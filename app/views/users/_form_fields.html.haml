@@ -1,0 +1,20 @@
+-# Don't offer photo as part of account creation - just a little too needy
+- unless action_name == 'new'
+  = f.input :photo
+  - if @user.has_photo?
+    = f.input :remove_photo, as: :boolean, hint: 'Revert to default logo'
+= f.input :name
+= f.input :email, required: true
+= f.input :password, required: true
+= f.input :password_confirmation, required: true, hint: current_user && action_name != 'new' ? 'Leave password fields blank to leave password unchanged.' : '7 characters, at least 1 number'
+- if current_user
+  = f.input :city
+  = f.input :state
+  = f.input :country, priority: ['US'], include_blank: false
+  = f.input :time_zone, priority: /US/
+
+- if current_user.try(:admin?)
+  = f.input :role_id, as: 'select', collection: @roles, include_blank: false
+  = f.input :active, :as => :boolean, :label => 'Active', :hint => 'Becomes true when user verifies email. When unchecked, the user cannot login.'
+  -if Setting.require_account_approval?
+    = f.input :approved, :as => :boolean, :label => 'Approved', :hint => 'When unchecked, the user cannot login.'

@@ -1,0 +1,14 @@
+= f.input :photo
+- if @user.has_photo?
+  = f.input :remove_photo, as: :boolean, hint: 'Revert to default logo'
+= f.input :email
+= f.input :name
+= f.input :city
+= f.input :state
+
+= f.input :time_zone, priority: /US/, default: current_user.time_zone, class: 'form-control'
+
+= f.input :password, :hint => 'Minimum 8 characters with at least 1 number. Leave this blank to keep your current password.'
+= f.input :password_confirmation
+%p Preferences
+= f.input :comment_notifications,   as: :boolean, label: "Receive email comment notifications"

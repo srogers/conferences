@@ -1,0 +1,8 @@
+en:
+  hello: "Hello world"
+
+  # Role names
+  admin:    "Admin"
+  editor:   "Editor"
+  reader:   "Reader"
+

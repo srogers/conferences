@@ -1,0 +1,6 @@
+admin:
+  name: <%= Role::ADMIN %>
+editor:
+  name: <%= Role::EDITOR %>
+user:
+  name: <%= Role::READER %>

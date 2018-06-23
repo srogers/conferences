@@ -1,0 +1,5 @@
+- if @user == current_user
+  =title 'Your Activity'
+- else
+  = title "Activity - #{ @user.name }"
+

@@ -1,0 +1,9 @@
+-# full documentation at:  http://ogp.me
+-# FaceBook documentation at:
+=tag :meta, property: "og:url",         content: og_url
+=tag :meta, property: "og:type",        content: og_type          # See:  https://developers.facebook.com/docs/reference/opengraph#object-type
+=tag :meta, property: "og:title",       content: og_title
+=tag :meta, property: "og:description", content: og_description   if og_description.present?
+=tag :meta, property: "og:image",       content: og_image_url     if og_image_url.present?
+=tag :meta, property: "fb:app_id",      content: ENV['FB_APP_ID']
+=tag :meta, property: "og:site_name",   content: "Conceputal Clarity"

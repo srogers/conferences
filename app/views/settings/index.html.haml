@@ -1,0 +1,22 @@
+-# There is only one setting, but we use index as the default view
+.row
+  .col-md-12
+    =title "System Settings"
+    %p{style: 'valign: bottom'}= "Version #{ APP_VERSION }"
+.row
+  .col-md-12
+    %table.table
+      %tr
+        %th{width: '50%'} Require Account Approval
+        %td= humanize_boolean @setting.require_account_approval?
+
+.row
+  .col-md-12
+    %p
+      Facebook Analytics
+      = link_to_if ENV['FB_APP_ID'].present?, "Dashboard", "https://www.facebook.com/analytics/#{ ENV['FB_APP_ID'] }/", target: '_blank'
+.row
+  .col-md-6
+    .form-actions.btn-group
+      = link_to "Edit", edit_setting_path(@setting), :class => "btn btn-secondary"
+      = link_to "Done", root_path, :class => "btn btn-primary"

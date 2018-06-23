@@ -1,0 +1,14 @@
+.row
+  .col-md-12
+    = title "Editing User : #{ @user.name }"
+
+.row
+  .col-md-6
+    = simple_form_for @user do |f|
+      .form_fields
+        = render :partial => "form_fields", :locals => {:f => f}
+      = save_or_cancel f, user_path(@user)
+
+  .col-md-6
+    .pull-right
+      =image_tag @user.photo.url, style: 'max-height: 100px'

@@ -1,0 +1,69 @@
+=title 'Your Account'
+
+.well.well-lg
+  =image_tag current_user.photo.url, class: 'pull-right', style: 'max-height: 100px'
+
+  %table.clean-values
+    %tr
+      %th Name
+      %td= current_user.name
+
+    %tr
+      %th Location
+      %td
+        = [current_user.city, current_user.state].join(", ")
+
+    %tr
+      %th Email
+      %td= current_user.email
+
+    %tr
+      %th Time Zone
+      %td= current_user.time_zone
+
+    %tr
+      %th Role
+      %td= t current_user.role_name
+
+  %table.clean-values
+    %caption Preferences
+    %tr
+      %th Other
+      %td TBD
+
+
+  =link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
+
+%h4 Activity
+.well.well-lg
+  .well.well-lg
+    %table.clean-values
+      %tr
+        %td N/A
+
+-# Don't show users this stuff about themselves
+- if current_user.admin?
+  %h4 System Activity
+  .well.well-lg
+    %table.clean-values
+      %tr
+        %th Login count:
+        %td= current_user.login_count
+      %tr
+        %th Failed login count:
+        %td= current_user.failed_login_count
+      %tr
+        %th Last request:
+        %td= pretty_date current_user.last_request_at, style: :full
+      %tr
+        %th Current login at:
+        %td= pretty_date current_user.current_login_at, style: :full
+      %tr
+        %th Last login at:
+        %td= pretty_date current_user.last_login_at, style: :full
+      %tr
+        %th Current login IP:
+        %td= current_user.current_login_ip
+      %tr
+        %th Last login IP:
+        %td= current_user.last_login_ip

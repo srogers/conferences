@@ -1,0 +1,14 @@
+// designed for showing model values in readable name/value columns
+table.clean-values {
+  margin-bottom: 15px;
+
+  th {
+    font-weight: bold;
+    padding-right: 10px;
+    text-align: right;
+    min-width: 150px;         // This makes separate stacked tables line up
+  }
+  td:nth-child(1) {
+    text-align: left;
+  }
+}

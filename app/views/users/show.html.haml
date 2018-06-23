@@ -1,0 +1,86 @@
+.row
+  .col-md-6
+    = title "#{ @user.name }"
+
+  .col-md-6
+    =image_tag @user.photo.url, class: 'pull-right', style: 'max-height: 100px'
+
+.row
+  .col-md-10
+    %table.clean-values
+      %tr
+        %th Name
+        %td= @user.name
+
+      %tr
+        %th Email
+        %td= mail_to(@user.email)
+
+      %tr
+        %th Role
+        %td= t @user.role_name
+
+      %tr
+        %th Active
+        %td
+          - if @user.active?
+            = icon 'check', :class => 'fa-lg fa-fw text-success'
+          - else
+            = icon 'ban', :class => 'fa-lg fa-fw text-danger'
+            Disabled
+
+      %tr
+        %th Approved
+        %td
+          - if @user.approved?
+            = icon 'check', :class => 'fa-lg fa-fw text-success'
+          - else
+            = icon 'ban', :class => 'fa-lg fa-fw text-danger'
+            Needs Approval
+      %tr
+        %th City
+        %td= @user.city
+
+      %tr
+        %th State
+        %td= @user.state
+
+      %tr
+        %th Country
+        %td= @user.country_name
+
+      %tr
+        %th Created at
+        %td= pretty_date(@user.created_at, :style => :full, :undefined_text => '---')
+
+      %tr
+        %th Last Login At
+        %td= pretty_date(@user.last_login_at, :style => :full, :undefined_text => '---')
+
+      %tr
+        %th Number of Times Logged in
+        %td= @user.login_count
+
+      %tr
+        %th Number of Failed Login Attempts
+        %td= @user.failed_login_count
+
+      %tr
+        %th Last request:
+        %td= pretty_date current_user.last_request_at, style: :full
+
+      %tr
+        %th Current login IP:
+        %td= current_user.current_login_ip
+
+      %tr
+        %th Last login IP:
+        %td= current_user.last_login_ip
+
+.row.form-actions
+  .col-md-6
+    = link_to "Edit", edit_user_path(@user), :class => "btn btn-secondary"
+    = link_to "Summary", summary_user_path(@user), :class => "btn btn-secondary"
+    = link_to "Done", users_path, :class => "btn btn-primary"
+  .col-md-6
+    = link_to icon('trash', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
