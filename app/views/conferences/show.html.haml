@@ -23,7 +23,7 @@
       %h5 Add a speaker
       = simple_form_for @conference_speaker do |f|
         = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
-        = f.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json), exclude: 3 }, class: "select2-autocomplete" }
+        = f.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json), exclude: @current_speaker_ids }, class: "select2-autocomplete" }
         = f.submit 'Add', id: 'new_conference_speaker_submit'
 
 .row

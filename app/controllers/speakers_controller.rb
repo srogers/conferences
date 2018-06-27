@@ -5,9 +5,11 @@ class SpeakersController < ApplicationController
   load_and_authorize_resource
 
   def index
-    # This handles the related concept autocomplete, which is locked to matching on the first character
+    # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
-      @speakers = @speakers.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @speakers = @speakers.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
+      @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
+      @speakers.limit(params[:per]) # :q and :per always go together
     else
       @speakers = Speaker.page(params[:page]).per(20)
     end

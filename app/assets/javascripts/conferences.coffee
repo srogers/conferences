@@ -19,7 +19,7 @@ $ ->
         q: params.term
         page: params.page
         per: 5
-        exclude: select.data('exclude') # this gets the ID of the current concept from data on the selector and passes it in so we can ignore it
+        exclude: select.data('exclude') # this gets the IDs of the current speakers from data on the selector and passes it so the controller can ignore it
       ,
       processResults: (data, params) ->
         # The controller has to put the data into the format select2 expects with a total and n: {:id , :text}
