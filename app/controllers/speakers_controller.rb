@@ -7,7 +7,7 @@ class SpeakersController < ApplicationController
   def index
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
-      @speakers = @speakers.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
+      @speakers = Speaker.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
       @speakers.limit(params[:per]) # :q and :per always go together
     else
@@ -33,12 +33,15 @@ class SpeakersController < ApplicationController
 
   def create
     @speaker = Speaker.new speaker_params
+    @speaker.name.strip!
     @speaker.creator_id = current_user.id
-    unless @speaker.save
-      flash[:error] = 'Your speaker could not be saved.'
-      logger.debug "Speaker save failed: #{ @speaker.errors.full_messages }"
+    if @speaker.save
+      redirect_to speaker_path(@speaker)
+    else
+      flash[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
+      logger.debug "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
+      redirect_to new_speaker_path
     end
-    redirect_to speaker_path(@speaker)
   end
 
   def update

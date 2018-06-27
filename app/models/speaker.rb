@@ -5,4 +5,6 @@ class Speaker < ApplicationRecord
   has_many :conference_speakers
   has_many :conferences, through: :conference_speakers
 
+  validates_uniqueness_of :name, :case_sensitive => false
+
 end
