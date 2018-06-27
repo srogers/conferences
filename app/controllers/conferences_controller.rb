@@ -6,7 +6,7 @@ class ConferencesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @conferences = Conference.page(params[:page]).per(20)
+    @conferences = Conference.order(:start_date).page(params[:page]).per(20)
   end
 
   def show
@@ -23,6 +23,9 @@ class ConferencesController < ApplicationController
 
   def create
     @conference = Conference.new conference_params
+    @conference.name.strip!
+    @conference.city.strip!
+    @conference.state.strip!
     @conference.creator_id = current_user.id
     unless @conference.save
       flash[:error] = 'Your conference could not be saved.'

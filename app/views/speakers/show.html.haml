@@ -12,6 +12,7 @@
     .form-actions
       - if can? :edit, @speaker
         = link_to "Edit", edit_speaker_path(@speaker), :class => "btn btn-secondary"
+        = link_to "Add Another", new_speaker_path, :class => "btn btn-secondary"
       = link_to "Done", speakers_path, :class => "btn btn-primary"
       .pull-right
         - if can? :destroy, @speaker

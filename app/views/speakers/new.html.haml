@@ -3,7 +3,7 @@
     = title "Add a New Speaker"
 .row
   .col-md-12
-    = simple_form_for @speaker do |f|
+    = simple_form_for @speaker, :html => {:autocomplete => "off"} do |f|
       = render :partial => "form_fields", :locals => {:f => f}
       %hr
       = save_or_cancel f, speakers_path, 'Create'
