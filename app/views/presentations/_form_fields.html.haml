@@ -1,0 +1,8 @@
+= f.input :speaker_id, collection: [[@presentation.speaker_name, @presentation.speaker.id]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }
+= f.input :name, :autofocus => true
+= f.input :description
+= f.input :tape, as: :boolean
+= f.input :cd, as: :boolean, label: 'CD'
+= f.input :vhs, as: :boolean, label: 'VHS'
+= f.input :estore_url
+= f.input :video_url

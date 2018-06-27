@@ -1,0 +1,21 @@
+.row
+  .col-md-12
+    = title "#{ @presentation.name }"
+    = @presentation.speaker_name
+
+    %p= @presentation.description
+
+    %p
+      Available as:
+      = available_formats(@presentation)
+
+.row
+  .col-md-12
+    .form-actions
+      - if can? :edit, @presentation
+        = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-secondary"
+        = link_to "Add Another", new_presentation_path, :class => "btn btn-secondary"
+      = link_to "Done", presentations_path, :class => "btn btn-primary"
+      .pull-right
+        - if can? :destroy, @presentation
+          = link_to icon('trash', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user assets to you and delete votes.' }, :post => true

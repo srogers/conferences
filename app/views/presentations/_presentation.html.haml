@@ -1,0 +1,12 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= link_to(truncate(presentation.name, length: 80), presentation_path(presentation))
+  %td= presentation.tape
+  %td= presentation.cd
+  %td= presentation.vhs
+  %td= presentation.estore_url.present?
+
+  %td{width: 120}
+    = link_to edit_presentation_path(presentation), :class => "btn btn-sm" do
+      = icon 'edit', class: 'fa-fw'
+      Edit
+    = link_to icon('trash', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

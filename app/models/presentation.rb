@@ -5,4 +5,7 @@ class Presentation < ApplicationRecord
 
   validates :speaker_id, presence: true
 
+  def speaker_name
+    speaker&.name
+  end
 end
