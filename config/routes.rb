@@ -11,9 +11,14 @@ Rails.application.routes.draw do
   get '/register/:activation_code', to: 'activations#new',    as: :registration
   get 'tags/:tag',                  to: 'concepts#index',     as: :tag
 
-  resource :account
+  resource  :account
+  resources :conferences
+  resources :conference_speakers, only: [:index, :create, :destroy]
+  resources :presentations
   resources :password_resets, only: [:new, :create, :edit, :update]
+  resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]
+  resources :speakers
   resources :users do
     member do
       get   :summary
@@ -24,5 +29,4 @@ Rails.application.routes.draw do
     end
   end
   resources :user_sessions, only: [:create, :destroy]
-  resources :votes
 end

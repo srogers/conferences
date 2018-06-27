@@ -17,8 +17,8 @@
 //  don't require turbolinks because the caching breaks select2
 //= require trix
 //= require social-share-button
-//  load specific named files rather that bulk-loading "require_tree ." because some JS is reserved for only certain pages
-//= require facebook_events
+// Everything loads everywhere, so we just suck up all the JS here
+//= require_tree .
 
 // For now, activate tooltips everywhere and pass any arguments in the view.
 // Tooltip details: http://v4-alpha.getbootstrap.com/components/tooltips/

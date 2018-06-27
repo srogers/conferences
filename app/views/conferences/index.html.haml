@@ -1,0 +1,27 @@
+- title 'Conferences'
+.row
+  .col-md-12
+    - category_button_classes = "btn btn-sm"
+    = link_to "My Conferences", conferences_path(mine: true,), class: category_button_classes + (params[:mine].present? ? " btn-disabled" : " btn-primary")
+    - if params[:search_term].present? || params[:mine].present?
+      = link_to 'all', conferences_path, class: category_button_classes + " btn-primary"
+
+    = form_for :search, html: { class: 'form-inline' }, url: conferences_path, method: :get do |f|
+      = text_field_tag :search_term, params[:search_term]
+      = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
+        = icon('search')
+
+    - if can? :create, Conference
+      .pull-right
+        =link_to "Add Conference", new_conference_path, class: 'btn btn-sm btn-primary'
+
+.row
+  .col-md-12
+    - if @conferences.blank?
+      %p You haven't created any conferences yet.
+    - else
+      %table.table
+        = render :partial => "table_head"
+        = render :partial => "conference", :collection => @conferences
+
+      = paginate @conferences

@@ -10,10 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_23_211543) do
+ActiveRecord::Schema.define(version: 2018_06_26_175337) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "conference_speakers", force: :cascade do |t|
+    t.bigint "conference_id"
+    t.bigint "speaker_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conference_id", "speaker_id"], name: "index_conference_speakers_on_conference_id_and_speaker_id", unique: true
+    t.index ["conference_id"], name: "index_conference_speakers_on_conference_id"
+    t.index ["creator_id"], name: "index_conference_speakers_on_creator_id"
+    t.index ["speaker_id"], name: "index_conference_speakers_on_speaker_id"
+  end
+
+  create_table "conferences", force: :cascade do |t|
+    t.date "start_date"
+    t.date "end_date"
+    t.string "venue"
+    t.string "venue_url"
+    t.string "city"
+    t.string "state"
+    t.bigint "organizer_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_conferences_on_creator_id"
+    t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
+  end
 
   create_table "friendly_id_slugs", id: :serial, force: :cascade do |t|
     t.string "slug", null: false
@@ -27,6 +54,32 @@ ActiveRecord::Schema.define(version: 2018_06_23_211543) do
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
   end
 
+  create_table "organizers", force: :cascade do |t|
+    t.string "name"
+    t.string "series_name"
+    t.string "abbreviation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "presentations", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.boolean "tape"
+    t.boolean "cd"
+    t.boolean "vhs"
+    t.string "estore_url"
+    t.string "video_url"
+    t.bigint "speaker_id"
+    t.bigint "conference_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conference_id"], name: "index_presentations_on_conference_id"
+    t.index ["creator_id"], name: "index_presentations_on_creator_id"
+    t.index ["speaker_id"], name: "index_presentations_on_speaker_id"
+  end
+
   create_table "roles", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -35,6 +88,15 @@ ActiveRecord::Schema.define(version: 2018_06_23_211543) do
 
   create_table "settings", id: :serial, force: :cascade do |t|
     t.boolean "require_account_approval", default: true
+  end
+
+  create_table "speakers", force: :cascade do |t|
+    t.string "name"
+    t.string "photo"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_speakers_on_creator_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|

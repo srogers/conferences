@@ -121,7 +121,7 @@ module ApplicationHelper
       when :short       then "%m#{sep}%d#{sep}%y" # output date like  10/28/08
       when :long        then "%m#{sep}%d#{sep}%Y" # output date like  10/28/2008
       when :db          then "%Y#{sep}%m#{sep}%d" # output date like  2008-10-28
-      when :yearless    then "%m#{sep}%d"         # output date like  10/28
+      when :yearless    then "%b %d"              # output date like  Oct 28
       when :url         then "%m#{sep}%d#{sep}%Y" # output date like  10_28_2008
       when :month_only  then "%b %Y"              # output date like  Oct 2008
       when :month_name  then "%b"                 # output short month name only like Oct

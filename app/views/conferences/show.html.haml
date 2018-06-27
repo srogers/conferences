@@ -1,0 +1,37 @@
+- title full_name_with_date(@conference)
+.row
+  .col-md-12
+    %h4= full_name_with_date(@conference)
+    - if @conference.venue_url.present?
+      = link_to @conference.venue, @conference.venue_url
+    - else
+      = @conference.venue
+    = @conference.location
+
+.row
+  .col-md-12
+    %h4 Speakers
+    %ul
+      - if @conference.speakers.empty?
+        %li None Yet
+      - @conference.speakers.each do |speaker|
+        %li= speaker.name
+
+- if can? :edit, @conference
+  .row
+    .col-md-12
+      %h5 Add a speaker
+      = simple_form_for @conference_speaker do |f|
+        = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
+        = f.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json), exclude: 3 }, class: "select2-autocomplete" }
+        = f.submit 'Add', id: 'new_conference_speaker_submit'
+
+.row
+  .col-md-12
+    .form-actions
+      - if can? :edit, @conference
+        = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-secondary"
+      = link_to "Done", conferences_path, :class => "btn btn-primary"
+      .pull-right
+        - if can? :destroy, @conference
+          = link_to icon('trash', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user assets to you and delete votes.' }, :post => true

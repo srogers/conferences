@@ -1,6 +1,7 @@
 %nav.navbar.navbar-inverse
   .container
     .navbar-header
+      = link_to 'Conferences', root_path, class: 'navbar-brand'
       = content_tag :div, 'Beta', class: 'beta-marker'
       %button.navbar-toggle.collapsed{type: "button", "data-toggle": "collapse", "data-target": "#navbar" }
         %span.sr-only Toggle navigation
@@ -10,6 +11,8 @@
 
     #navbar.collapse.navbar-collapse
       %ul.nav.navbar-nav
+        %li= link_to 'Conferences', conferences_path
+        %li= link_to 'Speakers', speakers_path
         - if current_user
           - if current_user.admin?
             %li= link_to 'Users', users_path

@@ -1,0 +1,9 @@
+.row
+  .col-md-12
+    = title "Edit Speaker"
+.row
+  .col-md-12
+    = simple_form_for @speaker do |f|
+      = render :partial => "form_fields", :locals => {:f => f}
+      %hr
+      = save_or_cancel f, speakers_path, 'Save'

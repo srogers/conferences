@@ -1,0 +1,18 @@
+.row
+  .col-md-12
+    %h3 Speaker
+
+    %table.table
+      %tr
+        %th Name
+        %td= title "#{ @speaker.name }"
+
+.row
+  .col-md-12
+    .form-actions
+      - if can? :edit, @speaker
+        = link_to "Edit", edit_speaker_path(@speaker), :class => "btn btn-secondary"
+      = link_to "Done", speakers_path, :class => "btn btn-primary"
+      .pull-right
+        - if can? :destroy, @speaker
+          = link_to icon('trash', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user assets to you and delete votes.' }, :post => true

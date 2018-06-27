@@ -1,0 +1,10 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= link_to(truncate(conference.name, length: 40), conference_path(conference))
+  %td= date_span conference
+  %td= conference.location
+
+  %td{width: 120}
+    = link_to edit_conference_path(conference), :class => "btn btn-sm" do
+      = icon 'edit', class: 'fa-fw'
+      Edit
+    = link_to icon('trash', class: 'fa-fw'), conference_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
