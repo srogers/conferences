@@ -6,7 +6,10 @@ class ConferencesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @conferences = Conference.order(:start_date).page(params[:page]).per(20)
+    q = params[:search_term]
+    @conferences = Conference.order(:start_date).includes(:organizer).references(:organizer)
+    @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{q}%", "#{q}%", "#{q}%") if q.present?
+    @conferences = @conferences.page(params[:page]).per(20)
   end
 
   def show

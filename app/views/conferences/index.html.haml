@@ -17,7 +17,12 @@
 .row
   .col-md-12
     - if @conferences.blank?
-      %p You haven't created any conferences yet.
+      - if params[:search_term].present?
+        %p No conferences match the search terms
+      - elsif params[:user_id].present?
+        %p You haven't marked any conferences as attended by you
+      - else
+        %p The system doesn't contain any conferences yet
     - else
       %table.table
         = render :partial => "conferences/table_head"

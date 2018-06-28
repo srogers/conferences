@@ -14,7 +14,7 @@ Setting.create! unless Setting.first
 
 if Organizer.all.empty?
   Organizer.create! name: "The Thomas Jefferson School", series_name: "TJS Conferences", abbreviation: "TJS"
-  Organizer.create! name: "The Ayn Rand Institute", series_name: "Objectivist Conferences", abbreviation: "OCON"
+  Organizer.create! name: "The Ayn Rand Institute (ARI)", series_name: "Objectivist Conferences", abbreviation: "OCON"
   Organizer.create! name: "Lyceum International", series_name: "Lyceum Conferences", abbreviation: "Lyceum"
   Organizer.create! name: "Lyceum International", series_name: "21st Century Conferences", abbreviation: "21CC"
   Organizer.create! name: "Conceptual Conferences", series_name: "Conceptual Conferences", abbreviation: "CC"
