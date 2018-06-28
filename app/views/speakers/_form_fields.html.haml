@@ -1,1 +1,4 @@
 = f.input :name, :autofocus => true
+-# Let the admin see this, just in case it needs tweaking
+- if current_user.admin? && action_name == 'edit'
+  = f.input :sortable_name

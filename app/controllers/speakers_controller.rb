@@ -5,13 +5,14 @@ class SpeakersController < ApplicationController
   load_and_authorize_resource
 
   def index
+    @speakers = Speaker.order(:sortable_name)
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
-      @speakers = Speaker.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
+      @speakers = @speakers.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
       @speakers.limit(params[:per]) # :q and :per always go together
     else
-      @speakers = Speaker.page(params[:page]).per(20)
+      @speakers = @speakers.page(params[:page]).per(20)
     end
 
     # The json result has to be built with the keys in the data expected by select2
@@ -19,7 +20,6 @@ class SpeakersController < ApplicationController
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }
     end
-
   end
 
   def show

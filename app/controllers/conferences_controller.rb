@@ -55,7 +55,7 @@ class ConferencesController < ApplicationController
   end
 
   def get_organizer_selections
-    @organizer_selections = Organizer.all.map{|o| ["#{o.name} - #{o.series_name}", o.id]}
+    @organizer_selections = Organizer.all.order(:name).map{|o| ["#{o.name} - #{o.series_name}", o.id]}
   end
 
   def conference_params
