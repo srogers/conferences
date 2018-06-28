@@ -6,6 +6,9 @@ class Conference < ApplicationRecord
   has_many :conference_speakers
   has_many :speakers, through: :conference_speakers
 
+  has_many :conference_users
+  has_many :users, through: :conference_users
+
   validates :organizer_id, presence: true
 
   def location

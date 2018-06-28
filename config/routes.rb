@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resource  :account
   resources :conferences
   resources :conference_speakers, only: [:index, :create, :destroy]
+  resources :conference_users, only: [:index, :create, :destroy]
   resources :presentations
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers

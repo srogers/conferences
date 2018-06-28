@@ -10,6 +10,7 @@ class ConferencesController < ApplicationController
   end
 
   def show
+    @conference_user = ConferenceUser.new
     # These two items are used in building the speaker autocomplete
     @conference_speaker = ConferenceSpeaker.new
     @current_speaker_ids = @conference.speakers.map{|s| s.id}.join(',')

@@ -8,6 +8,15 @@
       = @conference.venue
     = @conference.location
 
+    - if current_user
+      .pull-right
+        - if current_user.attended? @conference
+          %p= attendance_status_message(@conference)
+        - else
+          = simple_form_for @conference_user do |f|
+            = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
+            = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
+            = f.submit attendance_invitation_message(@conference)
 .row
   .col-md-12
     %h4 Speakers

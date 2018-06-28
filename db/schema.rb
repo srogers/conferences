@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_27_235443) do
+ActiveRecord::Schema.define(version: 2018_06_28_005149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,17 @@ ActiveRecord::Schema.define(version: 2018_06_27_235443) do
     t.index ["conference_id"], name: "index_conference_speakers_on_conference_id"
     t.index ["creator_id"], name: "index_conference_speakers_on_creator_id"
     t.index ["speaker_id"], name: "index_conference_speakers_on_speaker_id"
+  end
+
+  create_table "conference_users", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "conference_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conference_id"], name: "index_conference_users_on_conference_id"
+    t.index ["creator_id"], name: "index_conference_users_on_creator_id"
+    t.index ["user_id"], name: "index_conference_users_on_user_id"
   end
 
   create_table "conferences", force: :cascade do |t|

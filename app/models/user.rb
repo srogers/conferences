@@ -2,6 +2,9 @@ class User < ApplicationRecord
 
   belongs_to :role
 
+  has_many :conference_users
+  has_many :conferences, through: :conference_users
+
   validates :name, presence: true
   validates :role, presence: true
 
@@ -18,6 +21,10 @@ class User < ApplicationRecord
   end
 
   scope :needing_approval, -> { where('not users.approved') }
+
+  def attended?(conference)
+    conferences.include? conference
+  end
 
   def clean_email
     email.strip! if email.present?

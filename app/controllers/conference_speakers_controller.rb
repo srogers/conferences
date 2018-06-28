@@ -1,4 +1,7 @@
 class ConferenceSpeakersController < ApplicationController
+
+  before_action :require_user
+
   def create
     conference_speaker = ConferenceSpeaker.new conference_speaker_params
     conference_speaker.creator_id = current_user.id
