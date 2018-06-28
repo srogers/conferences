@@ -11,7 +11,9 @@
     - if current_user
       .pull-right
         - if current_user.attended? @conference
-          %p= attendance_status_message(@conference)
+          %p
+            = attendance_status_message(@conference)
+            = link_to icon('times-circle', class: 'fa-fw'), conference_user_path(@conference_user), :method => :delete, :style => "color: #F00", :data => { :confirm => 'Remove your association with this conference??' }, :post => true
         - else
           = simple_form_for @conference_user do |f|
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }

@@ -24,6 +24,14 @@ class ConferenceUsersController < ApplicationController
   end
 
   def destroy
+    conference_user = ConferenceUser.find(params[:id])
+    if conference_user
+      conference_id = conference_user.conference_id
+      conference_user.destroy
+      redirect_to conference_path(conference_id)
+    else
+      render body: nil
+    end
   end
 
   def conference_user_params
