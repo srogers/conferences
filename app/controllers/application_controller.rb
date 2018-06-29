@@ -34,8 +34,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # This is part of an escalating sequence - require_editor requires editor or higher role
   def require_editor
-    unless current_user && current_user.editor?
+    unless current_user && (current_user.editor? || current_user.admin?)
       store_location
       flash[:notice] = "You do not have permissions to access that page"
       redirect_to root_path

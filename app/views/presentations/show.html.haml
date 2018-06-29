@@ -6,15 +6,31 @@
     %p= @presentation.description
 
     %p
-      Available as:
-      = available_formats(@presentation)
+      = @presentation.publications.empty? ? "Not yet available" : "Available as"
+      = link_to icon("plus-circle"), "#", id: "show_new_publication", style: "margin-left: 40px;"
+      %ul
+        - @presentation.publications.each do |publication|
+          = format_and_date(publication)
+
+.row
+  .col-md-12
+    #add_publication.panel.panel-default{ style: "display: none"}
+      .panel-heading Add a publication
+      .panel-body
+        = simple_form_for @publication do |f|
+          = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+          = f.input :format, collection: Publication::FORMATS, include_blank: false
+          = f.input :published_on, as: :date, start_year: 1980, order: [:year]
+          = f.input :url, label: 'URL', hint: "Where applicable"
+          = f.submit "Add"
 
 .row
   .col-md-12
     .form-actions
       - if can? :edit, @presentation
         = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-secondary"
-        = link_to "Add Another", new_presentation_path, :class => "btn btn-secondary"
+        - if request.referrer == new_presentation_url
+          = link_to "Add Another", new_presentation_path, :class => "btn btn-secondary"
       = link_to "Done", presentations_path, :class => "btn btn-primary"
       .pull-right
         - if can? :destroy, @presentation

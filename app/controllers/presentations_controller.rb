@@ -21,6 +21,7 @@ class PresentationsController < ApplicationController
   end
 
   def show
+    @publication = Publication.new
   end
 
   def edit
@@ -61,6 +62,6 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :tape, :cd, :vhs, :estore_url, :video_url)
+    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description)
   end
 end
