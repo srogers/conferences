@@ -1,28 +1,68 @@
 .row
   .col-md-12
     = title "#{ @presentation.name }"
-    = @presentation.speaker_name
+    %h4= @presentation.speakers.empty? ? "no speaker identified" : @presentation.speaker_names
+    - if @presentation.conference.present?
+      %h5
+        Presented at:
+        =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
     %p= @presentation.description
 
     %p
       = @presentation.publications.empty? ? "Not yet available" : "Available as"
-      = link_to icon("plus-circle"), "#", id: "show_new_publication", style: "margin-left: 40px;"
       %ul
         - @presentation.publications.each do |publication|
-          = format_and_date(publication)
+          %li= format_and_date(publication)
 
-.row
-  .col-md-12
-    #add_publication.panel.panel-default{ style: "display: none"}
-      .panel-heading Add a publication
-      .panel-body
-        = simple_form_for @publication do |f|
+- if can? :edit, @presentation
+  .row
+    .col-md-12
+      - if @presentation.conference.blank?
+        %h5 Link to a Conference
+        = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-          = f.input :format, collection: Publication::FORMATS, include_blank: false
-          = f.input :published_on, as: :date, start_year: 1980, order: [:year]
-          = f.input :url, label: 'URL', hint: "Where applicable"
-          = f.submit "Add"
+          = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
+          = f.submit 'Add'
+
+  .row{ style: "margin-top: 20px"}
+    .col-md-12
+      %h5#manage_presentation_switch
+        = link_to icon('caret-right'), '#' # make this a link for nice cursor behavior, but make the whole thing 'hot'
+        Manage
+
+  .row#manage_presentation{ style: "display: none"}
+    .col-md-6
+      %h4 Speakers
+      %ul
+      - if @presentation.speakers.empty?
+        %li None Yet
+      - @presentation.speakers.each do |speaker|
+        %li= speaker.name
+
+      %h5 Add a speaker
+      = simple_form_for @presentation_speaker do |f|
+        = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+        = f.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", width: 400, source: speakers_path(format: :json), exclude: @current_speaker_ids }, class: "select2-autocomplete" }
+        = f.submit 'Add', id: 'new_presentation_speaker_submit'
+
+    .col-md-6
+      %h4 Publications
+      %ul
+      - if @presentation.publications.empty?
+        %li None Yet
+      - @presentation.publications.each do |publication|
+        %li
+          = [publication.format, publication.published_on.year, publication.url.present? ? publication.url : nil].compact.join(', ')
+
+      %h5 Add a publication
+      = simple_form_for @publication do |f|
+        = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+        = f.input :format, collection: Publication::FORMATS, include_blank: false
+        = f.input :published_on, as: :date, start_year: 1980, order: [:year], label: "Published"
+        = f.input :url, label: 'URL'
+        = f.submit "Add"
+
 
 .row
   .col-md-12

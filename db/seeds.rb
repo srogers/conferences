@@ -19,5 +19,7 @@ if Organizer.all.empty?
   Organizer.create! name: "Lyceum International", series_name: "21st Century Conferences", abbreviation: "21CC"
   Organizer.create! name: "Conceptual Conferences", series_name: "Conceptual Conferences", abbreviation: "CC"
   Organizer.create! name: "Second Renaissance Conferences", series_name: "Second Renaissance Conferences", abbreviation: "SRC"
+  Organizer.create! name: "Second Renaissance Books", series_name: "Second Renaissance Books Conferences", abbreviation: "SRB"
   Organizer.create! name: "The Hill Country Objectivist Association", series_name: "Texas Objectivist Conferences", abbreviation: "TOC"
+  Organizer.create! name: "The Objective Standard", series_name: "The Objective Standard Conferences", abbreviation: "TOS-CON"
 end

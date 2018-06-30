@@ -16,11 +16,13 @@ class ConferenceUsersController < ApplicationController
   def create
     conference_user = ConferenceUser.new conference_user_params
     conference_user.creator_id = current_user.id
-    unless conference_user.save
+    if conference_user.save
+      redirect_to conference_path(conference_user.conference_id)
+    else
       flash[:error] = 'The user/conference association could not be saved.'
       logger.debug "Conference Speaker save failed: #{ conference_user.errors.full_messages }"
+      redirect_to conferences_path
     end
-    redirect_to conference_path(conference_user.conference_id)
   end
 
   def destroy

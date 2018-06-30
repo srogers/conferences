@@ -10,22 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_28_163358) do
+ActiveRecord::Schema.define(version: 2018_06_30_032550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "conference_speakers", force: :cascade do |t|
-    t.bigint "conference_id"
-    t.bigint "speaker_id"
-    t.bigint "creator_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["conference_id", "speaker_id"], name: "index_conference_speakers_on_conference_id_and_speaker_id", unique: true
-    t.index ["conference_id"], name: "index_conference_speakers_on_conference_id"
-    t.index ["creator_id"], name: "index_conference_speakers_on_creator_id"
-    t.index ["speaker_id"], name: "index_conference_speakers_on_speaker_id"
-  end
 
   create_table "conference_users", force: :cascade do |t|
     t.bigint "user_id"
@@ -73,17 +61,27 @@ ActiveRecord::Schema.define(version: 2018_06_28_163358) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "presentation_speakers", force: :cascade do |t|
+    t.bigint "presentation_id"
+    t.bigint "speaker_id"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_presentation_speakers_on_creator_id"
+    t.index ["presentation_id", "speaker_id"], name: "index_presentation_speakers_on_presentation_id_and_speaker_id", unique: true
+    t.index ["presentation_id"], name: "index_presentation_speakers_on_presentation_id"
+    t.index ["speaker_id"], name: "index_presentation_speakers_on_speaker_id"
+  end
+
   create_table "presentations", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.bigint "speaker_id"
     t.bigint "conference_id"
     t.bigint "creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["conference_id"], name: "index_presentations_on_conference_id"
     t.index ["creator_id"], name: "index_presentations_on_creator_id"
-    t.index ["speaker_id"], name: "index_presentations_on_speaker_id"
   end
 
   create_table "publications", force: :cascade do |t|

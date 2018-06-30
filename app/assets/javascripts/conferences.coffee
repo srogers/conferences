@@ -32,3 +32,30 @@ $ ->
         }
 
     select.select2 options
+
+# Try to set the minimum number of characters for conference year to 4
+#  $('#conference_picker').select2(e) ->
+#    select = $(e)
+#    options = {
+#      minimumInputLength: 4
+#    }
+#    options.ajax =
+#      url: select.data('source')
+#      dataType: 'json'
+#      delay: 250,
+#      data: (params) ->
+#        q: params.term
+#        page: params.page
+#        per: 5
+#      ,
+#      processResults: (data, params) ->
+#        # The controller has to put the data into the format select2 expects with a total and n: {:id , :text}
+#        params.page = params.page || 1
+#        return {
+#          results: data.users,
+#          pagination: {
+#            more: (params.page * 5) < data.total
+#          }
+#        }
+#
+#    select.select2 options

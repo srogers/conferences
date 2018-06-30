@@ -6,17 +6,23 @@ class ConferencesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    q = params[:search_term]
-    @conferences = Conference.order(:start_date).includes(:organizer).references(:organizer)
-    @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{q}%", "#{q}%", "#{q}%") if q.present?
+    s = params[:search_term]
+    @conferences = Conference.order('start_date DESC').includes(:organizer).references(:organizer)
+    @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
+    @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{s}%", "#{s}%", "#{s}%") if s.present?
     @conferences = @conferences.page(params[:page]).per(20)
+
+    # The JSON result for select2 has to be built with the expected keys
+    respond_to do |format|
+      format.html
+      format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
+    end
+
   end
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user.id).first || ConferenceUser.new
     # These two items are used in building the speaker autocomplete
-    @conference_speaker = ConferenceSpeaker.new
-    @current_speaker_ids = @conference.speakers.map{|s| s.id}.join(',')
   end
 
   def edit
@@ -31,11 +37,13 @@ class ConferencesController < ApplicationController
     @conference.city.strip!
     @conference.state.strip!
     @conference.creator_id = current_user.id
-    unless @conference.save
+    if @conference.save
+      redirect_to conference_path(@conference)
+    else
       flash[:error] = 'Your conference could not be saved.'
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
+      render 'new'
     end
-    redirect_to conference_path(@conference)
   end
 
   def update

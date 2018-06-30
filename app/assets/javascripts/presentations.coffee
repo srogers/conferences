@@ -3,5 +3,5 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $ ->
-  $('#show_new_publication').on 'click', ->
-    $('#add_publication').toggle(800)
+  $('#manage_presentation_switch').on 'click', ->
+    $('#manage_presentation').toggle(800)

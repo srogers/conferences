@@ -5,11 +5,13 @@ class PublicationsController < ApplicationController
   def create
     publication = Publication.new publication_params
     publication.creator_id = current_user.id
-    unless publication.save
+    if publication.save
+      redirect_to presentation_path(publication.presentation_id)
+    else
       flash[:error] = 'The publication could not be saved.'
       logger.debug "Publication save failed: #{ publication.errors.full_messages }"
+      redirect_to presentations_path
     end
-    redirect_to presentation_path(publication.presentation_id)
   end
 
   def destroy

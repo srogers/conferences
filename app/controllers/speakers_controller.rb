@@ -40,7 +40,7 @@ class SpeakersController < ApplicationController
     else
       flash[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
-      redirect_to new_speaker_path
+      render 'new'
     end
   end
 

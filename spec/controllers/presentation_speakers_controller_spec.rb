@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ConferenceSpeakersController, type: :controller do
+RSpec.describe PresentationSpeakersController, type: :controller do
   before do
     pretend_to_be_authenticated
     allow(@current_user).to receive(:id).and_return 1
@@ -9,14 +9,14 @@ RSpec.describe ConferenceSpeakersController, type: :controller do
 
   describe "POST #create" do
     before do
-      post :create, params: { conference_speaker: { conference_id: 1, speaker_id: 1 }}
+      post :create, params: { presentation_speaker: { presentation_id: 1, speaker_id: 1 }}
     end
 
     it "sets the creator"
     it "saves the conference speaker"
 
     it "redirects to the conference show page" do
-      expect(response).to redirect_to conference_path(1)
+      expect(response).to redirect_to presentation_path(1)
     end
   end
 

@@ -4,6 +4,20 @@
 
 .row
   .col-md-12
+    %h4 Presentations
+    %ul
+      - if @speaker.presentations.empty?
+        %li None Yet
+      - else
+        - @speaker.presentations.each do |presentation|
+          %li
+            %b= link_to presentation.name, presentation_path(presentation)
+            - if presentation.conference.present?
+              at
+              =link_to presentation.conference_name, conference_path(presentation.conference)
+
+.row
+  .col-md-12
     .form-actions
       - if can? :edit, @speaker
         = link_to "Edit", edit_speaker_path(@speaker), :class => "btn btn-secondary"

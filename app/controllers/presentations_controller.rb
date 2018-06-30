@@ -22,6 +22,8 @@ class PresentationsController < ApplicationController
 
   def show
     @publication = Publication.new
+    @presentation_speaker = PresentationSpeaker.new
+    @current_speaker_ids = @presentation.speakers.map{|s| s.id}.join(',')
   end
 
   def edit
@@ -34,11 +36,16 @@ class PresentationsController < ApplicationController
     @presentation = Presentation.new presentation_params
     @presentation.name.strip!
     @presentation.creator_id = current_user.id
-    unless @presentation.save
-      flash[:error] = 'Your presentation could not be saved.'
-      logger.debug "Presentation save failed: #{ @presentation.errors.full_messages }"
+    if @presentation.save
+      if params[:presentation_speaker].present?
+        PresentationSpeaker.create(presentation_id: @presentation.id, speaker_id: params[:presentation_speaker][:speaker_id], creator_id: current_user.id)
+      end
+      redirect_to presentation_path(@presentation)
+    else
+      flash[:error] = "Your presentation could not be saved: #{ @presentation.errors.full_messages.join(', ') }"
+      logger.debug "Presentation save failed: #{ @presentation.errors.full_messages.join(', ') }"
+      render 'new'
     end
-    redirect_to presentation_path(@presentation)
   end
 
   def update

@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   resource  :account
   resources :conferences
-  resources :conference_speakers, only: [:index, :create, :destroy]
+  resources :presentation_speakers, only: [:index, :create, :destroy]
   resources :conference_users, only: [:index, :create, :destroy]
   resources :presentations
   resources :publications, only: [:create, :destroy]
