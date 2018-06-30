@@ -8,8 +8,15 @@
         =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
     %p= @presentation.description
+    %p
+      Parts:
+      = @presentation.parts
+    %p
+      Duration:
+      = @presentation.duration
 
     %p
+      Publications:
       = @presentation.publications.empty? ? "Not yet available" : "Available as"
       %ul
         - @presentation.publications.each do |publication|
