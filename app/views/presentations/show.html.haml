@@ -44,8 +44,10 @@
       %ul
       - if @presentation.speakers.empty?
         %li None Yet
-      - @presentation.speakers.each do |speaker|
-        %li= speaker.name
+      - @presentation.presentation_speakers.each do |presentation_speaker|
+        %li
+          = presentation_speaker.speaker.name
+          = link_to icon('times-circle'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
 
       %h5 Add a speaker
       = simple_form_for @presentation_speaker do |f|
@@ -61,6 +63,7 @@
       - @presentation.publications.each do |publication|
         %li
           = [publication.format, publication.published_on.year, publication.url.present? ? publication.url : nil].compact.join(', ')
+          = link_to icon('times-circle'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
 
       %h5 Add a publication
       = simple_form_for @publication do |f|

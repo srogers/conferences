@@ -15,6 +15,14 @@ class PresentationSpeakersController < ApplicationController
   end
 
   def destroy
+    presentation_speaker = PresentationSpeaker.find(params[:id])
+    if presentation_speaker
+      presentation_id = presentation_speaker.presentation_id
+      presentation_speaker.destroy
+      redirect_to presentation_path(presentation_id)
+    else
+      render body: nil
+    end
   end
 
   def presentation_speaker_params
