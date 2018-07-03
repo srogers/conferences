@@ -12,7 +12,7 @@ class ActivationsController < ApplicationController
         @user.activate!
         flash[:notice] = "Your account has been activated!"
       end
-      if Setting.require_account_approval?
+      if Setting.require_account_approval? && !@user.approved?
         AccountCreationMailer.pending_activation_notice(@user).deliver_now
         flash[:notice] = "Your email address has been confirmed - account pending administrator approval. You'll receive an email when it's ready."
         redirect_to root_url
