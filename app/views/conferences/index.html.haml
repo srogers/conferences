@@ -1,7 +1,8 @@
 - title 'Conferences'
 .row
   .col-md-12
-    = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn ftn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
+    - if current_user.present?
+      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn ftn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
     - if params[:search_term].present? || params[:user_id].present?
       = link_to 'All', conferences_path, class: "btn btn-sm btn-primary"
 

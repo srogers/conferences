@@ -5,7 +5,8 @@
   %td= presentation.formats
 
   %td{width: 120}
-    = link_to edit_presentation_path(presentation), :class => "btn btn-sm" do
-      = icon 'edit', class: 'fa-fw'
-      Edit
-    = link_to icon('trash', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+    - if can? :edit, presentation
+      = link_to edit_presentation_path(presentation), :class => "btn btn-sm" do
+        = icon 'edit', class: 'fa-fw'
+        Edit
+      = link_to icon('trash', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

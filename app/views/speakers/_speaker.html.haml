@@ -2,7 +2,8 @@
   %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
 
   %td{width: 120}
-    = link_to edit_speaker_path(speaker), :class => "btn btn-sm" do
-      = icon 'edit', class: 'fa-fw'
-      Edit
-    = link_to icon('trash', class: 'fa-fw'), speaker_path(speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+    - if can? :edit, speaker
+      = link_to edit_speaker_path(speaker), :class => "btn btn-sm" do
+        = icon 'edit', class: 'fa-fw'
+        Edit
+      = link_to icon('trash', class: 'fa-fw'), speaker_path(speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
