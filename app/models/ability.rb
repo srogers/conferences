@@ -13,6 +13,13 @@ class Ability
 
     elsif user.editor?
       can :read, :all
+      can :manage, Conference
+      can :manage, ConferenceUser
+      can :destroy, Conference, :creator_id => user.id
+      can :manage, Presentation
+      can :manage, PresentationSpeaker
+      can :manage, Publication
+      can :manage, Speaker
 
     elsif user.reader?
       can :read, :all
