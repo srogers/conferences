@@ -17,6 +17,7 @@ gem 'autoprefixer-rails'            # bootstrap needs this
 gem 'bootstrap-sass'                # This is what actually gets bootstrap installed, and determines the current version
 gem 'cancancan'
 gem 'carrierwave'
+gem 'country_select'                # provides country selector that works with simple_form
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
 gem "font-awesome-sass", '4.7.0'    # bundles font-awesome in a way that is compatible with Rails
 gem 'friendly_id'                   # manages sluggified URLs
