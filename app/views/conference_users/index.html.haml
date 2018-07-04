@@ -1,0 +1,15 @@
+- title 'Attendees'
+.row
+  .col-md-12
+    - if @attendees.blank?
+      %p No users have marked themselves as attending this conference.
+    - else
+      %table.table
+        = render :partial => "table_head"
+        = render :partial => "attendee", :collection => @attendees
+
+      = paginate @attendees
+
+.row
+  .col-md-12
+    %p= link_to "Done", conference_path(params[:conference_id]), :class => "btn btn-primary"

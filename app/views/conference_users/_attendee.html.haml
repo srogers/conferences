@@ -1,0 +1,2 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= link_to truncate(attendee.name, length: 40), conference_users_path(user_id: attendee.id)

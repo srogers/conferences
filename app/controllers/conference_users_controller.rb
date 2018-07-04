@@ -4,10 +4,11 @@ class ConferenceUsersController < ApplicationController
 
   def index
     if params[:user_id]
-      @conferences = User.find(params[:user_id]).conferences.order(:start_date).page(params[:page]).per(20)
+      @user = User.find(params[:user_id])
+      @conferences = @user.conferences.order(:start_date).page(params[:page]).per(20)
       render 'conferences/index'
     elsif params[:conference_id]
-      @users = Conference.find(params[:conference_id]).users
+      @attendees = Conference.find(params[:conference_id]).users.page(params[:page]).per(20)
     else
     end
   end

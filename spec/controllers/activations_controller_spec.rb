@@ -24,6 +24,7 @@ describe ActivationsController do
         before do
           allow(Setting).to receive(:require_account_approval?).and_return true
           allow(AccountCreationMailer).to receive_message_chain(:pending_activation_notice, :deliver_now).and_return true
+          allow(user).to receive(:approved?).and_return false
         end
 
         it "activates the user" do
@@ -31,9 +32,30 @@ describe ActivationsController do
           post :create, params: { id: 'token' }
         end
 
+        it "sends the activation email" do
+          expect(AccountCreationMailer).to receive(:pending_activation_notice)
+          post :create, params: { id: 'token' }
+        end
+
         it "redirects to the root path" do
           post :create, params: { id: 'token' }
           expect(response).to redirect_to root_path
+        end
+
+        context "and user is pre-approved" do
+          before do
+            allow(user).to receive(:approved?).and_return true
+          end
+
+          it "does not send the activation email" do
+            expect(AccountCreationMailer).not_to receive(:pending_activation_notice)
+            post :create, params: { id: 'token' }
+          end
+
+          it "redirects to the account path" do
+            post :create, params: { id: 'token' }
+            expect(response).to redirect_to account_url
+          end
         end
       end
 

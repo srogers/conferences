@@ -15,6 +15,13 @@
       .pull-right
         =link_to "Add Conference", new_conference_path, class: 'btn btn-sm btn-primary'
 
+- if params[:user_id].present?
+  .row
+    .col-md-12
+      %h4
+        Conferences Attended by
+        = @user.name
+
 .row
   .col-md-12
     - if @conferences.blank?

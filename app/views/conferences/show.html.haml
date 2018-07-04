@@ -37,6 +37,13 @@
 
 .row
   .col-md-12
+    %h4 Attendees
+    %p
+      = @conference.users.length
+      - if @conference.users.length > 0
+        = link_to "Show", conference_users_path(conference_id: @conference.id), class: 'btn btn-sm btn-secondary'
+.row
+  .col-md-12
     .form-actions
       - if can? :edit, @conference
         = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-secondary"

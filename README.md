@@ -170,6 +170,16 @@ Backups are scheduled at 2 AM for both staging and production. The command is:
     
 Production was bootstrapped from a copy of the staging database 
 
+#### Pushing and Restoring Data
+
+It may be possible to populate the Heroku database directly from the local DB (not tested):
+
+  https://devcenter.heroku.com/articles/heroku-postgresql#pg-push
+  
+For small databases, it is possible to pipe the data into the psql command, like:
+
+      PGPASSWORD='' pg_dump  --no-acl --no-owner -h localhost -U srogers conferences_development | heroku pg:psql --remote staging
+
 ### Outgoing Email
 
 Mail is configured to use Sendgrid. When the Add-On is provisioned, the username and password are added to the Heroku 
