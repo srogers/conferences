@@ -3,3 +3,22 @@
 - else
   = title "Activity - #{ @user.name }"
 
+.well.well-lg
+  %table.clean-values
+    %tr
+      %th Conferences Attended
+      %td= @conferences_attended
+    -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
+    - if @conferences_created > 0
+      %tr
+        %th Conferences Created
+        %td= @conferences_created
+    - if @presentations_created > 0
+      %tr
+        %th Presentations Created
+        %td= @presentations_created
+    - if @speakers_created > 0
+      %tr
+        %th Speakers Created
+        %td= @speakers_created
+

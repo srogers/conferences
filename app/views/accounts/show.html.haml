@@ -34,13 +34,6 @@
 
   =link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
 
-%h4 Activity
-.well.well-lg
-  .well.well-lg
-    %table.clean-values
-      %tr
-        %td N/A
-
 -# Don't show users this stuff about themselves
 - if current_user.admin?
   %h4 System Activity
