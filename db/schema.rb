@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_30_045547) do
+ActiveRecord::Schema.define(version: 2018_07_06_212006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 2018_06_30_045547) do
     t.datetime "updated_at", null: false
     t.integer "role_id"
     t.boolean "comment_notifications", default: false
+    t.boolean "show_attendance", default: true
   end
 
 end

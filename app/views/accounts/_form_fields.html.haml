@@ -10,5 +10,5 @@
 
 = f.input :password, :hint => 'Minimum 8 characters with at least 1 number. Leave this blank to keep your current password.'
 = f.input :password_confirmation
-%p Preferences
-= f.input :comment_notifications,   as: :boolean, label: "Receive email comment notifications"
+%h4 Preferences
+= f.input :show_attendance, as: :boolean, label: "Allow other users to see my conference attendance"

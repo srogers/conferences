@@ -28,8 +28,12 @@
   %table.clean-values
     %caption Preferences
     %tr
-      %th Other
-      %td TBD
+      %th
+        - if current_user.show_attendance
+          %span.confirm= icon('check')
+        - else
+          %span.deny= icon('times')
+      %td Allow other users to see my conference attendance
 
 
   =link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
