@@ -24,4 +24,38 @@ RSpec.describe ConferenceUsersController, type: :controller do
     it "destroys the conference/user relationship"
   end
 
+  describe "when listing" do
+
+    let(:user)             { create :user }
+    let(:conference)       { create :conference }
+    let!(:conference_user) { create :conference_user, user_id: user.id, conference_id: conference.id }
+
+    context "with a user ID" do
+      it "lists conferences for a user" do
+        get :index, params: { user_id: user.id }
+
+        expect(assigns(:conferences)).to eq([conference])
+      end
+
+      context "when user has disabled show_attendance preference" do
+        before do
+          user.update_attribute :show_attendance, false
+        end
+
+        it "excludes user from attendees list" do
+          get :index, params: { conference_id: conference.id }
+
+          expect(assigns(:attendees).include?(user)).to be_falsey
+        end
+      end
+    end
+
+    context "with a conference ID" do
+      it "lists users for a conference" do
+        get :index, params: { conference_id: conference.id }
+
+        expect(assigns(:attendees)).to eq([user])
+      end
+    end
+  end
 end
