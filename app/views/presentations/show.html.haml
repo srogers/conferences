@@ -7,7 +7,7 @@
         Presented at:
         =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
-    %p= @presentation.description
+    %p= @presentation.description.try(:html_safe)
 
     %p
       Subject Area:
