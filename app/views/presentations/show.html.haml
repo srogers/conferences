@@ -8,9 +8,15 @@
         =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
     %p= @presentation.description
+
+    %p
+      Subject Area:
+      = @presentation.tag_list.empty? ? '<i>none identified</i>'.html_safe : @presentation.tag_list.map{|t| link_to t, tag_path(t)}.join(', ').html_safe
+
     %p
       Parts:
       = @presentation.parts
+
     %p
       Duration:
       = @presentation.duration
