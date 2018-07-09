@@ -3,7 +3,7 @@
     = p.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }
 = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
 = f.input :name, :autofocus => true
-= f.input :description
+= f.trix_editor :description
 = f.input :tag_list, label: 'Subject Area', hint: "economics, politics, psychology, etc. - separate with commas"
 = f.input :parts
 = f.input :duration
