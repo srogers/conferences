@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   get '/activate/:id',              to: 'activations#create', as: :activation
   get '/register/:activation_code', to: 'activations#new',    as: :registration
-  get 'tags/:tag',                  to: 'concepts#index',     as: :tag
+  get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
   resource  :account
   resources :conferences

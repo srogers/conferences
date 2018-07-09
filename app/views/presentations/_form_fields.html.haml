@@ -4,5 +4,6 @@
 = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
 = f.input :name, :autofocus => true
 = f.input :description
+= f.input :tag_list, label: 'Subject Area', hint: "economics, politics, psychology, etc. - separate with commas"
 = f.input :parts
 = f.input :duration

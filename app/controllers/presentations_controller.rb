@@ -10,6 +10,7 @@ class PresentationsController < ApplicationController
     if params[:q].present?
       @presentations = @presentations.where("lower(presentations.name) like ? OR lower(presentations.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%').limit(params[:per])
     else
+      @presentations = @presentations.tagged_with(params[:tag]) if params[:tag].present?
       @presentations = @presentations.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
       @presentations = @presentations.page(params[:page]).per(20)
     end
@@ -71,6 +72,6 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :parts, :duration)
+    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :parts, :duration, :tag_list)
   end
 end
