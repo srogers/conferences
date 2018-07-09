@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 2018_07_09_014354) do
     t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
   end
 
-  create_table "friendly_id_slugs", id: :integer, default: nil, force: :cascade do |t|
+  create_table "friendly_id_slugs", id: :serial, force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
@@ -98,13 +98,13 @@ ActiveRecord::Schema.define(version: 2018_07_09_014354) do
     t.index ["presentation_id"], name: "index_publications_on_presentation_id"
   end
 
-  create_table "roles", id: :integer, default: nil, force: :cascade do |t|
+  create_table "roles", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "settings", id: :integer, default: nil, force: :cascade do |t|
+  create_table "settings", id: :serial, force: :cascade do |t|
     t.boolean "require_account_approval", default: true
   end
 
@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(version: 2018_07_09_014354) do
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
-  create_table "users", id: :integer, default: nil, force: :cascade do |t|
+  create_table "users", id: :serial, force: :cascade do |t|
     t.string "email"
     t.string "crypted_password"
     t.string "password_salt"
