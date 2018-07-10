@@ -9,7 +9,7 @@ RSpec.describe ConferenceUser, type: :model do
     }
   end
 
-  describe "when creating a Conference" do
+  describe "when creating a Conference User" do
     it "should have a working factory" do
       expect(create :conference_user).to be_valid
     end

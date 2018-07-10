@@ -7,6 +7,8 @@ class Presentation < ApplicationRecord
   has_many    :presentation_speakers
   has_many    :speakers, through: :presentation_speakers
 
+  validates :name, presence: true
+
   acts_as_taggable
 
   def speaker_names
