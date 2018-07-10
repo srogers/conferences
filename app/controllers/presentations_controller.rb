@@ -33,6 +33,11 @@ class PresentationsController < ApplicationController
   end
 
   def new
+    # Pre-populate the conference when we're doing the 'create another' flow
+    if params[:conference_id]
+      @conference = Conference.find(params[:conference_id])
+      @presentation = Presentation.new conference_id: @conference.id
+    end
   end
 
   def create

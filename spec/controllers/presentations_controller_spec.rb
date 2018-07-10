@@ -93,6 +93,16 @@ RSpec.describe PresentationsController, type: :controller do
       get :new, params: {}
       expect(assigns(:presentation)).to be_a_new(Presentation)
     end
+
+    context "with an identified conference" do
+
+      let(:conference) { create :conference }
+
+      it "assigns the conference to the the new presentation" do
+        get :new, params: { conference_id: conference.id }
+        expect(assigns(:presentation).conference).to eq(conference)
+      end
+    end
   end
 
   describe "GET #edit" do
