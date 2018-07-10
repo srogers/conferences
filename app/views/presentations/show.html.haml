@@ -42,7 +42,7 @@
     .col-md-12
       %h5#manage_presentation_switch
         = link_to icon('caret-right'), '#' # make this a link for nice cursor behavior, but make the whole thing 'hot'
-        Manage
+        Manage Speakers and Pubications
 
   .row#manage_presentation{ style: "display: none"}
     .col-md-6
@@ -56,7 +56,7 @@
           = link_to icon('times-circle'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
 
       %h5 Add a speaker
-      = simple_form_for @presentation_speaker do |f|
+      = simple_form_for @presentation_speaker, :html => {:autocomplete => "off"} do |f|
         = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
         = f.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", width: 400, source: speakers_path(format: :json), exclude: @current_speaker_ids }, class: "select2-autocomplete" }
         = f.submit 'Add', id: 'new_presentation_speaker_submit'
@@ -72,7 +72,7 @@
           = link_to icon('times-circle'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
 
       %h5 Add a publication
-      = simple_form_for @publication do |f|
+      = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
         = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
         = f.input :format, collection: Publication::FORMATS, include_blank: false
         = f.input :published_on, as: :date, start_year: 1980, end_year: Date.today.year,  order: [:year], label: "Published"
@@ -86,8 +86,8 @@
     .form-actions
       - if can? :edit, @presentation
         = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-secondary"
-        - if request.referrer == new_presentation_url
-          = link_to "Add Another", new_presentation_path, :class => "btn btn-secondary"
+        - if request.referrer.split('?').first == new_presentation_url # ignore any trailing params
+          = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-secondary"
       = link_to "Done", presentations_path, :class => "btn btn-primary"
       .pull-right
         - if can? :destroy, @presentation

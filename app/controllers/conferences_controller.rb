@@ -33,9 +33,8 @@ class ConferencesController < ApplicationController
 
   def create
     @conference = Conference.new conference_params
-    @conference.name.strip!
-    @conference.city.strip!
-    @conference.state.strip!
+    @conference.city&.strip!
+    @conference.state&.strip!
     @conference.creator_id = current_user.id
     if @conference.save
       redirect_to conference_path(@conference)
@@ -47,11 +46,13 @@ class ConferencesController < ApplicationController
   end
 
   def update
-    unless @conference.update_attributes conference_params
-      flash[:error] = 'Your conference could not be saved.'
+    if @conference.update_attributes conference_params
+      redirect_to conference_path(@conference)
+    else
+      flash.now[:error] = 'Your conference could not be saved.'
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
+      render 'edit'
     end
-    redirect_to conference_path(@conference)
   end
 
   def destroy

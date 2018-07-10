@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :organization do
+  factory :organizer do
     name  "Organization"
     series_name "Conference"
     abbreviation "OC"

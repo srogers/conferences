@@ -8,7 +8,7 @@ class PresentationsController < ApplicationController
     # This handles the presentation autocomplete
     @presentations = Presentation.order(:name).includes(:publications, :speakers, :conference => :organizer)
     if params[:q].present?
-      @presentations = @presentations.where("lower(presentations.name) like ? OR lower(presentations.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @presentations = @presentations.where("name ILIKE ? OR name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
     else
       @presentations = @presentations.tagged_with(params[:tag]) if params[:tag].present?
       @presentations = @presentations.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
@@ -33,6 +33,11 @@ class PresentationsController < ApplicationController
   end
 
   def new
+    # Pre-populate the conference when we're doing the 'create another' flow
+    if params[:conference_id]
+      @conference = Conference.find(params[:conference_id])
+      @presentation = Presentation.new conference_id: @conference.id
+    end
   end
 
   def create
@@ -52,11 +57,13 @@ class PresentationsController < ApplicationController
   end
 
   def update
-    unless @presentation.update_attributes presentation_params
-      flash[:error] = 'Your presentation could not be saved.'
+    if @presentation.update_attributes presentation_params
+      redirect_to presentation_path(@presentation)
+    else
+      flash.now[:error] = 'Your presentation could not be saved.'
       logger.debug "Presentation save failed: #{ @presentation.errors.full_messages }"
+      render 'edit'
     end
-    redirect_to presentation_path(@presentation)
   end
 
   def destroy

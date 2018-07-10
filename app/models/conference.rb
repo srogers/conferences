@@ -9,7 +9,7 @@ class Conference < ApplicationRecord
   has_many :conference_users
   has_many :users, through: :conference_users
 
-  validates :organizer_id, presence: true
+  validates :organizer_id, :start_date, :end_date, presence: true
 
   def location
     "#{city}, #{state}"

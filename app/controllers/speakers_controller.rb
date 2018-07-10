@@ -8,10 +8,11 @@ class SpeakersController < ApplicationController
     @speakers = Speaker.order(:sortable_name)
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
-      @speakers = @speakers.where("lower(speakers.name) like ? OR lower(speakers.name) like ? ", params[:q].downcase + '%', '% ' + params[:q] + '%')
+      @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
-      @speakers.limit(params[:per]) # :q and :per always go together
+      @speakers.limit(params[:per]) # :q, :exclude, and :per always go together
     else
+      @speakers = @speakers.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
       @speakers = @speakers.page(params[:page]).per(20)
     end
 
@@ -45,11 +46,13 @@ class SpeakersController < ApplicationController
   end
 
   def update
-    unless @speaker.update_attributes speaker_params
-      flash[:error] = 'Your speaker could not be saved.'
+    if @speaker.update_attributes speaker_params
+      redirect_to speaker_path(@speaker)
+    else
+      flash.now[:error] = 'Your speaker could not be saved.'
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages }"
+      render 'edit'
     end
-    redirect_to speaker_path(@speaker)
   end
 
   def destroy
