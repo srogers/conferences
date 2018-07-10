@@ -45,6 +45,8 @@
 .row
   .col-md-12
     .form-actions
+      - if can? :create, @presentation
+        = link_to "Add a Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-secondary"
       - if can? :edit, @conference
         = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-secondary"
       = link_to "Done", conferences_path, :class => "btn btn-primary"
