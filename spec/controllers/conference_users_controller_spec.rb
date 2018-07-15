@@ -39,6 +39,10 @@ RSpec.describe ConferenceUsersController, type: :controller do
     it "destroys the conference/user relationship" do
       expect { @conference_user.reload }.to raise_error ActiveRecord::RecordNotFound
     end
+
+    it "redirects to the conference show page" do
+      expect(response).to redirect_to conference_path(1)
+    end
   end
 
   describe "when listing" do

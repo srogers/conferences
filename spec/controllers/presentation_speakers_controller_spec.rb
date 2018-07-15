@@ -39,6 +39,10 @@ RSpec.describe PresentationSpeakersController, type: :controller do
     it "destroys the presentation/speaker relationship" do
       expect { @presentation_speaker.reload }.to raise_error ActiveRecord::RecordNotFound
     end
+
+    it "redirects to the manage_publications page for the presentation" do
+      expect(response).to redirect_to manage_speakers_presentation_path(1)
+    end
   end
 
 end
