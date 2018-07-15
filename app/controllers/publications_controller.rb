@@ -6,7 +6,7 @@ class PublicationsController < ApplicationController
     publication = Publication.new publication_params
     publication.creator_id = current_user.id
     if publication.save
-      redirect_to presentation_path(publication.presentation_id)
+      redirect_to manage_publications_presentation_path(publication.presentation_id)
     else
       flash[:error] = 'The publication could not be saved.'
       logger.debug "Publication save failed: #{ publication.errors.full_messages }"
@@ -19,7 +19,7 @@ class PublicationsController < ApplicationController
     if publication
       presentation_id = publication.presentation_id
       publication.destroy
-      redirect_to presentation_path(presentation_id)
+      redirect_to manage_publications_presentation_path(presentation_id)
     else
       render body: nil
     end

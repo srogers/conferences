@@ -1,0 +1,25 @@
+.row
+  .col-md-12
+    %h4= @presentation.name
+.row
+  .col-md-12
+    %h5 Manage Speakers
+    %ul
+      - @presentation.presentation_speakers.each do |presentation_speaker|
+        %li
+          = presentation_speaker.speaker.name
+          =# link_to icon('edit', 'Edit', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), edit_presentation_speaker_path(presentation_speaker)
+          = link_to icon('times-circle', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
+
+    .row
+      = simple_form_for @presentation_speaker, :html => {:autocomplete => "off", id: 'new_presentation_speaker_form'} do |ps|
+        .col-md-6
+          = ps.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+          = ps.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", width: 400, source: speakers_path(format: :json), exclude: @current_speaker_ids }, class: "select2-autocomplete" }
+        .col-md-6
+          %p= ps.submit 'Add', form: 'new_presentation_speaker_form'
+
+.row
+  .col-md-12
+    %p= link_to "Done", presentation_path(@presentation), :class => "btn btn-primary"
+

@@ -1,0 +1,4 @@
+%h5 Add a publication
+= simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+  = render :partial => "form_fields", :locals => {:f => f}
+  = f.submit "Add"
