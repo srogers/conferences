@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       get :manage_speakers, :manage_publications
     end
   end
-  resources :publications, only: [:create, :destroy]
+  resources :publications, only: [:create, :edit, :update, :destroy]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]

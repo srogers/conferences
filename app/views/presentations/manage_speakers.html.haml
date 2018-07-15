@@ -9,7 +9,7 @@
         %li
           = presentation_speaker.speaker.name
           =# link_to icon('edit', 'Edit', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), edit_presentation_speaker_path(presentation_speaker)
-          = link_to icon('times-circle', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
+          = link_to icon('trash-alt', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
 
     .row
       = simple_form_for @presentation_speaker, :html => {:autocomplete => "off", id: 'new_presentation_speaker_form'} do |ps|

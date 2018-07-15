@@ -16,19 +16,15 @@
           = publication.published_on.year
           - if publication.notes.present?
             = " - #{ publication.notes }"
-          = link_to icon('times-circle'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
+          = link_to icon('edit', :class => 'fa-fw'), edit_publication_path(publication)
+          = link_to icon('trash', :class => 'fa-fw'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
 
 .row
   .col-md-12
     %h5 Add a publication
     = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
-      = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-      = f.input :format, collection: Publication::FORMATS, include_blank: false
-      = f.input :published_on, as: :date, start_year: 1980, end_year: Date.today.year,  order: [:year], label: "Published"
-      = f.input :url, label: 'URL'
-      = f.input :notes, hint: 'Any special clarifying info or references'
+      = render partial: "publications/form_fields", locals: {:f => f}
       %p= f.submit "Add"
-
 
 .row
   .col-md-12

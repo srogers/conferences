@@ -1,6 +1,7 @@
 class PublicationsController < ApplicationController
 
   before_action :require_editor
+  before_action :get_publication, except: [:create, :new]
 
   def create
     @publication = Publication.new publication_params
@@ -14,8 +15,22 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def edit
+    @presentation = @publication.presentation
+  end
+
+  def update
+    if @publication.update_attributes publication_params
+      redirect_to manage_publications_presentation_path(@publication.presentation_id)
+    else
+      flash.now[:error] = 'Your publication could not be saved.'
+      logger.debug "Publication save failed: #{ @publication.errors.full_messages }"
+      @presentation = @publication.presentation
+      render 'edit'
+    end
+  end
+
   def destroy
-    @publication = Publication.find(params[:id])
     if @publication
       presentation_id = @publication.presentation_id
       @publication.destroy
@@ -23,6 +38,10 @@ class PublicationsController < ApplicationController
     else
       render body: nil
     end
+  end
+
+  def get_publication
+    @publication = Publication.find params[:id]
   end
 
   def publication_params
