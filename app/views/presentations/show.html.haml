@@ -23,7 +23,7 @@
 
     %p
       Publications:
-      = @presentation.publications.empty? ? "Not yet available" : "Available as"
+      = @presentation.publications.empty? ? "Not yet available" : ""
       %ul
         - @presentation.publications.each do |publication|
           %li
