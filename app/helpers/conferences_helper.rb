@@ -5,7 +5,12 @@ module ConferencesHelper
   end
 
   def date_span(conference)
-    "#{pretty_date conference.start_date, style: :yearless}-#{conference.end_date.day}, #{ conference.end_date.year} "
+    start_text = "#{pretty_date conference.start_date, style: :yearless}"
+    end_text = "#{conference.end_date.day}, #{ conference.end_date.year}"
+    if conference.start_date.month != conference.end_date.month
+      end_text = "#{ I18n.l(Time.now, format: "%B") } " + end_text
+    end
+    return "#{ start_text }-#{ end_text }"
   end
 
   # Show a message appropriate for a conference where user is related to conference

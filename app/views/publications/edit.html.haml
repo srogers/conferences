@@ -1,0 +1,4 @@
+%h4= @publication.presentation.name
+= simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+  = render :partial => "form_fields", :locals => {:f => f}
+  = f.submit "Save"

@@ -1,0 +1,31 @@
+.row
+  .col-md-12
+    %h4= @presentation.name
+.row
+  .col-md-12
+    %h5 Manage Publications
+    %ul
+      - if @presentation.publications.empty?
+        %li None Yet
+      - @presentation.publications.each do |publication|
+        %li
+          - if publication.url.present?
+            = link_to publication.format, publication.url, target: '_blank'
+          - else
+            = publication.format
+          = publication.published_on.year
+          - if publication.notes.present?
+            = " - #{ publication.notes }"
+          = link_to icon('edit', :class => 'fa-fw'), edit_publication_path(publication)
+          = link_to icon('trash', :class => 'fa-fw'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
+
+.row
+  .col-md-12
+    %h5 Add a publication
+    = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+      = render partial: "publications/form_fields", locals: {:f => f}
+      %p= f.submit "Add"
+
+.row
+  .col-md-12
+    %p= link_to "Done", presentation_path(@presentation), :class => "btn btn-primary"

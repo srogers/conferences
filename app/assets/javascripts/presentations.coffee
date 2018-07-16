@@ -6,7 +6,3 @@ document.addEventListener("trix-initialize", (event) ->
     console.log "fixing trix buttons"
     element.tabIndex = -1
 )
-$ ->
-  $('#manage_presentation_switch').on 'click', ->
-    $('#manage_presentation').toggle(800)
-

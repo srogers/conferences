@@ -24,12 +24,18 @@ class PresentationsController < ApplicationController
   end
 
   def show
-    @publication = Publication.new
+  end
+
+  def edit
+  end
+
+  def manage_speakers
     @presentation_speaker = PresentationSpeaker.new
     @current_speaker_ids = @presentation.speakers.map{|s| s.id}.join(',')
   end
 
-  def edit
+  def manage_publications
+    @publication = Publication.new
   end
 
   def new

@@ -3,22 +3,33 @@
 - else
   = title "Activity - #{ @user.name }"
 
-.well.well-lg
-  %table.clean-values
-    %tr
-      %th Conferences Attended
-      %td= @conferences_attended
-    -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
-    - if @conferences_created > 0
-      %tr
-        %th Conferences Created
-        %td= @conferences_created
-    - if @presentations_created > 0
-      %tr
-        %th Presentations Created
-        %td= @presentations_created
-    - if @speakers_created > 0
-      %tr
-        %th Speakers Created
-        %td= @speakers_created
+.row
+  .col-md-12
+    .well.well-lg
+      %table.clean-values
+        %tr
+          %th Conferences Attended
+          %td= @conferences_attended
+        -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
+        - if @conferences_created > 0
+          %tr
+            %th Conferences Created
+            %td= @conferences_created
+        - if @presentations_created > 0
+          %tr
+            %th Presentations Created
+            %td= @presentations_created
+        - if @speakers_created > 0
+          %tr
+            %th Speakers Created
+            %td= @speakers_created
 
+- if @conferences_attended > 0
+  .row
+    .col-md-12
+      %h3 Conferences You've Attended
+  .row
+    .col-md-12
+      %ul
+      - @user.conferences.each do |conference|
+        %li= link_to conference.name, conference_path(conference)

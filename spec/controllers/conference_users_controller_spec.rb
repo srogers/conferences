@@ -12,8 +12,14 @@ RSpec.describe ConferenceUsersController, type: :controller do
       post :create, params: { conference_user: { conference_id: 1, user_id: 1 }}
     end
 
-    it "sets the creator"
-    it "saves the conference user"
+    it "sets the creator" do
+      expect(assigns(:conference_user).creator_id).to eq(@current_user.id)
+    end
+
+    it "saves the conference_user" do
+      expect(assigns(:conference_user).errors).to be_empty
+      expect(assigns(:conference_user).id).to be_present
+    end
 
     it "redirects to the conference show page" do
       expect(response).to redirect_to conference_path(1)
@@ -21,7 +27,22 @@ RSpec.describe ConferenceUsersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the conference/user relationship"
+    before do
+      @conference_user = create :conference_user
+      delete :destroy, params: {id: @conference_user.to_param}
+    end
+
+    it "finds the conference/user relationship" do
+      expect(assigns(:conference_user)).to eq(@conference_user)
+    end
+
+    it "destroys the conference/user relationship" do
+      expect { @conference_user.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+
+    it "redirects to the conference show page" do
+      expect(response).to redirect_to conference_path(1)
+    end
   end
 
   describe "when listing" do
