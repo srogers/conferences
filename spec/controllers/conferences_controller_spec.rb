@@ -136,34 +136,38 @@ RSpec.describe ConferencesController, type: :controller do
         { start_date:   '2005/07/18'.to_date, end_date: '2005/07/25'.to_date }
       }
 
-      it "updates the requested conference" do
-        expect(conference.start_date).to eq(valid_attributes[:start_date])
+      before do
         put :update, params: {id: conference.to_param, conference: new_attributes}
+      end
+
+      it "updates the requested conference" do
         expect(assigns(:conference).start_date).to eq(new_attributes[:start_date])
       end
 
       it "redirects to the conference" do
-        put :update, params: {id: conference.to_param, conference: valid_attributes}
         expect(response).to redirect_to(conference)
       end
     end
 
     context "with invalid params" do
-      it "assigns the conference as @conference" do
+      before do
         put :update, params: {id: conference.to_param, conference: invalid_attributes}
+      end
+
+      it "assigns the conference as @conference" do
         expect(assigns(:conference)).to eq(conference)
       end
 
       it "re-renders the 'edit' template" do
-        put :update, params: {id: conference.to_param, conference: invalid_attributes}
         expect(response).to render_template("edit")
       end
     end
   end
 
   describe "DELETE #destroy" do
-
-    let!(:conference) { Conference.create! valid_attributes }
+    before do
+      expect(conference).to be_present # in these cases, touch it in advance to create it
+    end
 
     it "destroys the requested conference" do
       # preconditions that should be satisfied by setup

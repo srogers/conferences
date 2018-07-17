@@ -15,6 +15,8 @@ RSpec.describe OrganizersController, type: :controller do
     { name: "" }
   }
 
+  let(:organizer) { Organizer.create! valid_attributes }
+
   setup :activate_authlogic
 
   before do
@@ -28,19 +30,14 @@ RSpec.describe OrganizersController, type: :controller do
   let(:valid_session) { {} }
 
   describe "when listing organizers" do
-    before do
-      @organizer = Organizer.create! valid_attributes
-    end
-
     it "assigns all organizers as @organizers" do
       get :index, params: {}
-      expect(assigns(:organizers)).to eq([@organizer])
+      expect(assigns(:organizers)).to eq([organizer])
     end
   end
 
   describe "GET #show" do
     it "assigns the requested organizer as @organizer" do
-      organizer = Organizer.create! valid_attributes
       get :show, params: {id: organizer.to_param}
       expect(assigns(:organizer)).to eq(organizer)
     end
@@ -55,7 +52,6 @@ RSpec.describe OrganizersController, type: :controller do
 
   describe "GET #edit" do
     it "assigns the requested organizer as @organizer" do
-      organizer = Organizer.create! valid_attributes
       get :edit, params: {id: organizer.to_param}
       expect(assigns(:organizer)).to eq(organizer)
     end
@@ -100,29 +96,31 @@ RSpec.describe OrganizersController, type: :controller do
         { name: 'Updated Title' }
       }
 
-      it "updates the requested organizer" do
-        organizer = Organizer.create! valid_attributes
-        expect(organizer.name).to eq('Valid Organizer')
+      before do
         put :update, params: {id: organizer.to_param, organizer: new_attributes}
+      end
+
+      it "updates the requested organizer" do
+        expect(organizer.name).to eq('Valid Organizer')
         expect(assigns(:organizer).name).to eq(new_attributes[:name])
       end
 
       it "redirects to the organizer" do
-        organizer = Organizer.create! valid_attributes
-        put :update, params: {id: organizer.to_param, organizer: valid_attributes}
         expect(response).to redirect_to(organizer)
       end
     end
 
     context "with invalid params" do
+      before do
+        put :update, params: {id: organizer.to_param, organizer: invalid_attributes}
+      end
+
       it "assigns the organizer as @organizer" do
-        organizer = Organizer.create! valid_attributes
         put :update, params: {id: organizer.to_param, organizer: invalid_attributes}
         expect(assigns(:organizer)).to eq(organizer)
       end
 
       it "re-renders the 'edit' template" do
-        organizer = Organizer.create! valid_attributes
         put :update, params: {id: organizer.to_param, organizer: invalid_attributes}
         expect(response).to render_template("edit")
       end
@@ -130,8 +128,9 @@ RSpec.describe OrganizersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-
-    let!(:organizer) { Organizer.create! valid_attributes }
+    before do
+      expect(organizer).to be_present # in these cases, touch it in advance to create it
+    end
 
     it "destroys the requested organizer" do
       expect {

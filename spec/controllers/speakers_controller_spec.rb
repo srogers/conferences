@@ -15,6 +15,8 @@ RSpec.describe SpeakersController, type: :controller do
     { name: "" }
   }
 
+  let(:speaker) { Speaker.create! valid_attributes }
+
   setup :activate_authlogic
 
   before do
@@ -28,19 +30,15 @@ RSpec.describe SpeakersController, type: :controller do
   let(:valid_session) { {} }
 
   describe "when listing speakers" do
-    before do
-      @speaker = Speaker.create! valid_attributes
-    end
-
     it "assigns all speakers as @speakers" do
       get :index, params: {}
-      expect(assigns(:speakers)).to eq([@speaker])
+      expect(assigns(:speakers)).to eq([speaker])
     end
 
     context "with a search term" do
       it "finds speakers with matching titles without regard to case" do
         get :index, params:{ search_term: 'VALID' }
-        expect(assigns(:speakers)).to eq([@speaker])
+        expect(assigns(:speakers)).to eq([speaker])
       end
 
       it "it doesn't find non-matching speakers" do
@@ -52,12 +50,12 @@ RSpec.describe SpeakersController, type: :controller do
     context "with an auto-complete search term" do
       it "finds speakers with titles starting with the search term (case insensitive)" do
         get :index, params:{ q: 'VALID' }
-        expect(assigns(:speakers)).to eq([@speaker])
+        expect(assigns(:speakers)).to eq([speaker])
       end
 
       it "finds speakers with interior words starting with the search term" do
         get :index, params:{ q: 'speaker' }
-        expect(assigns(:speakers)).to eq([@speaker])
+        expect(assigns(:speakers)).to eq([speaker])
       end
 
       it "it doesn't find non-matching speakers" do
@@ -66,7 +64,7 @@ RSpec.describe SpeakersController, type: :controller do
       end
 
       it "it doesn't find excluded speakers" do
-        get :index, params:{ q: 'valid', exclude: @speaker.id }
+        get :index, params:{ q: 'valid', exclude: speaker.id }
         expect(assigns(:speakers)).to be_empty
       end
     end
@@ -74,7 +72,6 @@ RSpec.describe SpeakersController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested speaker as @speaker" do
-      speaker = Speaker.create! valid_attributes
       get :show, params: {id: speaker.to_param}
       expect(assigns(:speaker)).to eq(speaker)
     end
@@ -89,7 +86,6 @@ RSpec.describe SpeakersController, type: :controller do
 
   describe "GET #edit" do
     it "assigns the requested speaker as @speaker" do
-      speaker = Speaker.create! valid_attributes
       get :edit, params: {id: speaker.to_param}
       expect(assigns(:speaker)).to eq(speaker)
     end
@@ -135,14 +131,12 @@ RSpec.describe SpeakersController, type: :controller do
       }
 
       it "updates the requested speaker" do
-        speaker = Speaker.create! valid_attributes
         expect(speaker.name).to eq('Valid Speaker')
         put :update, params: {id: speaker.to_param, speaker: new_attributes}
         expect(assigns(:speaker).name).to eq(new_attributes[:name])
       end
 
       it "redirects to the speaker" do
-        speaker = Speaker.create! valid_attributes
         put :update, params: {id: speaker.to_param, speaker: valid_attributes}
         expect(response).to redirect_to(speaker)
       end
@@ -150,13 +144,11 @@ RSpec.describe SpeakersController, type: :controller do
 
     context "with invalid params" do
       it "assigns the speaker as @speaker" do
-        speaker = Speaker.create! valid_attributes
         put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
         expect(assigns(:speaker)).to eq(speaker)
       end
 
       it "re-renders the 'edit' template" do
-        speaker = Speaker.create! valid_attributes
         put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
         expect(response).to render_template("edit")
       end
@@ -164,15 +156,17 @@ RSpec.describe SpeakersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    before do
+      expect(speaker).to be_present # in these cases, touch it in advance to create it
+    end
+
     it "destroys the requested speaker" do
-      speaker = Speaker.create! valid_attributes
       expect {
         delete :destroy, params: {id: speaker.to_param}
       }.to change(Speaker, :count).by(-1)
     end
 
     it "redirects to the speakers list" do
-      speaker = Speaker.create! valid_attributes
       delete :destroy, params: {id: speaker.to_param}
       expect(response).to redirect_to(speakers_url)
     end
