@@ -10,6 +10,8 @@ RSpec.describe PublicationsController, type: :controller do
     { format: Publication::FORMATS.first, presentation_id: nil }
   }
 
+  let(:publication) { Publication.create! valid_attributes }
+
   before do
     pretend_to_be_authenticated
     allow(@current_user).to receive(:id).and_return 1
@@ -41,30 +43,29 @@ RSpec.describe PublicationsController, type: :controller do
         { format: Publication::FORMATS.last }
       }
 
-      it "updates the requested publication" do
-        publication = Publication.create! valid_attributes
-        expect(publication.format).to eq(valid_attributes[:format])
+      before do
         put :update, params: {id: publication.to_param, publication: new_attributes}
+      end
+
+      it "updates the requested publication" do
         expect(assigns(:publication).format).to eq(new_attributes[:format])
       end
 
       it "redirects to the manage publication page for the presentation" do
-        publication = Publication.create! valid_attributes
-        put :update, params: {id: publication.to_param, publication: valid_attributes}
         expect(response).to redirect_to manage_publications_presentation_path(publication.presentation_id)
       end
     end
 
     context "with invalid params" do
-      it "assigns the publication as @publication" do
-        publication = Publication.create! valid_attributes
+      before do
         put :update, params: {id: publication.to_param, publication: invalid_attributes}
+      end
+
+      it "assigns the publication as @publication" do
         expect(assigns(:publication)).to eq(publication)
       end
 
       it "re-renders the 'edit' template" do
-        publication = Publication.create! valid_attributes
-        put :update, params: {id: publication.to_param, publication: invalid_attributes}
         expect(response).to render_template("edit")
       end
     end
@@ -72,20 +73,19 @@ RSpec.describe PublicationsController, type: :controller do
 
   describe "DELETE #destroy" do
     before do
-      @publication = create :publication
-      delete :destroy, params: {id: @publication.to_param}
+      delete :destroy, params: {id: publication.to_param}
     end
 
     it "finds the publication" do
-      expect(assigns(:publication)).to eq(@publication)
+      expect(assigns(:publication)).to eq(publication)
     end
 
     it "destroys the publication" do
-      expect { @publication.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect { publication.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
     it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(@publication.presentation_id)
+      expect(response).to redirect_to manage_publications_presentation_path(publication.presentation_id)
     end
   end
 end

@@ -21,6 +21,8 @@ RSpec.describe ConferencesController, type: :controller do
     { start_date:   nil }
   }
 
+  let(:conference) { Conference.create! valid_attributes }
+
   setup :activate_authlogic
 
   before do
@@ -34,29 +36,25 @@ RSpec.describe ConferencesController, type: :controller do
   let(:valid_session) { {} }
 
   describe "when listing conferences" do
-    before do
-      @conference = Conference.create! valid_attributes
-    end
-
     it "assigns all conferences as @conferences" do
       get :index, params: {}
-      expect(assigns(:conferences)).to eq([@conference])
+      expect(assigns(:conferences)).to eq([conference])
     end
 
     context "with a search term" do
       it "finds conferences with organizer name matching" do
         get :index, params:{ search_term: 'Organ' }
-        expect(assigns(:conferences)).to eq([@conference])
+        expect(assigns(:conferences)).to eq([conference])
       end
 
       it "finds conferences with organizer series matching" do
         get :index, params:{ search_term: 'confe' }
-        expect(assigns(:conferences)).to eq([@conference])
+        expect(assigns(:conferences)).to eq([conference])
       end
 
       it "finds conferences with organizer abbbreviation matching" do
         get :index, params:{ search_term: 'OC' }
-        expect(assigns(:conferences)).to eq([@conference])
+        expect(assigns(:conferences)).to eq([conference])
       end
 
       it "it doesn't find non-matching conferences" do
@@ -68,7 +66,7 @@ RSpec.describe ConferencesController, type: :controller do
     context "with an auto-complete search term" do
       it "finds conferences with years matching the search term" do
         get :index, params:{ q: '2005' }
-        expect(assigns(:conferences)).to eq([@conference])
+        expect(assigns(:conferences)).to eq([conference])
       end
 
       it "it doesn't find non-matching conferences" do
@@ -80,7 +78,6 @@ RSpec.describe ConferencesController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested conference as @conference" do
-      conference = Conference.create! valid_attributes
       get :show, params: {id: conference.to_param}
       expect(assigns(:conference)).to eq(conference)
     end
@@ -95,7 +92,6 @@ RSpec.describe ConferencesController, type: :controller do
 
   describe "GET #edit" do
     it "assigns the requested conference as @conference" do
-      conference = Conference.create! valid_attributes
       get :edit, params: {id: conference.to_param}
       expect(assigns(:conference)).to eq(conference)
     end
@@ -140,45 +136,62 @@ RSpec.describe ConferencesController, type: :controller do
         { start_date:   '2005/07/18'.to_date, end_date: '2005/07/25'.to_date }
       }
 
-      it "updates the requested conference" do
-        conference = Conference.create! valid_attributes
-        expect(conference.start_date).to eq(valid_attributes[:start_date])
+      before do
         put :update, params: {id: conference.to_param, conference: new_attributes}
+      end
+
+      it "updates the requested conference" do
         expect(assigns(:conference).start_date).to eq(new_attributes[:start_date])
       end
 
       it "redirects to the conference" do
-        conference = Conference.create! valid_attributes
-        put :update, params: {id: conference.to_param, conference: valid_attributes}
         expect(response).to redirect_to(conference)
       end
     end
 
     context "with invalid params" do
-      it "assigns the conference as @conference" do
-        conference = Conference.create! valid_attributes
+      before do
         put :update, params: {id: conference.to_param, conference: invalid_attributes}
+      end
+
+      it "assigns the conference as @conference" do
         expect(assigns(:conference)).to eq(conference)
       end
 
       it "re-renders the 'edit' template" do
-        conference = Conference.create! valid_attributes
-        put :update, params: {id: conference.to_param, conference: invalid_attributes}
         expect(response).to render_template("edit")
       end
     end
   end
 
   describe "DELETE #destroy" do
+    before do
+      expect(conference).to be_present # in these cases, touch it in advance to create it
+    end
+
     it "destroys the requested conference" do
-      conference = Conference.create! valid_attributes
+      # preconditions that should be satisfied by setup
+      # expect(@current_user.admin?).to be_truthy
+      # expect(conference.presentations).to be_empty
+
       expect {
         delete :destroy, params: {id: conference.to_param}
       }.to change(Conference, :count).by(-1)
     end
 
+    context "with a conference containing presentations" do
+
+      let!(:presentation) { create :presentation, conference_id: conference.id }
+
+      it "does not destroy the requested conference" do
+        expect {
+          delete :destroy, params: {id: conference.to_param}
+        }.not_to change(Conference, :count)
+
+      end
+    end
+
     it "redirects to the conferences list" do
-      conference = Conference.create! valid_attributes
       delete :destroy, params: {id: conference.to_param}
       expect(response).to redirect_to(conferences_url)
     end

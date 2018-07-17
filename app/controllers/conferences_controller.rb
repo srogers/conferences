@@ -56,7 +56,11 @@ class ConferencesController < ApplicationController
   end
 
   def destroy
-    @conference.destroy
+    if can?(:destroy, @conference) && @conference.presentations.empty?
+      @conference.destroy
+    else
+      flash[:notice] = "That conference can't be deleted because it has presentations linked to it."
+    end
 
     redirect_to conferences_path
   end
@@ -72,6 +76,6 @@ class ConferencesController < ApplicationController
   end
 
   def conference_params
-    params.require(:conference).permit(:organizer_id, :start_date, :end_date, :venue, :venue_url, :city, :state)
+    params.require(:conference).permit(:organizer_id, :url, :start_date, :end_date, :venue, :venue_url, :city, :state)
   end
 end

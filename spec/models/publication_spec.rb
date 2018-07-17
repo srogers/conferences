@@ -1,14 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Publication, type: :model do
-  def valid_attributes
-    {
-      :presentation_id => 1,
-      :format => Publication::CD
-    }
-  end
-
   describe "when creating a Publication" do
+
+    let(:valid_attributes) {
+      {
+        :presentation_id => 1,
+        :format => Publication::CD
+      }
+    }
+
     it "should have a working factory" do
       expect(create :publication).to be_valid
     end

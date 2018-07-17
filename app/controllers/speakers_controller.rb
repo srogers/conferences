@@ -56,7 +56,11 @@ class SpeakersController < ApplicationController
   end
 
   def destroy
-    @speaker.destroy
+    if can?(:destroy, @speaker) && @speaker.presentations.empty?
+      @speaker.destroy
+    else
+      flash[:notice] = "Speaker can't be destroyed because it is associated with presentations."
+    end
 
     redirect_to speakers_path
   end

@@ -3,13 +3,12 @@ require 'rails_helper'
 RSpec.describe Role, :type => :model do
   fixtures :roles
 
-  def valid_attributes
-    {
-      :name => Role::ADMIN
-    }
-  end
-
   describe "when creating a Role" do
+
+    let(:valid_attributes) {
+      { :name => Role::ADMIN }
+    }
+
     it "should have a working factory" do
       expect(create :role).to be_valid
     end

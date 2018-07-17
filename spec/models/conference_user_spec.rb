@@ -1,15 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe ConferenceUser, type: :model do
-  def valid_attributes
-    {
-      :conference_id => 1,
-      :user_id => 1,
-      :creator_id => 1
-    }
-  end
-
   describe "when creating a Conference User" do
+
+    let(:valid_attributes) {
+      {
+        :conference_id => 1,
+        :user_id => 1,
+        :creator_id => 1
+      }
+    }
+
     it "should have a working factory" do
       expect(create :conference_user).to be_valid
     end

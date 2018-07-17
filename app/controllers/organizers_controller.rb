@@ -43,7 +43,11 @@ class OrganizersController < ApplicationController
   end
 
   def destroy
-    @organizer.destroy
+    if can?(:destroy, @organizer) && @organizer.conferences.empty?
+      @organizer.destroy
+    else
+      flash[:notice] = "Organizer can't be deleted because it owns conferences."
+    end
 
     redirect_to organizers_path
   end

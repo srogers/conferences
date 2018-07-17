@@ -5,4 +5,4 @@
   .col-md-12
     = simple_form_for @conference do |f|
       = render :partial => "form_fields", :locals => {:f => f}
-      = save_or_cancel f, conferences_path, 'Save'
+      = save_or_cancel f, conference_path(@conference), 'Save'

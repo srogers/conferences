@@ -15,6 +15,8 @@ RSpec.describe PresentationsController, type: :controller do
     { name: "" }
   }
 
+  let(:presentation) { Presentation.create! valid_attributes }
+
   setup :activate_authlogic
 
   before do
@@ -28,19 +30,15 @@ RSpec.describe PresentationsController, type: :controller do
   let(:valid_session) { {} }
 
   describe "when listing presentations" do
-    before do
-      @presentation = Presentation.create! valid_attributes
-    end
-
     it "assigns all presentations as @presentations" do
       get :index, params: {}
-      expect(assigns(:presentations)).to eq([@presentation])
+      expect(assigns(:presentations)).to eq([presentation])
     end
 
     context "with a search term" do
       it "finds presentations with matching titles without regard to case" do
         get :index, params:{ search_term: 'VALID' }
-        expect(assigns(:presentations)).to eq([@presentation])
+        expect(assigns(:presentations)).to eq([presentation])
       end
 
       it "it doesn't find non-matching presentations" do
@@ -52,12 +50,12 @@ RSpec.describe PresentationsController, type: :controller do
     context "with an auto-complete search term" do
       it "finds presentations with titles starting with the search term (case insensitive)" do
         get :index, params:{ q: 'VALID' }
-        expect(assigns(:presentations)).to eq([@presentation])
+        expect(assigns(:presentations)).to eq([presentation])
       end
 
       it "finds presentations with interior words starting with the search term" do
         get :index, params:{ q: 'present' }
-        expect(assigns(:presentations)).to eq([@presentation])
+        expect(assigns(:presentations)).to eq([presentation])
       end
 
       it "it doesn't find non-matching presentations" do
@@ -82,7 +80,6 @@ RSpec.describe PresentationsController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested presentation as @presentation" do
-      presentation = Presentation.create! valid_attributes
       get :show, params: {id: presentation.to_param}
       expect(assigns(:presentation)).to eq(presentation)
     end
@@ -107,7 +104,6 @@ RSpec.describe PresentationsController, type: :controller do
 
   describe "GET #edit" do
     it "assigns the requested presentation as @presentation" do
-      presentation = Presentation.create! valid_attributes
       get :edit, params: {id: presentation.to_param}
       expect(assigns(:presentation)).to eq(presentation)
     end
@@ -153,14 +149,12 @@ RSpec.describe PresentationsController, type: :controller do
       }
 
       it "updates the requested presentation" do
-        presentation = Presentation.create! valid_attributes
         expect(presentation.name).to eq('Valid Presentation')
         put :update, params: {id: presentation.to_param, presentation: new_attributes}
         expect(assigns(:presentation).name).to eq(new_attributes[:name])
       end
 
       it "redirects to the presentation" do
-        presentation = Presentation.create! valid_attributes
         put :update, params: {id: presentation.to_param, presentation: valid_attributes}
         expect(response).to redirect_to(presentation)
       end
@@ -168,13 +162,11 @@ RSpec.describe PresentationsController, type: :controller do
 
     context "with invalid params" do
       it "assigns the presentation as @presentation" do
-        presentation = Presentation.create! valid_attributes
         put :update, params: {id: presentation.to_param, presentation: invalid_attributes}
         expect(assigns(:presentation)).to eq(presentation)
       end
 
       it "re-renders the 'edit' template" do
-        presentation = Presentation.create! valid_attributes
         put :update, params: {id: presentation.to_param, presentation: invalid_attributes}
         expect(response).to render_template("edit")
       end
@@ -182,15 +174,17 @@ RSpec.describe PresentationsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    before do
+      expect(presentation).to be_present # in these cases, touch it in advance to create it
+    end
+
     it "destroys the requested presentation" do
-      presentation = Presentation.create! valid_attributes
       expect {
         delete :destroy, params: {id: presentation.to_param}
       }.to change(Presentation, :count).by(-1)
     end
 
     it "redirects to the presentations list" do
-      presentation = Presentation.create! valid_attributes
       delete :destroy, params: {id: presentation.to_param}
       expect(response).to redirect_to(presentations_url)
     end

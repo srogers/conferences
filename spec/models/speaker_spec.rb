@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Speaker, type: :model do
-  def valid_attributes
-    {
-      name: "Testing Userperson"
-    }
-  end
-
   describe "when creating a Speaker" do
+
+    let(:valid_attributes) {
+      { name: "Testing Userperson" }
+    }
+
     it "should have a working factory" do
       expect(create :speaker).to be_valid
     end
