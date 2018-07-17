@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def summary
     @user = User.find(params[:id])
     raise CanCan::AccessDenied unless @user == current_user || current_user.admin?
-    @conferences_attended = current_user.conferences.count
+    @conferences_attended = current_user.conferences.order('start_date DESC')
     @conferences_created = Conference.where(:creator_id => current_user.id).count
     @presentations_created = Presentation.where(:creator_id => current_user.id).count
     @speakers_created = Speaker.where(:creator_id => current_user.id).count
