@@ -2,7 +2,7 @@ class User < ApplicationRecord
 
   belongs_to :role
 
-  has_many :conference_users
+  has_many :conference_users,                           :dependent => :destroy
   has_many :conferences, through: :conference_users
 
   validates :name, presence: true

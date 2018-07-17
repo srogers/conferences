@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Organizer, type: :model do
-  def valid_attributes
-    {
-      name: "Valid Organizer"
-    }
-  end
-
   describe "when creating a Organizer" do
+
+    let(:valid_attributes) {
+      { name: "Valid Organizer" }
+    }
+
     it "should have a working factory" do
       expect(create :organizer).to be_valid
     end

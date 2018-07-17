@@ -1,15 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe PresentationSpeaker, type: :model do
-  def valid_attributes
-    {
-      :presentation_id => 1,
-      :speaker_id => 1,
-      :creator_id => 1
-    }
-  end
-
   describe "when creating a Conference" do
+
+    let(:valid_attributes) {
+      {
+        :presentation_id  => 1,
+        :speaker_id       => 1,
+        :creator_id       => 1
+      }
+    }
+
     it "should have a working factory" do
       expect(create :presentation_speaker).to be_valid
     end
