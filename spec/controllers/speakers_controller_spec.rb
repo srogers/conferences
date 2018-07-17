@@ -166,6 +166,18 @@ RSpec.describe SpeakersController, type: :controller do
       }.to change(Speaker, :count).by(-1)
     end
 
+    context "with owned presentations" do
+
+      let!(:presentation) { create :presentation }
+      let!(:presentation_speaker) { create :presentation_speaker, presentation_id: presentation.id, speaker_id: speaker.id }
+
+      it "does not destroy the requested speaker" do
+        expect {
+          delete :destroy, params: {id: speaker.to_param}
+        }.not_to change(Speaker, :count)
+      end
+    end
+
     it "redirects to the speakers list" do
       delete :destroy, params: {id: speaker.to_param}
       expect(response).to redirect_to(speakers_url)
