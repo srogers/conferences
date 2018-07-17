@@ -1,0 +1,12 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= link_to(truncate(organizer.name, length: 40), organizer_path(organizer))
+  %td= organizer.series_name
+  %td= organizer.abbreviation
+
+  %td{width: 120}
+    - if can? :edit, organizer
+      = link_to edit_organizer_path(organizer), :class => "btn btn-sm" do
+        = icon 'edit', class: 'fa-fw'
+        Edit
+    - if can?(:destroy, organizer) && organizer.conferences.empty?
+      = link_to icon('trash', class: 'fa-fw'), organizer_path(organizer), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
