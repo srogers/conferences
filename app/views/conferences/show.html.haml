@@ -2,12 +2,6 @@
 .row
   .col-md-12
     %h4= full_name_with_date(@conference)
-    - if @conference.venue_url.present?
-      = link_to @conference.venue, @conference.venue_url
-    - else
-      = @conference.venue
-    = @conference.location
-
     - if current_user
       .pull-right
         - if current_user.attended? @conference
@@ -19,6 +13,21 @@
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
             = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
             = f.submit attendance_invitation_message(@conference)
+    %b Venue:
+    - if @conference.venue_url.present?
+      = link_to @conference.venue, @conference.venue_url, target: '_blank'
+    - else
+      = @conference.venue
+    - if @conference.location.present?
+      &mdash;
+      = @conference.location
+    %p
+      %b Program:
+      - if @conference.url.present?
+        = link_to icon('file-o', class: 'fa-fw'), @conference.url, target: '_blank'
+      - else
+        %i none
+
 .row
   .col-md-12
     %h4 Presentations

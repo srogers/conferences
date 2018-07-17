@@ -12,7 +12,7 @@ class Conference < ApplicationRecord
   validates :organizer_id, :start_date, :end_date, presence: true
 
   def location
-    "#{city}, #{state}"
+    [city, state].join(', ')
   end
 
   def name

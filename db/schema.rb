@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_10_043556) do
+ActiveRecord::Schema.define(version: 2018_07_17_141930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2018_07_10_043556) do
     t.bigint "creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "url"
     t.index ["creator_id"], name: "index_conferences_on_creator_id"
     t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
   end
