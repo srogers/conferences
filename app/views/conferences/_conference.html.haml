@@ -2,6 +2,9 @@
   %td= link_to(truncate(conference.name, length: 40), conference_path(conference))
   %td= date_span conference
   %td= conference.location
+  %td{ align: 'center' }
+    - if conference.url.present?
+      = link_to icon('file-o'), conference.url, target: '_blank'
 
   %td{width: 120}
     - if can? :edit, conference
