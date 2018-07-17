@@ -130,15 +130,28 @@ RSpec.describe OrganizersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+
+    let!(:organizer) { Organizer.create! valid_attributes }
+
     it "destroys the requested organizer" do
-      organizer = Organizer.create! valid_attributes
       expect {
         delete :destroy, params: {id: organizer.to_param}
       }.to change(Organizer, :count).by(-1)
     end
 
+    context "with an organizer owning conferences" do
+
+      let!(:conference) { create :conference, organizer_id: organizer.id }
+
+      it "does not destroy the requested conference" do
+        expect {
+          delete :destroy, params: {id: organizer.to_param}
+        }.not_to change(Organizer, :count)
+
+      end
+    end
+
     it "redirects to the organizers list" do
-      organizer = Organizer.create! valid_attributes
       delete :destroy, params: {id: organizer.to_param}
       expect(response).to redirect_to(organizers_url)
     end
