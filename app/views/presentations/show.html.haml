@@ -23,14 +23,16 @@
 
     %p
       Publications:
-      = @presentation.publications.empty? ? "Not yet available" : ""
       %ul
+        - if @presentation.publications.empty?
+          %li
+            %i Not yet available
         - @presentation.publications.each do |publication|
           %li
             = format_and_date(publication)
             - if publication.notes.present?
               = " - #{ publication.notes }"
-
+        %li= link_to icon('search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 - if can? :edit, @presentation
   .row
     .col-md-12
