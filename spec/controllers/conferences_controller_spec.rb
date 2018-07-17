@@ -170,15 +170,32 @@ RSpec.describe ConferencesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+
+    let!(:conference) { Conference.create! valid_attributes }
+
     it "destroys the requested conference" do
-      conference = Conference.create! valid_attributes
+      # preconditions that should be satisfied by setup
+      # expect(@current_user.admin?).to be_truthy
+      # expect(conference.presentations).to be_empty
+
       expect {
         delete :destroy, params: {id: conference.to_param}
       }.to change(Conference, :count).by(-1)
     end
 
+    context "with a conference containing presentations" do
+
+      let!(:presentation) { create :presentation, conference_id: conference.id }
+
+      it "does not destroy the requested conference" do
+        expect {
+          delete :destroy, params: {id: conference.to_param}
+        }.not_to change(Conference, :count)
+
+      end
+    end
+
     it "redirects to the conferences list" do
-      conference = Conference.create! valid_attributes
       delete :destroy, params: {id: conference.to_param}
       expect(response).to redirect_to(conferences_url)
     end
