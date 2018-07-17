@@ -13,21 +13,26 @@
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
             = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
             = f.submit attendance_invitation_message(@conference)
-    %b Venue:
-    - if @conference.venue_url.present?
-      = link_to @conference.venue, @conference.venue_url, target: '_blank'
-    - else
-      = @conference.venue
-    - if @conference.location.present?
-      &mdash;
-      = @conference.location
+    %p
+      %b Venue:
+      - if @conference.venue_url.present?
+        = link_to @conference.venue, @conference.venue_url, target: '_blank'
+      - else
+        = @conference.venue
+      - if @conference.location.present?
+        &mdash;
+        = @conference.location
     %p
       %b Program:
       - if @conference.url.present?
         = link_to icon('file-o', class: 'fa-fw'), @conference.url, target: '_blank'
       - else
         %i none
-
+    %p
+      %b Members Attending:
+      = @conference.users.length
+      - if @conference.users.length > 0 && current_user
+        = link_to icon('users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
 .row
   .col-md-12
     %h4 Presentations
@@ -44,13 +49,6 @@
             - presentation.speakers.each do |speaker|
               = link_to speaker.name, speaker_path(speaker)
 
-.row
-  .col-md-12
-    %h4 Attendees
-    %p
-      = @conference.users.length
-      - if @conference.users.length > 0
-        = link_to "Show", conference_users_path(conference_id: @conference.id), class: 'btn btn-sm btn-secondary'
 .row
   .col-md-12
     .form-actions
