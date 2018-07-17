@@ -2,9 +2,9 @@ class Presentation < ApplicationRecord
 
   belongs_to  :conference
 
-  has_many    :publications
+  has_many    :publications,            :dependent => :destroy
 
-  has_many    :presentation_speakers
+  has_many    :presentation_speakers,   :dependent => :destroy
   has_many    :speakers, through: :presentation_speakers
 
   validates :name, presence: true
