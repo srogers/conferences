@@ -2,7 +2,7 @@
 .row
   .col-md-12
     - category_button_classes = "btn btn-sm"
-    - if params[:search_term].present? || params[:mine].present?
+    - if params[:search_term].present? || params[:tag].present?
       = link_to 'all', presentations_path, class: category_button_classes + " btn-primary"
 
     = form_for :search, html: { class: 'form-inline' }, url: presentations_path, method: :get do |f|
@@ -17,7 +17,10 @@
 .row
   .col-md-12
     - if @presentations.blank?
-      %p You haven't created any presentations yet.
+      - if params[:search_term].present? || params[:tag].present?
+        %p No presentations match that search term
+      - else
+        %p You haven't created any presentations yet.
     - else
       %table.table
         = render :partial => "table_head"

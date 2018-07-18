@@ -5,16 +5,12 @@
 .row
   .col-md-12
     %h4 Presentations
-    %ul
-      - if @speaker.presentations.empty?
-        %li None Yet
-      - else
-        - @speaker.presentations.each do |presentation|
-          %li
-            %b= link_to presentation.name, presentation_path(presentation)
-            - if presentation.conference.present?
-              at
-              =link_to presentation.conference_name, conference_path(presentation.conference)
+    - if @speaker.presentations.empty?
+      %p None Yet
+    - else
+      %table.table
+        = render :partial => "presentations/table_head"
+        = render :partial => "presentations/presentation", :collection =>  @speaker.presentations
 
 .row
   .col-md-12

@@ -6,11 +6,16 @@ class ConferencesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    s = params[:search_term]
     @conferences = Conference.order('start_date DESC').includes(:organizer).references(:organizer)
-    @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
-    @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{s}%", "#{s}%", "#{s}%") if s.present?
-    @conferences = @conferences.page(params[:page]).per(20)
+    per_page = params[:per] || 15 # autocomplete specifies :per
+    if params[:search_term].present?
+      s = params[:search_term]
+      @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{s}%", "#{s}%", "#{s}%")
+    elsif params[:q].present?
+      # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.
+      @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
+    end
+    @conferences = @conferences.page(params[:page]).per(per_page)
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|
@@ -73,6 +78,13 @@ class ConferencesController < ApplicationController
 
   def get_organizer_selections
     @organizer_selections = Organizer.all.order(:name).map{|o| ["#{o.name} - #{o.series_name}", o.id]}
+  end
+
+  # Gets either the simple name (OCON 2016) or the fully qualified name for special events.
+  # This is necessary because special event names aren't distinct, so picking them in presentation/create from
+  # autocomplete is confusing when there is more than one special event in the same year.
+  def qualified_name(conference)
+    conference.special_event? ? ApplicationController.helpers.fully_qualified_name(conference) : conference.name
   end
 
   def conference_params

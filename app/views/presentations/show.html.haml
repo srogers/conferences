@@ -11,7 +11,7 @@
 
     %p
       Subject Area:
-      = @presentation.tag_list.empty? ? '<i>none identified</i>'.html_safe : @presentation.tag_list.map{|t| link_to t, tag_path(t)}.join(', ').html_safe
+      = @presentation.tag_list.empty? ? '<i>none identified</i>'.html_safe : @presentation.tag_list.map{|t| link_to t, presentations_path(tag: t)}.join(', ').html_safe
 
     %p
       Parts:
@@ -50,8 +50,8 @@
         = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-secondary"
         - if request.referrer.split('?').first == new_presentation_url # ignore any trailing params
           = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-secondary"
-      = link_to "Manage Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-secondary"
-      = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-secondary"
+        = link_to "Manage Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-secondary"
+        = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-secondary"
       = link_to "Done", @presentation.conference_id.present? ? conference_path(@presentation.conference_id) : presentations_path, :class => "btn btn-primary"
       .pull-right
         - if can? :destroy, @presentation

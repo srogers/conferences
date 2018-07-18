@@ -7,20 +7,25 @@ class PresentationsController < ApplicationController
   def index
     # This handles the presentation autocomplete
     @presentations = Presentation.order(:name).includes(:publications, :speakers, :conference => :organizer)
+    per_page = params[:per] || 15 # autocomplete specifies :per
+    # TODO - what uses autocomplete for presentations?
     if params[:q].present?
       @presentations = @presentations.where("name ILIKE ? OR name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
-    else
-      @presentations = @presentations.tagged_with(params[:tag]) if params[:tag].present?
-      @presentations = @presentations.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
-      @presentations = @presentations.page(params[:page]).per(20)
+    elsif params[:search_term].present? || params[:tag].present?
+      # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
+      # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
+      term = params[:search_term] || params[:tag]
+      presentations_by_tag  = @presentations.tagged_with(term)
+      presentations_by_name = @presentations.where("name ILIKE ?", "%#{term}%")
+      @presentations = presentations_by_tag + (presentations_by_name - presentations_by_tag)
     end
+    @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
       format.html
       format.json { render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } } }
     end
-
   end
 
   def show

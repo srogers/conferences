@@ -17,7 +17,10 @@
 .row
   .col-md-12
     - if @speakers.blank?
-      %p You haven't created any speakers yet.
+      - if params[:search_term].present?
+        %p No speakers match that search term
+      - else
+        %p You haven't created any speakers yet.
     - else
       %table.table
         = render :partial => "table_head"
