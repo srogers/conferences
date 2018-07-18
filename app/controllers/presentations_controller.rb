@@ -7,12 +7,13 @@ class PresentationsController < ApplicationController
   def index
     # This handles the presentation autocomplete
     @presentations = Presentation.order(:name).includes(:publications, :speakers, :conference => :organizer)
+    per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:q].present?
       @presentations = @presentations.where("name ILIKE ? OR name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
     else
       @presentations = @presentations.tagged_with(params[:tag]) if params[:tag].present?
       @presentations = @presentations.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
-      @presentations = @presentations.page(params[:page]).per(20)
+      @presentations = @presentations.page(params[:page]).per(per_page)
     end
 
     # The json result has to be built with the keys in the data expected by select2

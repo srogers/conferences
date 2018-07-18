@@ -7,7 +7,7 @@ class ConferencesController < ApplicationController
 
   def index
     @conferences = Conference.order('start_date DESC').includes(:organizer).references(:organizer)
-    per_page = params[:per] || 20
+    per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:search_term].present?
       s = params[:search_term]
       @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{s}%", "#{s}%", "#{s}%")
