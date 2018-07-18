@@ -1,5 +1,5 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(conference.name, length: 40), conference_path(conference))
+  %td= link_to(truncate(conference.short_name, length: 40), conference_path(conference))
   %td= conference.date_span
   %td= conference.location
   %td{ align: 'center' }

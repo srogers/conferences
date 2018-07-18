@@ -15,6 +15,16 @@ class Conference < ApplicationRecord
     [city, state].compact.join(', ')
   end
 
+  # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.
+  # TODO - this is part of the overall jankyness of special events - to work, organizer.series_name has to be cleverly selected.
+  def short_name
+    if special_event?
+      "#{ organizer.series_name.singularize }"
+    else
+      name
+    end
+  end
+
   # Returns the minimum clearly distinct name for the conference.
   # This is used by presentations/new when picking a conference from scratch, as well as pre-populating the field.
   def name
