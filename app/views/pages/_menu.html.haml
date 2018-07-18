@@ -1,3 +1,5 @@
 %ul.nav.nav-tabs
   %li{ menu_attributes('about') }= link_to 'What?', about_path
+  - if current_user&.editor? || current_user&.admin?  # visitors and readers don't need to see this
+    %li{ menu_attributes('guidelines') }= link_to 'How?', guidelines_path
   %li{ menu_attributes('contact') }= link_to 'Contact', contact_path
