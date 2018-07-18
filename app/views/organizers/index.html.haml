@@ -1,15 +1,7 @@
 - title 'Organizers'
 .row
   .col-md-12
-    - category_button_classes = "btn btn-sm"
-    - if params[:search_term].present?
-      = link_to 'all', organizers_path, class: category_button_classes + " btn-primary"
-
-    = form_for :search, html: { class: 'form-inline' }, url: organizers_path, method: :get do |f|
-      = text_field_tag :search_term, params[:search_term]
-      = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
-        = icon('search')
-
+    -# Currently there is no search facility because organizers are expected to always be relatively small
     - if can? :create, Organizer
       .pull-right
         =link_to "Add Organizer", new_organizer_path, class: 'btn btn-sm btn-primary'
