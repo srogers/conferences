@@ -1,6 +1,8 @@
 %tr
   %th Name
   %th Speaker
-  %th Conference
+  -# Omit the conference when presentations are being listed on the conference/show page
+  - unless controller_name == "conferences"
+    %th Conference
   %th Formats
   %th

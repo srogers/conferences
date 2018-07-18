@@ -1,9 +1,11 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(presentation.name, length: 80), presentation_path(presentation))
   %td= presentation.speaker_names
-  %td
-    - if presentation.conference.present?
-      = link_to presentation.conference_name, conference_path(presentation.conference)
+  -# Omit the conference when presentations are being listed on the conference/show page
+  - unless controller_name == "conferences"
+    %td
+      - if presentation.conference.present?
+        = link_to presentation.conference_name, conference_path(presentation.conference)
   %td= presentation.formats
 
   %td{width: 140}
