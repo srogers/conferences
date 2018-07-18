@@ -1,9 +1,4 @@
 module ConferencesHelper
-
-  def full_name_with_date(conference)
-    "#{conference.organizer.series_name.singularize} #{date_span conference}"
-  end
-
   # Necessary because of special events
   def fully_qualified_name(conference)
     "#{conference.organizer.abbreviation} #{ date_span conference } #{ conference.location }"
