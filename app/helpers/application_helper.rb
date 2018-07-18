@@ -143,7 +143,12 @@ module ApplicationHelper
     undefined_text = options[:undefined_text] || 'n/a'
 
     value = Time.parse(value) if value.is_a?(String) rescue true
-    time_zone = defined?(current_user) ? current_user.try(:time_zone) : nil
+    begin
+      time_zone = current_user.try(:time_zone)
+    rescue
+      time_zone = nil
+    end
+
     if defined?(current_user) && localize && time_zone.present?
       value.in_time_zone(time_zone).strftime(date_format(:style => style, :sep => sep)) rescue undefined_text
     else
