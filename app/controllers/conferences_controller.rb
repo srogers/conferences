@@ -20,7 +20,7 @@ class ConferencesController < ApplicationController
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|
       format.html
-      format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: qualified_name(c) } } } }
+      format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
 
   end

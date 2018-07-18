@@ -1,7 +1,7 @@
-- title fully_qualified_name(@conference)
+- title @conference.name
 .row
   .col-md-12
-    %h4= fully_qualified_name(@conference)
+    %h4= @conference.name
     - if current_user
       .pull-right
         - if current_user.attended? @conference
