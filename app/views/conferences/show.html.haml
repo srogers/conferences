@@ -1,7 +1,9 @@
 - title @conference.name
 .row
   .col-md-12
-    %h4= @conference.name
+    %h4
+      = @conference.short_name + ','
+      = @conference.date_span
     - if current_user
       .pull-right
         - if current_user.attended? @conference
