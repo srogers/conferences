@@ -10,6 +10,9 @@ class Speaker < ApplicationRecord
 
   before_save :update_sortable_name
 
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+
   def update_sortable_name
     self.sortable_name = name.split(' ').last
   end

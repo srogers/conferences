@@ -1,7 +1,9 @@
 - title @conference.name
 .row
   .col-md-12
-    %h4= @conference.name
+    %h4
+      = @conference.short_name + ','
+      = @conference.date_span
     - if current_user
       .pull-right
         - if current_user.attended? @conference
@@ -46,11 +48,11 @@
 .row
   .col-md-12
     .form-actions
+      = link_to "Done", conferences_path, :class => "btn btn-secondary"
       - if can? :create, Presentation
-        = link_to "Add a Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-secondary"
+        = link_to "Add a Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-primary"
       - if can? :edit, @conference
-        = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-secondary"
-      = link_to "Done", conferences_path, :class => "btn btn-primary"
+        = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-primary"
       .pull-right
         - if can?(:destroy, @conference) && @conference.presentations.empty?
           = link_to icon('trash', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

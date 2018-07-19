@@ -1,9 +1,9 @@
 .row
   .col-md-12
-    %h4= @presentation.name
+    %h3= @presentation.name
 .row
   .col-md-12
-    %h5 Manage Publications
+    %h4 Current Publications
     %ul
       - if @presentation.publications.empty?
         %li None Yet
@@ -21,11 +21,12 @@
 
 .row
   .col-md-12
-    %h5 Add a publication
-    = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
-      = render partial: "publications/form_fields", locals: {:f => f}
-      %p= f.submit "Add"
+    -# Adding publications happens only here - there is no stand-alone publication/new
+    %h4 Add a publication
 
-.row
-  .col-md-12
-    %p= link_to "Done", presentation_path(@presentation), :class => "btn btn-primary"
+-# The publications form_fields partial does its own column management
+= simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+  = render partial: "publications/form_fields", locals: {:f => f}
+  .row
+    .col-md-12
+      = save_or_cancel f, presentation_path(@presentation)

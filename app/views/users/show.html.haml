@@ -79,8 +79,8 @@
 
 .row.form-actions
   .col-md-6
-    = link_to "Edit", edit_user_path(@user), :class => "btn btn-secondary"
-    = link_to "Summary", summary_user_path(@user), :class => "btn btn-secondary"
-    = link_to "Done", users_path, :class => "btn btn-primary"
+    = link_to "Done", users_path, :class => "btn btn-secondary"
+    = link_to "Edit", edit_user_path(@user), :class => "btn btn-primary"
+    = link_to "Summary", summary_user_path(@user), :class => "btn btn-primary"
   .col-md-6
     = link_to icon('trash', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
