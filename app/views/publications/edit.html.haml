@@ -1,4 +1,10 @@
-%h4= @publication.presentation.name
+.row
+  .col-md-12
+    %h4= @publication.presentation.name
+
+-# The publications form_fields partial does its own column management
 = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
   = render :partial => "form_fields", :locals => {:f => f}
-  = f.submit "Save"
+  .row
+    .col-md-12
+      = save_or_cancel f, manage_publications_presentation_path(@presentation)
