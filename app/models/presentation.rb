@@ -11,6 +11,9 @@ class Presentation < ApplicationRecord
 
   acts_as_taggable
 
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+
   def speaker_names
     speakers.map{|s| s.name}.join(", ")
   end

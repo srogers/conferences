@@ -73,7 +73,7 @@ class ConferencesController < ApplicationController
   private
 
   def get_conference
-    @conference = Conference.find params[:id]
+    @conference = Conference.friendly.find params[:id]
   end
 
   def get_organizer_selections

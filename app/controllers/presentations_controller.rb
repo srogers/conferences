@@ -86,7 +86,7 @@ class PresentationsController < ApplicationController
   private
 
   def get_presentation
-    @presentation = Presentation.find params[:id]
+    @presentation = Presentation.friendly.find params[:id]
   end
 
   def presentation_params

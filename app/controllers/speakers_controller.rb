@@ -69,7 +69,7 @@ class SpeakersController < ApplicationController
   private
 
   def get_speaker
-    @speaker = Speaker.find params[:id]
+    @speaker = Speaker.friendly.find params[:id]
   end
 
   def speaker_params
