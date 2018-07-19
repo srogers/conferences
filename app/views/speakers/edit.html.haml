@@ -6,4 +6,4 @@
     = simple_form_for @speaker do |f|
       = render :partial => "form_fields", :locals => {:f => f}
       %hr
-      = save_or_cancel f, speakers_path, 'Save'
+      = save_or_cancel f, speaker_path(@speaker), 'Save'

@@ -15,11 +15,11 @@
 .row
   .col-md-12
     .form-actions
+      = link_to "Done", speakers_path, :class => "btn btn-secondary"
       - if can? :edit, @speaker
-        = link_to "Edit", edit_speaker_path(@speaker), :class => "btn btn-secondary"
+        = link_to "Edit Speaker", edit_speaker_path(@speaker), :class => "btn btn-primary"
         - if request.referrer == new_speaker_url
-          = link_to "Add Another", new_speaker_path, :class => "btn btn-secondary"
-      = link_to "Done", speakers_path, :class => "btn btn-primary"
+          = link_to "Add Another", new_speaker_path, :class => "btn btn-primary"
       .pull-right
         - if can?(:destroy, @speaker) && @speaker.presentations.empty?
           = link_to icon('trash', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
