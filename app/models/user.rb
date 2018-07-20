@@ -5,6 +5,12 @@ class User < ApplicationRecord
   has_many :conference_users,                           :dependent => :destroy
   has_many :conferences, through: :conference_users
 
+  has_many  :created_conferences,            :foreign_key => :creator_id,  :class_name => 'Conference'
+  has_many  :created_presentations,          :foreign_key => :creator_id,  :class_name => 'Presentation'
+  has_many  :created_speakers,               :foreign_key => :creator_id,  :class_name => 'Speaker'
+  has_many  :created_publications,           :foreign_key => :creator_id,  :class_name => 'Publication'
+  has_many  :created_presentation_speakers,  :foreign_key => :creator_id,  :class_name => 'PresentationSpeaker'
+
   validates :name, presence: true
   validates :role, presence: true
 
@@ -86,9 +92,30 @@ class User < ApplicationRecord
 
   # shift all the user's content items to a new owner in preparation for deletion
   def pwnd!(owner)
-    # Only allow this to happen if the user passed in as the new owner is an admin and the account has been deactivated.
+    # Only allow this to happen if the user passed in as the new owner is an admin and the user account has been deactivated.
     return false unless owner.admin? && !active?
     # handle each item
+
+    created_conferences.each do |conference|
+      conference.update_attribute :creator_id, owner.id
+    end
+
+    created_presentations.each do |presentation|
+      presentation.update_attribute :creator_id, owner.id
+    end
+
+    created_speakers.each do |speaker|
+      speaker.update_attribute :creator_id, owner.id
+    end
+
+    created_publications.each do |publication|
+      publication.update_attribute :creator_id, owner.id
+    end
+
+    created_presentation_speakers.each do |presentation_speaker|
+      presentation_speaker.update_attribute :creator_id, owner.id
+    end
+
     return true
   end
 end
