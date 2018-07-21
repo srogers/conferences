@@ -64,7 +64,7 @@ RSpec.describe User, :type => :model do
 
   describe "when an admin takes over a user's assets (prior to destroy)" do
 
-    let(:user) { create :user, active: false }    # user has to be deactivated before pwnd!
+    let(:user) { create :user, approved: false }    # user has to be deactivated before pwnd!
     let(:deleting_admin) { create :admin_user }
 
     context "with created conferences" do
@@ -79,7 +79,7 @@ RSpec.describe User, :type => :model do
 
       context "when user is still active" do
         before do
-          user.activate!
+          user.approve!
           @results = user.pwnd! deleting_admin
         end
 
@@ -105,7 +105,7 @@ RSpec.describe User, :type => :model do
 
       context "when user is still active" do
         before do
-          user.activate!
+          user.approve!
           @results = user.pwnd! deleting_admin
         end
 
@@ -131,7 +131,7 @@ RSpec.describe User, :type => :model do
 
       context "when user is still active" do
         before do
-          user.activate!
+          user.approve!
           @results = user.pwnd! deleting_admin
         end
 
@@ -157,7 +157,7 @@ RSpec.describe User, :type => :model do
 
       context "when user is still active" do
         before do
-          user.activate!
+          user.approve!
           @results = user.pwnd! deleting_admin
         end
 
@@ -183,7 +183,7 @@ RSpec.describe User, :type => :model do
 
       context "when user is still active" do
         before do
-          user.activate!
+          user.approve!
           @results = user.pwnd! deleting_admin
         end
 

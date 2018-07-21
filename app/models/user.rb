@@ -93,7 +93,7 @@ class User < ApplicationRecord
   # shift all the user's content items to a new owner in preparation for deletion
   def pwnd!(owner)
     # Only allow this to happen if the user passed in as the new owner is an admin and the user account has been deactivated.
-    return false unless owner.admin? && !active?
+    return false unless owner.admin? && !approved?
     # handle each item
 
     created_conferences.each do |conference|
