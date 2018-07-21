@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'robots@tbd.com'
+  default from: 'robots@objectivistconferences.info'
   layout 'mailer'
 end
