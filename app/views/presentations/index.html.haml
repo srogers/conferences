@@ -8,7 +8,9 @@
 
   .col-md-6
     - if params[:search_term].present? || params[:tag].present?
-      = link_to 'all', presentations_path, class: "btn btn-sm btn-primary"
+      = link_to 'All', presentations_path, class: "btn btn-sm btn-primary"
+
+    = link_to 'Subject Areas', tags_presentations_path, class: "btn btn-sm btn-primary"
 
   .col-md-3
     - if can? :create, Presentation

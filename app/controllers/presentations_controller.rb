@@ -1,6 +1,6 @@
 class PresentationsController < ApplicationController
 
-  before_action :get_presentation, except: [:create, :new, :index]
+  before_action :get_presentation, except: [:create, :new, :index, :tags]
 
   load_and_authorize_resource
 
@@ -26,6 +26,10 @@ class PresentationsController < ApplicationController
       format.html
       format.json { render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } } }
     end
+  end
+
+  def tags
+    @tags = ActsAsTaggableOn::Tagging.joins(:tag).select('DISTINCT tags.name').map{|t| t.name}
   end
 
   def show

@@ -1,0 +1,6 @@
+.row
+  .col-md-12
+    = title 'Subject Areas'
+    %ul
+      - @tags.each do |tag|
+        %li= link_to tag, presentations_path(tag: tag)

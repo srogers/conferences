@@ -21,6 +21,9 @@ Rails.application.routes.draw do
     member do
       get :manage_speakers, :manage_publications
     end
+    collection do
+      get :tags
+    end
   end
   resources :publications, only: [:create, :edit, :update, :destroy]
   resources :password_resets, only: [:new, :create, :edit, :update]
