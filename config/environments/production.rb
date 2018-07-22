@@ -47,11 +47,16 @@ Rails.application.configure do
   # Don't mount Action Cable in the main server process.
   # config.action_cable.mount_path = nil
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
+  # Force SSL only on production - staging doesn't have a cert
+  if ENV['MAIL_HOST'] == 'objectivistconferences.info'
+    # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+    config.force_ssl = true
+    config.ssl_options = {  redirect: { status: 307, port: 81 } }
+  end
+
+  # For now, use :debug to ensure availability of diagnostic information when problems arise.
+  # TODO - switch this to :warn when things look more solid
   config.log_level = :debug
 
   # Prepend all log lines with the following tags.
