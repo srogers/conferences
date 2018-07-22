@@ -36,6 +36,7 @@ class PresentationsController < ApplicationController
   end
 
   def edit
+    @tags = @presentation.tag_list.join(', ')
   end
 
   def manage_speakers
