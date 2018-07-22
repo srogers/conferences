@@ -1,6 +1,6 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(presentation.name, length: 80), presentation_path(presentation))
-  %td= presentation.speaker_names
+  %td= clickable_speaker_list(presentation)
   -# Omit the conference when presentations are being listed on the conference/show page
   - unless controller_name == "conferences"
     %td

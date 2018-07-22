@@ -8,6 +8,14 @@ module PresentationsHelper
     end
   end
 
+  def clickable_speaker_list(presentation)
+    speaker_links = []
+    presentation.speakers.each do |speaker|
+      speaker_links << link_to(speaker.name, speaker_path(speaker))
+    end
+    return speaker_links.join(', ').html_safe
+  end
+
   def google_safe(text)
     searchable_title = text.gsub(" ", "+")                        # Google uses pluses for spaces
     searchable_title = searchable_title.delete("^a-zA-Z0-9+\-")   # Add the first speaker as an additional term

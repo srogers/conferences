@@ -1,7 +1,7 @@
 .row
   .col-md-12
     = title "#{ @presentation.name }"
-    %h4= @presentation.speakers.empty? ? "no speaker identified" : @presentation.speaker_names
+    %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
     - if @presentation.conference.present?
       %h5
         Presented at:
