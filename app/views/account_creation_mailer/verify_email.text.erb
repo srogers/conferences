@@ -1,14 +1,14 @@
 Greetings from the archive,
 
 <% if @created_by_admin %>
-An account has been created for you by an administrator at http://<%= ENV['MAIL_HOST'] %> If you did not request an account,
-please ignore this message.
+An account has been created for you by an administrator at https://<%= ENV['MAIL_HOST'] %>
 <% else %>
-Congratulations - you have created an account.
+Congratulations - you have created an account at https://<%= ENV['MAIL_HOST'] %>
 <% end %>
+If you did not request an account, please ignore this message.
 
-In order to verify your email address, please visit the link below in your browser. If the link isn't clickable, try copying
-it and pasting in your browser.
+In order to verify your email address, please visit the link below in your browser.
+If the link isn't clickable, try copying it and pasting in your browser.
 
 <%= @account_activation_url %>
 
