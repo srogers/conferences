@@ -150,6 +150,10 @@ RSpec.describe PresentationsController, type: :controller do
         post :create, params: {presentation: valid_attributes}
         expect(response).to redirect_to(Presentation.last)
       end
+
+      it "creates the presentation/speaker relationship"
+
+      it "requires a presentation/speaker relationship"  # TODO - this seems like a good idea
     end
 
     context "with invalid params" do
