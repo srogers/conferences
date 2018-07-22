@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get '/logout',  to: 'user_sessions#destroy', as: :logout
   get '/login',   to: 'user_sessions#new',     as: :login
   get '/about',   to: 'pages#about',           as: :about
+  get '/supporters',   to: 'pages#supporters', as: :supporters
   get '/guidelines',   to: 'pages#guidelines', as: :guidelines
   get '/contact', to: 'pages#contact',         as: :contact
   get '/robots',  to: 'pages#robots',          as: :robots

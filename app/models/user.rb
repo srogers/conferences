@@ -27,6 +27,7 @@ class User < ApplicationRecord
   end
 
   scope :needing_approval, -> { where('not users.approved') }
+  scope :editors,          -> { includes('role').references('role').where("roles.name = ?", Role::EDITOR) }
 
   def attended?(conference)
     conferences.include? conference
