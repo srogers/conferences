@@ -1,6 +1,6 @@
 class PresentationsController < ApplicationController
 
-  before_action :get_presentation, except: [:create, :new, :index]
+  before_action :get_presentation, except: [:create, :new, :index, :tags]
 
   load_and_authorize_resource
 
@@ -28,10 +28,15 @@ class PresentationsController < ApplicationController
     end
   end
 
+  def tags
+    @tags = ActsAsTaggableOn::Tagging.joins(:tag).select('DISTINCT tags.name').map{|t| t.name}
+  end
+
   def show
   end
 
   def edit
+    @tags = @presentation.tag_list.join(', ')
   end
 
   def manage_speakers

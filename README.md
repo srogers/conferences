@@ -231,6 +231,11 @@ Currently, assets are configured to compile on Heroku during slug compilation, s
 
 Currently there are no vendor assets.
 
+### Secure Server Configuration
+Production uses [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management#known-limitations)
+and is forced into SSL mode in production config. Staging does not force SSL, because it runs on free dynos, and isn't
+eligible for ACM. Domains have to be [configured](https://devcenter.heroku.com/articles/custom-domains) by pointing DNS to the herokudns URLs and not the old style herokuapp URLs.
+
 ## Facebook Integration
 
 Facebook likes and shares are handled using the FB SDK. FB defines an App ID and secret for use with the JS SDK, which

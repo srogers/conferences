@@ -1,16 +1,18 @@
 - title 'Conferences'
-.row
-  .col-md-12
-    - if current_user.present?
-      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn ftn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
-    - if params[:search_term].present? || params[:user_id].present?
-      = link_to 'All', conferences_path, class: "btn btn-sm btn-primary"
-
+.row.listing-controls
+  .col-md-3
     = form_for :search, html: { class: 'form-inline' }, url: conferences_path, method: :get do |f|
       = text_field_tag :search_term, params[:search_term]
       = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
         = icon('search')
 
+  .col-md-6
+    - if params[:search_term].present? || params[:user_id].present?
+      = link_to 'All', conferences_path, class: "btn btn-sm btn-primary"
+    - if current_user.present?
+      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
+
+  .col-md-3
     - if can? :create, Conference
       .pull-right
         =link_to "Add Conference", new_conference_path, class: 'btn btn-sm btn-primary'

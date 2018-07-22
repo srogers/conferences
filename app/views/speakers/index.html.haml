@@ -1,15 +1,16 @@
 - title 'Speakers'
-.row
-  .col-md-12
-    - category_button_classes = "btn btn-sm"
-    - if params[:search_term].present?
-      = link_to 'all', speakers_path, class: category_button_classes + " btn-primary"
-
+.row.listing-controls
+  .col-md-3
     = form_for :search, html: { class: 'form-inline' }, url: speakers_path, method: :get do |f|
       = text_field_tag :search_term, params[:search_term]
       = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
         = icon('search')
 
+  .col-md-6
+    - if params[:search_term].present?
+      = link_to 'all', speakers_path, class: "btn btn-sm btn-primary"
+
+  .col-md-3
     - if can? :create, Speaker
       .pull-right
         =link_to "Add Speaker", new_speaker_path, class: 'btn btn-sm btn-primary'

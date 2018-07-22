@@ -62,13 +62,147 @@ RSpec.describe User, :type => :model do
     end
   end
 
+  describe "when an admin takes over a user's assets (prior to destroy)" do
+
+    let(:user) { create :user, approved: false }    # user has to be deactivated before pwnd!
+    let(:deleting_admin) { create :admin_user }
+
+    context "with created conferences" do
+
+      let!(:conference) { create :conference, creator_id: user.id }
+
+      it "assigns created conference to the deleting admin" do
+        results = user.pwnd! deleting_admin
+        expect(results).to be_truthy
+        expect(conference.reload.creator).to eq(deleting_admin)
+      end
+
+      context "when user is still active" do
+        before do
+          user.approve!
+          @results = user.pwnd! deleting_admin
+        end
+
+        it "returns false" do
+          expect(@results).to be_falsey
+        end
+
+        it "leaves created conference assigned to the user" do
+          expect(conference.reload.creator).to eq(user)
+        end
+      end
+    end
+
+    context "with created presentations" do
+
+      let!(:presentation) { create :presentation, creator_id: user.id }
+
+      it "assigns created presentation to the deleting admin" do
+        results = user.pwnd! deleting_admin
+        expect(results).to be_truthy
+        expect(presentation.reload.creator).to eq(deleting_admin)
+      end
+
+      context "when user is still active" do
+        before do
+          user.approve!
+          @results = user.pwnd! deleting_admin
+        end
+
+        it "returns false" do
+          expect(@results).to be_falsey
+        end
+
+        it "leaves created presentation assigned to the user" do
+          expect(presentation.reload.creator).to eq(user)
+        end
+      end
+    end
+
+    context "with created speakers" do
+
+      let!(:speaker) { create :speaker, creator_id: user.id }
+
+      it "assigns created speaker to the deleting user" do
+        results = user.pwnd! deleting_admin
+        expect(results).to be_truthy
+        expect(speaker.reload.creator).to eq(deleting_admin)
+      end
+
+      context "when user is still active" do
+        before do
+          user.approve!
+          @results = user.pwnd! deleting_admin
+        end
+
+        it "returns false" do
+          expect(@results).to be_falsey
+        end
+
+        it "leaves created speaker assigned to the user" do
+          expect(speaker.reload.creator).to eq(user)
+        end
+      end
+    end
+
+    context "with created publications" do
+
+      let!(:publication) { create :publication, creator_id: user.id }
+
+      it "assigns created publication to the deleting user" do
+        results = user.pwnd! deleting_admin
+        expect(results).to be_truthy
+        expect(publication.reload.creator).to eq(deleting_admin)
+      end
+
+      context "when user is still active" do
+        before do
+          user.approve!
+          @results = user.pwnd! deleting_admin
+        end
+
+        it "returns false" do
+          expect(@results).to be_falsey
+        end
+
+        it "leaves created publication assigned to the user" do
+          expect(publication.reload.creator).to eq(user)
+        end
+      end
+    end
+
+    context "with created presentation_speakers" do
+
+      let!(:presentation_speaker) { create :presentation_speaker, creator_id: user.id }
+
+      it "assigns created presentation_speaker to the deleting user" do
+        results = user.pwnd! deleting_admin
+        expect(results).to be_truthy
+        expect(presentation_speaker.reload.creator).to eq(deleting_admin)
+      end
+
+      context "when user is still active" do
+        before do
+          user.approve!
+          @results = user.pwnd! deleting_admin
+        end
+
+        it "returns false" do
+          expect(@results).to be_falsey
+        end
+
+        it "leaves created presentation_speaker assigned to the user" do
+          expect(presentation_speaker.reload.creator).to eq(user)
+        end
+      end
+    end
+  end
+
   describe "when destroying a user" do
 
     let(:user) { create :user }
 
-    it "handles references to the user as creator"
-
-    context "with conferences" do
+    context "with attended conferences" do
       let!(:conference) { create :conference }
       let!(:conference_user) { create :conference_user, conference_id: conference.id, user_id: user.id }
 
@@ -82,6 +216,5 @@ RSpec.describe User, :type => :model do
         expect(conference.reload).to eq(conference)
       end
     end
-
   end
 end

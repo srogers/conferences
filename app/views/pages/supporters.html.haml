@@ -1,0 +1,24 @@
+= render partial: 'menu'
+
+.row
+  .col-md-12
+    %h2 Supporters
+
+.row
+  .col-md-12
+    %p
+      This site is made possible through the efforts of many supporters who have done software development, research, and
+      data entry.
+
+.row
+  .col-md-12
+    %h4 Your Editors
+    %ul
+    - @editors.each do |editor|
+      %li= editor.name
+
+.row
+  .col-md-12
+
+
+
