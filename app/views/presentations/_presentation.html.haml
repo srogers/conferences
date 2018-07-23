@@ -10,8 +10,8 @@
 
   %td{width: 140}
     - if can? :edit, presentation
-      = link_to icon('search', class: 'fa-fw'), google_search_url(presentation), target: "_blank"
+      = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), target: "_blank"
       = link_to edit_presentation_path(presentation), :class => "btn btn-sm" do
-        = icon 'edit', class: 'fa-fw'
+        = icon 'far', 'edit', class: 'fa-fw'
         Edit
-      = link_to icon('trash', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+      = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

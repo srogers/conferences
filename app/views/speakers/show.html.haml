@@ -22,4 +22,4 @@
           = link_to "Add Another", new_speaker_path, :class => "btn btn-primary"
       .pull-right
         - if can?(:destroy, @speaker) && @speaker.presentations.empty?
-          = link_to icon('trash', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

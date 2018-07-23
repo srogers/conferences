@@ -1,7 +1,7 @@
 %tr{ :class => cycle(:even, :odd) }
   %td.center-justify
     - unless user.active
-      = icon 'ban', :class => 'fa-lg text-danger'
+      = icon 'fas', 'ban', :class => 'fa-lg text-danger'
   %td
     = link_to(user.name, user_path(user))
   %td
@@ -12,7 +12,7 @@
     %span.has_tip{'data-toggle' => 'tooltip', :title => pretty_date(user.last_login_at, :style => :full, :undefined_text => '---')}
       = pretty_date(user.last_login_at, :style => :short, :undefined_text => '---')
   %td.actions
-    = link_to icon('edit', 'Edit', :class => 'fa-fw'), edit_user_path(user), class: 'btn btn-sm'
-    = link_to icon('trash', '', class: 'fa-fw'), user_path(user), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+    = link_to icon('far', 'edit', 'Edit', :class => 'fa-fw'), edit_user_path(user), class: 'btn btn-sm'
+    = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), user_path(user), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
     -if Setting.require_account_approval? && !user.approved
-      = link_to icon('check', "Approve"), approve_user_path(user), class: "btn btn-sm", method: :patch
+      = link_to icon('fas', 'check', "Approve"), approve_user_path(user), class: "btn btn-sm", method: :patch

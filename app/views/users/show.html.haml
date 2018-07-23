@@ -24,18 +24,18 @@
         %th Active
         %td
           - if @user.active?
-            = icon 'check', :class => 'fa-lg fa-fw text-success'
+            = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
           - else
-            = icon 'ban', :class => 'fa-lg fa-fw text-danger'
+            = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
             Disabled
 
       %tr
         %th Approved
         %td
           - if @user.approved?
-            = icon 'check', :class => 'fa-lg fa-fw text-success'
+            = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
           - else
-            = icon 'ban', :class => 'fa-lg fa-fw text-danger'
+            = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
             Needs Approval
       %tr
         %th City
@@ -83,4 +83,4 @@
     = link_to "Edit", edit_user_path(@user), :class => "btn btn-primary"
     = link_to "Summary", summary_user_path(@user), :class => "btn btn-primary"
   .col-md-6
-    = link_to icon('trash', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
+    = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true

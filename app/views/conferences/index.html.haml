@@ -4,7 +4,7 @@
     = form_for :search, html: { class: 'form-inline' }, url: conferences_path, method: :get do |f|
       = text_field_tag :search_term, params[:search_term]
       = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
-        = icon('search')
+        = icon('fas', 'search')
 
   .col-md-6
     - if params[:search_term].present? || params[:user_id].present?

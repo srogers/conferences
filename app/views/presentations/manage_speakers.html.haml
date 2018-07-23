@@ -8,8 +8,8 @@
       - @presentation.presentation_speakers.each do |presentation_speaker|
         %li
           = presentation_speaker.speaker.name
-          =# link_to icon('edit', 'Edit', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), edit_presentation_speaker_path(presentation_speaker)
-          = link_to icon('trash', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
+          =# link_to icon('far', 'edit', 'Edit', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), edit_presentation_speaker_path(presentation_speaker)
+          = link_to icon('far', 'trash-alt', :class => 'fa-fw'), presentation_speaker_path(presentation_speaker), :method => :delete, :data => { :confirm => 'remove this speaker?' }, :post => true, class: 'text-danger'
 
 .row
   .col-md-12
