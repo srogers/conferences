@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :require_admin, except: [:new, :create, :summary]
+  before_action :require_admin, except: [:new, :create, :supporters, :summary]   # new, create, and supporters are open
   before_action :require_user,  only: [:summary]
 
   def index
@@ -11,6 +11,11 @@ class UsersController < ApplicationController
       @users = User.all.order(:email)
     end
     @users = @users.includes(:role).page(params[:page]).per(20)
+  end
+
+  # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
+  def supporters
+    @editors = User.editors.where('show_contributor')
   end
 
   # finds names for autocomplete

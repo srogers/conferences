@@ -44,6 +44,22 @@ describe UsersController do
     end
   end
 
+  describe "when listing supporters" do
+
+    let(:editor_user)        { create :editor_user }
+    let(:hidden_editor_user) { create :editor_user, show_contributor: false }
+
+    it "should include editors" do
+      get :supporters
+      expect(assigns[:editors]).to include(editor_user)
+    end
+
+    it "should exclude editors with show_contributor disabled" do
+      get :supporters
+      expect(assigns[:editors]).not_to include(hidden_editor_user)
+    end
+  end
+
   describe "GET show" do
     before do
       @user = create :user, role: Role.admin

@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     end
     collection do
       get   :names
+      get   :supporters
     end
   end
   resources :user_sessions, only: [:create, :destroy]
