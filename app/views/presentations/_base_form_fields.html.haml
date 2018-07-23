@@ -1,4 +1,4 @@
-= f.input :name, :autofocus => true, label: 'Presentation Name'
+= f.input :name, label: 'Presentation Name'
 = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: "Conference Name", input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
 = f.label :description
 = f.trix_editor :description
