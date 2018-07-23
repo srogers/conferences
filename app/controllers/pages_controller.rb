@@ -1,10 +1,6 @@
 class PagesController < ApplicationController
 
-  # TODO - this is supposed to be the static pages controller, but the supporters page isn't entirely static.
-  #        Is that a problem?
-  def supporters
-    @editors = User.editors
-  end
+  # Handles static pages that should be available to anyone. Don't put anything here that needs guarding, or a spec
 
   def robots
     render layout: false, formats: [:text]

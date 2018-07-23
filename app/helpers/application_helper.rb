@@ -28,7 +28,7 @@ module ApplicationHelper
     # If the social links are placed on a page without a concept (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
     if @concept.present?
-      copy_link_button = link_to(icon('copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
+      copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
       admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ concept_url(@concept) }", class: "btn btn-xs btn-default", target: "_blank") : ''
     else
       copy_link_button = ''

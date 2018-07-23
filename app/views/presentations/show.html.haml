@@ -32,7 +32,7 @@
             = format_and_date(publication)
             - if publication.notes.present?
               = " - #{ publication.notes }"
-        %li= link_to icon('search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
+        %li= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 - if can? :edit, @presentation
   .row
     .col-md-12
@@ -55,4 +55,4 @@
         = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary"
       .pull-right
         - if can? :destroy, @presentation
-          = link_to icon('trash', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

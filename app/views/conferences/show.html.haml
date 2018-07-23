@@ -27,14 +27,14 @@
     %p
       %b Program:
       - if @conference.url.present?
-        = link_to icon('file-o', class: 'fa-fw'), @conference.url, target: '_blank'
+        = link_to icon('far', 'file', class: 'fa-fw'), @conference.url, target: '_blank'
       - else
         %i none
     %p
       %b Members Attending:
       = @conference.users.length
       - if @conference.users.length > 0 && current_user
-        = link_to icon('users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
+        = link_to icon('fas', 'users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
 .row
   .col-md-12
     %h4 Presentations
@@ -55,4 +55,4 @@
         = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-primary"
       .pull-right
         - if can?(:destroy, @conference) && @conference.presentations.empty?
-          = link_to icon('trash', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

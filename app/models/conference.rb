@@ -10,9 +10,14 @@ class Conference < ApplicationRecord
   has_many :users, through: :conference_users
 
   validates :organizer_id, :start_date, :end_date, presence: true
+  validate  :starts_before_ending
 
   extend FriendlyId
   friendly_id :name, use: :slugged
+
+  def starts_before_ending
+    errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
+  end
 
   def location
     [city, state].compact.join(', ')
@@ -50,7 +55,7 @@ class Conference < ApplicationRecord
     else
       end_text = "#{ end_date.day }, #{ end_date.year }"
       if start_date.month != end_date.month
-        end_text = "#{ I18n.l(Time.now, format: "%B") } " + end_text
+        end_text = "#{ I18n.l(end_date, format: "%b") } " + end_text
       end
       end_text = "-" + end_text
     end

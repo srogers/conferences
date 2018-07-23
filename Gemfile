@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.4.3'
+ruby '2.4.4'
 
 gem 'rails', '5.2.0'
 gem 'pg'
@@ -19,7 +19,7 @@ gem 'cancancan'
 gem 'carrierwave'
 gem 'country_select'                # provides country selector that works with simple_form
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
-gem "font-awesome-sass", '4.7.0'    # bundles font-awesome in a way that is compatible with Rails
+gem "font-awesome-sass", '5.0.13'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
 gem 'friendly_id'                   # manages sluggified URLs
 gem 'jbuilder', '~> 2.0'
 gem 'kaminari'                      # a more modern pagination replacement for Will Paginate

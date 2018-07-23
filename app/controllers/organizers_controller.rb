@@ -5,7 +5,7 @@ class OrganizersController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @organizers = Organizer.order(:name).page(params[:page]).per(20)
+    @organizers = Organizer.order(:abbreviation).page(params[:page]).per(20)
   end
 
   def show
