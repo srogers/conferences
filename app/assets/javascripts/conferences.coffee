@@ -2,9 +2,20 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-# This performs autocomplete for selecting a speaker by name. It pulls the autocomplete URL from the clicked
-# object, so that paths can be used to describe it on the Rails side.
 $ ->
+  # Make Start/End date a little less tedious by setting the end dates to the start dates as selected.
+  # Then the end date selectors should be in the right general range.
+  $('#conference_start_date_1i').change ->
+    $('#conference_end_date_1i').val( $('#conference_start_date_1i').val() )
+
+  $('#conference_start_date_2i').change ->
+    $('#conference_end_date_2i').val( $('#conference_start_date_2i').val() )
+
+  $('#conference_start_date_3i').change ->
+    $('#conference_end_date_3i').val( $('#conference_start_date_3i').val() )
+
+  # This performs autocomplete for selecting a speaker by name. It pulls the autocomplete URL from the clicked
+  # object, so that paths can be used to describe it on the Rails side.
   $('.select2-autocomplete').each (i, e) ->
     select = $(e)
     options = {
