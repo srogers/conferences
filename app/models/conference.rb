@@ -50,7 +50,7 @@ class Conference < ApplicationRecord
     else
       end_text = "#{ end_date.day }, #{ end_date.year }"
       if start_date.month != end_date.month
-        end_text = "#{ I18n.l(Time.now, format: "%B") } " + end_text
+        end_text = "#{ I18n.l(end_date, format: "%B") } " + end_text
       end
       end_text = "-" + end_text
     end
