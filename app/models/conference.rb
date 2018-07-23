@@ -10,9 +10,14 @@ class Conference < ApplicationRecord
   has_many :users, through: :conference_users
 
   validates :organizer_id, :start_date, :end_date, presence: true
+  validate  :starts_before_ending
 
   extend FriendlyId
   friendly_id :name, use: :slugged
+
+  def starts_before_ending
+    errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
+  end
 
   def location
     [city, state].compact.join(', ')

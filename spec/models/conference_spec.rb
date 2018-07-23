@@ -30,6 +30,10 @@ RSpec.describe Conference, type: :model do
     it "should be invalid without end_date" do
       expect(Conference.new(valid_attributes.merge(end_date: nil))).not_to be_valid
     end
+
+    it "should be invalid if start_date comes after end_date" do
+      expect(Conference.new(valid_attributes.merge(end_date: '2005/07/01'.to_date))).not_to be_valid
+    end
   end
 
   describe "when destroying a conference" do
