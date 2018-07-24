@@ -1,34 +1,28 @@
-%nav.navbar.navbar-inverse
+%nav.navbar.navbar-dark.bg-dark.navbar-expand-md
   .container
-    .navbar-header
-      = link_to 'OC', root_path, class: 'navbar-brand'
-      = content_tag :div, 'Beta', class: 'beta-marker'
-      %button.navbar-toggle.collapsed{type: "button", "data-toggle": "collapse", "data-target": "#navbar" }
-        %span.sr-only Toggle navigation
-        %span.icon-bar
-        %span.icon-bar
-        %span.icon-bar
+    = link_to 'OC', root_path, class: 'navbar-brand'
+    %button.navbar-toggler{type:"button", 'data-toggle': "collapse", 'data-target': "#navbarSupportedContent"}
+      %span.navbar-toggler-icon
 
-    #navbar.collapse.navbar-collapse
-      %ul.nav.navbar-nav
-        %li= link_to 'Conferences', conferences_path
-        %li= link_to 'Speakers', speakers_path
-        %li= link_to 'Presentations', presentations_path
+    #navbar.collapse.navbar-collapse#navbarSupportedContent
+      %ul.navbar-nav.mr-auto
+        %li.nav-item= link_to 'Conferences', conferences_path, class: 'nav-link' + current_tab?('conferences')
+        %li.nav-item= link_to 'Speakers', speakers_path, class: 'nav-link' + current_tab?('speakers')
+        %li.nav-item= link_to 'Presentations', presentations_path, class: 'nav-link' + current_tab?('presentations')
         - if current_user
           - if current_user.admin?
-            %li= link_to 'Organizers', organizers_path
-            %li= link_to 'Users', users_path
-            %li= link_to 'Settings', settings_path
+            %li.nav-item= link_to 'Organizers', organizers_path, class: 'nav-link' + current_tab?('organizers')
+            %li.nav-item= link_to 'Users', users_path, class: 'nav-link' + current_tab?('users')
+            %li.nav-item= link_to 'Settings', settings_path, class: 'nav-link' + current_tab?('settings')
           - elsif current_user.editor?
 
-      .pull-right
-        %ul.nav.navbar-nav
-          - if current_user
-            - if current_user.admin? || current_user.editor?
-              %li= link_to 'Summary', summary_user_path(current_user)
+      %ul.navbar-nav.mr-auto.justify-content-end
+        - if current_user
+          - if current_user.admin? || current_user.editor?
+            %li.nav-item= link_to 'Summary', summary_user_path(current_user), class: 'nav-link' + current_tab?('summary')
 
-            %li= link_to 'Profile', account_path
-            %li= link_to 'Logout', logout_path
-          - else
-            %li= link_to 'Sign Up', new_user_path
-            %li= link_to 'Login', login_path
+          %li.nav-item= link_to 'Profile', account_path, class: 'nav-link' + current_tab?('profile')
+          %li.nav-item= link_to 'Logout', logout_path, class: 'nav-link'
+        - else
+          %li.nav-item= link_to 'Sign Up', new_user_path, class: 'nav-link' + current_tab?('signup')
+          %li.nav-item= link_to 'Login', login_path, class: 'nav-link' + current_tab?('login')

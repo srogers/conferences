@@ -3,7 +3,7 @@
   %td= organizer.series_name
   %td= organizer.abbreviation
 
-  %td{width: 120}
+  %td{width: 130}
     - if can? :edit, organizer
       = link_to edit_organizer_path(organizer), :class => "btn btn-sm" do
         = icon 'far', 'edit', class: 'fa-fw'

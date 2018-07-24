@@ -6,7 +6,7 @@
     - if conference.url.present?
       = link_to icon('far', 'file'), conference.url, target: '_blank'
 
-  %td{width: 120}
+  %td{width: 130}
     - if can? :edit, conference
       = link_to edit_conference_path(conference), :class => "btn btn-sm" do
         = icon 'far', 'edit', class: 'fa-fw'
