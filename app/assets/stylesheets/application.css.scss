@@ -10,11 +10,12 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require trix
- *= require social-share-button
- *= require_tree .
- *= require_self
+ * bootstrap gem and the https://github.com/rails/sass-rails gem documentation says require tree and require self will
+ * break things in the sass environment, including other gems ability to access Bootstrap - doesn't seem to, but did it anyway.
  */
+
+@import "trix";
+@import "social-share-button";
 
 @import "select2";
 @import "select2-bootstrap";
@@ -22,8 +23,18 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
-@import 'bootstrap-sprockets';
 @import 'bootstrap';
+
+/* now import everything else that would have been imported by =require_tree .   TODO - don't forget to update when a new file is added */
+@import 'conferences';
+@import 'forms';
+@import 'layout';
+@import 'organizers';
+@import 'presentations';
+@import 'rails_errors';
+@import 'speakers';
+@import 'tables';
+@import 'text';
 
 /* Override the color for Bootstrap secondary button so they don't look like non-buttons */
 .btn-secondary, .btn-secondary:hover, .btn-secondary:active, .btn-secondary:visited {

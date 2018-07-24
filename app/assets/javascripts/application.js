@@ -10,8 +10,11 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
+// Bootstrap requires jquery3, popper - then require either bootstrap-sprockets or bootstrap
+//
+//= require jquery3
 //= require jquery_ujs
+//= require popper
 //= require bootstrap-sprockets
 //= require select2
 //  don't require turbolinks because the caching breaks select2
