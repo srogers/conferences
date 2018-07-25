@@ -80,7 +80,8 @@
 .row.form-actions
   .col-md-6
     = link_to "Done", users_path, :class => "btn btn-secondary"
-    = link_to "Edit", edit_user_path(@user), :class => "btn btn-primary"
+    -# Don't allow editing an inactive user, because it will change the perishable_token and break the user's validation link
+    = link_to "Edit", edit_user_path(@user), :class => "btn btn-primary" + (@user.active ? '' : ' disabled')
     = link_to "Summary", summary_user_path(@user), :class => "btn btn-primary"
   .col-md-6
     = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true

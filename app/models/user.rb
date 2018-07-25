@@ -63,8 +63,15 @@ class User < ApplicationRecord
   end
 
   def approve!
-    self.approved = true
-    save
+    # Specifically uses the #update_column method which skips callbacks.
+    # AuthLogic has an :after_save callback that updates perishable_token every time the user is saved - not just when
+    # the validation time expires. The perishable token has to stay the same from the time the validation email is sent
+    # until the user clicks on it. In cases where the admin approves the account before then the user clicks the
+    # validation link, the perishable token has to remain consistent or the user's validation URL will be invalid.
+    # This is a dumb design, because any other edit by admin during this period will invalidate the user's URL.
+    # We try to prevent that by making the user account uneditable while it is waiting for approval - but the admin
+    # does need the ability to approve during this window.
+    update_column :approved, true
   end
 
   # Uses translations provided by country_select gem to convert the country_code to country name

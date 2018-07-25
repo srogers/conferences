@@ -189,4 +189,30 @@ describe UsersController do
     end
   end
 
+  # This gets spec'd at both the model and controller level, because it's super-annoying if it's broken
+  describe "when approving a user" do
+    before do
+      @admin = create :user, role: Role.admin
+      log_in @admin
+
+      @user = create :user, approved: false
+    end
+
+    it "approves the specified user" do
+      put :approve, params: {id: @user.to_param}
+      expect(@user.reload).to be_approved
+    end
+
+    it "does not change the perishable token value" do
+      initial_token = @user.perishable_token
+      put :approve, params: {id: @user.to_param}
+      expect(@user.reload.perishable_token).to eq(initial_token)
+    end
+
+    it "redirects to the list of users needing approval" do
+      put :approve, params: {id: @user.to_param}
+      expect(response).to redirect_to users_path(needs_approval: true)
+    end
+  end
+
 end
