@@ -58,8 +58,8 @@ class User < ApplicationRecord
   end
 
   def activate!
-    self.active = true
-    save
+    # Make sure this doesn't change the persistence_token, even though admin can't normally edit it.
+    update_column :active, true
   end
 
   def approve!
