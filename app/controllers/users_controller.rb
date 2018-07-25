@@ -115,8 +115,8 @@ class UsersController < ApplicationController
       user.destroy
       flash[:notice] = "User deleted and assets reassigned to #{ current_user.name }"
     else
-      flash[:error] = "User couldn't be deleted - make sure user is unapproved first."
-      flash[:error] += " Deactivate user account first." if user.active?
+      flash[:error] = "User couldn't be deleted"
+      flash[:error] += " - Unapprove user account first." if user.approved?
     end
 
     redirect_to users_url
