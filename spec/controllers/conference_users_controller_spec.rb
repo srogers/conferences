@@ -63,16 +63,10 @@ RSpec.describe ConferenceUsersController, type: :controller do
           allow(@current_user).to receive(:admin?).and_return false
         end
 
-        it "does not list the conferences for a different user" do
+        it "lists the conferences for a different user when they have enabled show_attendance preference (the default)" do
           get :index, params: { user_id: user.id }
 
-          expect(assigns(:conferences)).to be_nil
-        end
-
-        it "redirects to the conferences listing" do
-          get :index, params: { user_id: user.id }
-
-          expect(response).to redirect_to conferences_path
+          expect(assigns(:conferences)).to eq([conference])
         end
       end
 
@@ -81,10 +75,10 @@ RSpec.describe ConferenceUsersController, type: :controller do
           user.update_attribute :show_attendance, false
         end
 
-        it "excludes user from attendees list" do
+        it "does not list the conference for the user" do
           get :index, params: { conference_id: conference.id }
 
-          expect(assigns(:attendees).include?(user)).to be_falsey
+          expect(assigns(:conferences)).to be_nil
         end
       end
     end
@@ -94,6 +88,18 @@ RSpec.describe ConferenceUsersController, type: :controller do
         get :index, params: { conference_id: conference.id }
 
         expect(assigns(:attendees)).to eq([user])
+      end
+
+      context "when user has disabled show_attendance preference" do
+        before do
+          user.update_attribute :show_attendance, false
+        end
+
+        it "does not list the user among attendees" do
+          get :index, params: { conference_id: conference.id }
+
+          expect(assigns(:attendees)).not_to include(user)
+        end
       end
     end
   end

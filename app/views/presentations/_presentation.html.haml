@@ -8,7 +8,7 @@
         = link_to presentation.conference_name, conference_path(presentation.conference)
   %td= presentation.formats
 
-  %td{width: 140}
+  %td{width: 150}
     - if can? :edit, presentation
       = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), target: "_blank"
       = link_to edit_presentation_path(presentation), :class => "btn btn-sm" do

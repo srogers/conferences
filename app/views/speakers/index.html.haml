@@ -1,18 +1,19 @@
 - title 'Speakers'
 .row.listing-controls
-  .col-md-3
+  .col-md-4
     = form_for :search, html: { class: 'form-inline' }, url: speakers_path, method: :get do |f|
       = text_field_tag :search_term, params[:search_term]
-      = button_tag type: 'submit', class: 'btn btn-primary btn-xs' do
-        = icon('fas', 'search')
+      %span{style: 'margin-right: 5px;'}
+      = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
+        = icon('fas', 'search', class: 'fa-sm')
 
-  .col-md-6
+  .col-md-5
     - if params[:search_term].present?
       = link_to 'all', speakers_path, class: "btn btn-sm btn-primary"
 
   .col-md-3
     - if can? :create, Speaker
-      .pull-right
+      .float-right
         =link_to "Add Speaker", new_speaker_path, class: 'btn btn-sm btn-primary'
 
 .row

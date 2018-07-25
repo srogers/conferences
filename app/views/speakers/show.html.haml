@@ -20,6 +20,6 @@
         = link_to "Edit Speaker", edit_speaker_path(@speaker), :class => "btn btn-primary"
         - if request.referrer == new_speaker_url
           = link_to "Add Another", new_speaker_path, :class => "btn btn-primary"
-      .pull-right
+      .float-right
         - if can?(:destroy, @speaker) && @speaker.presentations.empty?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

@@ -1,7 +1,7 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
 
-  %td{width: 120}
+  %td{width: 130}
     - if can? :edit, speaker
       = link_to edit_speaker_path(speaker), :class => "btn btn-sm" do
         = icon 'far', 'edit', class: 'fa-fw'

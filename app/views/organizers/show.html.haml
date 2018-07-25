@@ -18,6 +18,6 @@
       = link_to "Done", organizers_path, :class => "btn btn-secondary"
       - if can? :edit, @organizer
         = link_to "Edit", edit_organizer_path(@organizer), :class => "btn btn-primary"
-      .pull-right
+      .float-right
         - if can?(:destroy, @organizer) && @organizer.conferences.empty?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), organizer_path(@organizer), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

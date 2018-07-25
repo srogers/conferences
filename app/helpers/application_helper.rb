@@ -8,6 +8,35 @@ module ApplicationHelper
     content_tag(:h3, text)
   end
 
+  # Returns true when the selected tab name is active, which we wheedle out of the controller and action names.
+  def current_tab?(name)
+    current = case name
+    when 'conferences'
+      controller_name == 'conferences' || controller_name == 'conference_users'
+    when 'speakers'
+      controller_name == 'speakers'
+    when 'presentations'
+      controller_name == 'presentations'
+    when 'organizers'
+      controller_name == 'organizers'
+    when 'users'
+      controller_name == 'users' && action_name != 'supporters' && !(action_name == 'summary' && params[:id] == @current_user.id.to_s)
+    when 'settings'
+      controller_name == 'settings'
+    when 'summary'
+      controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
+    when 'profile'
+      controller_name == 'accounts'
+    when 'signup'
+      controller_name == 'users' && ['new'].include?(action_name)
+    when 'login'
+      controller_name == 'user_sessions'
+    else
+      false
+    end
+    return current ? ' active' : ''
+  end
+
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.

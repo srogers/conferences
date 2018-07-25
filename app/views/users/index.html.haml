@@ -3,7 +3,7 @@
   .col-md-12
     - if @require_account_approval
       =link_to "Needs Approval", users_path(:needs_approval => true), class: 'btn btn-sm btn-primary'
-    .pull-right
+    .float-right
       =link_to "Add User", new_user_path, class: 'btn btn-sm btn-primary'
 
 .row

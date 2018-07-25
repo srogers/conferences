@@ -53,6 +53,6 @@
           = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-primary"
         = link_to "Manage Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-primary"
         = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary"
-      .pull-right
+      .float-right
         - if can? :destroy, @presentation
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

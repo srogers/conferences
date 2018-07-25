@@ -4,6 +4,8 @@ html {
   min-height: 100%;
 }
 
+nav.navbar { margin-bottom: 15px; } /* With Bootstrap 4, everything is jammed right against the top */
+
 body {
   /* Add a space for the footer, plus any extra spacing  */
   margin-bottom: 100px !important;

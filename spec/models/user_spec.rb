@@ -50,14 +50,29 @@ RSpec.describe User, :type => :model do
     end
   end
 
+  describe "when approved by admin" do
+
+    let(:user) { create :user, approved: false }
+
+    it "does not change the perishable token value" do
+      initial_token = user.perishable_token
+      user.approve!
+      expect(user.reload.perishable_token).to eq(initial_token)
+    end
+
+    it "approves the user" do
+      user.approve!
+      expect(user.reload).to be_approved
+    end
+  end
+
   describe "when scoping user" do
     context "by users needing approval" do
-      before do
-        @user = create :user, approved: false
-      end
+
+      let(:user) { create :user, approved: false }
 
       it "should find unapproved users" do
-        expect(User.needing_approval).to eq([@user])
+        expect(User.needing_approval).to eq([user])
       end
     end
   end

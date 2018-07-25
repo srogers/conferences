@@ -9,12 +9,12 @@ gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 gem "haml-rails"                    # enables HAML in the asset pipeline
-gem 'jquery-rails'
+gem 'jquery-rails'                  # Bootstrap also requires this
 
 gem 'acts-as-taggable-on'
 gem 'authlogic'                     # As of version 3.5, authlogic is now compatible with Rails 5
 gem 'autoprefixer-rails'            # bootstrap needs this
-gem 'bootstrap-sass'                # This is what actually gets bootstrap installed, and determines the current version
+gem 'bootstrap'                     # This is what actually gets bootstrap 4.x installed, and determines the current version
 gem 'cancancan'
 gem 'carrierwave'
 gem 'country_select'                # provides country selector that works with simple_form
