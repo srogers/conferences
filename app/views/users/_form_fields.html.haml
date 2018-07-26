@@ -2,7 +2,7 @@
 - unless action_name == 'new'
   = f.input :photo
   - if @user.has_photo?
-    = f.input :remove_photo, as: :boolean, hint: 'Revert to default logo'
+    = f.input :remove_photo, as: :boolean, hint: 'Revert to default icon'
 = f.input :name
 = f.input :email, required: true
 = f.input :password, required: true
