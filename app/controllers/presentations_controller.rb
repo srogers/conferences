@@ -48,6 +48,11 @@ class PresentationsController < ApplicationController
     @publication = Publication.new
   end
 
+  # Send the handout straight to the browser - assumes PDF is required at upload
+  def download_handout
+    send_data @presentation.handout.read, type: 'application/pdf', disposition: 'inline', filename: "handout.pdf"
+  end
+
   def new
     # Pre-populate the conference when we're doing the 'create another' flow
     if params[:conference_id]
@@ -95,6 +100,7 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :parts, :duration, :tag_list)
+    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :parts, :duration, :tag_list,
+                                         :handout, :remove_handout)
   end
 end

@@ -108,6 +108,13 @@ RSpec.describe PresentationsController, type: :controller do
     end
   end
 
+  describe "when downloading the handout" do
+    it "sends the handout PDF attachment" do
+      skip "set up an attachment"
+      #get :download_handout, params: { id: presentation.to_param }
+    end
+  end
+
   describe "GET #new" do
     it "assigns a new presentation as @presentation" do
       get :new, params: {}

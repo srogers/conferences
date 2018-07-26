@@ -1,8 +1,8 @@
 -# Don't offer photo as part of account creation - just a little too needy
 - unless action_name == 'new'
-  = f.input :photo
+  = f.input :photo, label: @user.photo.present? ? 'Change photo' : 'Add photo'
   - if @user.has_photo?
-    = f.input :remove_photo, as: :boolean, hint: 'Revert to default icon'
+    = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'
 = f.input :name
 = f.input :email, required: true
 = f.input :password, required: true
