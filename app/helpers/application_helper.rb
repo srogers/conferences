@@ -41,7 +41,7 @@ module ApplicationHelper
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.
   def fb_social_bar(options={})
-    return if @concept.present? && @concept.status != Concept::PUBLISHED
+    return unless @conference.present? || @presentation.present?
     og_url         = options[:url]          || request.base_url + request.path
     og_type        = options[:type]         || "article"
     og_title       = options[:title]
@@ -54,11 +54,14 @@ module ApplicationHelper
 
     social_share_buttons = social_share_button_tag("Objectivist Conferences")
     fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
-    # If the social links are placed on a page without a concept (such as the landing page) then the social sharing debug
+    # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
-    if @concept.present?
+    if @conference.present?
       copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
-      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ concept_url(@concept) }", class: "btn btn-xs btn-default", target: "_blank") : ''
+      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ conference_url(@conference) }", class: "btn btn-xs btn-default", target: "_blank") : ''
+    elsif @presentation.present?
+      copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
+      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ presentation_url(@presentation) }", class: "btn btn-xs btn-default", target: "_blank") : ''
     else
       copy_link_button = ''
       admin_dashboard_button = ''
