@@ -132,7 +132,14 @@ the Heroku config command, like:
 
 ### Performance Monitoring
 
-New Relic whacked - monitoring TBD. 
+New Relic removed - no replacement chosen
+
+### SSL (TLS) and Certificates
+
+The site config and DNS hosting is migrated from the old appname.herokuapp.com format to the new name.com.herokudns.com format.
+The details are explained [here](https://devcenter.heroku.com/articles/custom-domains). 
+Once paid dynos are turned on, [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management)
+can be enabled, which easily and cheaply gets the site secure. 
 
 ### Heroku Database Configuration
 
