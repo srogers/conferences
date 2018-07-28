@@ -5,8 +5,6 @@
 
   %td{width: 130}
     - if can? :edit, organizer
-      = link_to edit_organizer_path(organizer), :class => "btn btn-sm" do
-        = icon 'far', 'edit', class: 'fa-fw'
-        Edit
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_organizer_path(organizer), :class => "btn btn-sm btn-primary"
     - if can?(:destroy, organizer) && organizer.conferences.empty?
       = link_to icon('far', 'trash-alt', class: 'fa-fw'), organizer_path(organizer), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

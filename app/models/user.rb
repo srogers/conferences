@@ -84,6 +84,10 @@ class User < ApplicationRecord
     end
   end
 
+  def location
+    [city.presence, state.presence].compact.join(', ')
+  end
+
   def deliver_password_reset_instructions!
     reset_perishable_token!
     PasswordResetMailer.reset_email(self).deliver_now

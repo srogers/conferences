@@ -13,8 +13,8 @@ function logFbCompletedRegistrationEvent(registrationMethod) {
 
 //---- Custom Events
 
-function logFbCreatedConceptEvent(conceptName) {
+function logFbCreatedPresentationEvent(presentationName) {
   var params = {};
-  params[FB.AppEvents.ParameterNames.DESCRIPTION] = conceptName;
-  FB.AppEvents.logEvent("createdConcept", null, params);
+  params[FB.AppEvents.ParameterNames.DESCRIPTION] = presentationName;
+  FB.AppEvents.logEvent("createdPresentation", null, params);
 }

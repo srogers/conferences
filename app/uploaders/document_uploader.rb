@@ -45,8 +45,10 @@ class DocumentUploader < CarrierWave::Uploader::Base
   #   "something.jpg" if original_filename
   # end
 
+  # Normally, the model doesn't have these attributes, but in the case where it's desirable to show this info,
+  # it's handy to create and set them explicitly in the model.
   def save_content_type_and_size
-    model.content_type = file.content_type if file.content_type
-    model.file_size = file.size
+    model.content_type = file.content_type if model.respond_to?(:content_type) && file.content_type
+    model.file_size = file.size if model.respond_to?(:file_size)
   end
 end

@@ -14,12 +14,12 @@ gem 'jquery-rails'                  # Bootstrap also requires this
 gem 'acts-as-taggable-on'
 gem 'authlogic'                     # As of version 3.5, authlogic is now compatible with Rails 5
 gem 'autoprefixer-rails'            # bootstrap needs this
-gem 'bootstrap'                     # This is what actually gets bootstrap 4.x installed, and determines the current version
+gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x installed, and determines the current version
 gem 'cancancan'
 gem 'carrierwave'
 gem 'country_select'                # provides country selector that works with simple_form
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
-gem "font-awesome-sass", '5.0.13'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
+gem "font-awesome-sass", '~> 5.0'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
 gem 'friendly_id'                   # manages sluggified URLs
 gem 'jbuilder', '~> 2.0'
 gem 'kaminari'                      # a more modern pagination replacement for Will Paginate

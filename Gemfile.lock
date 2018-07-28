@@ -438,7 +438,7 @@ DEPENDENCIES
   autoprefixer-rails
   better_errors
   binding_of_caller
-  bootstrap
+  bootstrap (~> 4.1)
   byebug
   cancancan
   carrierwave
@@ -449,7 +449,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   fog-aws
-  font-awesome-sass (= 5.0.13)
+  font-awesome-sass (~> 5.0)
   foreman
   friendly_id
   haml-rails

@@ -18,7 +18,6 @@
   <body>
     <%= render partial: 'shared/fb_sdk_init' %>
     <%= render partial: 'shared/navigation' %>
-    <%= yield :post_nav_body %>  <%# for the concept map - places it outside the container class  %>
 
     <div class="container">
       <% flash.each do |type, message| %>

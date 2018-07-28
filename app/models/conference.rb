@@ -20,7 +20,7 @@ class Conference < ApplicationRecord
   end
 
   def location
-    [city, state].compact.join(', ')
+    [city.presence, state.presence].compact.join(', ')
   end
 
   # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.

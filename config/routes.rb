@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   resources :conference_users, only: [:index, :create, :destroy]
   resources :presentations do
     member do
-      get :manage_speakers, :manage_publications
+      get :manage_speakers, :manage_publications, :download_handout
     end
     collection do
       get :tags

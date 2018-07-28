@@ -22,6 +22,13 @@
       = @presentation.duration
 
     %p
+      Handout:
+      - if @presentation.handout.present?
+        = link_to icon('fas','download'), download_handout_presentation_url(@presentation)
+      - else
+        = tag.i('none')
+
+    %p
       Publications:
       %ul
         - if @presentation.publications.empty?

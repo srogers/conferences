@@ -15,6 +15,8 @@ class Presentation < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
+  mount_uploader :handout, DocumentUploader
+
   def speaker_names
     speakers.map{|s| s.name}.join(", ")
   end

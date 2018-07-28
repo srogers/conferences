@@ -5,11 +5,10 @@
   %td{ align: 'center' }
     - if conference.url.present?
       = link_to icon('far', 'file'), conference.url, target: '_blank'
+  %td{ align: 'center' }= icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
 
   %td{width: 130}
     - if can? :edit, conference
-      = link_to edit_conference_path(conference), :class => "btn btn-sm" do
-        = icon 'far', 'edit', class: 'fa-fw'
-        Edit
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_conference_path(conference), :class => "btn btn-sm btn-primary"
     - if can?(:destroy, conference) && conference.presentations.empty?
       = link_to icon('far', 'trash-alt', class: 'fa-fw'), conference_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

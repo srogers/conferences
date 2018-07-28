@@ -1,6 +1,6 @@
-= f.input :photo
+= f.input :photo, label: @user.photo.present? ? 'Change photo' : 'Add photo'
 - if @user.has_photo?
-  = f.input :remove_photo, as: :boolean, hint: 'Revert to default logo'
+  = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'
 = f.input :email
 = f.input :name
 = f.input :city

@@ -6,7 +6,7 @@ require 'rails/all'  # TODO - could exclude ActionCable and TestUnit here
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Concepts
+module Conferences
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

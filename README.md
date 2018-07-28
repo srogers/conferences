@@ -60,16 +60,9 @@ Background tasks are handled by Sidekiq.
 
 ## Special Gems and Configuration
 
-### D3
-
-D3 installation is handled by the d3-rails gem. D3 is otherwise ordinary, but is explicitly included in the application layout
-in the HEAD tag because it has to be defined before the BODY, rather than in the footer with the rest of the asset stack.
-The d3-rails gem packages the assets, but they don't build properly on Heroku so the assets are pulled in from the
-Cloudflare CDN in the application layout (which supports SSL). Make sure the CDN D3 version matches the d3-rails version.
-
 ### Bootstrap
 
-Bootstrap is installed via the bootstrap-sass gem.
+Bootstrap is installed via the bootstrap gem.
 
 ### Sidekiq
 
@@ -132,7 +125,14 @@ the Heroku config command, like:
 
 ### Performance Monitoring
 
-New Relic whacked - monitoring TBD. 
+New Relic removed - no replacement chosen
+
+### SSL (TLS) and Certificates
+
+The site config and DNS hosting is migrated from the old appname.herokuapp.com format to the new name.com.herokudns.com format.
+The details are explained [here](https://devcenter.heroku.com/articles/custom-domains). 
+Once paid dynos are turned on, [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management)
+can be enabled, which easily and cheaply gets the site secure. 
 
 ### Heroku Database Configuration
 
