@@ -19,4 +19,4 @@
   = simple_form_for @presentation_speaker, :html => {:autocomplete => "off", id: 'new_presentation_speaker_form'} do |ps|
     = ps.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
     = ps.input :speaker_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", width: 400, source: speakers_path(format: :json), exclude: @current_speaker_ids }, class: "select2-autocomplete" }
-    = save_or_cancel ps, presentation_path(@presentation), "Add Speaker"
+    = save_or_cancel ps, presentation_path(@presentation), "Add Speaker", "Done"
