@@ -17,6 +17,50 @@ RSpec.describe Presentation, type: :model do
     it "requires a name" do
       expect(Presentation.new(valid_attributes.merge(name: ''))).not_to be_valid
     end
+
+    context "with an associated conference" do
+
+      let(:conference) { create :conference }
+
+      it "should be valid" do
+        expect(Presentation.new(valid_attributes.merge(conference_id: conference.id))).to be_valid
+      end
+
+      context "already having a presentation of the same name" do
+
+        let!(:duplicate_presentation) { create :presentation, name: valid_attributes[:name], conference_id: conference.id }
+
+        it "can't be associated with that conference" do
+          expect { Presentation.create!(valid_attributes.merge(conference_id: conference.id)) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Conference already has a presentation with the same name.")
+        end
+      end
+    end
+  end
+
+  describe "when updating a Presentation" do
+
+    let!(:presentation) { create :presentation }
+
+    context "conference" do
+
+      let(:conference) { create :conference }
+
+      # Need to be sure the duplicate validator doesn't fail by finding itself
+      it "associates the presentation with the conference" do
+        presentation.update conference_id: conference.id
+        expect(presentation.reload.conference).to eq(conference)
+      end
+
+      # This validator is checked in both create and update because it runs differently based on id presence
+      context "with a conference having a presentation of the same name" do
+
+        let!(:duplicate_presentation) { create :presentation, name: presentation.name, conference_id: conference.id }
+
+        it "can't be associated with that conference" do
+          expect { presentation.update_attributes!(conference_id: conference.id) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Conference already has a presentation with the same name.")
+        end
+      end
+    end
   end
 
   describe "when destroying a Presentation" do
