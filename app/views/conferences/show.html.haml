@@ -42,12 +42,12 @@
 .row
   .col-md-12
     %h4 Presentations
-    - if @conference.presentations.empty?
+    - if @presentations.empty?
       %p None Yet
     - else
       %table.table
         = render :partial => "presentations/table_head"
-        = render :partial => "presentations/presentation", :collection =>  @conference.presentations
+        = render :partial => "presentations/presentation", :collection =>  @presentations
 
 .row
   .col-md-12
@@ -58,5 +58,5 @@
       - if can? :edit, @conference
         = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-primary"
       .float-right
-        - if can?(:destroy, @conference) && @conference.presentations.empty?
+        - if can?(:destroy, @conference) && @presentations.empty?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

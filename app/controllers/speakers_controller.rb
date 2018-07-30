@@ -25,6 +25,7 @@ class SpeakersController < ApplicationController
   end
 
   def show
+    @presentations = @speaker.presentations.order(:name)
   end
 
   def edit
