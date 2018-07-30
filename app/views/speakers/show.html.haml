@@ -4,13 +4,18 @@
 
 .row
   .col-md-12
+    =image_tag @speaker.photo.url, class: 'float-right', style: 'max-height: 100px'
+    %p= @speaker.description.try(:html_safe)
+
+.row
+  .col-md-12
     %h4 Presentations
-    - if @speaker.presentations.empty?
+    - if @presentations.empty?
       %p None Yet
     - else
       %table.table
         = render :partial => "presentations/table_head"
-        = render :partial => "presentations/presentation", :collection =>  @speaker.presentations
+        = render :partial => "presentations/presentation", :collection =>  @presentations
 
 .row
   .col-md-12
@@ -21,5 +26,5 @@
         - if request.referrer == new_speaker_url
           = link_to "Add Another", new_speaker_path, :class => "btn btn-primary"
       .float-right
-        - if can?(:destroy, @speaker) && @speaker.presentations.empty?
+        - if can?(:destroy, @speaker) && @presentations.empty?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

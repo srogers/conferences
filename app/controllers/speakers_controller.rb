@@ -25,6 +25,7 @@ class SpeakersController < ApplicationController
   end
 
   def show
+    @presentations = @speaker.presentations.order(:name)
   end
 
   def edit
@@ -73,6 +74,6 @@ class SpeakersController < ApplicationController
   end
 
   def speaker_params
-    params.require(:speaker).permit(:name)
+    params.require(:speaker).permit(:name, :description, :photo, :remove_photo)
   end
 end

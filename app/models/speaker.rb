@@ -13,6 +13,8 @@ class Speaker < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
+  mount_uploader :photo, PhotoUploader
+
   def update_sortable_name
     self.sortable_name = name.split(' ').last
   end

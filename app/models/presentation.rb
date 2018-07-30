@@ -9,6 +9,7 @@ class Presentation < ApplicationRecord
   has_many    :speakers, through: :presentation_speakers
 
   validates :name, presence: true
+  validate  :unique_per_conference
 
   acts_as_taggable
 
@@ -16,6 +17,18 @@ class Presentation < ApplicationRecord
   friendly_id :name, use: :slugged
 
   mount_uploader :handout, DocumentUploader
+
+  # presentations can exist with duplicate names, but presentation names must be unique within a conference
+  def unique_per_conference
+    if conference_id.present?
+      if id.present?
+        duplicate_count = Presentation.where("name = ? AND id != ? AND conference_id = ?", name, id, conference_id).length
+      else
+        duplicate_count = Presentation.where("name = ? AND conference_id = ?", name, conference_id).length
+      end
+      errors.add(:conference, "already has a presentation with the same name.") if duplicate_count > 0
+    end
+  end
 
   def speaker_names
     speakers.map{|s| s.name}.join(", ")

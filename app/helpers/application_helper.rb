@@ -93,8 +93,9 @@ module ApplicationHelper
     end
   end
 
-  def cancel_button(path)
-    link_to 'Cancel', path, :class => 'btn btn-secondary btn-sm'
+  def cancel_button(path, text='Cancel')
+    button_text = text || 'Cancel'
+    link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
   # create a submit button with a uniform look - we use a link to get around variations in browser styling of submit
@@ -104,10 +105,10 @@ module ApplicationHelper
   end
 
   # this does the same thing as the two helpers above, with a separator in between - works with FormBuilder and SimpleForm
-  def save_or_cancel(form, path, text=false)
+  def save_or_cancel(form, path, save_text=false, cancel_text=false)
     content_tag(:div, :class => 'form-actions btn-group') do
       # concatenate these, cuz it's a helper
-      cancel_button(path) + (form.class == SimpleForm::FormBuilder ? my_submit_button(form, text) :form.button(text))
+      cancel_button(path, cancel_text) + (form.class == SimpleForm::FormBuilder ? my_submit_button(form, save_text) : form.button(save_text))
     end
   end
 

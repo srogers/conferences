@@ -27,7 +27,7 @@ class ConferencesController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    # These two items are used in building the speaker autocomplete
+    @presentations = @conference.presentations.order(:name)
   end
 
   def edit
