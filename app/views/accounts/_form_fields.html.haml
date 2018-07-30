@@ -1,3 +1,6 @@
+- if @user.has_photo?
+  .float-right
+    =image_tag @user.photo.url, style: 'max-height: 100px'
 = f.input :photo, label: @user.photo.present? ? 'Change photo' : 'Add photo'
 - if @user.has_photo?
   = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'

@@ -4,6 +4,11 @@
 
 .row
   .col-md-12
+    =image_tag @speaker.photo.url, class: 'float-right', style: 'max-height: 100px'
+    %p= @speaker.description.try(:html_safe)
+
+.row
+  .col-md-12
     %h4 Presentations
     - if @presentations.empty?
       %p None Yet

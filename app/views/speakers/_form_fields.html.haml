@@ -1,4 +1,12 @@
+- if @speaker.photo.present?
+  .float-right
+    =image_tag @speaker.photo.url, style: 'max-height: 100px'
+= f.input :photo, label: @speaker.photo.present? ? 'Change photo' : 'Add photo'
+- if @speaker.photo.present?
+  = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'
 = f.input :name, :autofocus => true
 -# Let the admin see this, just in case it needs tweaking
 - if current_user.admin? && action_name == 'edit'
   = f.input :sortable_name
+= f.label :description
+= f.trix_editor :description
