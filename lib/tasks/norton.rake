@@ -50,7 +50,7 @@ namespace :db do
     # Now look at each something_id column and see if all the referenced somethings.id actually exist
     references.each do |reference|
       # Skip tables that we know we aren't concerned with
-      next if ['sessions', 'schema_migrations', 'friendly_id_slugs'].include? reference['tablez']
+      next if ['sessions', 'schema_migrations', 'friendly_id_slugs', 'taggings'].include? reference['tablez']
       # In the query, "table_schema = 'public'" skips tables that are part of the PostgreSQL system infrastructure
       # skip columns that look like foreign keys but really aren't
       next if ['resource_id', 'session_id', 'klass_id'].include? reference['columnz']
@@ -60,12 +60,10 @@ namespace :db do
 
       # do some quick and dirty handling for foreign keys that reference users with an alternate name
       #referenced_table = 'users'   if ['created_by_id'].include? reference['columnz']
-      referenced_table = 'users' if reference['columnz'] == 'creator_id'
-      referenced_table = 'users' if reference['columnz'] == 'moderator_id'
+      referenced_table = 'users' if reference['columnz'] == 'creator_id'                # we skip most of these, but get it right, then skip them individually
 
-      # skip these tables because they're too big and the data is probably OK
-      #next if ['video_provider_id'].include?(reference['tablez'])
-      #next if referenced_table == 'video_providers'  # references.video_provider_id is not a DB key, so there is no such table
+      #next if ['attribute_id'].include?(reference['tablez'])   # for cases where a table should be skipped (e.g. due to size)
+      #next if referenced_table == 'nonexistent'                # for cases where the _id suffix is coincidental and there is no corresponding table
 
       puts "Checking #{ reference['tablez'] } references to #{ referenced_table }" if @verbose
       orphans_sql = "SELECT * FROM \"#{ reference['tablez'] }\" WHERE \"#{reference['tablez']}\".#{reference['columnz']} NOT IN (SELECT id from \"#{referenced_table}\")"
@@ -86,12 +84,25 @@ namespace :db do
       end
       puts unless orphans.empty?
 
-      # Now consider the flip side of orphan records - the case where an expected child row doesn't exist. In some cases, the existence
-      # of the child row is optional. In others we expect the child record to exist - this has to be specified manually.
-      # Some tables we sort of expect a child, but we know they aren't always present. We just skip these entirely,
-      # because getting a zillion warnings that something "might" be an error is unhelpful.
-      #next if referenced_table == 'categories' and reference['tablez'] == 'votes'
-      #next if referenced_table == 'concepts' and reference['tablez'] == 'comments'
+      # Now consider the flip side of orphan records - the case where an expected child row doesn't exist. In some cases,
+      # the existence of the child row is optional. In others we expect the child record to exist - this has to be
+      # specified manually. Some tables we sort of expect a child, but we know they aren't always present.
+      # We just skip these entirely, because getting a zillion warnings that something "might" be an error is unhelpful.
+
+      #next if referenced_table == 'things' and reference['tablez'] == 'thing_owners'  # this is the general form
+
+      next if referenced_table == 'users' and reference['tablez'] == 'conference_users'          # users may have attended no conferences
+      next if referenced_table == 'conferences' and reference['tablez'] == 'conference_users'    # a conference might have no attendees in users
+      next if referenced_table == 'presentations' and reference['tablez'] == 'publications'      # a conference might have no attendees in users
+      next if referenced_table == 'speakers' and reference['tablez'] == 'presentation_speakers'  # a speaker may have no presentations yet
+      # next if referenced_table == 'organizers' and reference['tablez'] == 'conferences'         # an organizer may have no conferences - but there won't be many, so let's see these
+
+      # Skip optional relationships with foreign keys - usually this is about creator_id
+      next if referenced_table == 'users' and reference['tablez'] == 'conferences' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'presentation_speakers' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'presentations' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'publications' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'speakers' and reference['columnz'] == 'creator_id'
 
       puts "Checking #{ referenced_table } children in #{ reference['tablez'] }" if @verbose
       parent_sql = "SELECT * FROM \"#{ referenced_table }\" WHERE \"#{referenced_table}\".id NOT IN (SELECT DISTINCT #{reference['columnz']} FROM \"#{reference['tablez']}\")"
@@ -113,6 +124,40 @@ namespace :db do
     end
 
     puts
+    puts "Checking Speakers for possible duplicates . . ."
+    speakers = Speaker.all.to_ary  # This is probably OK, since speakers is relatively small
+    speakers.each do |speaker|
+      speakers.each do |candidate|
+        next if candidate.id == speaker.id  # itself, not a duplicate
+        # See if the first and last names are the same, ignoring middle names, middle initial, etc.
+        speaker_name_parts = speaker.name.split(' ').map{|s| s.downcase }
+        candidate_name_parts = candidate.name.split(' ').map{|s| s.downcase }
+        if speaker_name_parts.first + speaker_name_parts.last == candidate_name_parts.first + candidate_name_parts.last
+          puts "Speaker ID #{ speaker.id } '#{speaker.name}' looks suspiciously like ID #{ candidate.id } #{candidate.name}"
+          # don't report this one again
+          speakers.delete_at(speakers.index(candidate))
+        end
+      end
+    end
+
+    puts
+    puts "Checking Presentations for possible duplicates . . ."
+    presentations = Presentation.select("id, name").to_ary  # This is maybe OK, if the query is limited to these two items, and we're in a rake task
+    presentations.each do |presentation|
+      presentations.each do |candidate|
+        next if candidate.id == presentation.id  # itself, not a duplicate
+        # See if the names are the same when all punctuation and fluff is stripped away
+        target_name = presentation.name.delete("^a-zA-Z ").downcase
+        candidate_name = candidate.name.delete("^a-zA-Z ").downcase
+        if target_name == candidate_name
+          puts "Presentation ID #{ presentation.id } '#{presentation.name}' looks suspiciously like ID #{ candidate.id } #{candidate.name}"
+          # don't report this one again - it's possible there could be other matches, but reporting reverse matches is very cluttery
+          presentations.delete_at(presentations.index(candidate))
+        end
+      end
+    end
+
+    puts
     puts "Checking Users . . ."
     User.find_each do |user|
       puts "User ID #{user.id} #{user.email} (#{ user.role_names.join(', ') }):  #{ user.errors.full_messages }" unless user.errors.empty?
@@ -120,22 +165,11 @@ namespace :db do
       puts "User ID #{user.id} #{user.email}: is terminated but still has an active account." if user.active? && !user.approved?
     end
 
-
     puts
     puts "Checking Roles"
     category_names = Role.all.map{|c| c.name}.sort
     if category_names != Role::ROLES.sort
       puts "Database category names don't match up with Role::ROLES"
-      if @repair
-        puts "repairing . . ."
-        # This is important, so when the roles re-load, they will get the same ID
-        ActiveRecord::Base.connection.execute "TRUNCATE TABLE categories RESTART IDENTITY"
-        Rake::Task["db:seed"].reenable
-        Rake::Task["db:seed"].invoke
-        puts "repaired - re-run rake db:norton to verify"
-      else
-        puts "delete all categories in the database, then run:  rake db:seeds"
-      end
     else
       puts "roles look OK"
     end

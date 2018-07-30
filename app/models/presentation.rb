@@ -10,6 +10,7 @@ class Presentation < ApplicationRecord
 
   validates :name, presence: true
   validate  :unique_per_conference
+  # requiring a speaker at create is handled by PresentationsController
 
   acts_as_taggable
 

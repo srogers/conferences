@@ -18,6 +18,8 @@ RSpec.describe Presentation, type: :model do
       expect(Presentation.new(valid_attributes.merge(name: ''))).not_to be_valid
     end
 
+    # Requiring a speaker is managed by the controller
+
     context "with an associated conference" do
 
       let(:conference) { create :conference }

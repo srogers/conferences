@@ -63,11 +63,24 @@ class PresentationsController < ApplicationController
 
   def create
     @presentation = Presentation.new presentation_params
+    if presentation_speaker_params[:speaker_id].blank?
+      flash[:error] = "Presentations require at least one speaker"
+      render 'new' and return
+    end
+
+    speaker = Speaker.find params[:presentation_speaker][:speaker_id] rescue false
+    unless speaker
+      # Seems like this would have to be params hackery, or a bug
+      flash[:error] = "Couldn't find that speaker - contact an admin for assistance"
+      logger.warn "Presentation create got a post from user #{current_user.id} with non-existent speaker ID #{ params[:presentation_speaker][:speaker_id] }"
+      render 'new' and return
+    end
+
     @presentation.name.strip!
     @presentation.creator_id = current_user.id
     if @presentation.save
       if params[:presentation_speaker].present?
-        PresentationSpeaker.create(presentation_id: @presentation.id, speaker_id: params[:presentation_speaker][:speaker_id], creator_id: current_user.id)
+        PresentationSpeaker.create(presentation_id: @presentation.id, speaker_id: speaker.id, creator_id: current_user.id)
       end
       redirect_to presentation_path(@presentation)
     else
@@ -100,7 +113,11 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :speaker_id, :name, :description, :parts, :duration, :tag_list,
+    params.require(:presentation).permit(:conference_id, :name, :description, :parts, :duration, :tag_list,
                                          :handout, :remove_handout)
+  end
+
+  def presentation_speaker_params
+    params.require(:presentation_speaker).permit(:speaker_id)
   end
 end

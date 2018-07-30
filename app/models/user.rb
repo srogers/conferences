@@ -19,7 +19,8 @@ class User < ApplicationRecord
   mount_uploader :photo, PhotoUploader
 
   acts_as_authentic do |c|
-    c.crypto_provider = Authlogic::CryptoProviders::Sha512
+    c.transition_from_crypto_providers = [Authlogic::CryptoProviders::Sha512]
+    c.crypto_provider = Authlogic::CryptoProviders::SCrypt
 
     c.validates_uniqueness_of_email_field_options
     c.perishable_token_valid_for 2.days

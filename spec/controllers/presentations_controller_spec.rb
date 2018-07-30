@@ -4,18 +4,14 @@ RSpec.describe PresentationsController, type: :controller do
   fixtures :roles
   fixtures :settings
 
-  # This should return the minimal set of attributes required to create a valid
-  # Presentation. As you add validations to Presentation, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    { name: "Valid Presentation" }
+  let(:speaker) { create :speaker }
+
+  # The model doesn't care about presentation_speaker => speaker ID, but the controller validates it
+  let(:valid_params) {
+    HashWithIndifferentAccess.new( {presentation: { name: "Valid Presentation" }, presentation_speaker: { speaker_id: speaker.id } })
   }
 
-  let(:invalid_attributes) {
-    { name: "" }
-  }
-
-  let(:presentation) { Presentation.create! valid_attributes }
+  let(:presentation) { create :presentation }
 
   setup :activate_authlogic
 
@@ -143,65 +139,104 @@ RSpec.describe PresentationsController, type: :controller do
     context "with valid params" do
       it "creates a new Presentation" do
         expect {
-          post :create, params: {presentation: valid_attributes}
+          post :create, params: valid_params
         }.to change(Presentation, :count).by(1)
       end
 
       it "assigns a newly created presentation as @presentation" do
-        post :create, params: {presentation: valid_attributes}
+        post :create, params: valid_params
         expect(assigns(:presentation)).to be_a(Presentation)
         expect(assigns(:presentation)).to be_persisted
       end
 
       it "redirects to the created presentation" do
-        post :create, params: {presentation: valid_attributes}
+        post :create, params: valid_params
         expect(response).to redirect_to(Presentation.last)
       end
 
-      it "creates the presentation/speaker relationship"
-
-      it "requires a presentation/speaker relationship"  # TODO - this seems like a good idea
+      it "creates the presentation/speaker relationship" do
+        post :create, params: valid_params
+        presentation_speaker = PresentationSpeaker.where(presentation_id: assigns(:presentation).id, speaker_id: speaker.id).first
+        expect(presentation_speaker).to be_present
+      end
     end
 
-    context "with invalid params" do
+    context "without a speaker ID" do
+
+      let(:invalid_params) { valid_params.merge(:presentation_speaker => { :speaker_id => nil }) }
+
+      it "does not create a presentation" do
+        expect {
+          post :create, params: invalid_params
+        }.not_to change(Presentation, :count)
+      end
+
+      it "returns to the creation form" do
+        expect(post :create, params: invalid_params).to render_template("new")
+      end
+    end
+
+    context "with a speaker ID that points to nothing" do
+
+      let(:invalid_params) { valid_params.merge(:presentation_speaker => {:speaker_id => 456123789}) }
+
+      it "does not create a presentation" do
+        expect {
+          post :create, params: invalid_params
+        }.not_to change(Presentation, :count)
+      end
+
+      it "returns to the creation form" do
+        expect(post :create, params: invalid_params ).to render_template("new")
+      end
+    end
+
+    context "with invalid presentation attributes" do
+
+      let(:invalid_params) { valid_params.merge(:presentation => {:name => ''}) }
+
       it "assigns a newly created but unsaved presentation as @presentation" do
-        post :create, params: {presentation: invalid_attributes}
+        post :create, params: invalid_params
         expect(assigns(:presentation)).to be_a_new(Presentation)
       end
 
-      it "re-renders the 'new' template" do
-        post :create, params: {presentation: invalid_attributes}
+      it "returns to the creation form" do
+        post :create, params: invalid_params
         expect(response).to render_template("new")
       end
     end
   end
 
   describe "PUT #update" do
+
+    let(:update_params) { valid_params.merge(id: presentation.to_param, presentation: { name: 'Updated Title' }) } # just like create, but with an added ID
+
     context "with valid params" do
-      let(:new_attributes) {
-        { name: 'Updated Title' }
-      }
 
       it "updates the requested presentation" do
-        expect(presentation.name).to eq('Valid Presentation')
-        put :update, params: {id: presentation.to_param, presentation: new_attributes}
-        expect(assigns(:presentation).name).to eq(new_attributes[:name])
+        put :update, params: update_params
+        expect(assigns(:presentation).name).to eq(update_params[:presentation][:name])
       end
 
       it "redirects to the presentation" do
-        put :update, params: {id: presentation.to_param, presentation: valid_attributes}
+        put :update, params: update_params
         expect(response).to redirect_to(presentation)
       end
+
+      # Only presentation attributes are updated here. Speakers are updated through PresentationSpeakers controller
     end
 
-    context "with invalid params" do
+    context "with invalid presentation params" do
+
+      let(:invalid_presentation_params) { update_params.merge(:presentation => {:name => ''}) }
+
       it "assigns the presentation as @presentation" do
-        put :update, params: {id: presentation.to_param, presentation: invalid_attributes}
+        put :update, params: invalid_presentation_params
         expect(assigns(:presentation)).to eq(presentation)
       end
 
       it "re-renders the 'edit' template" do
-        put :update, params: {id: presentation.to_param, presentation: invalid_attributes}
+        put :update, params: invalid_presentation_params
         expect(response).to render_template("edit")
       end
     end
