@@ -88,6 +88,6 @@ class ConferencesController < ApplicationController
   end
 
   def conference_params
-    params.require(:conference).permit(:organizer_id, :url, :start_date, :end_date, :venue, :venue_url, :city, :state, :completed)
+    params.require(:conference).permit(:organizer_id, :url, :start_date, :end_date, :venue, :venue_url, :city, :state, :country, :completed)
   end
 end
