@@ -134,6 +134,11 @@ module ApplicationHelper
     %w(a e i o u).include?(word[0].downcase) ? "an #{word}" : "a #{word}"
   end
 
+  # shows the location and includes the long or short country name when it's not "US" - takes a User or Conference
+  def location_with_non_us_country(thing, format=:short)
+    thing.location(thing.country == 'US' ? false : format)
+  end
+
   # Format the date according to a named style; accept an alternate date separator.
   # Intended to be used by #pretty_date rather than being called directly.
   def date_format(options={})

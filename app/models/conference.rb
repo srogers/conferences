@@ -19,8 +19,21 @@ class Conference < ApplicationRecord
     errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
   end
 
-  def location
-    [city.presence, state.presence].compact.join(', ')
+  # Uses translations provided by country_select gem to convert the country_code to country name
+  def country_name
+    if country.present?
+      country_object = ISO3166::Country[country]
+      country_object.translations[I18n.locale.to_s] || country_object.name
+    else
+      "n/a"
+    end
+  end
+
+  def location(show_country=false)
+    elements = [city.presence, state.presence]
+    elements << [country_name.presence] if show_country.to_s == 'full'
+    elements << [country.presence] if show_country.to_s == 'short'
+    elements.compact.join(', ')
   end
 
   # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.

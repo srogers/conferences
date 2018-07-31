@@ -11,7 +11,7 @@
     %tr
       %th Location
       %td
-        = current_user.location
+        = location_with_non_us_country current_user, :short
 
     %tr
       %th Email
@@ -43,7 +43,7 @@
       %td List me on the Supporters page as a contributing editor
 
 
-  =link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
+  %p= link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
 
 -# Don't show users this stuff about themselves
 - if current_user.admin?

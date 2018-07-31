@@ -6,4 +6,5 @@
 = f.input :venue_url
 = f.input :city
 = f.input :state
+= f.input :country, priority: ['US'], include_blank: false
 = f.input :completed, as: :boolean, hint: "Check this when all the conference's presentations have been entered."

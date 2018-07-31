@@ -23,7 +23,7 @@
         = @conference.venue
       - if @conference.location.present?
         &mdash;
-        = @conference.location
+        = location_with_non_us_country @conference, :full
     %p
       %b Program:
       - if @conference.url.present?
