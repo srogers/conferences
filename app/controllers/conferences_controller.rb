@@ -10,7 +10,13 @@ class ConferencesController < ApplicationController
     per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:search_term].present?
       s = params[:search_term]
-      @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ?", "%#{s}%", "#{s}%", "#{s}%")
+      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
+      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
+      if s.length == 2 && States::STATES.map{|s| s[0].downcase}.include?(s.downcase)
+        @conferences = @conferences.where('conferences.state ILIKE ?', s)
+      else
+        @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ? OR conferences.city ILIKE ?", "%#{s}%", "#{s}%", "#{s}%", "#{s}%")
+      end
     elsif params[:q].present?
       # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
