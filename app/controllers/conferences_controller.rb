@@ -51,6 +51,7 @@ class ConferencesController < ApplicationController
       redirect_to conference_path(@conference)
     else
       flash[:error] = 'Your conference could not be saved.'
+      get_organizer_selections
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
       render 'new'
     end
@@ -61,6 +62,7 @@ class ConferencesController < ApplicationController
       redirect_to conference_path(@conference)
     else
       flash.now[:error] = 'Your conference could not be saved.'
+      get_organizer_selections
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
       render 'edit'
     end
