@@ -11,28 +11,45 @@ RSpec.describe Conference, type: :model do
       }
     }
 
-    it "should have a working factory" do
+    it "has a working factory" do
       expect(create :conference).to be_valid
     end
 
-    it "should be valid with valid attributes" do
+    it "is valid with valid attributes" do
       expect(Conference.new(valid_attributes)).to be_valid
     end
 
-    it "should be invalid without organizer_id" do
+    it "is invalid without organizer_id" do
       expect(Conference.new(valid_attributes.merge(organizer_id: nil))).not_to be_valid
     end
 
-    it "should be invalid without start_date" do
+    it "is invalid without start_date" do
       expect(Conference.new(valid_attributes.merge(start_date: nil))).not_to be_valid
     end
 
-    it "should be invalid without end_date" do
+    it "is invalid without end_date" do
       expect(Conference.new(valid_attributes.merge(end_date: nil))).not_to be_valid
     end
 
-    it "should be invalid if start_date comes after end_date" do
+    it "is invalid if start_date comes after end_date" do
       expect(Conference.new(valid_attributes.merge(end_date: '2005/07/01'.to_date))).not_to be_valid
+    end
+
+    context "when country is US" do
+      it "is valid with a valid state" do
+        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'TX'))).to be_valid
+      end
+
+      it "is invalid with a non-existent state" do
+        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'Typo'))).not_to be_valid
+      end
+    end
+
+    context "when country is not US" do
+      it "state can be anything, including blank" do
+        expect(Conference.new(valid_attributes.merge(country: 'Wombatistan', state: ''))).to be_valid
+        expect(Conference.new(valid_attributes.merge(country: 'Wombatistan', state: 'Plutopia'))).to be_valid
+      end
     end
   end
 

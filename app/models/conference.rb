@@ -1,5 +1,8 @@
 class Conference < ApplicationRecord
 
+  require 'states'  # seems like it shouldn't be necessary to load this explicitly, but it is
+  include States
+
   belongs_to  :organizer
   belongs_to  :creator,   class_name: "User"
 
@@ -11,12 +14,18 @@ class Conference < ApplicationRecord
 
   validates :organizer_id, :start_date, :end_date, presence: true
   validate  :starts_before_ending
+  validate  :us_state_existence
 
   extend FriendlyId
   friendly_id :name, use: :slugged
 
   def starts_before_ending
     errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
+  end
+
+  def us_state_existence
+    return true unless country == 'US'
+    errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
   end
 
   # Uses translations provided by country_select gem to convert the country_code to country name
