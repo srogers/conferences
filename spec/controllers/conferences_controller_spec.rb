@@ -4,7 +4,7 @@ RSpec.describe ConferencesController, type: :controller do
   fixtures :roles
   fixtures :settings
 
-  require_dependency Rails.root.join('app', 'lib', 'states') # shouldn't be necessary, but it seems like it is
+  require_dependency Rails.root.join('lib', 'states') # shouldn't be necessary to load this explicitly, but it is
 
   # This should return the minimal set of attributes required to create a valid
   # Conference. As you add validations to Conference, be sure to
