@@ -23,6 +23,8 @@ module ApplicationHelper
       controller_name == 'users' && action_name != 'supporters' && !(action_name == 'summary' && params[:id] == @current_user.id.to_s)
     when 'settings'
       controller_name == 'settings'
+    when 'documents'
+      controller_name == 'documents'
     when 'summary'
       controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
     when 'profile'

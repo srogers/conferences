@@ -1,0 +1,13 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= document.name
+  %td= document.format
+  %td= option_text(document)
+
+  %td= number_to_human_size document.file_size
+  %td= pretty_date document.created_at, style: :full, localize: true
+  %td= document.status
+
+  %td{width: 80}
+    = link_to_if document.complete?, icon('fas', 'file-pdf', class: 'fa-fw fa-lg') + icon('fas', 'download'), download_document_path(document), target: '_blank'
+  %td{width: 50}
+    = link_to_if (document.complete? || document.failed?), icon('far', 'trash-alt', class: 'fa-fw'), document_path(document), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

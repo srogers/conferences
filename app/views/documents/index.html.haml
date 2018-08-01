@@ -1,0 +1,26 @@
+- title 'Documents'
+
+- if current_user.try(:admin?)
+  .card.mb-4
+    .card-body
+      %h5.card-title Generate a new document
+      %p.card-text
+        = simple_form_for :document, html: { class: 'form-inline' } do |f|
+          = f.input :format, collection: Document::FORMATS, include_blank: false
+          = f.input :conferences, :as => :boolean, input_html: { class: 'ml-4' }
+          = f.input :presentations, :as => :boolean, input_html: { class: 'ml-4' }
+          = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
+
+          = button_tag  icon('fas', 'file-pdf', icon('fas', 'cogs'), class: 'fa-fw') + ' Generate', type: 'submit', class: 'btn btn-primary btn-sm ml-4'
+
+.row
+  .col-md-12
+    %h2 Generated Documents
+    - if @documents.blank?
+      %p There are no documents
+    - else
+      %table.table
+        = render :partial => "header"
+        = render :partial => "document", :collection => @documents
+
+      = paginate @documents

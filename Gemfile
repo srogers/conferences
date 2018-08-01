@@ -24,8 +24,13 @@ gem 'friendly_id'                   # manages sluggified URLs
 gem 'jbuilder', '~> 2.0'
 gem 'kaminari'                      # a more modern pagination replacement for Will Paginate
 gem 'link_thumbnailer'
+gem 'prawn'                         # for generating the PDF export
+gem 'prawn-icon'                    # provides a simple interface to FontAwesome and other icons to match online styles
+gem 'prawn-styled-text'             # supports minimal HTML in PDF generation for handling rich text fields
+gem 'prawn-table'                   # supports table layout for formatted details
 gem 'rails-assets-tether'           # enables tooltips properly in the pipeline with bootstrap-sass
 gem 'rmagick'
+gem 'rubyzip'                       # Used for zipping PDF for download
 gem 'select2-rails'                 # used for autocomplete select boxes
 gem 'sidekiq'
 gem 'sidekiq-status'
