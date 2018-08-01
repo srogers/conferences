@@ -1,5 +1,8 @@
 class Conference < ApplicationRecord
 
+  require 'states'  # seems like it shouldn't be necessary to load this explicitly, but it is
+  include States
+
   belongs_to  :organizer
   belongs_to  :creator,   class_name: "User"
 
@@ -11,6 +14,7 @@ class Conference < ApplicationRecord
 
   validates :organizer_id, :start_date, :end_date, presence: true
   validate  :starts_before_ending
+  validate  :us_state_existence
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -19,8 +23,26 @@ class Conference < ApplicationRecord
     errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
   end
 
-  def location
-    [city.presence, state.presence].compact.join(', ')
+  def us_state_existence
+    return true unless country == 'US'
+    errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
+  end
+
+  # Uses translations provided by country_select gem to convert the country_code to country name
+  def country_name
+    if country.present?
+      country_object = ISO3166::Country[country]
+      country_object.translations[I18n.locale.to_s] || country_object.name
+    else
+      "n/a"
+    end
+  end
+
+  def location(show_country=false)
+    elements = [city.presence, state.presence]
+    elements << [country_name.presence] if show_country.to_s == 'full'
+    elements << [country.presence] if show_country.to_s == 'short'
+    elements.compact.join(', ')
   end
 
   # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.

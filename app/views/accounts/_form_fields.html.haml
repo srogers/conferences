@@ -8,6 +8,7 @@
 = f.input :name
 = f.input :city
 = f.input :state
+= f.input :country, priority: ['US'], include_blank: false
 
 = f.input :time_zone, priority: /US/, default: current_user.time_zone, class: 'form-control'
 

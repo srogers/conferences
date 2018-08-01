@@ -85,8 +85,11 @@ class User < ApplicationRecord
     end
   end
 
-  def location
-    [city.presence, state.presence].compact.join(', ')
+  def location(show_country=false)
+    elements = [city.presence, state.presence]
+    elements << [country_name.presence] if show_country.to_s == 'full'
+    elements << [country.presence] if show_country.to_s == 'short'
+    elements.compact.join(', ')
   end
 
   def deliver_password_reset_instructions!
