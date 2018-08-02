@@ -7,9 +7,21 @@
       %p.card-text
         = simple_form_for :document, html: { class: 'form-inline' } do |f|
           = f.input :format, collection: Document::FORMATS, include_blank: false
-          = f.input :conferences, :as => :boolean, input_html: { class: 'ml-4' }
-          = f.input :presentations, :as => :boolean, input_html: { class: 'ml-4' }
-          = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
+          .form-group#checkbox_fields
+            = f.input :conferences, :as => :boolean, input_html: { class: 'ml-4' }
+            = f.input :presentations, :as => :boolean, input_html: { class: 'ml-4' }
+            = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
+          .form-group#radio_fields{style: 'display: none;'}
+            = content_tag :label, for: 'document_conferences_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[conferences]", id: "document_conferences_true"
+              Conferences
+            = content_tag :label, for: 'document_presentations_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[presentations]", id: "document_presentations_true"
+              Presentations
+            = content_tag :label, for: 'document_speakers_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[speakers]", id: "document_speakers_true"
+              Speakers
+
 
           = button_tag  icon('fas', 'cogs', class: 'fa-fw') + ' Generate', type: 'submit', class: 'btn btn-primary btn-sm ml-4'
 
