@@ -26,10 +26,13 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  # This is necessary because several models use URL helpers to generate URLs for CSV output
+  Rails.application.routes.default_url_options[:host] = ENV['MAIL_HOST']
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.delivery_method = ENV['USER'] == 'vagrant' ? :letter_opener_web : :letter_opener
-  config.action_mailer.default_url_options = { host: 'localhost:3001' }
+  config.action_mailer.default_url_options = { host: ENV['MAIL_HOST'] }
 
   config.action_mailer.perform_caching = false
 

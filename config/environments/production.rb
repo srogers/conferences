@@ -79,6 +79,9 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: ENV['MAIL_HOST'] }
 
+  # This is necessary because several models use URL helpers to generate URLs for CSV output
+  Rails.application.routes.default_url_options[:host] = ENV['MAIL_HOST']
+
   ActionMailer::Base.smtp_settings = {
       :address        => 'smtp.sendgrid.net',
       :port           => '587',

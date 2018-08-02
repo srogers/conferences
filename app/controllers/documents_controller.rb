@@ -24,7 +24,7 @@ class DocumentsController < ApplicationController
   end
 
   def download
-    send_data @document.attachment.read, type: 'application/pdf', disposition: 'inline', filename: "Conferences.pdf"
+    send_data @document.attachment.read, type: @document.content_type, disposition: 'inline', filename: @document.name
   end
 
   def destroy

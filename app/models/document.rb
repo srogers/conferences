@@ -6,7 +6,7 @@ class Document < ApplicationRecord
 
   mount_uploader :attachment, DocumentUploader
 
-  before_save  :initialize_status
+  before_save  :initialize_values
   before_destroy :destroy_uploader
 
   PENDING  = 'pending'
@@ -19,8 +19,10 @@ class Document < ApplicationRecord
   CSV = 'CSV'
   FORMATS = [PDF, CSV]
 
-  def initialize_status
+  def initialize_values
     self.status = PENDING
+    # Set the name based on the options - what will be in the file
+    self.name   = options.map{|k,v| k.to_s if v}.compact.join('_') + '.' + format.downcase
   end
 
   def working?
@@ -46,6 +48,10 @@ class Document < ApplicationRecord
 
   def failed!
     update_column :status, FAILED
+  end
+
+  def options
+    { conferences: conferences, presentations: presentations, speakers: speakers }
   end
 
   def destroy_uploader

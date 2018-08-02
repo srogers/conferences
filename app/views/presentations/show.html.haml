@@ -11,7 +11,7 @@
 
     %p
       Subject Area:
-      = @presentation.tag_list.empty? ? '<i>none identified</i>'.html_safe : @presentation.tag_list.map{|t| link_to t, presentations_path(tag: t)}.join(', ').html_safe
+      = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
 
     %p
       Parts:

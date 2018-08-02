@@ -8,6 +8,7 @@
   %td= document.status
 
   %td{width: 80}
-    = link_to_if document.complete?, icon('fas', 'file-pdf', class: 'fa-fw fa-lg') + icon('fas', 'download'), download_document_path(document), target: '_blank'
+    - icon_name = document.format == Document::PDF ? 'file-pdf' : 'file-alt'  # file-download would be perfect for both, but it doesn't work
+    = link_to_if document.complete?, icon('fas', icon_name, class: 'fa-fw fa-lg') + icon('fas', 'download'), download_document_path(document), target: '_blank'
   %td{width: 50}
     = link_to_if (document.complete? || document.failed?), icon('far', 'trash-alt', class: 'fa-fw'), document_path(document), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

@@ -8,6 +8,10 @@ module PresentationsHelper
     end
   end
 
+  def linked_tag_names(presentation)
+    presentation.tag_list.map{|t| link_to t, presentations_path(tag: t)}.join(', ').html_safe
+  end
+
   def clickable_speaker_list(presentation)
     speaker_links = []
     presentation.speakers.each do |speaker|
