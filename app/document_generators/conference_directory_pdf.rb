@@ -39,9 +39,34 @@ class ConferenceDirectoryPdf < Prawn::Document
 
   def conferences
     font_size 10
+    # Use #all because #find_each doesn't allow sorting.
+    Conference.all.includes(:speaker).order(:name).each do |conference|
+      start_new_page
+      text "<link href='#{ conference_url(conference) }'>#{ conference.name }</link>", size: 14, style: :bold, :inline_format => true
+      text conference.date_span
+      text conference.location
+
+      move_down 3
+      text "Description", style: :bold
+      move_down 3
+      styled_text clean_rich_text conference.description
+
+      move_down 5  # a little extra pretty space
+    end
+  end
+
+  def presentations
+    font_size 10
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     start_new_page
-    text "conferences go here"
+    text "presentations go here"
+  end
+
+  def speakers
+    font_size 10
+    # Use #all because #find_each doesn't allow sorting.
+    start_new_page
+    text "speakers go here"
   end
 
   def numbering
@@ -63,7 +88,9 @@ class ConferenceDirectoryPdf < Prawn::Document
     # Generate the document according to the specified options
 
     cover_page
-    conferences
+    conferences   if options[:conferences]
+    presentations if options[:presentations]
+    speakers      if options[:speakers]
     numbering
   end
 end
