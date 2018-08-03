@@ -75,8 +75,8 @@ class ConferenceDirectoryPdf < Prawn::Document
     Speaker.order(:name).each do |speaker|
 
       # Get the speaker image or default icon - development keeps these in the local filesystem, so the URL is a local file path.
-      # In production, the url method returns a URL into S3.
-      if Rails.env.development?
+      # In production, the url method for photos returns a URL into S3, but a path for the default icon
+      if Rails.env.development? || !speaker.has_photo?
         image_url = "http://#{ENV['MAIL_HOST']}" + speaker.photo.url # the default icon returns a path - make it a URL
       else
         image_url = speaker.photo.url
