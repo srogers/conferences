@@ -6,7 +6,7 @@ class PresentationsController < ApplicationController
 
   def index
     # This handles the presentation autocomplete
-    @presentations = Presentation.order(:name).includes(:publications, :speakers, :conference => :organizer)
+    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.name')
     per_page = params[:per] || 15 # autocomplete specifies :per
     # TODO - what uses autocomplete for presentations?
     if params[:q].present?
