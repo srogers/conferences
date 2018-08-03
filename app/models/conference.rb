@@ -84,6 +84,37 @@ class Conference < ApplicationRecord
     return start_text + end_text
   end
 
+  def url
+    Rails.application.routes.url_helpers.conference_url(self)
+  end
+
+  def has_program?
+    program_url.present?
+  end
+
+  # Hash of human-friendly CSV column names and the methods that get the data
+  TITLES_AND_METHODS = {
+      'Name'        => :name,
+      'Start'       => :start_date,
+      'End'         => :end_date,
+      'Venue'       => :venue,
+      'City'        => :city,
+      'State'       => :state,
+      'Country'     => :country,
+      'Completed'   => :completed,
+      'Program'     => :has_program?,
+      'URL'         => :url
+  }
+
+  # DocumentWorker uses this to get the header for generated CSV output
+  def self.csv_header
+    TITLES_AND_METHODS.keys
+  end
+
+  def csv_row
+    TITLES_AND_METHODS.values.map{|v| self.send(v)}
+  end
+
   private
 
   # This is necessary because there isn't currently a place for events to have a distinct name, and this is confusing

@@ -37,10 +37,10 @@ class DocumentWorker
     begin
       temp_file = Tempfile.new(['document', '.csv'])
 
-      class_name = 'presentations' # TODO - something extracted from options
+      class_name = document.options.map{|k,v| k.to_s if v}.compact.first # for CSV, there can be only one
       klass = class_name.classify.safe_constantize
 
-      # To make this work, implement Class method #csv_header and instance method #to_csv on conference, presentation, and speaker.
+      # To make this work, implement Class method #csv_header and instance method #csv_row on conference, presentation, and speaker.
       CSV.open(temp_file.path, "wb") do |csv|
         csv << klass.csv_header
         # find_each doesn't support sorting, but it's a CSV, so sort it yourself in the spreadsheet.

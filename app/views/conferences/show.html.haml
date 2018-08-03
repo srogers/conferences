@@ -26,8 +26,8 @@
         = location_with_non_us_country @conference, :full
     %p
       %b Program:
-      - if @conference.url.present?
-        = link_to icon('far', 'file', class: 'fa-fw'), @conference.url, target: '_blank'
+      - if @conference.program_url.present?
+        = link_to icon('far', 'file', class: 'fa-fw'), @conference.program_url, target: '_blank'
       - else
         %i none
     %p
