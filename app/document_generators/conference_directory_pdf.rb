@@ -39,6 +39,42 @@ class ConferenceDirectoryPdf < Prawn::Document
     return speaker_links.join(', ').html_safe
   end
 
+  # TODO - seems like this should work with icons, but it doesn't
+  # Get a letter for each icon type, since multiple icons stacked in a cell doesn't seem to work.
+  def linked_format_icons(presentation)
+    icon_list = []
+    presentation.publications.each do |publication|
+      icon_name = case publication.format
+        # Put the tooltip directly on the icons that are unlikely to have links - TODO - enforce which does and doesn't get a link
+      when Publication::TAPE then
+        "T"
+      when Publication::CD then
+        "CD"
+      when Publication::VHS then
+        "VHS"
+      when Publication::DISK then
+        "DVD"
+      when Publication::CAMPUS then
+        "C"
+      when Publication::YOUTUBE then
+        "YT"
+      when Publication::PODCAST then
+        "P"
+      when Publication::ONLINE then
+        "D"
+      when Publication::ESTORE then
+        "E"
+      else
+        "?" # This means something was added to Publication FORMATS but not included here
+      end
+
+      link_text = publication.url.present? ? "<link href='#{ publication.url }'>#{ icon_name }</link>" : icon_name  # individual publications may or may not be links
+      icon_list << link_text
+    end
+
+    return icon_list.join(' ')
+  end
+
   def cover_page
     move_down 100
     text "Objectivist Conferences", size: 42, style: :bold, align: :center
@@ -75,7 +111,7 @@ class ConferenceDirectoryPdf < Prawn::Document
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
         linked_speaker_names(presentation),
         presentation.conference.present? ? "<link href='#{ conference_url(presentation.conference) }'>#{ presentation.conference_name }</link>" : presentation.conference_name,
-        presentation.formats
+        linked_format_icons(presentation)
       ]
     end
     table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
