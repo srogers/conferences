@@ -1,11 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Conference, type: :model do
+
+  let(:organizer) { create :organizer }
+
   describe "when creating a conference" do
 
     let(:valid_attributes) {
       {
-        :organizer_id => 1,
+        :name         => 'The Testing Conference',
+        :organizer_id => organizer.id,
         :start_date   => '2005/07/15'.to_date,
         :end_date     => '2005/07/23'.to_date
       }
@@ -35,6 +39,23 @@ RSpec.describe Conference, type: :model do
       expect(Conference.new(valid_attributes.merge(end_date: '2005/07/01'.to_date))).not_to be_valid
     end
 
+    it "uses the provided name in params" do
+      conference = Conference.new(valid_attributes)
+      conference.save!
+      expect(conference.name).to eq('The Testing Conference')
+    end
+
+    context "when a name is not provided" do
+      before do
+        @conference = Conference.new(valid_attributes.merge(name: nil))
+        @conference.save!
+      end
+
+      it "takes name from the organizer's series and the start date" do
+        expect(@conference.name).to eq('OC 2005')
+      end
+    end
+
     context "when country is US" do
       it "is valid with a valid state" do
         expect(Conference.new(valid_attributes.merge(country: 'US', state: 'TX'))).to be_valid
@@ -51,6 +72,24 @@ RSpec.describe Conference, type: :model do
         expect(Conference.new(valid_attributes.merge(country: 'Wombatistan', state: 'Plutopia'))).to be_valid
       end
     end
+  end
+
+  describe "when updating a conference" do
+
+    let(:conference) { create :conference, organizer_id: organizer.id }
+
+    it "uses the provided name in params" do
+      conference.update(name: 'Updated Conference Name')
+      expect(conference.name).to eq('Updated Conference Name')
+    end
+
+    context "when a name is not provided" do
+      it "takes name from the organizer's series and the start date" do
+        conference.update(name: '')
+        expect(conference.name).to eq('OC 2005')
+      end
+    end
+
   end
 
   describe "when destroying a conference" do

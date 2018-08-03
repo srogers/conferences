@@ -12,9 +12,11 @@ class Conference < ApplicationRecord
   has_many :conference_users,                   :dependent => :destroy
   has_many :users, through: :conference_users
 
-  validates :organizer_id, :start_date, :end_date, presence: true
+  validates :name, :organizer_id, :start_date, :end_date, presence: true
   validate  :starts_before_ending
   validate  :us_state_existence
+
+  before_validation :set_default_name
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -26,6 +28,12 @@ class Conference < ApplicationRecord
   def us_state_existence
     return true unless country == 'US'
     errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
+  end
+
+  def set_default_name
+    # Usually an adequate name - like "OCON 2015" or "TOS-CON 2018", but not great for special events.
+    # When the default name is not great, the user just has to change it.
+    self.name = "#{organizer&.abbreviation} #{start_date&.year}" if name.blank?
   end
 
   # Uses translations provided by country_select gem to convert the country_code to country name
@@ -43,29 +51,6 @@ class Conference < ApplicationRecord
     elements << [country_name.presence] if show_country.to_s == 'full'
     elements << [country.presence] if show_country.to_s == 'short'
     elements.compact.join(', ')
-  end
-
-  # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.
-  # TODO - this is part of the overall jankyness of special events - to work, organizer.series_name has to be cleverly selected.
-  def short_name
-    if special_event?
-      "#{ organizer.series_name.singularize }"
-    else
-      name
-    end
-  end
-
-  # Returns the minimum clearly distinct name for the conference.
-  # This is used by presentations/new when picking a conference from scratch, as well as pre-populating the field.
-  # All values have to be treated as possibly nil, because FriendlyId can call the name method at unexpected times.
-  def name
-    if special_event?
-      # returns something like: "Special Event, Sep 12, 2006 - Irvine, CA"
-      fully_qualified_name
-    else
-      # Usually an adequate name - like "OCON 2015" or "TOS-CON 2018", but not great for special events
-      "#{organizer&.abbreviation} #{start_date&.year}"
-    end
   end
 
   # This is referenced by itself in conference/index, so it isn't private
