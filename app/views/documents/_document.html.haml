@@ -1,7 +1,5 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= document.name
-  %td= document.format
-  %td= option_text(document)
 
   %td= number_to_human_size document.file_size
   %td= pretty_date document.created_at, style: :full, localize: true
