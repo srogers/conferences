@@ -38,9 +38,11 @@ class ConferenceDirectoryPdf < Prawn::Document
   end
 
   def conferences
-    font_size 10
-    # Use #all because #find_each doesn't allow sorting.
     start_new_page
+    text "Conferences", size: 14, style: :bold
+    font_size 10
+
+    # Use #all because #find_each doesn't allow sorting.
     table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
     Conference.all.order('start_date DESC').each do |conference|
       table_data << [
@@ -53,9 +55,11 @@ class ConferenceDirectoryPdf < Prawn::Document
   end
 
   def presentations
-    font_size 10
-    # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     start_new_page
+    text "Presentations", size: 14, style: :bold
+    font_size 10
+
+    # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Formats</strong>']]
     Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.name').each do |presentation|
       table_data << [
@@ -69,9 +73,10 @@ class ConferenceDirectoryPdf < Prawn::Document
   end
 
   def speakers
-    font_size 10
-
     start_new_page
+    font_size 10
+    text "Speakers", size: 14, style: :bold
+
     Speaker.order(:name).each do |speaker|
 
       # Get the speaker image or default icon - development keeps these in the local filesystem, so the URL is a local file path.
