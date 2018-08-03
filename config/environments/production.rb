@@ -32,7 +32,7 @@ Rails.application.configure do
   # Setting this to true is required to get image assets to be served.
   # But Heroku/StackOverflow says not to set this to true - maybe no longer necessary?
   # https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
-  config.assets.compile = true
+  # config.assets.compile = true
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
