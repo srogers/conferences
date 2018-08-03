@@ -30,6 +30,15 @@ class ConferenceDirectoryPdf < Prawn::Document
     text.gsub('<p>','').gsub('</p>','').gsub('<blockquote>','<p style="margin-left: 10">').gsub('</blockquote>','</p>').gsub('<br><br>','<br>')
   end
 
+  # set up links to the speakers in the format Prawn wants, which is different from an HTML link.
+  def linked_speaker_names(presentation)
+    speaker_links = []
+    presentation.speakers.each do |speaker|
+      speaker_links <<  "<link href='#{speaker_path(speaker)}'>#{ speaker.name }</link>"
+    end
+    return speaker_links.join(', ').html_safe
+  end
+
   def cover_page
     move_down 100
     text "Objectivist Conferences", size: 42, style: :bold, align: :center
@@ -60,12 +69,12 @@ class ConferenceDirectoryPdf < Prawn::Document
     font_size 10
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
-    table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Formats</strong>']]
+    table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Links</strong>']]
     Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.name').each do |presentation|
       table_data << [
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
-        presentation.speaker_names,
-        presentation.conference_name,
+        linked_speaker_names(presentation),
+        presentation.conference.present? ? "<link href='#{ conference_url(presentation.conference) }'>#{ presentation.conference_name }</link>" : presentation.conference_name,
         presentation.formats
       ]
     end
@@ -109,7 +118,7 @@ class ConferenceDirectoryPdf < Prawn::Document
       details = [ActionView::Base.full_sanitizer.sanitize(speaker.description)]  # TODO - get styled text here
 
       top = cursor
-      speaker_name_text = "<strong>#{ speaker.name }</strong>" # build the string with format here so we measure and output the same text height
+      speaker_name_text = "<strong><link href='#{ speaker_url(speaker) }'>#{ speaker.name }</link></strong>" # build the string with format here so we measure and output the same text height
       begin
         # Get the height of the description text
         box = Prawn::Text::Box.new details.join("\n\n"), { at: [70, top], width: 450, inline_format: true, document: self }
