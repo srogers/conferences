@@ -1,10 +1,10 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(conference.short_name, length: 40), conference_path(conference))
+  %td= link_to(truncate(conference.name, length: 40), conference_path(conference))
   %td= conference.date_span
   %td= location_with_non_us_country conference, :short
   %td{ align: 'center' }
-    - if conference.url.present?
-      = link_to icon('far', 'file'), conference.url, target: '_blank'
+    - if conference.program_url.present?
+      = link_to icon('far', 'file'), conference.program_url, target: '_blank'
   %td{ align: 'center' }= icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
 
   %td{width: 130}

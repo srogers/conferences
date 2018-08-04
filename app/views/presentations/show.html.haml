@@ -11,7 +11,7 @@
 
     %p
       Subject Area:
-      = @presentation.tag_list.empty? ? '<i>none identified</i>'.html_safe : @presentation.tag_list.map{|t| link_to t, presentations_path(tag: t)}.join(', ').html_safe
+      = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
 
     %p
       Parts:
@@ -48,7 +48,7 @@
         = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
           = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
-          = f.submit 'Add'
+          = f.submit 'Associate', class: 'btn btn-primary btn-sm'
 
 .row
   .col-md-12

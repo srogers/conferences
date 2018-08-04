@@ -6,7 +6,7 @@
     %td
       - if presentation.conference.present?
         = link_to presentation.conference_name, conference_path(presentation.conference)
-  %td= presentation.formats
+  %td= linked_format_icons(presentation)
 
   %td{width: 150}
     - if can? :edit, presentation

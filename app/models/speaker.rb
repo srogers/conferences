@@ -18,4 +18,35 @@ class Speaker < ApplicationRecord
   def update_sortable_name
     self.sortable_name = name.split(' ').last
   end
+
+  # Gives the description with any HTML tags stripped out
+  def clean_description
+    ActionView::Base.full_sanitizer.sanitize(description)
+  end
+
+  def has_photo?
+    photo.present?
+  end
+
+  def url
+    Rails.application.routes.url_helpers.speaker_url(self)
+  end
+
+  # Hash of human-friendly CSV column names and the methods that get the data
+  TITLES_AND_METHODS = {
+      'Name'        => :name,
+      'Sort Name'   => :sortable_name,
+      'Photo'       => :has_photo?,
+      'URL'         => :url,
+      'Description' => :clean_description
+  }
+
+  # DocumentWorker uses this to get the header for generated CSV output
+  def self.csv_header
+    TITLES_AND_METHODS.keys
+  end
+
+  def csv_row
+    TITLES_AND_METHODS.values.map{|v| self.send(v)}
+  end
 end

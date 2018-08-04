@@ -6,17 +6,17 @@ class PresentationsController < ApplicationController
 
   def index
     # This handles the presentation autocomplete
-    @presentations = Presentation.order(:name).includes(:publications, :speakers, :conference => :organizer)
+    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.name')
     per_page = params[:per] || 15 # autocomplete specifies :per
     # TODO - what uses autocomplete for presentations?
     if params[:q].present?
-      @presentations = @presentations.where("name ILIKE ? OR name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
     elsif params[:search_term].present? || params[:tag].present?
       # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
       # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
       term = params[:search_term] || params[:tag]
       presentations_by_tag  = @presentations.tagged_with(term)
-      presentations_by_name = @presentations.where("name ILIKE ?", "%#{term}%")
+      presentations_by_name = @presentations.where("presentations.name ILIKE ?", "%#{term}%")
       @presentations = presentations_by_tag + (presentations_by_name - presentations_by_tag)
     end
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)

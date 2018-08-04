@@ -32,7 +32,7 @@ Rails.application.configure do
   # Setting this to true is required to get image assets to be served.
   # But Heroku/StackOverflow says not to set this to true - maybe no longer necessary?
   # https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
-  config.assets.compile = true
+  # config.assets.compile = true
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
@@ -78,6 +78,9 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.default_url_options = { host: ENV['MAIL_HOST'] }
+
+  # This is necessary because several models use URL helpers to generate URLs for CSV output
+  Rails.application.routes.default_url_options[:host] = ENV['MAIL_HOST']
 
   ActionMailer::Base.smtp_settings = {
       :address        => 'smtp.sendgrid.net',

@@ -17,6 +17,11 @@ Rails.application.routes.draw do
   resources :conferences
   resources :presentation_speakers, only: [:index, :create, :destroy]
   resources :conference_users, only: [:index, :create, :destroy]
+  resources :documents do
+    member do
+      get :download
+    end
+  end
   resources :presentations do
     member do
       get :manage_speakers, :manage_publications, :download_handout

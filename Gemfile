@@ -18,14 +18,20 @@ gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x i
 gem 'cancancan'
 gem 'carrierwave'
 gem 'country_select'                # provides country selector that works with simple_form (country_state_select looks good, but isn't up to Rails 5, and requires Turbolinks)
+gem 'fastimage'                     # for finding the size of reference images to calculate the height for layout
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
 gem "font-awesome-sass", '~> 5.0'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
 gem 'friendly_id'                   # manages sluggified URLs
 gem 'jbuilder', '~> 2.0'
 gem 'kaminari'                      # a more modern pagination replacement for Will Paginate
 gem 'link_thumbnailer'
+gem 'prawn'                         # for generating the PDF export
+gem 'prawn-icon'                    # provides a simple interface to FontAwesome and other icons to match online styles
+gem 'prawn-styled-text'             # supports minimal HTML in PDF generation for handling rich text fields
+gem 'prawn-table'                   # supports table layout for formatted details
 gem 'rails-assets-tether'           # enables tooltips properly in the pipeline with bootstrap-sass
 gem 'rmagick'
+gem 'rubyzip'                       # Used for zipping PDF for download
 gem 'select2-rails'                 # used for autocomplete select boxes
 gem 'sidekiq'
 gem 'sidekiq-status'

@@ -88,14 +88,7 @@ class ConferencesController < ApplicationController
     @organizer_selections = Organizer.all.order(:name).map{|o| ["#{o.name} - #{o.series_name}", o.id]}
   end
 
-  # Gets either the simple name (OCON 2016) or the fully qualified name for special events.
-  # This is necessary because special event names aren't distinct, so picking them in presentation/create from
-  # autocomplete is confusing when there is more than one special event in the same year.
-  def qualified_name(conference)
-    conference.special_event? ? ApplicationController.helpers.fully_qualified_name(conference) : conference.name
-  end
-
   def conference_params
-    params.require(:conference).permit(:organizer_id, :url, :start_date, :end_date, :venue, :venue_url, :city, :state, :country, :completed)
+    params.require(:conference).permit(:name, :organizer_id, :program_url, :start_date, :end_date, :venue, :venue_url, :city, :state, :country, :completed)
   end
 end

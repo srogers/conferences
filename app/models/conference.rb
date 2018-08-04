@@ -12,9 +12,11 @@ class Conference < ApplicationRecord
   has_many :conference_users,                   :dependent => :destroy
   has_many :users, through: :conference_users
 
-  validates :organizer_id, :start_date, :end_date, presence: true
+  validates :name, :organizer_id, :start_date, :end_date, presence: true
   validate  :starts_before_ending
   validate  :us_state_existence
+
+  before_validation :set_default_name
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -26,6 +28,12 @@ class Conference < ApplicationRecord
   def us_state_existence
     return true unless country == 'US'
     errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
+  end
+
+  def set_default_name
+    # Usually an adequate name - like "OCON 2015" or "TOS-CON 2018", but not great for special events.
+    # When the default name is not great, the user just has to change it.
+    self.name = "#{organizer&.abbreviation} #{start_date&.year}" if name.blank?
   end
 
   # Uses translations provided by country_select gem to convert the country_code to country name
@@ -45,29 +53,6 @@ class Conference < ApplicationRecord
     elements.compact.join(', ')
   end
 
-  # Currently only conference/index uses this because the date/city is shown with the name, making fully_qualified_name redundant.
-  # TODO - this is part of the overall jankyness of special events - to work, organizer.series_name has to be cleverly selected.
-  def short_name
-    if special_event?
-      "#{ organizer.series_name.singularize }"
-    else
-      name
-    end
-  end
-
-  # Returns the minimum clearly distinct name for the conference.
-  # This is used by presentations/new when picking a conference from scratch, as well as pre-populating the field.
-  # All values have to be treated as possibly nil, because FriendlyId can call the name method at unexpected times.
-  def name
-    if special_event?
-      # returns something like: "Special Event, Sep 12, 2006 - Irvine, CA"
-      fully_qualified_name
-    else
-      # Usually an adequate name - like "OCON 2015" or "TOS-CON 2018", but not great for special events
-      "#{organizer&.abbreviation} #{start_date&.year}"
-    end
-  end
-
   # This is referenced by itself in conference/index, so it isn't private
   def date_span
     # Using pretty_date here to avoid having to deal with strftime or build a lookup table for month names
@@ -82,6 +67,37 @@ class Conference < ApplicationRecord
       end_text = "-" + end_text
     end
     return start_text + end_text
+  end
+
+  def url
+    Rails.application.routes.url_helpers.conference_url(self)
+  end
+
+  def has_program?
+    program_url.present?
+  end
+
+  # Hash of human-friendly CSV column names and the methods that get the data
+  TITLES_AND_METHODS = {
+      'Name'        => :name,
+      'Start'       => :start_date,
+      'End'         => :end_date,
+      'Venue'       => :venue,
+      'City'        => :city,
+      'State'       => :state,
+      'Country'     => :country,
+      'Completed'   => :completed,
+      'Program'     => :has_program?,
+      'URL'         => :url
+  }
+
+  # DocumentWorker uses this to get the header for generated CSV output
+  def self.csv_header
+    TITLES_AND_METHODS.keys
+  end
+
+  def csv_row
+    TITLES_AND_METHODS.values.map{|v| self.send(v)}
   end
 
   private

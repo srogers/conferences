@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_31_161405) do
+ActiveRecord::Schema.define(version: 2018_08_03_144942) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,12 +37,28 @@ ActiveRecord::Schema.define(version: 2018_07_31_161405) do
     t.bigint "creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "url"
+    t.string "program_url"
     t.string "slug"
     t.boolean "completed", default: false
     t.string "country"
+    t.string "name"
     t.index ["creator_id"], name: "index_conferences_on_creator_id"
     t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.string "name"
+    t.integer "creator_id"
+    t.string "format"
+    t.boolean "conferences"
+    t.boolean "presentations"
+    t.boolean "speakers"
+    t.string "status"
+    t.string "attachment"
+    t.string "content_type"
+    t.string "file_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "friendly_id_slugs", id: :serial, force: :cascade do |t|
