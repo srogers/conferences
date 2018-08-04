@@ -5,40 +5,75 @@
     %h2 Guidelines
     %p
       There are many options in terms of how to enter the conference info, and how to tag it. Following these guidelines will
-      help keep the data consistent. Guidelines will evolve over time.
+      help keep the data consistent. Guidelines will evolve over time. Feel free to make suggestions.
 
     %h4 Conferences
-    %p
-      if you add a conference, you'll pick an organizer. This denotes the sponsoring organization, as well as a conference
-      series. For example, ARI hosts a student conference AynRandCon, as well as a general summer conference OCON, plus
-      occasional special events. Organizers are not expected to change very often. If you discover a new organizer, contact
-      the admin.
-
     %ul
+      %li
+        When you add a conference, you'll pick an organizer. This denotes the sponsoring organization, as well as a conference
+        series. For example, ARI hosts a student conference AynRandCon, as well as a general summer conference OCON, plus
+        occasional special events. Organizers are not expected to change very often. If you discover a new organizer, contact
+        the admin.
       %li
         What is a conference? So far, it is limited to events with a physical location that generate media which might be
         recorded. Pure telepresence events are not included.
+      %li
+        Conferences are given a name automatically based on the year and organizer, like OCON 2015, or Lyceum 1995.
+        This works well for the major conferences, but not as well for special events. In that case, you may need to
+        change the name - for example, see the
+        = link_to "ARI Ford Hall Forum Event", "https://objectivistconferences.info/conferences/ari-special-event-oct-20-22-2006-boston-ma"
+        in 2006. Use the program event name if available. Otherwise, pick something that is meaningful in the context of the conference listing.
+      %li
+        We think we have all the major conferences, but there are certainly many weekend events that are missing. It is
+        unclear how many of these we can discover, and how far down this road we want to go. So far, the approach has been
+        to capture everything, particularly if it generated media. For example, the
+        =link_to "ARI Special Event", "http://localhost:3001/conferences/ari-special-event-sep-12-2006-irvine-ca"
+        at Irvine in 2006 was not really a conference. It was just a one-time speech. But it was recorded, it exists on
+        YouTube, and it was a month before the Ford Hall Forum event on the same topic. So it is meaningful from a
+        historical perspective.
 
     %h4 Speakers
     %ul
       %li
         Try to create the speaker only once. Watch out for variations with and without the middle initial.
+      %li
+        If you're entering data from an old conference and find it necessary to create many new speakers, you can simply
+        keep the Speaker Add page open in a different browser window to save time.
 
     %h4 Presentations
     %ul
       %li
-        You don't have to know the Conference a presentation was created at in order to add it. It's better if you do know it,
-        so the presentation isn't duplicated later.
-    %ul
+        What is a presentation? Generally, it's a conference event with a speaker or a panel. It may be in a workshop
+        format with audience participation. But it doesn't include things like receptions, social events, talent contests, etc.
+        The social aspects of the conference will be documented in other ways.
+      %li
+        If you just know the presentation name and speaker, but not the conference (e.g., an old tape or CD, or an e-store listing)
+        you can still enter it. Eventually we'll figure it out.
+      %li
+        The OCON schedule puts "Panel:" and "Lunch:" qualifiers on some session names. We're not including that in the title.
+        So the listing in the OCON schedule as "Panel: Transforming Burnout with Selfishness" is just "
+        =link_to "Transforming Burnout With Selfishness", "https://objectivistconferences.info/presentations/transforming-burnout-with-selfishness"
+        " in the presentation listing.
       %li
         Sometimes a presentation is listed as a single event on the schedule, but media is released in multiple parts - typically
-        for a multi-speaker panel. In this case, create one presentation per the schedule, and attach multiple presentations to it.
+        for a multi-speaker panel. In this case, create one presentation as it appears the schedule, and attach multiple publications to it.
         For example, see
-        %i= link_to "Free Will, Free Speech, Free Borders, Freedom in the Middle East", 'http://objectivistconferences.info/presentations/123'
-    %ul
+        %i= link_to "Free Will, Free Speech, Free Borders, Freedom in the Middle East", 'http://objectivistconferences.info/presentations/free-will-free-speech-free-borders-freedom-in-the-middle-east'
+      %li
+        Courses spanning multiple days are listed as a single presentation with the parts in the description, as in
+        =link_to "The Foundations of Knowledge.", "https://objectivistconferences.info/presentations/the-foundations-of-knowledge"
+        This is tedious, but from the perspective of the site being an index into the media, it should be helpful for
+        people who are shopping for presentations to hear (vs. browsing with curiosity about history).
       %li
         Each delivery of a presentation is considered distinct, even if the name is the same, and the content is substantially
-        the same. Each presentation may still have its own recorded media.
+        the same. Each presentation may still have its own recorded media, and a unique Q&A. For example, see:
+        %ul
+          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "https://objectivistconferences.info/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail"
+          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "https://objectivistconferences.info/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail-c02a07d6-7062-47e1-8251-73f4fb8f6912"
+      %li
+        The ARI schedules from 2014 forward include JavaScript to show/hide descriptions which makes them difficult to copy.
+        To get around that, open the schedule in a different browser and turn JavaScript off in the browser preferences.
+        Then then text will behave normally. You have to re-enable it to navigate between days though.
 
     %h5 Presentation Subject Areas
     %p
@@ -50,17 +85,19 @@
     %p
       Tags are designed to avoid creating a pre-defined list of categories and then assigning items to a category. Tags
       are flexible, so we don't have to imagine all the possible categories in advance. But that flexibility can result in
-      the tags becoming overly complex over time. Try to use existing tags when possible (
-      = link_to "Subject Areas", tags_presentations_path
-      ) rather than adding a slightly different tag. A small number of broad tags is more useful than many tags with
+      the tags becoming overly complex over time. Try to use
+      = link_to "existing tags", tags_presentations_path
+      when possible rather than adding a slightly different tag. A small number of broad tags is more useful than many tags with
       one or two presentations assigned to each one.
     %ul
       %li
         Try to come up with one or perhaps two tags that capture the presentation's topic at the highest level.
-    %ul
       %li
         Don't add words in the title as tags.  For example, a talk titled "Epistemology in Objectivism"  will already be
         searchable by "objectivism" and "epistemology", so it isn't necessary to add that information as tags.
-    %ul
       %li
         Use topic/category style tags, like history, psychology, etc. Not adjective-style like: historical, psychological.
+      %li
+        You can see the existing tags on the Presentations page, under the
+        = link_to "Subject Areas", "https://objectivistconferences.info/presentations/tags"
+        button.

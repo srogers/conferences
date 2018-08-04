@@ -56,7 +56,7 @@
       = link_to "Done", @presentation.conference_id.present? ? conference_path(@presentation.conference.to_param) : presentations_path, :class => "btn btn-secondary"
       - if can? :edit, @presentation
         = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-primary"
-        - if request.referrer.split('?').first == new_presentation_url # ignore any trailing params
+        - if request&.referrer&.split('?')&.first == new_presentation_url # ignore any trailing params
           = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-primary"
         = link_to "Manage Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-primary"
         = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary"
