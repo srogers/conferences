@@ -13,6 +13,7 @@ RSpec.describe ConferencesController, type: :controller do
 
   let(:valid_attributes) {
     {
+      name:         'Test Conference',
       organizer_id: organizer.id,
       start_date:   '2005/07/15'.to_date,
       end_date:     '2005/07/23'.to_date
@@ -49,13 +50,13 @@ RSpec.describe ConferencesController, type: :controller do
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "finds conferences with organizer series matching" do
-        get :index, params:{ search_term: 'confe' }
+      it "finds conferences with conference name matching" do
+        get :index, params:{ search_term: 'Test Conference' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "finds conferences with organizer abbbreviation matching" do
-        get :index, params:{ search_term: 'OC' }
+      it "finds conferences with organizer name matching" do
+        get :index, params:{ search_term: 'Organiza' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
