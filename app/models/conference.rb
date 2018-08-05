@@ -17,6 +17,7 @@ class Conference < ApplicationRecord
   validate  :us_state_existence
 
   before_validation :set_default_name
+  before_save       :update_default_name
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -33,7 +34,19 @@ class Conference < ApplicationRecord
   def set_default_name
     # Usually an adequate name - like "OCON 2015" or "TOS-CON 2018", but not great for special events.
     # When the default name is not great, the user just has to change it.
-    self.name = "#{organizer&.abbreviation} #{start_date&.year}" if name.blank?
+    self.name = default_name(organizer) if name.blank?
+  end
+
+  # reset the default name if the conference is using the default name, but leave it alone if it has been manually modified
+  def update_default_name
+    if will_save_change_to_organizer_id?
+      previous_organizer = Organizer.where(abbreviation: name.split(" ").first).first
+      old_default_name = default_name(previous_organizer)
+      use_default = name == old_default_name
+    else
+      use_default = name.blank?
+    end
+    self.name = default_name(organizer) if use_default
   end
 
   # Uses translations provided by country_select gem to convert the country_code to country name
@@ -101,6 +114,11 @@ class Conference < ApplicationRecord
   end
 
   private
+
+  # Get the default name for a given organizer, which may not be the current one
+  def default_name(an_organizer)
+    "#{an_organizer&.abbreviation} #{start_date&.year}"
+  end
 
   # This is necessary because there isn't currently a place for events to have a distinct name, and this is confusing
   # when selecting the conference from autocomplete in presentation/create.

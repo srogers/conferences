@@ -15,7 +15,7 @@ class ConferencesController < ApplicationController
       if s.length == 2 && States::STATES.map{|s| s[0].downcase}.include?(s.downcase)
         @conferences = @conferences.where('conferences.state ILIKE ?', s)
       else
-        @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.series_name ILIKE ? OR organizers.abbreviation ILIKE ? OR conferences.city ILIKE ?", "%#{s}%", "#{s}%", "#{s}%", "#{s}%")
+        @conferences = @conferences.where("organizers.name ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "%#{s}%", "#{s}%", "%#{s}%")
       end
     elsif params[:q].present?
       # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.

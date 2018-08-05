@@ -16,6 +16,9 @@
             = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
             = f.submit attendance_invitation_message(@conference)
     %p
+      %b Organizer:
+      = @conference.organizer&.name
+    %p
       %b Venue:
       - if @conference.venue_url.present?
         = link_to @conference.venue, @conference.venue_url, target: '_blank'
