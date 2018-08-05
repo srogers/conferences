@@ -4,16 +4,15 @@ RSpec.describe Conference, type: :model do
 
   let(:organizer) { create :organizer }
 
-  describe "when creating a conference" do
-
-    let(:valid_attributes) {
-      {
-        :name         => 'The Testing Conference',
-        :organizer_id => organizer.id,
-        :start_date   => '2005/07/15'.to_date,
-        :end_date     => '2005/07/23'.to_date
-      }
+  let(:valid_attributes) {
+    {
+      :organizer_id => organizer.id,
+      :start_date   => '2005/07/15'.to_date,
+      :end_date     => '2005/07/23'.to_date
     }
+  }
+
+  describe "when creating a conference" do
 
     it "has a working factory" do
       expect(create :conference).to be_valid
@@ -39,10 +38,10 @@ RSpec.describe Conference, type: :model do
       expect(Conference.new(valid_attributes.merge(end_date: '2005/07/01'.to_date))).not_to be_valid
     end
 
-    it "uses the provided name in params" do
-      conference = Conference.new(valid_attributes)
+    it "uses the name from params, if one is provided" do
+      conference = Conference.new(valid_attributes.merge(name: 'Provided Name'))
       conference.save!
-      expect(conference.name).to eq('The Testing Conference')
+      expect(conference.name).to eq('Provided Name')
     end
 
     context "when a name is not provided" do
@@ -76,7 +75,7 @@ RSpec.describe Conference, type: :model do
 
   describe "when updating a conference" do
 
-    let(:conference) { create :conference, organizer_id: organizer.id }
+    let(:conference) { Conference.create(valid_attributes) }
 
     it "uses the provided name in params" do
       conference.update(name: 'Updated Conference Name')
@@ -90,6 +89,33 @@ RSpec.describe Conference, type: :model do
       end
     end
 
+    context "when changing the organizer" do
+
+      let(:new_organizer) { create :organizer, name: "NewOrg", series_name: "New Conferences", abbreviation: "NewC"}
+
+      context "with a default conference name" do
+        before do
+          puts "Conference name:  #{ conference.name }   organizer #{ conference.organizer.abbreviation } "
+          expect(conference.name).to eq("OC 2005") # from default
+          conference.update(organizer_id: new_organizer.id)
+        end
+
+        it "automatically updates the name to the new default indicated by the new organizer" do
+          expect(conference.name).to eq("NewC 2005")
+        end
+      end
+
+      context "with a manually modified conference name" do
+        before do
+          conference.update(name: "Special Event")
+          conference.update(organizer_id: new_organizer.id)
+        end
+
+        it "leaves the conference name unchanged" do
+          expect(conference.name).to eq("Special Event")
+        end
+      end
+    end
   end
 
   describe "when destroying a conference" do
