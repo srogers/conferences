@@ -119,6 +119,20 @@ describe UsersController do
         end
       end
 
+      describe "with a GDPR country" do
+        before do
+          post :create, params: { :user => valid_attributes.merge(country: "EE") }
+        end
+
+        it "redirects to the root path" do
+          expect(response).to redirect_to root_path
+        end
+
+        it "sets a flash message" do
+          expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
+        end
+      end
+
       describe "with invalid params" do
         it "does not create a new User" do
           expect { post :create, params: { :user => invalid_attributes } }.not_to change(User, :count)
@@ -172,6 +186,20 @@ describe UsersController do
         it "strips leading and trailing spaces off the password" do
           post :create, params: { :user => valid_attributes.merge( email: ' bob@example.com ', password: ' tester1 ') }
           expect(UserSession.new(email: 'bob@example.com', password: 'tester1')).to be_truthy
+        end
+      end
+
+      describe "with a GDPR country" do
+        before do
+          post :create, params: { :user => valid_attributes.merge(country: "EE") }
+        end
+
+        it "redirects to the root path" do
+          expect(response).to redirect_to root_path
+        end
+
+        it "sets a flash message" do
+          expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
         end
       end
 

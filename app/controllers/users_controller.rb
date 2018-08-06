@@ -71,6 +71,10 @@ class UsersController < ApplicationController
       # only admin can create new users directly
       redirect_to root_path and return
     end
+    if params[:user] && GDPR_COUNTRIES.include?(params[:user][:country])
+      flash[:notice] = "This site does not support accounts from that country at this time."
+      redirect_to root_path and return
+    end
     @user = User.new(users_params)
     @user.role = Role.reader unless @user.role_id.present? && current_user && current_user.admin?
     if @user.save

@@ -13,7 +13,8 @@
 - if current_user
   = f.input :city
   = f.input :state
-  = f.input :country, priority: ['US'], include_blank: false
+= f.input :country, priority: ['US'], include_blank: false
+- if current_user
   = f.input :time_zone, priority: /US/
 
 - if current_user.try(:admin?)
