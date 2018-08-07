@@ -29,7 +29,7 @@ class PresentationsController < ApplicationController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tagging.joins(:tag).select('DISTINCT tags.name').map{|t| t.name}.sort
+    @tags = ActsAsTaggableOn::Tag.order(:name)
   end
 
   def show
