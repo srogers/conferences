@@ -8,5 +8,7 @@
     = f.input :url, label: 'URL'
     = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
 .row
-  .col-md-12
+  .col-md-2
+    = f.input :duration, hint: "total minutes"
+  .col-md-10
     = f.input :notes, hint: 'Any special clarifying info or references'

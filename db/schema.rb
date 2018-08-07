@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_03_144942) do
+ActiveRecord::Schema.define(version: 2018_08_07_043734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,7 +101,6 @@ ActiveRecord::Schema.define(version: 2018_08_03_144942) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parts"
-    t.integer "duration"
     t.string "slug"
     t.string "handout"
     t.index ["conference_id"], name: "index_presentations_on_conference_id"
@@ -117,6 +116,7 @@ ActiveRecord::Schema.define(version: 2018_08_03_144942) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "notes"
+    t.integer "duration"
     t.index ["creator_id"], name: "index_publications_on_creator_id"
     t.index ["presentation_id"], name: "index_publications_on_presentation_id"
   end

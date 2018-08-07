@@ -4,7 +4,6 @@
 = f.trix_editor :description
 = f.input :tag_list, input_html: { value: @tags }, label: 'Subject Areas', hint: "economics, politics, psychology, etc. - separate with commas"
 = f.input :parts
-= f.input :duration, hint: "total minutes"
 = f.input :handout, label: @presentation.handout.present? ? 'Change handout' : 'Add handout'
 - if @presentation.handout.present?
   = f.input :remove_handout, as: :boolean

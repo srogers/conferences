@@ -8,17 +8,7 @@
       - if @presentation.publications.empty?
         %li None Yet
       - @presentation.publications.each do |publication|
-        %li
-          - if publication.url.present?
-            = link_to publication.format, publication.url, target: '_blank'
-          - else
-            = publication.format
-          = publication.published_on.year
-          - if publication.notes.present?
-            = " - #{ publication.notes }"
-          = link_to icon('far', 'edit', :class => 'fa-fw'), edit_publication_path(publication)
-          = link_to icon('far', 'trash-alt', :class => 'fa-fw'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'
-
+        = render :partial => 'publication', locals: { publication: publication}
 .row
   .col-md-12
     -# Adding publications happens only here - there is no stand-alone publication/new

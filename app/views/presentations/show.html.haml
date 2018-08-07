@@ -18,10 +18,6 @@
       = @presentation.parts
 
     %p
-      Duration:
-      = @presentation.duration
-
-    %p
       Handout:
       - if @presentation.handout.present?
         = link_to icon('fas','download'), download_handout_presentation_url(@presentation)
@@ -35,11 +31,10 @@
           %li
             %i Not yet available
         - @presentation.publications.each do |publication|
-          %li
-            = format_and_date(publication)
-            - if publication.notes.present?
-              = " - #{ publication.notes }"
-        %li= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
+          = render :partial => 'publication', locals: { publication: publication }
+
+        %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
+
 - if can? :edit, @presentation
   .row
     .col-md-12

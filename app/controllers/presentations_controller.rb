@@ -113,7 +113,7 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :name, :description, :parts, :duration, :tag_list,
+    params.require(:presentation).permit(:conference_id, :name, :description, :parts, :tag_list,
                                          :handout, :remove_handout)
   end
 
