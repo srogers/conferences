@@ -95,7 +95,6 @@ RSpec.describe Conference, type: :model do
 
       context "with a default conference name" do
         before do
-          puts "Conference name:  #{ conference.name }   organizer #{ conference.organizer.abbreviation } "
           expect(conference.name).to eq("OC 2005") # from default
           conference.update(organizer_id: new_organizer.id)
         end
