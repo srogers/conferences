@@ -29,7 +29,7 @@ class PresentationsController < ApplicationController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tagging.joins(:tag).select('DISTINCT tags.name').map{|t| t.name}.sort
+    @tags = ActsAsTaggableOn::Tag.order(:name)
   end
 
   def show
@@ -113,7 +113,7 @@ class PresentationsController < ApplicationController
   end
 
   def presentation_params
-    params.require(:presentation).permit(:conference_id, :name, :description, :parts, :duration, :tag_list,
+    params.require(:presentation).permit(:conference_id, :name, :description, :parts, :tag_list,
                                          :handout, :remove_handout)
   end
 

@@ -5,6 +5,37 @@ class ApplicationController < ActionController::Base
 
   private
 
+  GDPR_COUNTRIES = [
+      "AT", # Austria
+      "BE", # Belgium
+      "BG", # Bulgaria
+      "HR", # Croatia
+      "CY", # Republic of Cyprus
+      "CZ", # Czech Republic
+      "DK", # Denmark
+      "EE", # Estonia
+      "FI", # Finland
+      "FR", # France
+      "DE", # Germany
+      "GR", # Greece
+      "HU", # Hungary
+      "IE", # Ireland
+      "IT", # Italy
+      "LV", # Latvia
+      "LT", # Lithuania
+      "LU", # Luxembourg
+      "MT", # Malta
+      "NL", # Netherlands
+      "PL", # Poland
+      "PT", # Portugal
+      "RO", # Romania
+      "SK", # Slovakia
+      "SI", # Slovenia
+      "ES", # Spain
+      "SE", # Sweden
+      "GB", # United Kingdom
+  ]
+
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find

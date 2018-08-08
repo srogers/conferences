@@ -1,0 +1,11 @@
+-# Shows a publication in a single row on the presentation/show page and the manage publications page
+%li
+  = format_and_date(publication)
+  - if publication.duration.present?
+    = " - #{ publication.duration } mins"
+  - if publication.notes.present?
+    = " - #{ publication.notes }"
+  - if action_name == 'manage_publications'
+    -# Don't include this in the show view, because the return paths only make sense in the "Mange Publications" context
+    = link_to icon('far', 'edit', :class => 'fa-fw'), edit_publication_path(publication)
+    = link_to icon('far', 'trash-alt', :class => 'fa-fw'), publication_path(publication), :method => :delete, :data => { :confirm => 'remove this publication?' }, :post => true, class: 'text-danger'

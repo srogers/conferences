@@ -3,4 +3,6 @@
     = title 'Subject Areas'
     %ul
       - @tags.each do |tag|
-        %li= link_to tag, presentations_path(tag: tag)
+        %li
+          = link_to tag.name, presentations_path(tag: tag.name)
+          = "(#{ tag.taggings_count })"

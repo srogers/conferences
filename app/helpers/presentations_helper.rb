@@ -53,7 +53,7 @@ module PresentationsHelper
 
   def clickable_speaker_list(presentation)
     speaker_links = []
-    presentation.speakers.each do |speaker|
+    presentation.speakers.order(:sortable_name).each do |speaker|
       speaker_links << link_to(speaker.name, speaker_path(speaker))
     end
     return speaker_links.join(', ').html_safe
