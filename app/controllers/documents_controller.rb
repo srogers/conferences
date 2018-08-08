@@ -45,6 +45,6 @@ class DocumentsController < ApplicationController
   end
 
   def document_params
-    params.require(:document).permit(:format, :conferences, :presentations, :speakers)
+    params.require(:document).permit(:format, :conferences, :presentations, :speakers, :publications)
   end
 end

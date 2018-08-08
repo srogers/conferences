@@ -54,7 +54,8 @@ class Document < ApplicationRecord
   end
 
   def options
-    { conferences: conferences, presentations: presentations, speakers: speakers }
+    # Currently publications only affects CSV
+    { conferences: conferences, presentations: presentations, speakers: speakers, publications: publications }
   end
 
   def destroy_uploader

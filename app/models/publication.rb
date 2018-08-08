@@ -19,4 +19,36 @@ class Publication < ApplicationRecord
 
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
 
+  # Methods used to support CSV export
+  def presentation_url
+    presentation&.url
+  end
+
+  def presentation_name
+    presentation&.name
+  end
+
+  def conference_name
+    presentation&.conference_name
+  end
+
+  # Hash of human-friendly CSV column names and the methods that get the data for CSV export
+  TITLES_AND_METHODS = {
+      'Conference Name'   => :conference_name,
+      'Presentation Name' => :presentation_name,
+      'Presentation URL'  => :presentation_url,
+      'Format'            => :format,
+      'Duration'          => :duration,
+      'Notes'             => :notes,
+      'Media URL'         => :url,
+  }
+
+  # DocumentWorker uses this to get the header for generated CSV output
+  def self.csv_header
+    TITLES_AND_METHODS.keys
+  end
+
+  def csv_row
+    TITLES_AND_METHODS.values.map{|v| self.send(v)}
+  end
 end

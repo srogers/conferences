@@ -117,6 +117,23 @@ class ConferenceDirectoryPdf < Prawn::Document
     table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
   end
 
+  def publications
+    start_new_page
+    text "Publications", size: 14, style: :bold
+    font_size 10
+
+    # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
+    table_data = [['<strong>Conference/Name/Notes</strong>', '<strong>Format/ Location</strong>', '<strong>Mins</strong>']]
+    Publication.includes(:presentation => :conference).order('conferences.start_date DESC, presentations.name').each do |publication|
+      table_data << [
+          [publication.conference_name, "<link href='#{ publication.presentation_url }'>#{ publication.presentation_name }</link>", publication.notes].join('<br/>'),
+          "<link href='#{ publication.presentation_url }'>#{ publication.format }</link>",
+          publication.duration
+      ]
+    end
+    table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
+  end
+
   def speakers
     start_new_page
     font_size 10
@@ -233,6 +250,7 @@ class ConferenceDirectoryPdf < Prawn::Document
     conferences   if options[:conferences]
     presentations if options[:presentations]
     speakers      if options[:speakers]
+    publications  if options[:publications]
     numbering
   end
 end
