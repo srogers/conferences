@@ -32,15 +32,20 @@ class Publication < ApplicationRecord
     presentation&.conference_name
   end
 
+  def conference_date
+    presentation&.conference&.start_date
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
   TITLES_AND_METHODS = {
       'Conference Name'   => :conference_name,
+      'Date'              => :conference_date,
       'Presentation Name' => :presentation_name,
-      'Presentation URL'  => :presentation_url,
       'Format'            => :format,
       'Duration'          => :duration,
       'Notes'             => :notes,
       'Media URL'         => :url,
+      'Presentation URL'  => :presentation_url
   }
 
   # DocumentWorker uses this to get the header for generated CSV output
