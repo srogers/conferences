@@ -64,6 +64,8 @@ class ConferenceDirectoryPdf < Prawn::Document
         "D"
       when Publication::ESTORE then
         "E"
+      when Publication::PRINT then
+        "B"
       else
         "?" # This means something was added to Publication FORMATS but not included here
       end
@@ -106,7 +108,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Links</strong>']]
-    Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.name').each do |presentation|
+    Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name').each do |presentation|
       table_data << [
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
         linked_speaker_names(presentation),
@@ -124,7 +126,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Conference/Name/Notes</strong>', '<strong>Format/ Location</strong>', '<strong>Mins</strong>']]
-    Publication.includes(:presentation => :conference).order('conferences.start_date DESC, presentations.name').each do |publication|
+    Publication.includes(:presentation => :conference).order('conferences.start_date DESC, presentations.sortable_name').each do |publication|
       table_data << [
           [publication.conference_name, "<link href='#{ publication.presentation_url }'>#{ publication.presentation_name }</link>", publication.notes].join('<br/>'),
           "<link href='#{ publication.presentation_url }'>#{ publication.format }</link>",

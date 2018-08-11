@@ -25,7 +25,7 @@ class SpeakersController < ApplicationController
   end
 
   def show
-    @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.name')
+    @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.sortable_name')
   end
 
   def edit
@@ -74,6 +74,6 @@ class SpeakersController < ApplicationController
   end
 
   def speaker_params
-    params.require(:speaker).permit(:name, :description, :photo, :remove_photo)
+    params.require(:speaker).permit(:name, :description, :bio_url, :photo, :remove_photo)
   end
 end

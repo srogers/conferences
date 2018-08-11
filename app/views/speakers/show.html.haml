@@ -5,6 +5,10 @@
 .row
   .col-md-12
     =image_tag @speaker.photo.url, class: 'float-right', style: 'max-height: 100px'
+    - if @speaker.bio_url.present?
+      %p
+        Speaker's
+        = link_to "Bio", @speaker.bio_url
     %p= @speaker.description.try(:html_safe)
 
 .row

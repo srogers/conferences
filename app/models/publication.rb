@@ -15,7 +15,8 @@ class Publication < ApplicationRecord
   PODCAST = 'Podcast'
   ONLINE  = 'Online'       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'      # This is going away . . .
-  FORMATS = [TAPE, CD, VHS, DISK, CAMPUS, YOUTUBE, PODCAST, ONLINE, ESTORE]
+  PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
+  FORMATS = [TAPE, CD, VHS, DISK, CAMPUS, YOUTUBE, PODCAST, ONLINE, ESTORE, PRINT]
 
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
 
@@ -32,15 +33,20 @@ class Publication < ApplicationRecord
     presentation&.conference_name
   end
 
+  def conference_date
+    presentation&.conference&.start_date
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
   TITLES_AND_METHODS = {
       'Conference Name'   => :conference_name,
+      'Date'              => :conference_date,
       'Presentation Name' => :presentation_name,
-      'Presentation URL'  => :presentation_url,
       'Format'            => :format,
       'Duration'          => :duration,
       'Notes'             => :notes,
       'Media URL'         => :url,
+      'Presentation URL'  => :presentation_url
   }
 
   # DocumentWorker uses this to get the header for generated CSV output

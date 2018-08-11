@@ -33,6 +33,8 @@ module PresentationsHelper
       icon('fas', 'download')
     when Publication::ESTORE then
       icon('fas', 'store')
+    when Publication::PRINT then
+      icon('fas', 'book')
     else
       icon('fas', 'question-circle')  # This means something was added to Publication FORMATS but not included here
     end

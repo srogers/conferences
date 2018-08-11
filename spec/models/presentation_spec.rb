@@ -18,6 +18,32 @@ RSpec.describe Presentation, type: :model do
       expect(Presentation.new(valid_attributes.merge(name: ''))).not_to be_valid
     end
 
+    context "when the name starts with an article" do
+      it "removes the article from name for sortable name" do
+        presentation = Presentation.new name: "The Presentation That Shouldn't Be Sorted by T"
+        presentation.save
+        presentation.reload
+        expect(presentation.sortable_name).to eq("Presentation That Shouldn't Be Sorted by T")
+      end
+    end
+
+    context "when the name starts with an quote" do
+      it "removes the quote from name for sortable name" do
+        presentation = Presentation.new name: '"Quote" is Not For Sorting'
+        presentation.save
+        presentation.reload
+        expect(presentation.sortable_name).to eq('Quote" is Not For Sorting')
+      end
+    end
+
+    context "when the name does not start with an article" do
+      it "saves the name directly as sortable name" do
+        presentation = Presentation.new name: "Creatively Named Presentation"
+        presentation.save
+        presentation.reload
+        expect(presentation.sortable_name).to eq("Creatively Named Presentation")
+      end
+    end
     # Requiring a speaker is managed by the controller
 
     context "with an associated conference" do
