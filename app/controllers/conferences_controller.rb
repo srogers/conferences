@@ -33,7 +33,7 @@ class ConferencesController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    @presentations = @conference.presentations.order(:name)
+    @presentations = @conference.presentations.order("presentations.sortable_name")
   end
 
   def edit

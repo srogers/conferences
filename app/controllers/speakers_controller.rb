@@ -25,7 +25,7 @@ class SpeakersController < ApplicationController
   end
 
   def show
-    @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.name')
+    @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.sortable_name')
   end
 
   def edit
