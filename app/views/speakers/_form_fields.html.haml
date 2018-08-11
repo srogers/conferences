@@ -8,5 +8,6 @@
 -# Let the admin see this, just in case it needs tweaking
 - if current_user.admin? && action_name == 'edit'
   = f.input :sortable_name
+= f.input :bio_url, label: 'Bio URL', hint: "URL for the speaker's own page, e.g. at ARI Campus or their personal site."
 = f.label :description
 = f.trix_editor :description
