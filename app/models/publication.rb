@@ -15,7 +15,8 @@ class Publication < ApplicationRecord
   PODCAST = 'Podcast'
   ONLINE  = 'Online'       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'      # This is going away . . .
-  FORMATS = [TAPE, CD, VHS, DISK, CAMPUS, YOUTUBE, PODCAST, ONLINE, ESTORE]
+  PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
+  FORMATS = [TAPE, CD, VHS, DISK, CAMPUS, YOUTUBE, PODCAST, ONLINE, ESTORE, PRINT]
 
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
 

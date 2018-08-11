@@ -64,6 +64,8 @@ class ConferenceDirectoryPdf < Prawn::Document
         "D"
       when Publication::ESTORE then
         "E"
+      when Publication::PRINT then
+        "B"
       else
         "?" # This means something was added to Publication FORMATS but not included here
       end
