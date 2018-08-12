@@ -14,7 +14,11 @@ Rails.application.routes.draw do
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
   resource  :account
-  resources :conferences
+  resources :conferences do
+    collection do
+      get :cities_count_by
+    end
+  end
   resources :presentation_speakers, only: [:index, :create, :destroy]
   resources :conference_users, only: [:index, :create, :destroy]
   resources :documents do

@@ -1,6 +1,6 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index]
+  before_action :get_conference, except: [:create, :new, :index, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
   load_and_authorize_resource
@@ -29,6 +29,16 @@ class ConferencesController < ApplicationController
       format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
 
+  end
+
+  # Feeds the frequent cities chart
+  def cities_count_by
+    results = Conference.group(:city).having("count(city) > 2").order("count(city) DESC").count(:city)
+
+    respond_to do |format|
+      format.html
+      format.json { render json: results.to_json }
+    end
   end
 
   def show

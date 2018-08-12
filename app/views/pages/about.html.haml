@@ -29,4 +29,12 @@
   .col-md-12
     %h3 Most Frequent Presenters
     %p Click a name to see their presentations
-    = render partial: 'shared/speakers_chart'
+    #speakers_chart
+      = render partial: 'shared/speakers_chart'
+
+.row
+  .col-md-12
+    %h3 Most Frequent Conference Cities
+    %p Click a city to see its conferences
+    #cities_chart
+      = render partial: 'shared/cities_chart'

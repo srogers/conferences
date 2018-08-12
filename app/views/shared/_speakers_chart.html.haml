@@ -6,13 +6,14 @@
 -# The Hash[*] business allows for converting the category keys in the DB into translated values driven by I18n for display
 = bar_chart presentations_count_by_speakers_path(format: :json), library: { yAxis: { allowDecimals: false } }
 
--# This is a somewhat hacky way of getting the Top Speakers chart labels linked to their speaker pages
+-# This is a somewhat hacky way of getting the Top Speakers chart labels linked to their speaker pages.
+-# The chart has to be rendered into a #speakers_chart element so it can appear on pages with other charts without side-effects
 = content_for :footer do
   :javascript
     $(document).ready(function() {
       // wait for stuff to load
       var handle = setInterval(function(){
-        $('.highcharts-xaxis-labels tspan').each(function() {
+        $('#speakers_chart .highcharts-xaxis-labels tspan').each(function() {
           console.log(this.innerHTML);
           this.addEventListener("click", function(e) {
               var url = '/speakers/'+this.innerHTML.replace(' ', '-').toLowerCase();
@@ -21,5 +22,5 @@
           }, false);
           clearInterval(handle); // if we find one, we're done (probably)
         });
-      }, 500);
+      }, 500);                  // This has to be long enough to ensure that if the first one is done, the last one is too
     });
