@@ -16,13 +16,13 @@
         $('#cities_chart .highcharts-xaxis-labels text').each(function() {
           // Sometimes Highcharts puts the text into a child tspan element, sometimes it doesn't - because why not?
           if (this.innerHTML.includes("<tspan>")) {
-            city_name = this.firstElementChild.innerHTML
+            element = this.firstElementChild
           } else {
-            city_name = this.innerHTML
+            element = this
           }
-          console.log(city_name);
-          this.addEventListener("click", function(e) {
-              var url = '/conferences?search_term='+city_name;  // spaces are OK here
+          console.log(element.innerHTML);
+          element.addEventListener("click", function(e) {
+              var url = '/conferences?search_term='+this.innerHTML;  // spaces are OK here
               window.location.href = url
           }, false);
           clearInterval(handle); // if we find one, we're done (probably)
