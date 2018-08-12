@@ -158,7 +158,7 @@ class ConferenceDirectoryPdf < Prawn::Document
           image_dimensions = FastImage.size image_url
           scaled_dimensions = get_scaled_dimensions image_dimensions
           image_height = scaled_dimensions[1]
-          Rails.logger.debug "#{speaker.name} #{speaker.id} - image size: #{ image_dimensions } - scaled size: #{ scaled_dimensions }"
+          # Rails.logger.debug "#{speaker.name} #{speaker.id} - image size: #{ image_dimensions } - scaled size: #{ scaled_dimensions }"
         rescue => e
           opened_image = nil
           image_height = 0

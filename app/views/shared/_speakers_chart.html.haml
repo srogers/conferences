@@ -1,0 +1,25 @@
+= content_for :pre_application_js do
+  -# Uncomment one or the other of these to use google charts or highcharts
+  =# javascript_include_tag "https://www.gstatic.com/charts/loader.js"
+  = javascript_include_tag "https://code.highcharts.com/highcharts.js"
+
+-# The Hash[*] business allows for converting the category keys in the DB into translated values driven by I18n for display
+= bar_chart presentations_count_by_speakers_path(format: :json), library: { yAxis: { allowDecimals: false } }
+
+-# This is a somewhat hacky way of getting the Top Speakers chart labels linked to their speaker pages
+= content_for :footer do
+  :javascript
+    $(document).ready(function() {
+      // wait for stuff to load
+      var handle = setInterval(function(){
+        $('.highcharts-xaxis-labels tspan').each(function() {
+          console.log(this.innerHTML);
+          this.addEventListener("click", function(e) {
+              var url = '/speakers/'+this.innerHTML.replace(' ', '-').toLowerCase();
+              // window.open(url, '_blank');
+              window.location.href = url
+          }, false);
+          clearInterval(handle); // if we find one, we're done (probably)
+        });
+      }, 500);
+    });
