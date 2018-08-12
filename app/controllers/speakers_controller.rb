@@ -1,6 +1,6 @@
 class SpeakersController < ApplicationController
 
-  before_action :get_speaker, except: [:create, :new, :index]
+  before_action :get_speaker, except: [:create, :new, :index, :presentations_count_by]
 
   load_and_authorize_resource
 
@@ -21,6 +21,16 @@ class SpeakersController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }
+    end
+  end
+
+  # Feeds the frequent speakers chart
+  def presentations_count_by
+    results = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
+
+    respond_to do |format|
+      format.html
+      format.json { render json: results.to_json }
     end
   end
 

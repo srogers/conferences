@@ -17,6 +17,7 @@ gem 'autoprefixer-rails'            # bootstrap needs this
 gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x installed, and determines the current version
 gem 'cancancan'
 gem 'carrierwave'
+gem "chartkick"                     # used for charts
 gem 'country_select'                # provides country selector that works with simple_form (country_state_select looks good, but isn't up to Rails 5, and requires Turbolinks)
 gem 'fastimage'                     # for finding the size of reference images to calculate the height for layout
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems

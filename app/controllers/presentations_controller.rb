@@ -16,7 +16,7 @@ class PresentationsController < ApplicationController
       # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
       term = params[:search_term] || params[:tag]
       presentations_by_tag  = @presentations.tagged_with(term)
-      presentations_by_name = @presentations.where("presentations.name ILIKE ?", "%#{term}%")
+      presentations_by_name = @presentations.where("presentations.name ILIKE ? OR organizers.abbreviation ILIKE ? OR organizers.series_name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
       @presentations = presentations_by_tag + (presentations_by_name - presentations_by_tag)
     end
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)

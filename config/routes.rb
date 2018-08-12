@@ -14,7 +14,11 @@ Rails.application.routes.draw do
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
   resource  :account
-  resources :conferences
+  resources :conferences do
+    collection do
+      get :cities_count_by
+    end
+  end
   resources :presentation_speakers, only: [:index, :create, :destroy]
   resources :conference_users, only: [:index, :create, :destroy]
   resources :documents do
@@ -34,7 +38,11 @@ Rails.application.routes.draw do
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]
-  resources :speakers
+  resources :speakers do
+    collection do
+      get :presentations_count_by
+    end
+  end
   resources :users do
     member do
       get   :summary

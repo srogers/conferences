@@ -1,0 +1,31 @@
+= content_for :pre_application_js do
+  -# Uncomment one or the other of these to use google charts or highcharts
+  =# javascript_include_tag "https://www.gstatic.com/charts/loader.js"
+  = javascript_include_tag "https://code.highcharts.com/highcharts.js"
+
+-# The Hash[*] business allows for converting the category keys in the DB into translated values driven by I18n for display
+= bar_chart cities_count_by_conferences_path(format: :json), library: { yAxis: { allowDecimals: false } }
+
+-# This is a somewhat hacky way of getting the Top Cities chart labels linked to a conference search
+-# The chart has to be rendered into a #cities_chart element so it can appear on pages with other charts without side-effects
+= content_for :footer do
+  :javascript
+    $(document).ready(function() {
+      // wait for stuff to load
+      var handle = setInterval(function(){
+        $('#cities_chart .highcharts-xaxis-labels text').each(function() {
+          // Sometimes Highcharts puts the text into a child tspan element, sometimes it doesn't - because why not?
+          if (this.innerHTML.includes("<tspan>")) {
+            element = this.firstElementChild
+          } else {
+            element = this
+          }
+          console.log(element.innerHTML);
+          element.addEventListener("click", function(e) {
+              var url = '/conferences?search_term='+this.innerHTML;  // spaces are OK here
+              window.location.href = url
+          }, false);
+          clearInterval(handle); // if we find one, we're done (probably)
+        });
+      }, 500);                 // This has to be long enough to ensure that if the first one is done, the last one is too
+    });
