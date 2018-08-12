@@ -9,7 +9,9 @@
       %tr
         %th{width: '50%'} Require Account Approval
         %td= humanize_boolean @setting.require_account_approval?
-
+      %tr
+        %th{width: '50%'} Top Speakers Floor
+        %td= @setting.speaker_chart_floor
 .row
   .col-md-12
     %p

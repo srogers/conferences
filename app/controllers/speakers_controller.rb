@@ -26,7 +26,7 @@ class SpeakersController < ApplicationController
 
   # Feeds the frequent speakers chart
   def presentations_count_by
-    results = PresentationSpeaker.includes(:speaker).group("speakers.name").having("count(presentation_id) > 2").order("count(presentation_id) DESC").count(:presentation_id)
+    results = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
 
     respond_to do |format|
       format.html
