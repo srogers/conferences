@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :conferences do
     collection do
       get :cities_count_by
+      get :chart
     end
   end
   resources :presentation_speakers, only: [:index, :create, :destroy]

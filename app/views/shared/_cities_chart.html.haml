@@ -4,7 +4,7 @@
   = javascript_include_tag "https://code.highcharts.com/highcharts.js"
 
 -# The Hash[*] business allows for converting the category keys in the DB into translated values driven by I18n for display
-= bar_chart cities_count_by_conferences_path(format: :json), library: { yAxis: { allowDecimals: false } }
+= bar_chart cities_count_by_conferences_path(search_term: params[:search_term], format: :json), library: { yAxis: { allowDecimals: false } }
 
 -# This is a somewhat hacky way of getting the Top Cities chart labels linked to a conference search
 -# The chart has to be rendered into a #cities_chart element so it can appear on pages with other charts without side-effects
