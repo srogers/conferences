@@ -185,6 +185,8 @@ GEM
     gherkin (5.1.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    groupdate (4.0.1)
+      activesupport (>= 4.2)
     haml (5.0.4)
       temple (>= 0.8.0)
       tilt
@@ -468,6 +470,7 @@ DEPENDENCIES
   font-awesome-sass (~> 5.0)
   foreman
   friendly_id
+  groupdate
   haml-rails
   jbuilder (~> 2.0)
   jquery-rails

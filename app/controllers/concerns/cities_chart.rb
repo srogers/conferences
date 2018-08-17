@@ -13,7 +13,7 @@ module CitiesChart
         results = Conference.group(:city).where('state ILIKE ?', term).order("count(city) DESC").count(:city)
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge. TODO - maybe set the chart height based on results size
+        # Just have to let the results fly, and hope it's not too huge.
         results = Conference.group(:city).where('city ILIKE ? OR name ILIKE ? OR id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.name ILIKE ?)', "%#{term}%", "#{term}%", "%#{term}%").order("count(city) DESC").count(:city)
       end
 

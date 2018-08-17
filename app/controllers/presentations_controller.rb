@@ -1,24 +1,25 @@
 class PresentationsController < ApplicationController
 
-  before_action :get_presentation, except: [:create, :new, :index, :tags]
+  before_action :get_presentation, except: [:create, :new, :index, :chart, :tags]
 
   load_and_authorize_resource
+
+  include PresentationsChart
 
   def index
     # This handles the presentation autocomplete
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
     per_page = params[:per] || 15 # autocomplete specifies :per
+
     # TODO - what uses autocomplete for presentations?
     if params[:q].present?
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+
     elsif params[:search_term].present? || params[:tag].present?
-      # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
-      # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
       term = params[:search_term] || params[:tag]
-      presentations_by_tag  = @presentations.tagged_with(term)
-      presentations_by_name = @presentations.where("presentations.name ILIKE ? OR organizers.abbreviation ILIKE ? OR organizers.series_name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
-      @presentations = presentations_by_tag + (presentations_by_name - presentations_by_tag)
+      @presentations = filter_presentations_by_term(@presentations, term)
     end
+
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2
@@ -26,6 +27,13 @@ class PresentationsController < ApplicationController
       format.html
       format.json { render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } } }
     end
+  end
+
+  def chart
+    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+    # a vertical bar chart).
+    @presentations = presentation_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
   end
 
   def tags

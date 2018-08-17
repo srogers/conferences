@@ -2,7 +2,7 @@
 .row.listing-controls
   .col-md-4
     = form_for :search, html: { class: 'form-inline' }, url: presentations_path, method: :get do |f|
-      = text_field_tag :search_term, params[:search_term]
+      = text_field_tag :search_term, params[:search_term] || params[:tag]
       %span{style: 'margin-right: 5px;'}
       = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         = icon('fas', 'search', class: 'fa-sm')
@@ -10,6 +10,7 @@
   .col-md-5
     - if params[:search_term].present? || params[:tag].present?
       = link_to 'All', presentations_path, class: "btn btn-sm btn-primary"
+    = link_to icon('fas', 'chart-bar', 'by Year', class: 'fa-sm'), chart_presentations_path(search_term: params[:search_term], tag: params[:tag]), class: "btn btn-sm btn-primary"
 
     = link_to 'Subject Areas', tags_presentations_path, class: "btn btn-sm btn-primary"
 

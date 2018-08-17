@@ -1,0 +1,15 @@
+.row
+  .col-md-12
+    = link_to "Done", presentations_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
+
+    - if params[:search_term].present? || params[:tag].present?
+      %h3
+        Presentations for
+        = params[:search_term] || params[:tag]
+
+    - else
+      %h3 Presentations by Year
+
+    %p Click a year to see its presentations
+    #presentations_chart
+      = render partial: 'shared/presentations_chart'
