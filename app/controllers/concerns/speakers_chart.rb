@@ -15,8 +15,9 @@ module SpeakersChart
 
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge. TODO - maybe set the chart height based on results size
-        data = PresentationSpeaker.includes(:speaker).group("speakers.name").order("count(presentation_id) DESC").count(:presentation_id)
+        # Just have to let the results fly, and hope it's not too huge.
+        # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
+        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where("organizers.name ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "%#{term}%", "#{term}%", "%#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case
@@ -27,7 +28,6 @@ module SpeakersChart
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
       # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
-      # TODO - maybe adjust chart height for the number of returned rows?
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
     end
