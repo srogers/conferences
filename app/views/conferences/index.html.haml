@@ -12,7 +12,8 @@
       = link_to 'All', conferences_path, class: "btn btn-sm btn-primary"
     - if current_user.present?
       = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
-      = link_to icon('fas', 'chart-bar', 'Chart It', class: 'fa-sm'), chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
+      = link_to icon('fas', 'chart-bar', 'Cities',   class: 'fa-sm'), chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
+      = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
 
   .col-md-3
     - if can? :create, Conference

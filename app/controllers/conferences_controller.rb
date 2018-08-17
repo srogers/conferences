@@ -37,8 +37,7 @@ class ConferencesController < ApplicationController
     # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
     # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
     # a vertical bar chart).
-    @cities    = city_count_data.to_a
-    @speakers = speaker_count_data.to_a
+    @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
   end
 
   # Feeds the frequent cities chart

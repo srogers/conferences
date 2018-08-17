@@ -16,8 +16,8 @@ Rails.application.routes.draw do
   resource  :account
   resources :conferences do
     collection do
-      get :cities_count_by
-      get :chart
+      get :cities_count_by    # the chart data endpoint - returns JSON
+      get :chart              # queries the data and pushes it to the chart in an array
     end
   end
   resources :presentation_speakers, only: [:index, :create, :destroy]
@@ -41,7 +41,8 @@ Rails.application.routes.draw do
   resources :settings, only: [:index, :show, :edit, :update]
   resources :speakers do
     collection do
-      get :presentations_count_by
+      get :presentations_count_by    # the chart data endpoint - returns JSON
+      get :chart                     # queries the data and pushes it to the chart in an array
     end
   end
   resources :users do

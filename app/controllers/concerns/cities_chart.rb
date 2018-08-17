@@ -25,7 +25,7 @@ module CitiesChart
       # Show the top cities - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off cities with the same count as cities shown, which is misleading. There is a setting
       # for the speaker chart floor - but not for cities (yet) - 2 works well.
-      results = Conference.group(:city).having("count(city) > 2").order("count(city) DESC").count(:city)
+      results = Conference.group(:city).having("count(city) > 1").order("count(city) DESC").count(:city)
     end
 
     return results

@@ -1,6 +1,6 @@
 class SpeakersController < ApplicationController
 
-  before_action :get_speaker, except: [:create, :new, :index, :presentations_count_by]
+  before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
   load_and_authorize_resource
 
@@ -24,6 +24,13 @@ class SpeakersController < ApplicationController
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }
     end
+  end
+
+  def chart
+    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+    # a vertical bar chart).
+    @speakers = speaker_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
   end
 
   # Feeds the frequent speakers chart - the name gives presentations_count_by_speakers_path
