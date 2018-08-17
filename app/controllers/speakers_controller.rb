@@ -4,6 +4,8 @@ class SpeakersController < ApplicationController
 
   load_and_authorize_resource
 
+  include SpeakersChart
+
   def index
     @speakers = Speaker.order(:sortable_name)
     per_page = params[:per] || 15 # autocomplete specifies :per
@@ -24,13 +26,13 @@ class SpeakersController < ApplicationController
     end
   end
 
-  # Feeds the frequent speakers chart
+  # Feeds the frequent speakers chart - the name gives presentations_count_by_speakers_path
+  # Speakers are the thing being counted - which is why it's here, and not in conferences controller (although the search terms are similar)
   def presentations_count_by
-    results = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
 
     respond_to do |format|
       format.html
-      format.json { render json: results.to_json }
+      format.json { render json: speaker_count_data.to_json }
     end
   end
 

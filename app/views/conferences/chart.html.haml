@@ -1,7 +1,18 @@
 
 .row
   .col-md-12
-    %h3 Most Frequent Presenters
+    - if params[:search_term].present?
+      %h3
+        Speakers for
+        = params[:search_term]
+
+    - elsif params[:user_id].present?
+      %h3
+        Your Conference Speakers
+        = params[:search_term]
+
+    - else
+      %h3 Most Frequent Speakers
     %p Click a name to see their presentations
     #speakers_chart
       = render partial: 'shared/speakers_chart'
@@ -12,6 +23,12 @@
       %h3
         Conference Cities for
         = params[:search_term]
+
+    - elsif params[:user_id].present?
+      %h3
+        Your Conference Cities
+        = params[:search_term]
+
     - else
       %h3 Top Conference Cities
 

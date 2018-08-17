@@ -16,4 +16,9 @@ module ConferencesHelper
       "I was there!"
     end
   end
+
+  # Returns a value that can be passed into ChartKick for height that will generate a reasonable size for all bars
+  def bar_chart_height(bar_count)
+    "#{bar_count * 25 + 50}px"
+  end
 end
