@@ -1,5 +1,7 @@
 .row
   .col-md-12
+    = render partial: 'shared/return_from_chart_with_params'
+
     - if params[:search_term].present?
       %h3
         Speakers for
