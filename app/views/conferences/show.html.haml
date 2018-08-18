@@ -44,7 +44,7 @@
         %span.ml-3
           = link_to icon('fas', 'users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
 
-- if can? :edit, @conference
+- if can?(:edit, @conference) && @conference.editors_notes.present?
   .row
     .col-md-12
       %p
