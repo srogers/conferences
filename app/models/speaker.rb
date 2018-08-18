@@ -8,12 +8,17 @@ class Speaker < ApplicationRecord
   validates :name, presence: true
   validates_uniqueness_of :name, :case_sensitive => false
 
-  before_save :update_sortable_name
+  before_create :capitalize_name        # do this only once, so the user can fix exceptions like Fred de Cordova
+  before_save   :update_sortable_name   # always do this
 
   extend FriendlyId
   friendly_id :name, use: :slugged
 
   mount_uploader :photo, PhotoUploader
+
+  def capitalize_name
+    self.name = name.split.map(&:capitalize)*' '
+  end
 
   def update_sortable_name
     self.sortable_name = name.split(' ').last

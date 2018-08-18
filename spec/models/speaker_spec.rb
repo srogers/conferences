@@ -25,6 +25,13 @@ RSpec.describe Speaker, type: :model do
       speaker.reload
       expect(speaker.sortable_name).to eq('Speakerperson')
     end
+
+    it "capitalizes name" do
+      speaker = Speaker.new name: "homer j. simpson"
+      speaker.save
+      speaker.reload
+      expect(speaker.name).to eq('Homer J. Simpson')
+    end
   end
 
   describe "when updating a speaker" do
@@ -34,6 +41,14 @@ RSpec.describe Speaker, type: :model do
       speaker.save
       speaker.reload
       expect(speaker.sortable_name).to eq('Speakerperson')
+    end
+
+    it "does not capitalize the name" do
+      speaker = create :speaker
+      speaker.name = "homer j. simpson"
+      speaker.save
+      speaker.reload
+      expect(speaker.name).to eq('homer j. simpson')
     end
   end
 end
