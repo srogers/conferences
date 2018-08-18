@@ -33,15 +33,24 @@
         = link_to icon('far', 'file', class: 'fa-fw'), @conference.program_url, target: '_blank'
       - else
         %i none
-    %p
-      %b Data entry completed:
-      = @conference.completed ? icon('fas', 'check', :class => 'fa-lg fa-fw text-success') : tag.i('not yet')
+    - if can? :edit, Conference
+      %p
+        %b Data entry completed:
+        = @conference.completed ? icon('fas', 'check', :class => 'fa-lg fa-fw text-success') : tag.i('not yet')
     %p
       %b Members Attending:
       = @conference.users.length
       - if @conference.users.length > 0 && current_user
         %span.ml-3
           = link_to icon('fas', 'users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
+
+- if can? :edit, @conference
+  .row
+    .col-md-12
+      %p
+        %b Editor's Notes
+        = @conference.editors_notes.try(:html_safe)
+
 .row
   .col-md-12
     %h4 Presentations
