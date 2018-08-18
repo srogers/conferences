@@ -4,28 +4,28 @@
     %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
     - if @presentation.conference.present?
       %h5
-        Presented at:
+        %b Presented at:
         =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
     %p= @presentation.description.try(:html_safe)
 
     %p
-      Subject Area:
+      %b Subject Area:
       = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
 
     %p
-      Parts:
+      %b Parts:
       = @presentation.parts
 
     %p
-      Handout:
+      %b Handout:
       - if @presentation.handout.present?
         = link_to icon('fas','download'), download_handout_presentation_url(@presentation)
       - else
         = tag.i('none')
 
     %p
-      Publications:
+      %b Publications:
       %ul
         - if @presentation.publications.empty?
           %li
@@ -35,7 +35,13 @@
 
         %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 
-- if can? :edit, @presentation
+- if can?(:edit, @presentation) && @presentation.editors_notes.present?
+  .row
+    .col-md-12
+      %p
+        %b Editor's Notes
+        = @presentation.editors_notes.try(:html_safe)
+
   .row
     .col-md-12
       - if @presentation.conference.blank?

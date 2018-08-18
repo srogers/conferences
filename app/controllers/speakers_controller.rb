@@ -2,7 +2,7 @@ class SpeakersController < ApplicationController
 
   before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
-  authorize_resource  # friendly_find is incompatible with load_resource
+  authorize_resource except: [:chart]  # friendly_find is incompatible with load_resource
 
   include SpeakersChart
 

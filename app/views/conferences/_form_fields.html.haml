@@ -11,3 +11,7 @@
 = f.input :state
 = f.input :country, priority: ['US'], include_blank: false
 = f.input :completed, as: :boolean, hint: "Check this when all the conference's presentations have been entered."
+- if current_user.editor? || current_user.admin?
+  = f.label :editors_notes, "Editor's Notes"
+  = f.trix_editor :editors_notes
+  .small Only visible to other editors. Use for source documentation and any notes other editors might find useful

@@ -6,7 +6,7 @@ module PresentationsChart
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
     presentations_by_tag  = presentations.tagged_with(term)
-    presentations_by_name = presentations.where("presentations.name ILIKE ? OR organizers.name ILIKE ? OR organizers.abbreviation ILIKE ? OR organizers.series_name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR cast(date_part('year',conferences.start_date) as text) = ?", "%#{term}%", "%#{term}%", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", "#{term}")
+    presentations_by_name = presentations.where("presentations.name ILIKE ? OR organizers.abbreviation ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR cast(date_part('year',conferences.start_date) as text) = ?", "%#{term}%", "#{term}%", "#{term}%", "#{term}%", "#{term}")
     return presentations_by_tag + (presentations_by_name - presentations_by_tag)
   end
 
@@ -25,7 +25,7 @@ module PresentationsChart
       # keys = @presentations.map{|p| p.conference.start_date.year}.uniq.sort                 # based on just the years that are present
       keys = *(Conference.minimum(:start_date).year..Conference.maximum(:start_date).year)  # a list of all the possible years - reflects full context
 
-      data = keys.inject({}) { |h, v| h.merge(v => @presentations.select{|p| p.conference.start_date.year == v}.length) }
+      data = keys.inject({}) { |h, v| h.merge(v => @presentations.select{|p| p.conference&.start_date&.year == v}.length) }
 
       logger.debug data
     else

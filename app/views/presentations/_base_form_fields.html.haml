@@ -7,4 +7,7 @@
 = f.input :handout, label: @presentation.handout.present? ? 'Change handout' : 'Add handout'
 - if @presentation.handout.present?
   = f.input :remove_handout, as: :boolean
-
+- if current_user.editor? || current_user.admin?
+  = f.label :editors_notes, "Editor's Notes"
+  = f.trix_editor :editors_notes
+  .small Only visible to other editors. Use for source documentation and any notes other editors might find useful

@@ -9,7 +9,7 @@ RSpec.describe ConferencesController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Conference. As you add validations to Conference, be sure to
   # adjust the attributes here as well.
-  let(:organizer) { create :organizer }
+  let(:organizer) { create :organizer, name: 'Organization', abbreviation: 'WOMBAT' }
 
   let(:valid_attributes) {
     {
@@ -45,8 +45,8 @@ RSpec.describe ConferencesController, type: :controller do
     end
 
     context "with a search term" do
-      it "finds conferences with organizer name matching" do
-        get :index, params:{ search_term: 'Organ' }
+      it "finds conferences with organizer abbreviation partial matching" do
+        get :index, params:{ search_term: 'WOM' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
@@ -55,13 +55,13 @@ RSpec.describe ConferencesController, type: :controller do
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "finds conferences with organizer name matching" do
-        get :index, params:{ search_term: 'Organiza' }
-        expect(assigns(:conferences)).to eq([conference])
+      it "does not find conferences with organizer name matching" do
+        get :index, params:{ search_term: 'Organization' }               # see organizer create above
+        expect(assigns(:conferences)).to be_empty
       end
 
       it "it doesn't find non-matching conferences" do
-        get :index, params:{ search_term: 'Wombats' }
+        get :index, params:{ search_term: 'Zebras' }
         expect(assigns(:conferences)).to be_empty
       end
     end
