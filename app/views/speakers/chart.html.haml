@@ -1,0 +1,20 @@
+.row
+  .col-md-12
+    = render partial: 'shared/return_from_chart_with_params'
+
+    - if params[:search_term].present?
+      %h3
+        Speakers for
+        = params[:search_term]
+
+    - elsif params[:user_id].present?
+      %h3
+        Your Conference Speakers
+        = params[:search_term]
+
+    - else
+      %h3 Most Frequent Speakers
+
+    %p Click a name to see their presentations
+    #speakers_chart
+      = render partial: 'shared/speakers_chart'

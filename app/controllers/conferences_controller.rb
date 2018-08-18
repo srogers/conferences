@@ -1,21 +1,24 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index, :cities_count_by]
+  before_action :get_conference, except: [:create, :new, :index, :chart, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
-  load_and_authorize_resource
+  authorize_resource except: [:chart] # friendly_find is incompatible with load_resource
+
+  include CitiesChart
+  include SpeakersChart
 
   def index
     @conferences = Conference.order('start_date DESC').includes(:organizer).references(:organizer)
     per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:search_term].present?
-      s = params[:search_term]
+      term = params[:search_term]
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if s.length == 2 && States::STATES.map{|s| s[0].downcase}.include?(s.downcase)
-        @conferences = @conferences.where('conferences.state ILIKE ?', s)
+      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
+        @conferences = @conferences.where('conferences.state ILIKE ?', term)
       else
-        @conferences = @conferences.where("organizers.name ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "%#{s}%", "#{s}%", "%#{s}%")
+        @conferences = @conferences.where("organizers.name ILIKE ? OR organizers.abbreviation ILIKE ? OR organizers.series_name ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "%#{term}%", "#{term}%", "%#{term}%", "#{term}%", "%#{term}%")
       end
     elsif params[:q].present?
       # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.
@@ -28,16 +31,21 @@ class ConferencesController < ApplicationController
       format.html
       format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
+  end
 
+  def chart
+    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+    # a vertical bar chart).
+    @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
   end
 
   # Feeds the frequent cities chart
   def cities_count_by
-    results = Conference.group(:city).having("count(city) > 2").order("count(city) DESC").count(:city)
 
     respond_to do |format|
       format.html
-      format.json { render json: results.to_json }
+      format.json { render json: city_count_data.to_json }
     end
   end
 
@@ -50,6 +58,7 @@ class ConferencesController < ApplicationController
   end
 
   def new
+    @conference = Conference.new
   end
 
   def create
@@ -60,7 +69,7 @@ class ConferencesController < ApplicationController
     if @conference.save
       redirect_to conference_path(@conference)
     else
-      flash[:error] = 'Your conference could not be saved.'
+      flash.now[:error] = 'Your conference could not be saved.'
       get_organizer_selections
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
       render 'new'

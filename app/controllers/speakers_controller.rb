@@ -1,8 +1,10 @@
 class SpeakersController < ApplicationController
 
-  before_action :get_speaker, except: [:create, :new, :index, :presentations_count_by]
+  before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
-  load_and_authorize_resource
+  authorize_resource  # friendly_find is incompatible with load_resource
+
+  include SpeakersChart
 
   def index
     @speakers = Speaker.order(:sortable_name)
@@ -24,13 +26,20 @@ class SpeakersController < ApplicationController
     end
   end
 
-  # Feeds the frequent speakers chart
+  def chart
+    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+    # a vertical bar chart).
+    @speakers = speaker_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
+  end
+
+  # Feeds the frequent speakers chart - the name gives presentations_count_by_speakers_path
+  # Speakers are the thing being counted - which is why it's here, and not in conferences controller (although the search terms are similar)
   def presentations_count_by
-    results = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
 
     respond_to do |format|
       format.html
-      format.json { render json: results.to_json }
+      format.json { render json: speaker_count_data.to_json }
     end
   end
 
@@ -42,6 +51,7 @@ class SpeakersController < ApplicationController
   end
 
   def new
+    @speaker = Speaker.new
   end
 
   def create
@@ -51,7 +61,7 @@ class SpeakersController < ApplicationController
     if @speaker.save
       redirect_to speaker_path(@speaker)
     else
-      flash[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
+      flash.now[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
       render 'new'
     end

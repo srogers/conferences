@@ -23,6 +23,7 @@ gem 'fastimage'                     # for finding the size of reference images t
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
 gem "font-awesome-sass", '~> 5.0'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
 gem 'friendly_id'                   # manages sluggified URLs
+gem 'groupdate'                     # provides easy group_by_year for presentations charts
 gem 'jbuilder', '~> 2.0'
 gem 'kaminari'                      # a more modern pagination replacement for Will Paginate
 gem 'link_thumbnailer'

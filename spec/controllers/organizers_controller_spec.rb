@@ -8,7 +8,7 @@ RSpec.describe OrganizersController, type: :controller do
   # Organizer. As you add validations to Organizer, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    { name: "Valid Organizer" }
+    { name: "Valid Organizer", series_name: "Conference Series", abbreviation: "ConSer"}
   }
 
   let(:invalid_attributes) {

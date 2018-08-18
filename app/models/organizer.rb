@@ -1,6 +1,6 @@
 class Organizer < ApplicationRecord
 
-  validates :name,       presence: true
+  validates :name, :series_name, :abbreviation,  presence: true
 
   has_many  :conferences
 

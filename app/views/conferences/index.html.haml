@@ -6,17 +6,21 @@
       %span{style: 'margin-right: 5px;'}
       = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         = icon('fas', 'search', class: 'fa-sm')
+      - if params[:search_term].present? || params[:user_id].present?
+        = link_to 'All', conferences_path, class: "btn btn-sm btn-primary ml-2"
 
-  .col-md-5
-    - if params[:search_term].present? || params[:user_id].present?
-      = link_to 'All', conferences_path, class: "btn btn-sm btn-primary"
+  .col-md-2
     - if current_user.present?
       = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
 
-  .col-md-3
+  .col-md-4
+    = link_to icon('fas', 'chart-bar', 'Cities',   class: 'fa-sm'), chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
+    = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
+
+  .col-md-2
     - if can? :create, Conference
       .float-right
-        =link_to "Add Conference", new_conference_path, class: 'btn btn-sm btn-primary'
+        =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_conference_path, class: 'btn btn-sm btn-primary'
 
 - if params[:user_id].present?
   .row

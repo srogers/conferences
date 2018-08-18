@@ -3,11 +3,10 @@
   =# javascript_include_tag "https://www.gstatic.com/charts/loader.js"
   = javascript_include_tag "https://code.highcharts.com/highcharts.js"
 
--# use this method to get the data from an endpoint after the page loads
-=# bar_chart presentations_count_by_speakers_path(search_term: params[:search_term], format: :json), library: { yAxis: { allowDecimals: false } }
+-# There's no endpoint for this chart
 
 -# use this method to get the data from the controller action, and set the height based on the result size
-= bar_chart @speakers, height: bar_chart_height(@speakers.length), library: { yAxis: { allowDecimals: false } }
+= bar_chart @presentations, height: bar_chart_height(@presentations.length), library: { yAxis: { allowDecimals: false } }
 
 -# This is a somewhat hacky way of getting the Top Speakers chart labels linked to their speaker pages.
 -# The chart has to be rendered into a #speakers_chart element so it can appear on pages with other charts without side-effects
@@ -16,10 +15,11 @@
     $(document).ready(function() {
       // wait for stuff to load
       var handle = setInterval(function(){
-        $('#speakers_chart .highcharts-xaxis-labels tspan').each(function() {
+        // The other charts wrap the label in a tspan tag - this one doesn't, because why not?
+        $('#presentations_chart .highcharts-xaxis-labels text').each(function() {
           console.log(this.innerHTML);
           this.addEventListener("click", function(e) {
-              var url = '/speakers/'+this.innerHTML.replace(' ', '-').toLowerCase();
+              var url = '/presentations?search_term='+this.innerHTML;
               // window.open(url, '_blank');
               window.location.href = url
           }, false);

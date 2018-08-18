@@ -172,13 +172,13 @@ Production was bootstrapped from a copy of the staging database
 
 #### Pushing and Restoring Data
 
-It may be possible to populate the Heroku database directly from the local DB (not tested):
+The easiest way to move data up and down from Heroku is using the 
+[pg-push/pg-pull](https://devcenter.heroku.com/articles/heroku-postgresql#pg-pull) commands.
 
-  https://devcenter.heroku.com/articles/heroku-postgresql#pg-push
-  
-For small databases, it is possible to pipe the data into the psql command, like:
-
-      PGPASSWORD='' pg_dump  --no-acl --no-owner -h localhost -U srogers conferences_development | heroku pg:psql --remote staging
+    PGUSER=steve PGPASSWORD='' heroku pg:pull postgresql-rigid-18515 conferences_development --remote production
+    
+However, for this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
+unless you can change your local Postgres version to match what's running on Heroku.
 
 ### Outgoing Email
 
