@@ -5,7 +5,8 @@
   %td{ align: 'center' }
     - if conference.program_url.present?
       = link_to icon('far', 'file'), conference.program_url, target: '_blank'
-  %td{ align: 'center' }= icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
+  - if can? :edit, Conference
+    %td{ align: 'center' }= icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
 
   %td{width: 130}
     - if can? :edit, conference
