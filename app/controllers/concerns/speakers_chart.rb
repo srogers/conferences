@@ -17,7 +17,7 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where("organizers.name ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "%#{term}%", "#{term}%", "%#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
+        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where("organizers.abbreviation ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "#{term}%", "#{term}%", "%#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case
