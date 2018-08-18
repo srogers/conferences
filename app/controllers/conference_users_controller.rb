@@ -2,6 +2,8 @@ class ConferenceUsersController < ApplicationController
 
   before_action :require_user
 
+  # authorize_resource - authorization is handled manually via before_filter, and checking show_attendance pref
+
   def index
     if params[:user_id]
       @user = User.find(params[:user_id])

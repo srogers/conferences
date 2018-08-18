@@ -1,6 +1,7 @@
 class SettingsController < ApplicationController
 
   before_action :require_admin
+
   load_and_authorize_resource
 
   def index

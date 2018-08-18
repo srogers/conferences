@@ -2,7 +2,10 @@ class DocumentsController < ApplicationController
 
   before_action :require_user
   before_action :require_admin,  only: [:generate]
-  before_action :get_document,   only: [:show, :edit, :update, :destroy, :download]
+  #before_action :get_document,   only: [:show, :edit, :update, :destroy, :download]
+
+  load_resource only: [:show, :edit, :update, :destroy, :download]
+  authorize_resource
 
   def index
     @documents = Document.all.order("created_at DESC").page(params[:page])

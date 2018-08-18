@@ -2,7 +2,7 @@ class SpeakersController < ApplicationController
 
   before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
-  load_and_authorize_resource
+  authorize_resource  # friendly_find is incompatible with load_resource
 
   include SpeakersChart
 
@@ -51,6 +51,7 @@ class SpeakersController < ApplicationController
   end
 
   def new
+    @speaker = Speaker.new
   end
 
   def create
@@ -60,7 +61,7 @@ class SpeakersController < ApplicationController
     if @speaker.save
       redirect_to speaker_path(@speaker)
     else
-      flash[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
+      flash.now[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
       render 'new'
     end

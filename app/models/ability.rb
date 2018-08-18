@@ -16,6 +16,7 @@ class Ability
       can :manage, Conference
       can :manage, ConferenceUser
       can :destroy, Conference, :creator_id => user.id
+      can [:read, :download] , Document
       can :manage, Presentation
       can :manage, PresentationSpeaker
       can :manage, Publication

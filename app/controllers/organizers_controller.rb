@@ -1,8 +1,6 @@
 class OrganizersController < ApplicationController
 
-  before_action :get_organizer, except: [:create, :new, :index]
-
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:create, :new, :index]
 
   def index
     @organizers = Organizer.order(:abbreviation).page(params[:page]).per(20)
@@ -15,6 +13,7 @@ class OrganizersController < ApplicationController
   end
 
   def new
+    @organizer = Organizer.new
   end
 
   def create
@@ -26,7 +25,7 @@ class OrganizersController < ApplicationController
     if @organizer.save
       redirect_to organizer_path(@organizer)
     else
-      flash[:error] = "Your organizer could not be saved: #{ @organizer.errors.full_messages.join(", ") }"
+      flash.now[:error] = "Your organizer could not be saved: #{ @organizer.errors.full_messages.join(", ") }"
       logger.debug "Organizer save failed: #{ @organizer.errors.full_messages.join(", ") }"
       render 'new'
     end

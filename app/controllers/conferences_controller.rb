@@ -3,7 +3,7 @@ class ConferencesController < ApplicationController
   before_action :get_conference, except: [:create, :new, :index, :chart, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
-  load_and_authorize_resource
+  authorize_resource except: [:chart] # friendly_find is incompatible with load_resource
 
   include CitiesChart
   include SpeakersChart
@@ -58,6 +58,7 @@ class ConferencesController < ApplicationController
   end
 
   def new
+    @conference = Conference.new
   end
 
   def create
@@ -68,7 +69,7 @@ class ConferencesController < ApplicationController
     if @conference.save
       redirect_to conference_path(@conference)
     else
-      flash[:error] = 'Your conference could not be saved.'
+      flash.now[:error] = 'Your conference could not be saved.'
       get_organizer_selections
       logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
       render 'new'

@@ -2,7 +2,7 @@
   .col-md-12
     = simple_form_for @presentation, :html => {:autocomplete => "off"} do |f|
       = simple_fields_for :presentation_speaker do |p|
-        = p.input :speaker_id, collection: [['',0]], label: "Speaker", input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }, :autofocus => true
+        = p.input :speaker_id, collection: [[@speaker.name, @speaker.id]], label: "Speaker", input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }, :autofocus => true
 
       = render :partial => "base_form_fields", :locals => {:f => f}
       = save_or_cancel f, presentations_path, 'Create'

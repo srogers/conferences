@@ -2,7 +2,7 @@ class PresentationsController < ApplicationController
 
   before_action :get_presentation, except: [:create, :new, :index, :chart, :tags]
 
-  load_and_authorize_resource
+  authorize_resource except: [:chart, :tags] # friendly_find is incompatible with load_resource
 
   include PresentationsChart
 
@@ -63,23 +63,26 @@ class PresentationsController < ApplicationController
 
   def new
     # Pre-populate the conference when we're doing the 'create another' flow
+    @speaker = Speaker.new
     if params[:conference_id]
       @conference = Conference.find(params[:conference_id])
       @presentation = Presentation.new conference_id: @conference.id
+    else
+      @presentation = Presentation.new
     end
   end
 
   def create
     @presentation = Presentation.new presentation_params
     if presentation_speaker_params[:speaker_id].blank?
-      flash[:error] = "Presentations require at least one speaker"
+      flash.now[:error] = "Presentations require at least one speaker"
       render 'new' and return
     end
 
-    speaker = Speaker.find params[:presentation_speaker][:speaker_id] rescue false
-    unless speaker
+    @speaker = Speaker.find params[:presentation_speaker][:speaker_id] rescue false
+    unless @speaker
       # Seems like this would have to be params hackery, or a bug
-      flash[:error] = "Couldn't find that speaker - contact an admin for assistance"
+      flash.now[:error] = "Couldn't find that speaker - contact an admin for assistance"
       logger.warn "Presentation create got a post from user #{current_user.id} with non-existent speaker ID #{ params[:presentation_speaker][:speaker_id] }"
       render 'new' and return
     end
@@ -88,12 +91,13 @@ class PresentationsController < ApplicationController
     @presentation.creator_id = current_user.id
     if @presentation.save
       if params[:presentation_speaker].present?
-        PresentationSpeaker.create(presentation_id: @presentation.id, speaker_id: speaker.id, creator_id: current_user.id)
+        PresentationSpeaker.create(presentation_id: @presentation.id, speaker_id: @speaker.id, creator_id: current_user.id)
       end
       redirect_to presentation_path(@presentation)
     else
-      flash[:error] = "Your presentation could not be saved: #{ @presentation.errors.full_messages.join(', ') }"
+      flash.now[:error] = "Your presentation could not be saved: #{ @presentation.errors.full_messages.join(', ') }"
       logger.debug "Presentation save failed: #{ @presentation.errors.full_messages.join(', ') }"
+      logger.debug @speaker.inspect
       render 'new'
     end
   end
