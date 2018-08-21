@@ -94,6 +94,6 @@ class SpeakersController < ApplicationController
   end
 
   def speaker_params
-    params.require(:speaker).permit(:name, :description, :bio_url, :photo, :remove_photo)
+    params.require(:speaker).permit(:name, :description, :bio_url, :photo, :remove_photo, :sortable_name)
   end
 end
