@@ -16,7 +16,7 @@ class Conference < ApplicationRecord
   validate  :starts_before_ending
   validate  :us_state_existence
 
-  before_validation :set_default_name
+  before_validation :set_default_name, if: Proc.new {|c| c.name.blank? }  # only set the default if the user blanked it
   before_save       :update_default_name
 
   extend FriendlyId

@@ -3,9 +3,22 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $ ->
+  # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date
+  set_conference_name = ->
+    parts = $("#conference_organizer_id :selected").text().split(' - ')
+    abbreviation = parts[parts.length-1]
+    name = abbreviation + ' ' + $('#conference_start_date_1i').val()
+    $("#conference_name").val(name)
+
+  set_conference_name() # do it once on page load
+
+  $("#conference_organizer_id").change ->
+    set_conference_name()
+
   # Make Start/End date a little less tedious by setting the end dates to the start dates as selected.
   # Then the end date selectors should be in the right general range.
   $('#conference_start_date_1i').change ->
+    set_conference_name()
     $('#conference_end_date_1i').val( $('#conference_start_date_1i').val() )
 
   $('#conference_start_date_2i').change ->
