@@ -9,13 +9,17 @@
       - if params[:search_term].present? || params[:user_id].present?
         = link_to 'All', conferences_path, class: "btn btn-sm btn-primary ml-2"
 
-  .col-md-2
+  .col-md-6
     - if current_user.present?
-      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary #{params[:user_id].present? ? 'disabled' : ''}"
+      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary mr-2 #{params[:user_id].present? ? 'disabled' : ''}"
 
-  .col-md-4
-    = link_to icon('fas', 'chart-bar', 'Cities',   class: 'fa-sm'), chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
-    = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "btn btn-sm btn-primary"
+    %span.dropdown.show
+      = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
+      .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
+        = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), cities_chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), countries_chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Speakers',  class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+
 
   .col-md-2
     - if can? :create, Conference
