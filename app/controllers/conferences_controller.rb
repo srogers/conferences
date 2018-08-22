@@ -1,11 +1,12 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index, :chart, :cities_count_by]
+  before_action :get_conference, except: [:create, :new, :index, :cities_chart, :countries_chart, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
-  authorize_resource except: [:chart] # friendly_find is incompatible with load_resource
+  authorize_resource except: [:cities_chart, :countries_chart] # friendly_find is incompatible with load_resource
 
   include CitiesChart
+  include CountriesChart
   include SpeakersChart
 
   def index
@@ -18,7 +19,7 @@ class ConferencesController < ApplicationController
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
         @conferences = @conferences.where('conferences.state ILIKE ?', term)
       else
-        @conferences = @conferences.where("organizers.abbreviation ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "#{term}%", "#{term}%", "#{term}%")
+        @conferences = @conferences.where("organizers.abbreviation ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ? OR conferences.country = ?", "#{term}%", "#{term}%", "#{term}%", country_code(term) )
       end
     elsif params[:q].present?
       # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.
@@ -33,11 +34,15 @@ class ConferencesController < ApplicationController
     end
   end
 
-  def chart
-    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
-    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
-    # a vertical bar chart).
+  # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+  # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+  # a vertical bar chart).
+  def cities_chart
     @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+  end
+
+  def countries_chart
+    @countries = country_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
   end
 
   # Feeds the frequent cities chart
