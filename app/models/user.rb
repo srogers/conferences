@@ -1,6 +1,7 @@
 class User < ApplicationRecord
 
   belongs_to :role
+  belongs_to :speaker
 
   has_many :conference_users,                           :dependent => :destroy
   has_many :conferences, through: :conference_users

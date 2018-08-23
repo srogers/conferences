@@ -24,6 +24,7 @@ class Ability
 
     elsif user.reader?
       can :read, :all
+      can [:edit, :update], Speaker, :id => user.speaker_id
 
     else
       # Some read abilities are going to be required to allow social media linking

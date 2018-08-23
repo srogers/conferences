@@ -17,6 +17,11 @@
       %th Email
       %td= current_user.email
 
+    - if @user.speaker.present?
+      %tr
+        %th Associated Speaker
+        %td= link_to @user.speaker.name, speaker_path(@user.speaker)
+
     %tr
       %th Time Zone
       %td= current_user.time_zone

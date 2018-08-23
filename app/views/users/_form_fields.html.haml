@@ -8,6 +8,10 @@
     = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'
 = f.input :name
 = f.input :email, required: true
+- if current_user&.admin?
+  = f.input :role_id, as: 'select', collection: @roles, include_blank: false
+  = f.input :speaker_id, collection: [[@user&.speaker&.name, @user&.speaker&.id]], label: "Associated Speaker", input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }, :autofocus => true
+
 = f.input :password, required: true
 = f.input :password_confirmation, required: true, hint: current_user && action_name != 'new' ? 'Leave password fields blank to leave password unchanged.' : '7 characters, at least 1 number'
 - if current_user
@@ -18,7 +22,6 @@
   = f.input :time_zone, priority: /US/
 
 - if current_user.try(:admin?)
-  = f.input :role_id, as: 'select', collection: @roles, include_blank: false
   = f.input :active, :as => :boolean, :label => 'Active', :hint => 'Becomes true when user verifies email. When unchecked, the user cannot login.'
   -if Setting.require_account_approval?
     = f.input :approved, :as => :boolean, :label => 'Approved', :hint => 'When unchecked, the user cannot login.'

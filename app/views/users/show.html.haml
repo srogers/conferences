@@ -21,6 +21,14 @@
         %td= t @user.role_name
 
       %tr
+        %th Associated Speaker
+        %td
+          - if @user.speaker.present?
+            = link_to @user.speaker.name, speaker_path(@user.speaker)
+          - else
+            %i not linked
+
+      %tr
         %th Active
         %td
           - if @user.active?
