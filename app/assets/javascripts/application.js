@@ -17,7 +17,7 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require select2
-//=# require Chart.bundle  this loads Chart.js - the simplest library for ChartKick
+//=# require chartkick itself, which seems to work without loading Chart.bundle - the individual charts load highcharts or google charts as needed
 //= require chartkick
 //  don't require turbolinks because the caching breaks select2
 //= require trix
