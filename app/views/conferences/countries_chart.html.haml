@@ -3,17 +3,20 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if params[:search_term].present?
+      - title "Conference Countries for #{ params[:search_term] }"
       %h3
         Conference Countries for
         = params[:search_term]
 
     - elsif params[:user_id].present?
+      - title "Your Conference Countries"
       %h3
         Your Conference Countries
         = params[:search_term]
 
     - else
-      %h3 Top Conference Countries
+      - title "Conferences by Country"
+      %h3 Conferences by Country
 
     %p Click a country to see its conferences
     #countries_chart

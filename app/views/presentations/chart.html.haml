@@ -3,11 +3,13 @@
     = link_to "Done", presentations_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
 
     - if params[:search_term].present? || params[:tag].present?
+      - title "Presentations for #{ params[:search_term] }"
       %h3
         Presentations for
         = params[:search_term] || params[:tag]
 
     - else
+      - title "Presentations by Year"
       %h3 Presentations by Year
 
     %p Click a year to see its presentations
