@@ -3,16 +3,19 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if params[:search_term].present?
+      - title "Speakers for #{ params[:search_term] }"
       %h3
         Speakers for
         = params[:search_term]
 
     - elsif params[:user_id].present?
+      - title "Your Conference Speakers"
       %h3
         Your Conference Speakers
         = params[:search_term]
 
     - else
+      - title "Frequent Conference Speakers"
       %h3 Most Frequent Speakers
 
     %p Click a name to see their presentations

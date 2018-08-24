@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_18_204927) do
+ActiveRecord::Schema.define(version: 2018_08_23_152736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -200,6 +200,7 @@ ActiveRecord::Schema.define(version: 2018_08_18_204927) do
     t.integer "role_id"
     t.boolean "show_attendance", default: true
     t.boolean "show_contributor", default: true
+    t.integer "speaker_id"
   end
 
 end

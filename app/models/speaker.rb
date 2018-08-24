@@ -2,6 +2,8 @@ class Speaker < ApplicationRecord
 
   belongs_to  :creator,   class_name: "User"
 
+  has_one     :user
+
   has_many :presentation_speakers,                           :dependent => :destroy
   has_many :presentations, through: :presentation_speakers
 
