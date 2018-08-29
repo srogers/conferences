@@ -36,6 +36,18 @@ class ApplicationController < ActionController::Base
       "GB", # United Kingdom
   ]
 
+  # Converts a two character code like "US" to full name "United States"
+  def country_name(country_code)
+    country_object = ISO3166::Country[country_code]
+    country_object.translations[I18n.locale.to_s] || country_object.name
+  end
+
+  # Get the two character code like "US" from the full name "United States"
+  def country_code(country_name)
+    country = ISO3166::Country.find_country_by_name(country_name)
+    country&.alpha2
+  end
+
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
