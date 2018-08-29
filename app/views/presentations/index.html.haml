@@ -12,7 +12,7 @@
       = link_to 'All', presentations_path, class: "btn btn-sm btn-primary"
     = link_to icon('fas', 'chart-bar', 'by Year', class: 'fa-sm'), chart_presentations_path(search_term: params[:search_term], tag: params[:tag]), class: "btn btn-sm btn-primary"
 
-    = link_to 'Subject Areas', tags_presentations_path, class: "btn btn-sm btn-primary"
+    = link_to 'Topics', tags_presentations_path, class: "btn btn-sm btn-primary"
 
   .col-md-3
     - if can? :create, Presentation
