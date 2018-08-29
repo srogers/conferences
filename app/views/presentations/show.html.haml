@@ -10,7 +10,7 @@
     %p= @presentation.description.try(:html_safe)
 
     %p
-      %b Subject Area:
+      %b Topic:
       = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
 
     %p

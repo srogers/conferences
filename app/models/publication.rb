@@ -12,11 +12,12 @@ class Publication < ApplicationRecord
   DISK    = 'DVD/Blu-ray'
   CAMPUS  = 'Campus'
   YOUTUBE = 'YouTube'      # Is it helpful to make this distinct?
+  FACEBOOK = 'FaceBook'    # Is it helpful to make this distinct?
   PODCAST = 'Podcast'
   ONLINE  = 'Online'       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'      # This is going away . . .
   PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
-  FORMATS = [TAPE, CD, VHS, DISK, CAMPUS, YOUTUBE, PODCAST, ONLINE, ESTORE, PRINT]
+  FORMATS = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
 
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
 

@@ -1,16 +1,5 @@
 module CountriesChart
 
-  # Converts a two character code like "US" to full name "United States"
-  def country_name(country_code)
-    country_object = ISO3166::Country[country_code]
-    country_object.translations[I18n.locale.to_s] || country_object.name
-  end
-
-  def country_code(country_name)
-    country = ISO3166::Country.find_country_by_name(country_name)
-    country&.alpha2
-  end
-
   # Builds a hash of speaker counts that looks like: {"Austin"=>7, "Houston"=>6, "Dallas"=>5}
   # which the endpoint can return as JSON or the action can use directly as an array.
   def country_count_data

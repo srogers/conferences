@@ -2,7 +2,7 @@
 = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: "Conference Name", input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
 = f.label :description
 = f.trix_editor :description
-= f.input :tag_list, input_html: { value: @tags }, label: 'Subject Areas', hint: "economics, politics, psychology, etc. - separate with commas"
+= f.input :tag_list, input_html: { value: @tags }, label: 'Topics', hint: "economics, politics, psychology, etc. - separate with commas"
 = f.input :parts
 = f.input :handout, label: @presentation.handout.present? ? 'Change handout' : 'Add handout'
 - if @presentation.handout.present?
