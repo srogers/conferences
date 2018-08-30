@@ -18,7 +18,7 @@ class ConferencesController < ApplicationController
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
         @conferences = @conferences.where('conferences.state ILIKE ?', term)
       else
-        @conferences = @conferences.where(ConferencesChart::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%" )
+        @conferences = @conferences.where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%" )
       end
     elsif params[:q].present?
       # Presentations uses this for picking conference in case where a presentation is created without a conference, then associated later.

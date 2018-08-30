@@ -1,13 +1,6 @@
-
 module ConferencesChart
 
-  # It would be cool if each "count_data" could call a helper to apply the basic restrictions - but the group, where, and count
-  # have to be applied all at once - they aren't intermediate (mabye a fix for that using Arel). Next best thing - the
-  # query construction string is defined once.
-
-  # This defines the query for the main case, shared by all - only name should get leading and trailing wildcard - others just trailing.
-  # Terms:  name, city, country, organizer_abbreviation
-  BASE_QUERY = 'conferences.name ILIKE ? OR conferences.city ILIKE ? OR conferences.country = ? OR id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)'
+  include SharedQueries
 
   # Builds a hash of speaker counts that looks like: {"Austin"=>7, "Houston"=>6, "Dallas"=>5}
   # which the endpoint can return as JSON or the action can use directly as an array.
@@ -23,7 +16,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:city).where(BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(city) DESC").count(:city)
+        results = Conference.group(:city).where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(city) DESC").count(:city)
       end
 
       # Handles the My Conferences case
@@ -54,7 +47,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:country).where(BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(country) DESC").count
+        results = Conference.group(:country).where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(country) DESC").count
       end
 
       # Handles the My Conferences case
@@ -84,7 +77,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group_by_year("conferences.start_date").where(BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").count
+        results = Conference.group_by_year("conferences.start_date").where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").count
       end
 
       # Handles the My Conferences case
