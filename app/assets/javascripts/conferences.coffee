@@ -3,12 +3,15 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $ ->
-  # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date
+  # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date,
+  # But it shouldn't change the name once it's been set. A gon flag is used to wave it off.
   set_conference_name = ->
+    return unless typeof gon != 'undefined' and gon.apply_name_default
     parts = $("#conference_organizer_id :selected").text().split(' - ')
     abbreviation = parts[parts.length-1]
     name = abbreviation + ' ' + $('#conference_start_date_1i').val()
     $("#conference_name").val(name)
+    $('#conference_name').css("background-color", "yellow")
 
   set_conference_name() # do it once on page load
 

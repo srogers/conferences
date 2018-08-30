@@ -185,6 +185,10 @@ GEM
     gherkin (5.1.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    gon (6.2.1)
+      actionpack (>= 3.0)
+      multi_json
+      request_store (>= 1.0)
     groupdate (4.0.1)
       activesupport (>= 4.2)
     haml (5.0.4)
@@ -470,6 +474,7 @@ DEPENDENCIES
   font-awesome-sass (~> 5.0)
   foreman
   friendly_id
+  gon
   groupdate
   haml-rails
   jbuilder (~> 2.0)
@@ -511,4 +516,4 @@ RUBY VERSION
    ruby 2.4.4p296
 
 BUNDLED WITH
-   1.16.3
+   1.16.4

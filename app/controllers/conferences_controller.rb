@@ -7,6 +7,7 @@ class ConferencesController < ApplicationController
 
   include ConferencesChart
   include SpeakersChart
+  include ConferencesHelper
 
   def index
     @conferences = Conference.order('start_date DESC').includes(:organizer)
@@ -67,9 +68,12 @@ class ConferencesController < ApplicationController
   end
 
   def edit
+    # Keep custom names - but dynamically change the name based on date/organizer if it's still the default name
+    gon.apply_name_default = name_blank_or_default?(@conference)
   end
 
   def new
+    gon.apply_name_default = true
     @conference = Conference.new
   end
 
