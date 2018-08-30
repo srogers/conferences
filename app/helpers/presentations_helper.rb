@@ -27,6 +27,8 @@ module PresentationsHelper
       icon('fas', 'university')
     when Publication::YOUTUBE then
       icon('fab', 'youtube')
+    when Publication::FACEBOOK then
+      icon('fab', 'facebook')
     when Publication::PODCAST then
       icon('fas', 'podcast')
     when Publication::ONLINE then

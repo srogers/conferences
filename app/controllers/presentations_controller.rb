@@ -2,12 +2,12 @@ class PresentationsController < ApplicationController
 
   before_action :get_presentation, except: [:create, :new, :index, :chart, :tags]
 
-  authorize_resource except: [:chart, :tags] # friendly_find is incompatible with load_resource
+  authorize_resource            # friendly_find is incompatible with load_resource
 
-  include PresentationsChart
+  include SharedQueries         # defines uniform ways for applying search terms
+  include PresentationsChart    # gets chart data
 
   def index
-    # This handles the presentation autocomplete
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
     per_page = params[:per] || 15 # autocomplete specifies :per
 

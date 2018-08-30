@@ -3,6 +3,8 @@ class PublicationsController < ApplicationController
   before_action :require_editor
   before_action :get_publication, except: [:create, :new]
 
+  authorize_resource
+
   def create
     @publication = Publication.new publication_params
     @publication.creator_id = current_user.id

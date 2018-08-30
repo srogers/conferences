@@ -21,4 +21,8 @@ module ConferencesHelper
   def bar_chart_height(bar_count)
     "#{bar_count * 25 + 50}px"
   end
+
+  def name_blank_or_default?(conference)
+    conference.name.blank? || conference.name == conference.organizer.abbreviation + ' ' + conference.start_date.year.to_s
+  end
 end
