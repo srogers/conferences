@@ -1,16 +1,15 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index, :cities_chart, :countries_chart, :cities_count_by]
+  before_action :get_conference, except: [:create, :new, :index, :cities_chart, :countries_chart, :years_chart, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
-  authorize_resource except: [:cities_chart, :countries_chart] # friendly_find is incompatible with load_resource
+  authorize_resource  # friendly_find is incompatible with load_resource
 
-  include CitiesChart
-  include CountriesChart
+  include ConferencesChart
   include SpeakersChart
 
   def index
-    @conferences = Conference.order('start_date DESC').includes(:organizer).references(:organizer)
+    @conferences = Conference.order('start_date DESC').includes(:organizer)
     per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:search_term].present?
       term = params[:search_term]
@@ -19,11 +18,15 @@ class ConferencesController < ApplicationController
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
         @conferences = @conferences.where('conferences.state ILIKE ?', term)
       else
-        @conferences = @conferences.where("organizers.abbreviation ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ? OR conferences.country = ?", "#{term}%", "#{term}%", "#{term}%", country_code(term) )
+        @conferences = @conferences.where(ConferencesChart::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%" )
       end
     elsif params[:q].present?
-      # autocomplete search - returns most recent conferences until the 4 digit year is complete. Year is the only good unique attribute.
+      # Presentations uses this for picking conference in case where a presentation is created without a conference, then associated later.
+      # Returns most recent conferences until the 4 digit year is complete. Year is the only good attribute for ensuring
+      # the target conference will show up within a set of 5. Over time, may need to bump the 5 to 6 or 8 - use conferences_by_year
+      # chart - value needs to be =< maximum conferences in any one year.
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
+      @conferences = @conferences.limit(5)
     end
     @conferences = @conferences.page(params[:page]).per(per_page)
 
@@ -43,6 +46,10 @@ class ConferencesController < ApplicationController
 
   def countries_chart
     @countries = country_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+  end
+
+  def years_chart
+    @years = year_count_data.to_a
   end
 
   # Feeds the frequent cities chart

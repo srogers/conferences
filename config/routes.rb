@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
       get :cities_chart       # queries the data and pushes it to the chart in an array
+      get :years_chart        # queries the data and pushes it to the chart in an array
       get :countries_chart    # queries the data and pushes it to the chart in an array
     end
   end

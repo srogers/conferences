@@ -14,6 +14,7 @@ class Ability
     elsif user.editor?
       can :read, :all
       can :manage, Conference
+      can [:cities_chart, :countries_chart, :years_chart], Conference
       can :manage, ConferenceUser
       can :destroy, Conference, :creator_id => user.id
       can [:read, :download] , Document
