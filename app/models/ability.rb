@@ -19,13 +19,17 @@ class Ability
       can :destroy, Conference, :creator_id => user.id
       can [:read, :download] , Document
       can :manage, Presentation
+      can [:chart, :tags], Presentation
       can :manage, PresentationSpeaker
       can :manage, Publication
       can :manage, Speaker
+      can [:chart], Speaker
 
     elsif user.reader?
       can :read, :all
+      can [:cities_chart, :countries_chart, :years_chart], Conference
       can [:edit, :update], Speaker, :id => user.speaker_id
+      can [:chart], Speaker
 
     else
       # Some read abilities are going to be required to allow social media linking
