@@ -5,34 +5,44 @@ class Ability
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
-    user ||= User.new # guest user (not logged in)
+    if user.present?
 
-    # Currently, everything  is handled by controller filters, but the framework is here....
-    if user.admin?
-      can :manage, :all
+      if user.admin?
+        can :manage, :all
 
-    elsif user.editor?
-      can :read, :all
-      can :manage, Conference
-      can [:cities_chart, :countries_chart, :years_chart], Conference
-      can :manage, ConferenceUser
-      can :destroy, Conference, :creator_id => user.id
-      can [:read, :download] , Document
-      can :manage, Presentation
-      can [:chart, :tags], Presentation
-      can :manage, PresentationSpeaker
-      can :manage, Publication
-      can :manage, Speaker
-      can [:chart], Speaker
+      elsif user.editor?
+        can :read, :all
+        can :manage, Conference
+        can [:cities_chart, :countries_chart, :years_chart], Conference
+        can :manage, ConferenceUser
+        can :destroy, Conference, :creator_id => user.id
+        can [:read, :download] , Document
+        can :manage, Presentation
+        can [:chart, :tags], Presentation
+        can :manage, PresentationSpeaker
+        can :manage, Publication
+        can :manage, Speaker
+        can [:chart], Speaker
 
-    elsif user.reader?
-      can :read, :all
-      can [:cities_chart, :countries_chart, :years_chart], Conference
-      can [:edit, :update], Speaker, :id => user.speaker_id
-      can [:chart], Speaker
+      elsif user.reader?
+        can :read, :all
+        can [:cities_chart, :countries_chart, :years_chart], Conference
+        can [:chart, :tags], Presentation
+        can [:edit, :update], Speaker, :id => user.speaker_id
+        can [:chart], Speaker
+
+      else
+        logger.error "user #{user.id} with undefined role"
+      end
 
     else
       # Some read abilities are going to be required to allow social media linking
+      can :read, Conference
+      can [:cities_chart, :countries_chart, :years_chart], Conference
+      can :read, Presentation
+      can [:chart, :tags], Presentation
+      can :read, Speaker
+      can [:chart], Speaker
     end
   end
 end
