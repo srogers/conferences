@@ -23,7 +23,7 @@ module PresentationsChart
 
       # Build year keys and counts - use one method or the other
       # keys = @presentations.map{|p| p.conference.start_date.year}.uniq.sort                 # based on just the years that are present
-      keys = *(Conference.minimum(:start_date).year.Conference.maximum(:start_date).year)     # a list of all the possible years - reflects full context
+      keys = *(Conference.minimum(:start_date).year..Conference.maximum(:start_date).year)    # a list of all the possible years - reflects full context
 
       data = keys.inject({}) { |h, v| h.merge(v => @presentations.select{|p| p.conference&.start_date&.year == v}.length) }
 
