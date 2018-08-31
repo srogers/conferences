@@ -6,11 +6,15 @@
       %span{style: 'margin-right: 5px;'}
       = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         = icon('fas', 'search', class: 'fa-sm')
+      - if params[:search_term].present? || params[:tag].present?
+        = link_to 'All', presentations_path, class: "btn btn-sm btn-primary ml-2"
 
   .col-md-5
-    - if params[:search_term].present? || params[:tag].present?
-      = link_to 'All', presentations_path, class: "btn btn-sm btn-primary"
-    = link_to icon('fas', 'chart-bar', 'by Year', class: 'fa-sm'), chart_presentations_path(search_term: params[:search_term], tag: params[:tag]), class: "btn btn-sm btn-primary"
+    %span.dropdown.show
+      = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
+      .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
+        = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(search_term: params[:search_term], tag: params[:tag]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
     = link_to 'Topics', tags_presentations_path, class: "btn btn-sm btn-primary"
 

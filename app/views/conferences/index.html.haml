@@ -21,7 +21,6 @@
         = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), years_chart_conferences_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
         = link_to icon('fas', 'chart-bar', 'Speakers',  class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-
   .col-md-2
     - if can? :create, Conference
       .float-right
