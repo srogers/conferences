@@ -6,7 +6,7 @@ module PresentationsChart
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
     presentations_by_tag  = presentations.tagged_with(term)
-    presentations_by_name = presentations.where(base_query_for('presentations') + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+    presentations_by_name = presentations.where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
     return presentations_by_tag + (presentations_by_name - presentations_by_tag)
   end
 
