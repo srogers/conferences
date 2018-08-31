@@ -16,7 +16,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:city).where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(city) DESC").count(:city)
+        results = Conference.group(:city).where(base_query_for('conferences'), "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(city) DESC").count(:city)
       end
 
       # Handles the My Conferences case
@@ -47,7 +47,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:country).where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").order("count(country) DESC").count
+        results = Conference.group(:country).where(base_query_for('conferences'), "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(country) DESC").count
       end
 
       # Handles the My Conferences case
@@ -77,7 +77,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group_by_year("conferences.start_date").where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%").count
+        results = Conference.group_by_year("conferences.start_date").where(base_query_for('conferences'), "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").count
       end
 
       # Handles the My Conferences case
