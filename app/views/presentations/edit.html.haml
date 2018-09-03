@@ -1,5 +1,6 @@
 .row
   .col-md-12
     = simple_form_for @presentation do |f|
+      -# Speaker isn't present for edit because we use "Manage Speakers" rather than populating select2 with multiple speakers
       = render :partial => "base_form_fields", :locals => {:f => f}
       = save_or_cancel f, presentation_path(@presentation), 'Save'
