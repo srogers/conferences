@@ -14,10 +14,13 @@ class SpeakersController < ApplicationController
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
       @speakers.limit(params[:per]) # :q, :exclude, and :per always go together
-    else
-      @speakers = @speakers.where("name ILIKE ?", "%#{params[:search_term]}%") if params[:search_term].present?
-      @speakers = @speakers.page(params[:page]).per(per_page)
+    elsif params[:search_term].present?
+      term = params[:search_term]
+      @speakers = @speakers.includes(:presentations => { :conference => :organizer }).references(:conferences)
+      @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
     end
+
+    @speakers = @speakers.page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

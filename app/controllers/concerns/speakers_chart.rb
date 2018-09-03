@@ -1,6 +1,8 @@
 # This is a concern so both speakers controller and conferences controller can use it.
 module SpeakersChart
 
+  include SharedQueries
+
   # Builds a hash of speaker counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
   # which the endpoint can return as JSON or the action can use directly as an array.
   def speaker_count_data
@@ -17,7 +19,7 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where("organizers.abbreviation ILIKE ? OR conferences.city ILIKE ? OR conferences.name ILIKE ?", "#{term}%", "#{term}%", "%#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
+        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case

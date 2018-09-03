@@ -10,27 +10,31 @@
     %h4 Conferences
     %ul
       %li
+        What is a conference? Generally what immediately comes to mind: a multi-day event with presentations and activities.
+        We're also including many of the single-day and weekend events, and some special events that consist of a single
+        lecture. We're also including the Ford Hall Forum talks, because they are so important to the overall flow of
+        topics.
+      %li
+        %b Name
+        %br
+        When you create a conference, a name will be assigned automatically based on the conference organizer and year
+        you select (e.g., OCON 2012). This name will be used as part of the URL for the confernce, and this uniform
+        naming scheme helps make things searchable. The URL doesn't change, even if the conference name is updated,
+        so if you accidentally create the conference with the wrong organizer, delete it and start over-you don't want
+        OCON 2020 to have a URL that ends with "irm-1996".
+        %b
+        For the same reason, it's also important to carefully pick the name of special events, such as:
+        = link_to "Ayn Rand Comes to Harvard 1996", 'https://objectivistconferences.info/conferences/ayn-rand-comes-to-harvard-1996'
+        or
+        = link_to "ARI Ford Hall Forum Event", "https://objectivistconferences.info/conferences/ari-special-event-oct-20-22-2006-boston-ma"
+        Use the program event name if available. Otherwise, pick something that is meaningful in the context of the conference listing.
+      %li
+        %b Organizer
+        %br
         When you add a conference, you'll pick an organizer. This denotes the sponsoring organization, as well as a conference
         series. For example, ARI hosts a student conference AynRandCon, as well as a general summer conference OCON, plus
         occasional special events. Organizers are not expected to change very often. If you discover a new organizer, contact
         the admin.
-      %li
-        What is a conference? So far, it is limited to events with a physical location that generate media which might be
-        recorded. Pure telepresence events are not included.
-      %li
-        Conferences are given a name automatically based on the year and organizer, like OCON 2015, or Lyceum 1995.
-        This works well for the major conferences, but not as well for special events. In that case, you may need to
-        change the name - for example, see the
-        = link_to "ARI Ford Hall Forum Event", "https://objectivistconferences.info/conferences/ari-special-event-oct-20-22-2006-boston-ma"
-        in 2006. Use the program event name if available. Otherwise, pick something that is meaningful in the context of the conference listing.
-      %li
-        We think we have all the major conferences, but there are certainly many weekend events that are missing. It is
-        unclear how many of these we can discover, and how far down this road we want to go. So far, the approach has been
-        to capture everything, particularly if it generated media. For example, the
-        =link_to "ARI Special Event", "http://localhost:3001/conferences/ari-special-event-sep-12-2006-irvine-ca"
-        at Irvine in 2006 was not really a conference. It was just a one-time speech. But it was recorded, it exists on
-        YouTube, and it was a month before the Ford Hall Forum event on the same topic. So it is meaningful from a
-        historical perspective.
 
     %h4 Speakers
     %ul
@@ -92,9 +96,6 @@
     %ul
       %li
         Try to come up with one or perhaps two tags that capture the presentation's topic at the highest level.
-      %li
-        Don't add words in the title as tags.  For example, a talk titled "Epistemology in Objectivism"  will already be
-        searchable by "objectivism" and "epistemology", so it isn't necessary to add that information as tags.
       %li
         Use topic/category style tags, like history, psychology, etc. Not adjective-style like: historical, psychological.
       %li

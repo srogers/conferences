@@ -5,8 +5,10 @@ module SharedQueries
   # using Arel). Next best thing - the query construction string is defined once.
 
   # This defines the query for the main case, shared by all - only name should get leading and trailing wildcard - others
-  # just trailing wildcard.
-  # Terms:  name, city, country, organizer_abbreviation
-  BASE_QUERY = 'conferences.name ILIKE ? OR conferences.city ILIKE ? OR conferences.country = ? OR id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)'
+  # just trailing wildcard - year, no wildcard. Year is there to catch special events that don't have the year in the title.
+  # Terms:  name, city, country, year, organizer_abbreviation
 
+  def base_query
+    "conferences.name ILIKE ? OR conferences.city ILIKE ? OR conferences.country = ? OR cast(date_part('year',conferences.start_date) as text) = ? OR conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
+  end
 end

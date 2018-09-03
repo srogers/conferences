@@ -19,7 +19,7 @@ class ConferencesController < ApplicationController
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
         @conferences = @conferences.where('conferences.state ILIKE ?', term)
       else
-        @conferences = @conferences.where(SharedQueries::BASE_QUERY, "%#{term}%", "#{term}%", country_code(term), "#{term}%" )
+        @conferences = @conferences.where(base_query, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
       end
     elsif params[:q].present?
       # Presentations uses this for picking conference in case where a presentation is created without a conference, then associated later.
@@ -27,7 +27,7 @@ class ConferencesController < ApplicationController
       # the target conference will show up within a set of 5. Over time, may need to bump the 5 to 6 or 8 - use conferences_by_year
       # chart - value needs to be =< maximum conferences in any one year.
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
-      @conferences = @conferences.limit(5)
+      @conferences = @conferences.limit(7)
     end
     @conferences = @conferences.page(params[:page]).per(per_page)
 

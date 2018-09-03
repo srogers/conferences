@@ -3,7 +3,7 @@ class Presentation < ApplicationRecord
   belongs_to  :conference
   belongs_to  :creator,   class_name: "User"
 
-  has_many    :publications,            :dependent => :destroy
+  has_many    :publications, -> { order(:format, :published_on, :notes) },   :dependent => :destroy
 
   has_many    :presentation_speakers,   :dependent => :destroy
   has_many    :speakers, through: :presentation_speakers

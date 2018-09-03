@@ -9,7 +9,7 @@ class ConferenceUsersController < ApplicationController
       @user = User.find(params[:user_id])
       redirect_to conferences_path and return unless current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
       if @user.show_attendance || current_user.id.to_s == params[:user_id]
-        @conferences = @user.conferences.order(:start_date).page(params[:page]).per(20)
+        @conferences = @user.conferences.order("start_date DESC").page(params[:page]).per(20)
       else
         @conferences = []
       end
