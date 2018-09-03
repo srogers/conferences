@@ -35,20 +35,30 @@ RSpec.describe Speaker, type: :model do
   end
 
   describe "when updating a speaker" do
-    it "updates the sortable name" do
-      speaker = create :speaker
-      speaker.name = "Distinctively Named Speakerperson"
-      speaker.save
-      speaker.reload
-      expect(speaker.sortable_name).to eq('Speakerperson')
+
+    let(:speaker) { create :speaker, name: "Original Name" }
+
+    context "changing the name" do
+      before do
+        speaker.update(name: "Distinctively named Speakerperson")
+      end
+
+      it "does not capitalize the name" do
+        expect(speaker.name).to eq("Distinctively named Speakerperson")
+      end
+
+      it "updates the sortable name" do
+        expect(speaker.sortable_name).to eq('Speakerperson')
+      end
+
+      it "generates a new slug" do
+        expect(Speaker.friendly.find('distinctively-named-speakerperson')).to eq(speaker)
+      end
+
+      it "keeps the old slug history" do
+        expect(Speaker.friendly.find('original-name')).to eq(speaker)
+      end
     end
 
-    it "does not capitalize the name" do
-      speaker = create :speaker
-      speaker.name = "homer j. simpson"
-      speaker.save
-      speaker.reload
-      expect(speaker.name).to eq('homer j. simpson')
-    end
   end
 end

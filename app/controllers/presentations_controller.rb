@@ -122,6 +122,7 @@ class PresentationsController < ApplicationController
 
   def get_presentation
     @presentation = Presentation.friendly.find params[:id]
+    redirect_to(@presentation, :status => :moved_permanently) and return if params[:id] != @presentation.slug
   end
 
   def presentation_params

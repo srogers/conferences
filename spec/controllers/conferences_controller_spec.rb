@@ -84,6 +84,24 @@ RSpec.describe ConferencesController, type: :controller do
       get :show, params: {id: conference.to_param}
       expect(assigns(:conference)).to eq(conference)
     end
+
+    # This is checked once for all the methods using get_conference
+    context "with a moved conference" do
+      before do
+        conference.update(name: 'New Conference Name')
+      end
+
+      it "finds the conference with the old URL" do
+        get :show, params: {id: 'test-conference'}
+        expect(assigns(:conference)).to eq(conference)
+        expect(response).to be_redirect
+      end
+
+      it "finds the conference with the new URL" do
+        get :show, params: {id: 'new-conference-name'}
+        expect(assigns(:conference)).to eq(conference)
+      end
+    end
   end
 
   describe "GET #new" do

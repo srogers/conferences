@@ -73,6 +73,8 @@ FriendlyId.defaults do |config|
   # FriendlyId adds to your model. The change below makes FriendlyId 5.0 behave
   # more like 4.0.
   #
+  # NOTE: apparently, this code has to go in the model - changing it here doesn't do anything
+  #
   # config.use Module.new {
   #   def should_generate_new_friendly_id?
   #     slug.blank? || <your_column_name_here>_changed?

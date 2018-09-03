@@ -17,9 +17,14 @@ class Presentation < ApplicationRecord
   acts_as_taggable
 
   extend FriendlyId
-  friendly_id :name, use: :slugged
+  friendly_id :name, use: [:slugged, :history]
 
   mount_uploader :handout, DocumentUploader
+
+  # This is necessary to make Friendly_id generate a new slug when the current name is changed.
+  def should_generate_new_friendly_id?
+    slug.blank? || name_changed?
+  end
 
   # presentations can exist with duplicate names, but presentation names must be unique within a conference
   def unique_per_conference

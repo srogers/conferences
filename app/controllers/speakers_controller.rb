@@ -7,7 +7,7 @@ class SpeakersController < ApplicationController
   include SpeakersChart
 
   def index
-    @speakers = Speaker.includes(:presentations => { :conference => :organizer }).references(:conferences).order(:sortable_name)
+    @speakers = Speaker.order(:sortable_name)
     per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
@@ -16,6 +16,7 @@ class SpeakersController < ApplicationController
       @speakers.limit(params[:per]) # :q, :exclude, and :per always go together
     elsif params[:search_term].present?
       term = params[:search_term]
+      @speakers = @speakers.includes(:presentations => { :conference => :organizer }).references(:conferences)
       @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
     end
 
@@ -93,6 +94,7 @@ class SpeakersController < ApplicationController
 
   def get_speaker
     @speaker = Speaker.friendly.find params[:id]
+    redirect_to(@speaker, :status => :moved_permanently) and return if params[:id] != @speaker.slug
   end
 
   def speaker_params

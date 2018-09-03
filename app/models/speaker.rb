@@ -14,9 +14,14 @@ class Speaker < ApplicationRecord
   before_save   :update_sortable_name   # always do this
 
   extend FriendlyId
-  friendly_id :name, use: :slugged
+  friendly_id :name, use: [:slugged, :history]
 
   mount_uploader :photo, PhotoUploader
+
+  # This is necessary to make Friendly_id generate a new slug when the current name is changed.
+  def should_generate_new_friendly_id?
+    slug.blank? || name_changed?
+  end
 
   def capitalize_name
     self.name = name.split.map(&:capitalize)*' '
