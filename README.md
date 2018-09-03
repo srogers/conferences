@@ -180,6 +180,17 @@ The easiest way to move data up and down from Heroku is using the
 However, for this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
 unless you can change your local Postgres version to match what's running on Heroku.
 
+#### Transferring Data Between Apps
+
+To transfer production data back to staging for testing (ensure the staging database plan can handle it).
+
+    heroku maintenance:on --remote staging
+    heroku pg:copy conference-media::DATABASE_URL DATABASE_URL -a conference-media-staging
+    # this will ask to confirm the copy by typing the name of the staging app
+    heroku maintenance:off --remote staging
+
+After that, staging is ready to go with the production data. Remember - this blasts the users also.
+
 ### Outgoing Email
 
 Mail is configured to use Sendgrid. When the Add-On is provisioned, the username and password are added to the Heroku 
