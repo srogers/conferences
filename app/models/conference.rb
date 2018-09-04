@@ -20,7 +20,12 @@ class Conference < ApplicationRecord
   before_save       :update_default_name
 
   extend FriendlyId
-  friendly_id :name, use: :slugged
+  friendly_id :name, use: [:slugged, :history]
+
+  # This is necessary to make Friendly_id generate a new slug when the current name is changed.
+  def should_generate_new_friendly_id?
+    slug.blank? || name_changed?
+  end
 
   def starts_before_ending
     errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date

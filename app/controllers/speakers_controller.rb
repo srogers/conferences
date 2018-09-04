@@ -94,6 +94,7 @@ class SpeakersController < ApplicationController
 
   def get_speaker
     @speaker = Speaker.friendly.find params[:id]
+    redirect_to(@speaker, :status => :moved_permanently) and return if params[:id] != @speaker.slug
   end
 
   def speaker_params

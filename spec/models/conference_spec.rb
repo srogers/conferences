@@ -82,10 +82,26 @@ RSpec.describe Conference, type: :model do
       expect(conference.name).to eq('Updated Conference Name')
     end
 
-    context "when a name is not provided" do
-      it "takes name from the organizer's series and the start date" do
-        conference.update(name: '')
-        expect(conference.name).to eq('OC 2005')
+    context "changing the name" do
+      context 'to a new string' do
+        before do
+          conference.update(name: 'New Conference Name')
+        end
+
+        it "generates a new slug" do
+          expect(Conference.friendly.find('new-conference-name')).to eq(conference)
+        end
+
+        it "keeps the old slug history" do
+          expect(Conference.friendly.find('oc-2005')).to eq(conference)
+        end
+      end
+
+      context "to blank" do
+        it "takes name from the organizer's series and the start date" do
+          conference.update(name: '')
+          expect(conference.name).to eq('OC 2005')
+        end
       end
     end
 

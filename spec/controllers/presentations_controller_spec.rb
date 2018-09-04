@@ -102,6 +102,24 @@ RSpec.describe PresentationsController, type: :controller do
       get :show, params: {id: presentation.to_param}
       expect(assigns(:presentation)).to eq(presentation)
     end
+
+    # This is checked once for all the methods using get_presentation
+    context "with a moved presentation" do
+      before do
+        presentation.update(name: 'New Presentation Name')
+      end
+
+      it "finds the presentation with the old URL" do
+        get :show, params: {id: 'some-presentation'}
+        expect(assigns(:presentation)).to eq(presentation)
+        expect(response).to be_redirect
+      end
+
+      it "finds the presentation with the new URL" do
+        get :show, params: {id: 'new-presentation-name'}
+        expect(assigns(:presentation)).to eq(presentation)
+      end
+    end
   end
 
   describe "when downloading the handout" do
@@ -220,6 +238,7 @@ RSpec.describe PresentationsController, type: :controller do
 
       it "redirects to the presentation" do
         put :update, params: update_params
+        presentation.reload
         expect(response).to redirect_to(presentation)
       end
 

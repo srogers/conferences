@@ -75,6 +75,24 @@ RSpec.describe SpeakersController, type: :controller do
       get :show, params: {id: speaker.to_param}
       expect(assigns(:speaker)).to eq(speaker)
     end
+
+    # This is checked once for all the methods using get_speaker
+    context "with a moved speaker" do
+      before do
+        speaker.update(name: 'New Speaker Name')
+      end
+
+      it "finds the speaker with the old URL" do
+        get :show, params: {id: 'valid-speaker'}
+        expect(assigns(:speaker)).to eq(speaker)
+        expect(response).to be_redirect
+      end
+
+      it "finds the speaker with the new URL" do
+        get :show, params: {id: 'new-speaker-name'}
+        expect(assigns(:speaker)).to eq(speaker)
+      end
+    end
   end
 
   describe "GET #new" do

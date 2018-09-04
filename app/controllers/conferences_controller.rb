@@ -117,6 +117,7 @@ class ConferencesController < ApplicationController
 
   def get_conference
     @conference = Conference.friendly.find params[:id]
+    redirect_to(@conference, :status => :moved_permanently) and return if params[:id] != @conference.slug
   end
 
   def get_organizer_selections

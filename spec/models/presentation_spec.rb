@@ -89,6 +89,20 @@ RSpec.describe Presentation, type: :model do
         end
       end
     end
+
+    context "changing the name" do
+      before do
+        presentation.update(name: 'New Presentation Name')
+      end
+
+      it "generates a new slug" do
+        expect(Presentation.friendly.find('new-presentation-name')).to eq(presentation)
+      end
+
+      it "keeps the old slug history" do
+        expect(Presentation.friendly.find('some-presentation')).to eq(presentation)
+      end
+    end
   end
 
   describe "when destroying a Presentation" do
