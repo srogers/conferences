@@ -27,7 +27,7 @@ module PresentationsChart
 
       data = keys.inject({}) { |h, v| h.merge(v => @presentations.select{|p| p.conference&.start_date&.year == v}.length) }
 
-      logger.debug data
+      #logger.debug data
     else
       # Show the presentations count by year. This one doesn't need limiting because it naturally has a fixed number of rows.
       data = Presentation.includes(:conference).references(:conference).group_by_year("conferences.start_date").count

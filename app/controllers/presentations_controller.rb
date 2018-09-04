@@ -15,7 +15,12 @@ class PresentationsController < ApplicationController
     if params[:q].present?
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
 
-    elsif params[:search_term].present? || params[:tag].present?
+    elsif params[:search_term].present? || params[:tag].present? || params[:heart].present?
+      # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
+      if params[:heart].present?
+        @presentations = @presentations.includes("taggings").where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
+      end
+
       term = params[:search_term] || params[:tag]
       @presentations = filter_presentations_by_term(@presentations, term)
     end

@@ -6,6 +6,13 @@
     %br
     %i= linked_tag_names(presentation)
 
+  - if params[:heart].present?
+    %td
+      = icon('fas', 'tag', class: 'fa-fw') if presentation.tags.empty?
+      = icon('fas', 'align-left', class: 'fa-fw') if presentation.description.blank?
+      = icon('fas', 'puzzle-piece', class: 'fa-fw') if presentation.parts.blank?
+      = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if presentation.conference.blank?
+
   -# Omit the conference when presentations are being listed on the conference/show page
   - unless controller_name == "conferences"
     %td
