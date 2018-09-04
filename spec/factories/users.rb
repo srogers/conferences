@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :user, aliases: [:creator] do
-    name                  "Testing User"
+    name                  { "Testing User" }
     sequence(:email)      { |n| "person#{n}@example.com" }
-    password              "changeme1"
-    password_confirmation "changeme1"
-    active                true
-    approved              true
+    password              { "changeme1" }
+    password_confirmation { "changeme1" }
+    active                { true }
+    approved              { true }
 
     role                  { create :role }
   end
