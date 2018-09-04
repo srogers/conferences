@@ -10,7 +10,7 @@
   - unless controller_name == "conferences"
     %td
       - if presentation.conference.present?
-        = link_to truncate(presentation.conference_name, length: 15), conference_path(presentation.conference)
+        = link_to truncate(presentation.conference_name, length: 45), conference_path(presentation.conference)
   %td= linked_format_icons(presentation)
 
   %td{width: 150}
