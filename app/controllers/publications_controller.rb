@@ -9,7 +9,7 @@ class PublicationsController < ApplicationController
     @publication = Publication.new publication_params
     @publication.creator_id = current_user.id
     if @publication.save
-      redirect_to manage_publications_presentation_path(@publication.presentation_id)
+      redirect_to manage_publications_presentation_path(@publication.presentation.to_param)
     else
       flash[:error] = 'The publication could not be saved.'
       logger.debug "Publication save failed: #{ @publication.errors.full_messages }"
@@ -23,7 +23,7 @@ class PublicationsController < ApplicationController
 
   def update
     if @publication.update_attributes publication_params
-      redirect_to manage_publications_presentation_path(@publication.presentation_id)
+      redirect_to manage_publications_presentation_path(@publication.presentation.to_param)
     else
       flash.now[:error] = 'Your publication could not be saved.'
       logger.debug "Publication save failed: #{ @publication.errors.full_messages }"
@@ -34,7 +34,7 @@ class PublicationsController < ApplicationController
 
   def destroy
     if @publication
-      presentation_id = @publication.presentation_id
+      presentation_id = @publication.presentation.to_param
       @publication.destroy
       redirect_to manage_publications_presentation_path(presentation_id)
     else

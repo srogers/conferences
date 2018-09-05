@@ -12,14 +12,20 @@ class ConferencesController < ApplicationController
   def index
     @conferences = Conference.order('start_date DESC').includes(:organizer)
     per_page = params[:per] || 15 # autocomplete specifies :per
-    if params[:search_term].present?
-      term = params[:search_term]
-      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        @conferences = @conferences.where('conferences.state ILIKE ?', term)
-      else
-        @conferences = @conferences.where(base_query, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
+    if params[:search_term].present? || params[:heart].present?
+      if params[:heart].present?
+        @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
+      end
+
+      if params[:search_term].present?
+        term = params[:search_term]
+        # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
+        # This doesn't work for international states - might be fixed by going to country_state_select at some point.
+        if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
+          @conferences = @conferences.where('conferences.state ILIKE ?', term)
+        else
+          @conferences = @conferences.where(base_query, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
+        end
       end
     elsif params[:q].present?
       # Presentations uses this for picking conference in case where a presentation is created without a conference, then associated later.

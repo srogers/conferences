@@ -4,7 +4,7 @@ module ApplicationHelper
   DEFAULT_TIME_ZONE = "America/Chicago"
 
   def title(text)
-    content_for(:title) { text }
+    content_for(:title) { text.present? ? text + ' -- ' : '' }
     content_tag(:h3, text)
   end
 

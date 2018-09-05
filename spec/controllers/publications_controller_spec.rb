@@ -2,8 +2,10 @@ require 'rails_helper'
 
 RSpec.describe PublicationsController, type: :controller do
 
+  let(:presentation) { create :presentation }
+
   let(:valid_attributes) {
-    { format: Publication::FORMATS.first, presentation_id: 1 }
+    { format: Publication::FORMATS.first, presentation_id: presentation.id }
   }
 
   let(:invalid_attributes) {
@@ -33,7 +35,7 @@ RSpec.describe PublicationsController, type: :controller do
     end
 
     it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(assigns(:publication).presentation_id)
+      expect(response).to redirect_to manage_publications_presentation_path(assigns(:publication).presentation)
     end
   end
 
@@ -52,7 +54,7 @@ RSpec.describe PublicationsController, type: :controller do
       end
 
       it "redirects to the manage publication page for the presentation" do
-        expect(response).to redirect_to manage_publications_presentation_path(publication.presentation_id)
+        expect(response).to redirect_to manage_publications_presentation_path(publication.presentation)
       end
     end
 
@@ -85,7 +87,7 @@ RSpec.describe PublicationsController, type: :controller do
     end
 
     it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(publication.presentation_id)
+      expect(response).to redirect_to manage_publications_presentation_path(publication.presentation)
     end
   end
 end
