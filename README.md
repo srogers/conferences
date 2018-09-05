@@ -177,7 +177,8 @@ The easiest way to move data up and down from Heroku is using the
 
     PGUSER=steve PGPASSWORD='' heroku pg:pull postgresql-rigid-18515 conferences_development --remote production
     
-However, for this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
+This command creates the named database, so rename the existing database before performing the download.
+For this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
 unless you can change your local Postgres version to match what's running on Heroku.
 
 #### Transferring Data Between Apps
