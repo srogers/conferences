@@ -1,9 +1,9 @@
 - if params[:user_id].present?
   = link_to "Done", conference_users_path(user_id: params[:user_id]), :class => "btn btn-secondary float-right"
 - else
-  - if request.referrer.include?('speakers')
+  - if request.referrer&.include?('speakers')
     = link_to "Done", speakers_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
-  - elsif request.referrer.include?('presentations')
+  - elsif request.referrer&.include?('presentations')
     = link_to "Done", presentations_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
   - else
     = link_to "Done", conferences_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
