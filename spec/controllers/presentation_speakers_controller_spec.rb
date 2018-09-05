@@ -7,9 +7,11 @@ RSpec.describe PresentationSpeakersController, type: :controller do
     allow(@current_user).to receive(:id=).and_return true
   end
 
+  let(:presentation) { create :presentation }
+
   describe "POST #create" do
     before do
-      post :create, params: { presentation_speaker: { presentation_id: 1, speaker_id: 1 }}
+      post :create, params: { presentation_speaker: { presentation_id: presentation.id, speaker_id: 1 }}
     end
 
     it "sets the creator" do
@@ -22,13 +24,13 @@ RSpec.describe PresentationSpeakersController, type: :controller do
     end
 
     it "redirects to the manage_speakers page for the presentation" do
-      expect(response).to redirect_to manage_speakers_presentation_path(1)
+      expect(response).to redirect_to manage_speakers_presentation_path(presentation)
     end
   end
 
   describe "DELETE #destroy" do
     before do
-      @presentation_speaker = create :presentation_speaker
+      @presentation_speaker = create :presentation_speaker, presentation_id: presentation.id
       delete :destroy, params: {id: @presentation_speaker.to_param}
     end
 
@@ -41,7 +43,7 @@ RSpec.describe PresentationSpeakersController, type: :controller do
     end
 
     it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_speakers_presentation_path(1)
+      expect(response).to redirect_to manage_speakers_presentation_path(presentation)
     end
   end
 
