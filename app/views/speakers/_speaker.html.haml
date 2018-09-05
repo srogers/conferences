@@ -1,6 +1,11 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
 
+  - if params[:heart].present?
+    %td
+      = icon('fas', 'align-left', class: 'fa-fw') if speaker.description.blank?
+      = icon('fas', 'id-badge', class: 'fa-fw') if speaker.photo.blank?
+
   %td{width: 130}
     - if can? :edit, speaker
       = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker), :class => "btn btn-sm btn-primary"
