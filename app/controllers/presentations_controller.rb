@@ -19,6 +19,8 @@ class PresentationsController < ApplicationController
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
         @presentations = @presentations.includes("taggings").where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
+        # Skip conferences in the future - we know they're not done
+        @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
       term = params[:search_term] || params[:tag]
