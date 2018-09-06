@@ -3,7 +3,7 @@
     -# @presentation has to be here explicitly because we never let publications exist standalone
     = f.input :format, collection: Publication::FORMATS, include_blank: false
   .col-md-2
-    = f.input :published_on, as: :date, start_year: 1960, end_year: Date.today.year,  order: [:year], label: "Published"
+    = f.input :published_on, as: :date, start_year: Date.today.year, end_year: 1960,  order: [:year], include_blank: true, label: "Published"
   .col-md-8
     = f.input :url, label: 'URL'
     = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
