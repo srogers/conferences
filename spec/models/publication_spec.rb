@@ -18,12 +18,27 @@ RSpec.describe Publication, type: :model do
       expect(Publication.new(valid_attributes)).to be_valid
     end
 
-    it "is invalid without presentation_id" do
-      expect(Publication.new(valid_attributes.merge(presentation_id: nil))).not_to be_valid
-    end
-
     it "requires a valid format" do
       expect(Publication.new(valid_attributes.merge(format: "bogosity"))).not_to be_valid
+    end
+  end
+
+  describe "when destroying a Publication" do
+
+    let(:publication) { create :publication }
+
+    context "with associated presentations" do
+      let!(:presentation) { create :presentation }
+      let!(:presentation_publication) { create :presentation_publication, presentation_id: presentation.id, publication_id: publication.id }
+
+      it "also destroys the presentation/publication relationship" do
+        publication.destroy
+        expect{ presentation_publication.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
+
+      it "does not destroy the presentation" do
+        expect(presentation.reload).to be_present
+      end
     end
   end
 end

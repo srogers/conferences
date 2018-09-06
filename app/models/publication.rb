@@ -1,9 +1,12 @@
 class Publication < ApplicationRecord
 
-  belongs_to  :presentation
+  # belongs_to  :presentation
+  has_many    :presentation_publications,   :dependent => :destroy
+  has_many    :presentations, through: :presentation_publications
+
   belongs_to  :creator,   class_name: "User"
 
-  validates :presentation_id, presence: true
+  # Publication doesn't use friendly ID because only editors and admin can see these paths, so they aren't indexed by search engines
 
   # These are just short word strings and not icons because there aren't good icons for making things like DVD and CD distinct.
   TAPE    = 'Tape'

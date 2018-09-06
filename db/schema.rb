@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_23_152736) do
+ActiveRecord::Schema.define(version: 2018_09_05_190435) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,19 @@ ActiveRecord::Schema.define(version: 2018_08_23_152736) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "presentation_publications", force: :cascade do |t|
+    t.bigint "presentation_id"
+    t.bigint "publication_id"
+    t.bigint "creator_id"
+    t.boolean "canonical"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_presentation_publications_on_creator_id"
+    t.index ["presentation_id", "publication_id"], name: "index_presentation_publications_on_presentation_and_publication", unique: true
+    t.index ["presentation_id"], name: "index_presentation_publications_on_presentation_id"
+    t.index ["publication_id"], name: "index_presentation_publications_on_publication_id"
+  end
+
   create_table "presentation_speakers", force: :cascade do |t|
     t.bigint "presentation_id"
     t.bigint "speaker_id"
@@ -121,6 +134,7 @@ ActiveRecord::Schema.define(version: 2018_08_23_152736) do
     t.datetime "updated_at", null: false
     t.string "notes"
     t.integer "duration"
+    t.string "name"
     t.index ["creator_id"], name: "index_publications_on_creator_id"
     t.index ["presentation_id"], name: "index_publications_on_presentation_id"
   end
