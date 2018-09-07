@@ -1,4 +1,4 @@
-- if @publication.presentations.empty?
+- if @publication.presentations.empty? && action_name != 'manage_publications'
   -# These fields matter only for orphan publications in order to later find and attach them to the right presentations
   .row
     .col-md-12
