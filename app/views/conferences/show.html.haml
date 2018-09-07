@@ -71,4 +71,4 @@
         = link_to "Edit", edit_conference_path(@conference), :class => "btn btn-primary"
       .float-right
         - if can?(:destroy, @conference) && @presentations.empty?
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), conference_path(@conference), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
