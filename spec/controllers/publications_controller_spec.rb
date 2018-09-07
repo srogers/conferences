@@ -5,12 +5,10 @@ RSpec.describe PublicationsController, type: :controller do
   let(:presentation) { create :presentation }
 
   let(:valid_attributes) {
-    { format: Publication::FORMATS.first, name: 'Valid Publication' }
+    { format: Publication::FORMATS.first, name: 'Valid Publication', speaker_names: 'Somebody' }
   }
 
-  let(:invalid_attributes) {
-    { format: '', name: '' }
-  }
+  let(:invalid_attributes) { { format: '', name: '', speaker_names: '' } }
 
   let(:publication) { Publication.create! valid_attributes }
 

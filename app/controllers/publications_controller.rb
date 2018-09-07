@@ -32,13 +32,17 @@ class PublicationsController < ApplicationController
 
   # Creates a Publication and allows a Presentation/Publication relationship to be created simultaneously by passing a presentation ID
   def create
+    get_presentation
     @publication = Publication.new publication_params
     @publication.creator_id = current_user.id
+    if @presentation.present? # The user doesn't see name or speaker names in the Manage Publications context
+      @publication.name ||= @presentation.name
+      @publication.speaker_names = 'N/A'        # something meaningful to show Editors when looking at publication details regular users can't see
+    end
     if @publication.save
-      if params[:presentation_id].present?
-        presentation = Presentation.find params[:presentation_id]
-        @presentation_publication = PresentationPublication.create presentation_id: params[:presentation_id], publication_id: @publication.id, creator_id: current_user.id, canonical: params[:canonical].present?
-        redirect_to manage_publications_presentation_path(presentation)
+      if @presentation.present?
+        @presentation_publication = PresentationPublication.create presentation_id: @presentation.id, publication_id: @publication.id, creator_id: current_user.id, canonical: params[:canonical].present?
+        redirect_to manage_publications_presentation_path(@presentation)
       else
         redirect_to publication_path(@publication)
       end
@@ -50,14 +54,11 @@ class PublicationsController < ApplicationController
   end
 
   def edit
-    # Edit uses this to get back to manage_presentations when we came from there
-    @presentation = Presentation.find(params[:presentation_id]) if params[:presentation_id].present?
   end
 
   def update
     if @publication.update_attributes publication_params
-      if params[:presentation_id].present?
-        @presentation = Presentation.find params[:presentation_id]
+      if @presentation.present?
         if params[:canonical].present? # then update this attribute of the relationship
           @presentation_publication = PresentationPublication.where(presentation_id: @presentation.id, publication_id: @publication.id).first
           if @presentation_publication
@@ -80,19 +81,26 @@ class PublicationsController < ApplicationController
   def destroy
     @publication.destroy
     # Manage Publications passes the publication ID so we can get back to the origin page
-    if params[:presentation_id]
-      presentation = Presentation.find params[:presentation_id]
-      redirect_to manage_publications_presentation_path(presentation)
+    if @presentation.present?
+      redirect_to manage_publications_presentation_path(@presentation)
     else
       redirect_to publications_path
     end
   end
 
+  # Create, update, edit and destroy use presentation to get back to manage_presentations when we came from there.
+  def get_presentation
+    if params[:presentation_id].present?
+      @presentation = Presentation.find params[:presentation_id]
+    end
+  end
+
   def get_publication
     @publication = Publication.find params[:id]
+    get_presentation
   end
 
   def publication_params
-    params.require(:publication).permit(:name, :published_on, :format, :url, :duration, :notes)
+    params.require(:publication).permit(:name, :speaker_names, :published_on, :format, :url, :duration, :notes)
   end
 end

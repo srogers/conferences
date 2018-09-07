@@ -26,7 +26,7 @@ class Publication < ApplicationRecord
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
 
-  validates :name, presence: true
+  validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
 
   # Methods used to support CSV export
