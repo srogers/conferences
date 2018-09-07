@@ -3,12 +3,7 @@ require 'rails_helper'
 RSpec.describe Publication, type: :model do
   describe "when creating a Publication" do
 
-    let(:valid_attributes) {
-      {
-        :presentation_id => 1,
-        :format => Publication::CD
-      }
-    }
+    let(:valid_attributes) { { :format => Publication::CD, name: 'Valid Publication' } }
 
     it "should have a working factory" do
       expect(create :publication).to be_valid
@@ -20,6 +15,10 @@ RSpec.describe Publication, type: :model do
 
     it "requires a valid format" do
       expect(Publication.new(valid_attributes.merge(format: "bogosity"))).not_to be_valid
+    end
+
+    it "requires a name" do
+      expect(Publication.new(valid_attributes.merge(name: ""))).not_to be_valid
     end
   end
 
