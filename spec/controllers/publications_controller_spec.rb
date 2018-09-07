@@ -37,6 +37,39 @@ RSpec.describe PublicationsController, type: :controller do
         expect(assigns(:publications)).to be_empty
       end
     end
+
+    context "that need editor attention" do
+
+      # set up data that meets all the criteria being checked:
+      #   published_on present, duration present where applicable, and at least one presentation
+      let!(:video_pub) { create :publication, format: Publication::YOUTUBE, published_on: Date.today, duration: 1 }
+      let!(:print_pub) { create :publication, format: Publication::PRINT,   published_on: Date.today, duration: 1 }
+      let!(:video_pres_pub) { create :presentation_publication, presentation_id: presentation.id, publication_id: video_pub.id }
+      let!(:print_pres_pub) { create :presentation_publication, presentation_id: presentation.id, publication_id: print_pub.id }
+
+      context "when all the basics are in place" do
+        it "should not find any problems" do
+          get :index, params: { heart: 'true' }
+          expect(assigns(:publications)).not_to include(video_pub, print_pub) # it won't be blank due to basic publication
+        end
+      end
+
+      context "to duration" do
+        before do
+          video_pub.update(duration: nil)
+          print_pub.update(duration: nil)
+          get :index, params: { heart: 'true' }
+        end
+
+        it "lists publications with blank duration" do
+          expect(assigns(:publications)).to include(video_pub)
+        end
+
+        it "ignores publications where duration is not applicable" do
+          expect(assigns(:publications)).not_to include(print_pub)
+        end
+      end
+    end
   end
 
   describe "GET #new" do

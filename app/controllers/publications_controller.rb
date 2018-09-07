@@ -11,7 +11,10 @@ class PublicationsController < ApplicationController
     @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers).order('conferences.start_date DESC')
 
     if params[:heart].present?
-      @publications = @publications.where("publications.published_on IS NULL OR publications.duration IS NULL OR (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1")
+      @publications = @publications.where("
+        publications.published_on IS NULL OR (publications.duration IS NULL AND publications.format IN (?)) OR
+        (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1
+      ", Publication::HAS_DURATION)
     end
 
     @publications = @publications.page(params[:page]).per(per_page)
