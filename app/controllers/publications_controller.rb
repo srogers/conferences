@@ -106,6 +106,6 @@ class PublicationsController < ApplicationController
   end
 
   def publication_params
-    params.require(:publication).permit(:name, :speaker_names, :published_on, :format, :url, :duration, :notes)
+    params.require(:publication).permit(:name, :speaker_names, :published_on, :format, :url, :duration, :notes, :editors_notes)
   end
 end

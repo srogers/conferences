@@ -19,7 +19,7 @@
   .col-md-2
     = f.input :duration, hint: "total minutes"
   .col-md-10
-    = f.input :notes, hint: 'Any special clarifying info or references'
+    = f.input :notes, hint: 'Users see this - label multi-part items here. Anything clarifying from a reader perspective.'
 - if @presentation.present?
   .row
     .col-md-12
@@ -27,3 +27,8 @@
       - label_text = icon('fas', 'crown', :class => 'fa-fw text-warning')
       - label_text += " This publication is specifically <i>#{ @presentation.name }</i> presented at #{ @presentation.conference_name }".html_safe
       = label_tag :canonical, label_text
+.row
+  .col-md-12
+    = f.label "Editor's Notes"
+    = f.trix_editor :editors_notes
+    .small Only visible to other editors. Use for source documentation and any notes other editors might find useful.

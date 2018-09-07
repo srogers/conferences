@@ -13,25 +13,28 @@
         = ' - '
         = @publication.notes
 
--#- if can?(:edit, @publication) && @publication.notes.present?
--#  .row
--#    .col-md-12
--#      %p
--#        %b Editor's Notes
--#        = @publication.notes.try(:html_safe)
+- if can?(:edit, @publication) && @publication.editors_notes.present?
+  .row
+    .col-md-12
+      %p
+        %b Editor's Notes
+        = @publication.editors_notes.try(:html_safe)
 
 .row
   .col-md-12
     %h5 Associated Presentations
     %ul
-    - @publication.presentation_publications.each do |presentation_publication|
-      %li
-        - presentation = presentation_publication.presentation
-        = link_to presentation.name, presentation_path(presentation)
-        - if presentation.conference.present?
-          at
-          = link_to presentation.conference_name, conference_path(presentation.conference)
-        = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+      - if @publication.presentation_publications.empty?
+        %li
+          %i None yet
+      - @publication.presentation_publications.each do |presentation_publication|
+        %li
+          - presentation = presentation_publication.presentation
+          = link_to presentation.name, presentation_path(presentation)
+          - if presentation.conference.present?
+            at
+            = link_to presentation.conference_name, conference_path(presentation.conference)
+          = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
 
 .row
   .col-md-12

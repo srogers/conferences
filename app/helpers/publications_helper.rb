@@ -6,7 +6,7 @@ module PublicationsHelper
 
   def format_and_date(publication)
     if publication.url.present?
-      link_to(icon_for_format(publication)  + ' ' + publication.format, publication.url, target: '_blank') + ", #{ publication.published_on.year }"
+      link_to(icon_for_format(publication)  + ' ' + publication.format, publication.url, target: '_blank') + ", #{ publication.published_on&.year }"
     else
       ["#{ icon_for_format(publication) } #{ publication.format }", publication.published_on&.year].compact.join(', ').html_safe
     end
