@@ -9,7 +9,7 @@ class PresentationSpeakersController < ApplicationController
       redirect_to manage_speakers_presentation_path(@presentation_speaker.presentation.to_param)
     else
       flash[:error] = 'The speaker/presentation association could not be saved.'
-      logger.debug "Presentation Speaker save failed: #{ presentation_speaker.errors.full_messages }"
+      logger.debug "Presentation Speaker save failed: #{ @presentation_speaker.errors.full_messages }"
       if @presentation_speaker&.presentation_id
         redirect_to manage_speakers_presentation_path(@presentation_speaker.presentation.to_param)
       else

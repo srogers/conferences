@@ -1,17 +1,29 @@
 .row
   .col-md-12
-    %h3= @presentation.name
+    %h3
+      %i
+        = @presentation.name
+      presented at
+      = @presentation.conference_name
 .row
   .col-md-12
     %h4 Current Publications
     %ul
       - if @presentation.publications.empty?
         %li None Yet
-      - @presentation.publications.each do |publication|
-        = render :partial => 'publication', locals: { publication: publication}
+      - @presentation.presentation_publications.each do |presentation_publication|
+        %li
+          - publication = presentation_publication.publication
+          = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+          = render :partial => 'publication', locals: { publication: publication}
+
+          = link_to icon('far', 'edit', :class => 'fa-fw'), edit_publication_path(publication, presentation_id: @presentation.id)
+          = link_to icon('fas', 'unlink', :class => 'fa-fw'), presentation_publication_path(presentation_publication), :method => :delete, :post => true, class: 'text-danger'
+          = link_to icon('far', 'trash-alt', :class => 'fa-fw'), publication_path(publication, presentation_id: presentation_publication.presentation_id), :method => :delete, :data => { :confirm => 'remove this publication permanently?' }, :post => true, class: 'text-danger'
+
 .row
   .col-md-12
-    -# Adding publications happens only here - there is no stand-alone publication/new
+    -# Adds a publication and creates the association in one convenient shot
     %h4 Add a publication
 
 -# The publications form_fields partial does its own column management
@@ -20,3 +32,22 @@
   .row
     .col-md-12
       = save_or_cancel f, presentation_path(@presentation), "Add Publication", "Done"
+
+-# If the controller identified possible related publications, list them for association
+- if @related_publications.present?
+  %br
+  .row
+    .col-md-12
+      %h4 Link an existing publication
+      %ul
+        - @related_publications.each do |publication|
+          %li
+            = link_to publication.name, publication_path(publication), target: '_blank'
+            = render :partial => 'publication', locals: { publication: publication}
+
+            = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{@presentation.id}_#{publication.id}').submit()"
+
+            = simple_form_for :presentation_publication, html: { id: "form_for_#{@presentation.id}_#{publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
+              = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+              = f.input :publication_id, as: :hidden, input_html: { value: publication.id }
+

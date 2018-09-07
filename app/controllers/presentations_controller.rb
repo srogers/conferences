@@ -60,6 +60,9 @@ class PresentationsController < ApplicationController
   end
 
   def manage_publications
+    @related_publications = Publication.where(name: @presentation.name)
+    # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
+    @related_publications = @related_publications.where("publications.id NOT IN (?)", @presentation.presentation_publications.map{|pp| pp.publication_id}) if @presentation.presentation_publications.present?
     @publication = Publication.new
   end
 

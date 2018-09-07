@@ -5,11 +5,11 @@ RSpec.describe PublicationsController, type: :controller do
   let(:presentation) { create :presentation }
 
   let(:valid_attributes) {
-    { format: Publication::FORMATS.first, presentation_id: presentation.id }
+    { format: Publication::FORMATS.first, name: 'Valid Publication' }
   }
 
   let(:invalid_attributes) {
-    { format: Publication::FORMATS.first, presentation_id: nil }
+    { format: '', name: '' }
   }
 
   let(:publication) { Publication.create! valid_attributes }
@@ -20,9 +20,50 @@ RSpec.describe PublicationsController, type: :controller do
     allow(@current_user).to receive(:id=).and_return true
   end
 
+  describe "when listing publications" do
+    it "assigns all publications as @publications" do
+      get :index, params: {}
+      expect(assigns(:publications)).to eq([publication])
+    end
+
+    context "with a search term" do
+      it "finds publications with matching names without regard to case" do
+        get :index, params: { search_term: 'VALID' }
+        expect(assigns(:publications)).to eq([publication])
+      end
+
+      it "doesn't find non-matching publications" do
+        get :index, params: { search_term: 'Wombats' }
+        expect(assigns(:publications)).to be_empty
+      end
+    end
+  end
+
+  describe "GET #new" do
+    it "assigns a new publication as @publication" do
+      get :new, params: {}
+      expect(assigns(:publication)).to be_a_new(Publication)
+    end
+  end
+
+  describe "GET #edit" do
+    it "assigns the requested publication as @publication" do
+      get :edit, params: { id: publication.to_param }
+      expect(assigns(:publication)).to eq(publication)
+    end
+
+    it "assigns the requested presentation as @presentation when specified" do
+      get :edit, params: { id: publication.to_param, presentation_id: presentation.id }
+      expect(assigns(:presentation)).to eq(presentation)
+    end
+  end
+
   describe "POST #create" do
+
+    let(:params) { { publication: valid_attributes } }
+
     before do
-      post :create, params: { publication: valid_attributes }
+      post :create, params: params
     end
 
     it "sets the creator" do
@@ -34,27 +75,45 @@ RSpec.describe PublicationsController, type: :controller do
       expect(assigns(:publication).id).to be_present
     end
 
-    it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(assigns(:publication).presentation)
+    it "redirects to publication show page" do
+      expect(response).to redirect_to publication_path(assigns(:publication))
+    end
+
+    context "when a presentation is specified" do
+
+      let(:params) { { publication: valid_attributes, presentation_id: presentation.id  } }
+
+      it "redirects to the manage_publications page for the presentation" do
+        expect(response).to redirect_to manage_publications_presentation_path(presentation)
+      end
     end
   end
 
   describe "PUT #update" do
     context "with valid params" do
-      let(:new_attributes) {
-        { format: Publication::FORMATS.last }
-      }
+
+      let(:selected_format) { Publication::FORMATS.last }
+      let(:params) { { id: publication.to_param, publication: { format: selected_format } } }
 
       before do
-        put :update, params: {id: publication.to_param, publication: new_attributes}
+        put :update, params: params
       end
 
       it "updates the requested publication" do
-        expect(assigns(:publication).format).to eq(new_attributes[:format])
+        expect(assigns(:publication).format).to eq(selected_format)
       end
 
-      it "redirects to the manage publication page for the presentation" do
-        expect(response).to redirect_to manage_publications_presentation_path(publication.presentation)
+      it "redirects to the publication show page" do
+        expect(response).to redirect_to publication_path(publication)
+      end
+
+      context "when a presentation is specified" do
+
+        let(:params) { { id: publication.to_param, presentation_id: presentation.id, publication: { format: Publication::FORMATS.last } } }
+
+        it "redirects to the manage publication page for the presentation" do
+          expect(response).to redirect_to manage_publications_presentation_path(presentation)
+        end
       end
     end
 
@@ -74,8 +133,11 @@ RSpec.describe PublicationsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+
+    let(:params) { { id: publication.to_param } }
+
     before do
-      delete :destroy, params: {id: publication.to_param}
+      delete :destroy, params: params
     end
 
     it "finds the publication" do
@@ -86,8 +148,13 @@ RSpec.describe PublicationsController, type: :controller do
       expect { publication.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
-    it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(publication.presentation)
+    context "with presentation ID specified" do
+
+      let(:params) { { id: publication.to_param, presentation_id: presentation.id } }
+
+      it "redirects to the manage_publications page for the presentation" do
+        expect(response).to redirect_to manage_publications_presentation_path(presentation)
+      end
     end
   end
 end

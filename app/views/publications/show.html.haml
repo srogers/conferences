@@ -1,0 +1,44 @@
+.row
+  .col-md-12
+    = title "#{ @publication.name }"
+
+    %p
+      = format_and_date(@publication)
+
+      - if @publication.duration.present?
+        = " - "
+        = @publication.duration
+        mins
+      - if @publication.notes.present?
+        = ' - '
+        = @publication.notes
+
+-#- if can?(:edit, @publication) && @publication.notes.present?
+-#  .row
+-#    .col-md-12
+-#      %p
+-#        %b Editor's Notes
+-#        = @publication.notes.try(:html_safe)
+
+.row
+  .col-md-12
+    %h5 Associated Presentations
+    %ul
+    - @publication.presentation_publications.each do |presentation_publication|
+      %li
+        - presentation = presentation_publication.presentation
+        = link_to presentation.name, presentation_path(presentation)
+        - if presentation.conference.present?
+          at
+          = link_to presentation.conference_name, conference_path(presentation.conference)
+        = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+
+.row
+  .col-md-12
+    .form-actions
+      = link_to "Done", publications_path, :class => "btn btn-secondary"
+      - if can? :edit, @publication
+        = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-primary"
+      .float-right
+        - if can? :destroy, @publication
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

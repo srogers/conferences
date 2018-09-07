@@ -9,14 +9,15 @@
         %li.nav-item= link_to 'Conferences', conferences_path, class: 'nav-link' + current_tab?('conferences')
         %li.nav-item= link_to 'Speakers', speakers_path, class: 'nav-link' + current_tab?('speakers')
         %li.nav-item= link_to 'Presentations', presentations_path, class: 'nav-link' + current_tab?('presentations')
-        - if current_user
-          - if current_user.admin?
-            %li.nav-item= link_to 'Organizers', organizers_path, class: 'nav-link' + current_tab?('organizers')
-            %li.nav-item= link_to 'Users', users_path, class: 'nav-link' + current_tab?('users')
-            %li.nav-item= link_to 'Settings', settings_path, class: 'nav-link' + current_tab?('settings')
-            %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
-          - elsif current_user.editor?
-            %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
+        - if current_user&.admin?
+          %li.nav-item= link_to 'Pubs', publications_path, class: 'nav-link' + current_tab?('publications')
+          %li.nav-item= link_to 'Orgs', organizers_path, class: 'nav-link' + current_tab?('organizers')
+          %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
+          %li.nav-item= link_to 'Users', users_path, class: 'nav-link' + current_tab?('users')
+          %li.nav-item= link_to 'Settings', settings_path, class: 'nav-link' + current_tab?('settings')
+        - elsif current_user&.editor?
+          %li.nav-item= link_to 'Publications', publications_path, class: 'nav-link' + current_tab?('publications')
+          %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
 
       %ul.navbar-nav.mr-auto.justify-content-end
         - if current_user
