@@ -25,7 +25,6 @@ class SettingsController < ApplicationController
   private
 
   def setting_params
-    params.require(:setting).permit(:require_account_approval, :speaker_chart_floor)
+    params.require(:setting).permit(:require_account_approval, :speaker_chart_floor, :api_open)
   end
-
 end

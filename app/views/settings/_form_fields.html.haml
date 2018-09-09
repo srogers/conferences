@@ -1,3 +1,4 @@
 .form_fields
   = f.input :require_account_approval, :as => :boolean, :hint => 'When checked, new accounts must be approved by the administrator.'
   = f.input :speaker_chart_floor, :hint => 'Minimum number of presentations required to show up on the Top Speakers chart.'
+  = f.input :api_open, as: :boolean, label: 'API Open', :hint => 'When false, all API update access is blocked.'

@@ -20,6 +20,9 @@ module Api
 
     # Performs HTTP basic auth that works with Authlogic
     def require_http_auth_user
+
+      render :json => { :errors => 'unauthorized', status: 401 } unless Setting.api_open?
+
       authenticate_or_request_with_http_basic do |username, password|
         user = User.where(:email => username).first
         if user.valid_password?(password)         # this is an Authlogic method
@@ -27,7 +30,7 @@ module Api
           true   # nothing pays attention to true/false anymore from filters
         else
           @current_user = nil
-          render :json => { :error => 'unauthorized', status: 401 }
+          render :json => { :errors => 'unauthorized', status: 401 }
         end
       end
     end
