@@ -13,6 +13,7 @@ module Api
         PresentationSpeaker.create(presentation_id: presentation.id, speaker_id: speaker.id, creator_id: current_user.id)
       end
 
+      # The speaker isn't taken into account in status - if presentation works, it's all good.
       if presentation.errors.empty?
         render :json => { status: "201 created" }
       else
