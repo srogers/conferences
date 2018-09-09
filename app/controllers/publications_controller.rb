@@ -7,8 +7,8 @@ class PublicationsController < ApplicationController
   include SharedQueries         # defines uniform ways for applying search terms
 
   def index
-    per_page = params[:per] || 15 # autocomplete specifies :per
-    @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers).order('conferences.start_date DESC')
+    per_page = params[:per] || 10 # autocomplete specifies :per
+    @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers).order('name')  #order('conferences.start_date DESC')
 
     if params[:heart].present?
       @publications = @publications.where("

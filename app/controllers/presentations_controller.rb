@@ -9,7 +9,7 @@ class PresentationsController < ApplicationController
 
   def index
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
-    per_page = params[:per] || 15 # autocomplete specifies :per
+    per_page = params[:per] || 10 # autocomplete specifies :per
 
     # TODO - what uses autocomplete for presentations?
     if params[:q].present?
