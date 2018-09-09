@@ -43,7 +43,9 @@
     .col-md-12
       %p
         %b Editor's Notes
-        = @presentation.editors_notes.try(:html_safe)
+        .card
+          .card-body
+            = @presentation.editors_notes.try(:html_safe)
 
   .row
     .col-md-12

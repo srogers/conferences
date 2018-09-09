@@ -5,6 +5,11 @@
     %p
       = format_and_date(@publication)  # this contains the publication year, if present
 
+    - if @publication.presentations.blank?
+      %p
+        %b Speaker Names
+        = @publication.speaker_names
+
     - if @publication.has_duration?
       %p
         %b Duration
@@ -46,9 +51,11 @@
 %br
 .row
   .col-md-12
-    %h4 Link to a Presentation
+    %h4= "Link to #{ @publication.presentation_publications.present? ? 'Another' : 'A' } Presentation"
     %ul
-      %p= 'Automatic searching could not find any candidates' if @related_presentations.empty?
+      - if @related_presentations.empty?
+        %p
+          %i Automated searching could not find any candidates
       - @related_presentations.each do |presentation|
         %li
           = link_to presentation.name, presentation_path(presentation), target: '_blank'
