@@ -13,6 +13,11 @@ Rails.application.routes.draw do
   get '/register/:activation_code', to: 'activations#new',    as: :registration
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
+  namespace :api do
+    resources :presentations
+    resources :publications
+  end
+
   resource  :account
   resources :conferences do
     collection do
