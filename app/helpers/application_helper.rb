@@ -17,6 +17,8 @@ module ApplicationHelper
       controller_name == 'speakers'
     when 'presentations'
       controller_name == 'presentations'
+    when 'publications'
+      controller_name == 'publications'
     when 'organizers'
       controller_name == 'organizers'
     when 'users'
@@ -163,6 +165,7 @@ module ApplicationHelper
       when :db          then "%Y#{sep}%m#{sep}%d" # output date like  2008-10-28
       when :yearless    then "%b %d"              # output date like  Oct 28
       when :url         then "%m#{sep}%d#{sep}%Y" # output date like  10_28_2008
+      when :year_only   then "%Y"                 # output year like  2008
       when :month_only  then "%b %Y"              # output date like  Oct 2008
       when :month_name  then "%b"                 # output short month name only like Oct
       when :timelike    then "%l#{sep}%M %p"      # output time like  10:25 AM

@@ -110,11 +110,16 @@ RSpec.describe Presentation, type: :model do
     let(:presentation) { create :presentation }
 
     context "with publications" do
-      let!(:publication) { create :publication, presentation_id: presentation.id }
+      let!(:publication) { create :publication }
+      let!(:presentation_publication) { create :presentation_publication, presentation_id: presentation.id, publication_id: publication.id }
 
-      it "also destroys the publications" do
+      it "also destroys the presentation/publication relationship" do
         presentation.destroy
-        expect{ publication.reload }.to raise_error ActiveRecord::RecordNotFound
+        expect{ presentation_publication.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
+
+      it "does not destroy the publication" do
+        expect(publication.reload).to be_present
       end
     end
 

@@ -1,0 +1,22 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td
+    = link_to(truncate(publication.name, length: 80), publication_path(publication))
+    %br
+    = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
+    = publication.format
+    - if publication.notes.present?
+      = ' - '
+      = publication.notes
+  %td
+    = conference_names publication
+
+  - if params[:heart].present?
+    %td
+      = icon('far', 'clock', class: 'fa-fw') if publication.duration.blank?
+      = icon('far', 'calendar-times', class: 'fa-fw') if publication.published_on.blank?
+      = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if publication.presentations.blank?
+
+  %td{width: 150}
+    - if can? :edit, publication
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_publication_path(publication), :class => "btn btn-sm btn-primary"
+      = link_to icon('far', 'trash-alt', class: 'fa-fw'), publication_path(publication), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :publication do
-    presentation_id { 1 }
+    name            { 'Some Publication' }
+    speaker_names   { 'Somebbody' }
     format          { Publication::CD }
   end
 end

@@ -9,7 +9,7 @@ class PresentationsController < ApplicationController
 
   def index
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
-    per_page = params[:per] || 15 # autocomplete specifies :per
+    per_page = params[:per] || 10 # autocomplete specifies :per
 
     # TODO - what uses autocomplete for presentations?
     if params[:q].present?
@@ -60,6 +60,9 @@ class PresentationsController < ApplicationController
   end
 
   def manage_publications
+    @related_publications = Publication.where("name @@  phraseto_tsquery(?)", @presentation.name)
+    # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
+    @related_publications = @related_publications.where("publications.id NOT IN (?)", @presentation.presentation_publications.map{|pp| pp.publication_id}) if @presentation.presentation_publications.present?
     @publication = Publication.new
   end
 
@@ -81,6 +84,7 @@ class PresentationsController < ApplicationController
 
   def create
     @presentation = Presentation.new presentation_params
+    # When created via the UI, a speaker is required, but the model doesn't require it.
     if presentation_speaker_params[:speaker_id].blank?
       flash.now[:error] = "Presentations require at least one speaker"
       render 'new' and return

@@ -1,0 +1,79 @@
+.row
+  .col-md-12
+    = title "#{ @publication.name }"
+
+    %p
+      = format_and_date(@publication)  # this contains the publication year, if present
+
+    - if @publication.presentations.blank?
+      %p
+        %b Speaker Names
+        = @publication.speaker_names
+
+    - if @publication.has_duration?
+      %p
+        %b Duration
+        - if @publication.duration.present?
+          = "#{ @publication.duration } mins"
+        -else
+          %i unspecified
+    %p
+      %b Notes
+      = @publication.notes
+
+- if can?(:edit, @publication) && @publication.editors_notes.present?
+  .row
+    .col-md-12
+      %p
+        %b Editor's Notes
+        %br
+        .card
+          .card-body
+            = @publication.editors_notes.try(:html_safe)
+
+.row
+  .col-md-12
+    %h4 Associated Presentations
+    %ul
+      - if @publication.presentation_publications.empty?
+        %li
+          %i None yet
+      - @publication.presentation_publications.each do |presentation_publication|
+        %li
+          - presentation = presentation_publication.presentation
+          = link_to presentation.name, presentation_path(presentation)
+          - if presentation.conference.present?
+            at
+            = link_to presentation.conference_name, conference_path(presentation.conference)
+          = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+
+-# If the controller identified possible related publications, list them for association
+%br
+.row
+  .col-md-12
+    %h4= "Link to #{ @publication.presentation_publications.present? ? 'Another' : 'A' } Presentation"
+    %ul
+      - if @related_presentations.empty?
+        %p
+          %i Automated searching could not find any candidates
+      - @related_presentations.each do |presentation|
+        %li
+          = link_to presentation.name, presentation_path(presentation), target: '_blank'
+          - if presentation.conference_name.present?
+            =  "(#{presentation.conference_name})"
+
+          = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{presentation.id}_#{@publication.id}').submit()", class: "btn btn-sm btn-primary"
+
+          = simple_form_for :presentation_publication, html: { id: "form_for_#{presentation.id}_#{@publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
+            = f.input :presentation_id, as: :hidden, input_html: { value: presentation.id }
+            = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
+
+.row
+  .col-md-12
+    .form-actions
+      = link_to "Done", publications_path, :class => "btn btn-secondary"
+      - if can? :edit, @publication
+        = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-primary"
+      .float-right
+        - if can? :destroy, @publication
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

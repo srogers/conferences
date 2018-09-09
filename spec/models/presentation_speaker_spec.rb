@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PresentationSpeaker, type: :model do
-  describe "when creating a Conference" do
+  describe "when creating a presentation/speaker relationship" do
 
     let(:valid_attributes) {
       {

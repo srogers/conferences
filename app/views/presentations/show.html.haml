@@ -30,17 +30,22 @@
         - if @presentation.publications.empty?
           %li
             %i Not yet available
-        - @presentation.publications.each do |publication|
-          = render :partial => 'publication', locals: { publication: publication }
+        - @presentation.presentation_publications.each do |presentation_publication|
+          %li
+            - publication = presentation_publication.publication
+            = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+            = render :partial => 'publication', locals: { publication: publication }
 
-        %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
+      %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 
 - if can?(:edit, @presentation) && @presentation.editors_notes.present?
   .row
     .col-md-12
       %p
         %b Editor's Notes
-        = @presentation.editors_notes.try(:html_safe)
+        .card
+          .card-body
+            = @presentation.editors_notes.try(:html_safe)
 
   .row
     .col-md-12

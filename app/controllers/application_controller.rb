@@ -114,7 +114,14 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     logger.warn "ApplicationController handled failed find: #{ exception }"
-    flash[:notice] = "Couldn't find that information"
-    redirect_to root_url
+    respond_to do |format|
+      format.html do
+        flash[:notice] = "Couldn't find that information"
+        redirect_to root_url
+      end
+      format.json do
+        render :json => { :error => 'not found', status: 404 }
+      end
+    end
   end
 end

@@ -10,4 +10,4 @@
     - if can? :edit, speaker
       = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker), :class => "btn btn-sm btn-primary"
     -if can?(:destroy, speaker) && speaker.presentations.empty?
-      = link_to icon('far', 'trash-alt', class: 'fa-fw'), speaker_path(speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+      = link_to icon('far', 'trash-alt', class: 'fa-fw'), speaker_path(speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this speaker?' }, :post => true

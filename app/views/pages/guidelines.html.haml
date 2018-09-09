@@ -102,3 +102,31 @@
         You can see the existing tags on the Presentations page, under the
         = link_to "Topics", "https://objectivistconferences.info/presentations/tags"
         button.
+
+    %h4 Publications
+    %p
+      A publication is a presentation preserved in concrete form - a transcript, a tape, a CD, a YouTube video, etc.
+      Publications are first-class citizens for editors - you can list and edit them, and manage the relationships between
+      publications and presentations. Users only see the results of this: the links at the bottom of presentations.
+    %p
+      In some cases we know exactly which conference the media came from. In other cases, a lecture with the same name
+      was given in several different places, and we just don't know which one corresponds to the recording. The system
+      allows the same publication to be associated with multiple lectures, and the "real" one can be marked if it is known.
+      This way, we keep an accurate record of the media that exists (e.g. one taped lecture by Peter Schwartz named
+      %i= link_to "Contextual Knowledge", "https://objectivistconferences.info/presentations?search_term=contextual+knowledge"
+      associated with two presentations by the same name.
+    %p
+      The system will try to find likely publications in the "Manage Publications" section - and also on the flip-side
+      when looking at a publication. It finds matches based on substantially similar names.
+    %ul
+      %li Try to ensure media isn't duplicated. The system doesn't block duplicates, because they may exist.
+      %li If you don't know the year, you can leave it blank.
+      %li
+        Publications have a "Note" field visible to users, and an "Editors Notes" field only editors can see - use that
+        to document any special info about the origin (e.g. - found it in an ebay listing at this URL)
+      %li
+        For items released in multiple parts (e.g. on YouTube) give them a note that is sortable - e.g., "Part 1",
+        "Part 2", etc. The system sorts publications alphabetically by note, so the parts will then be listed in order.
+      %li
+        Publications pushed over from the e-Store have the description saved in the editor's notes. This field often
+        has some clues as to where the item came from.

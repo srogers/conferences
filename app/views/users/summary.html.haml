@@ -1,35 +1,53 @@
-- if @user == current_user
-  =title 'Your Activity'
-- else
-  = title "Activity - #{ @user.name }"
-
 .row
-  .col-md-12
-    .well.well-lg
-      %table.clean-values
+  .col-md-6
+    %h3 System Summary
+    %table.clean-values
+      %tr
+        %th Conferences
+        %td= Conference.count
+      %tr
+        %th Speakers
+        %td= Speaker.count
+      %tr
+        %th Presentations
+        %td= Presentation.count
+      %tr
+        %th Publications
+        %td= Publication.count
+
+
+  .col-md-6
+    - if @user == current_user
+      =title 'Your Activity'
+    - else
+      = title "Activity - #{ @user.name }"
+
+    %table.clean-values
+      -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
+      - if @conferences_created > 0
         %tr
-          %th Conferences Attended
-          %td= @conferences_attended.length
-        -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
-        - if @conferences_created > 0
-          %tr
-            %th Conferences Created
-            %td= @conferences_created
-        - if @presentations_created > 0
-          %tr
-            %th Presentations Created
-            %td= @presentations_created
-        - if @speakers_created > 0
-          %tr
-            %th Speakers Created
-            %td= @speakers_created
+          %th Conferences Created
+          %td= @conferences_created
+      - if @speakers_created > 0
+        %tr
+          %th Speakers Created
+          %td= @speakers_created
+      - if @presentations_created > 0
+        %tr
+          %th Presentations Created
+          %td= @presentations_created
+      - if @publications_created > 0
+        %tr
+          %th Publications Created
+          %td= @publications_created
+      %tr
+        %th Conferences Attended
+        %td= @conferences_attended.length
 
 - if @conferences_attended.length > 0
   .row
     .col-md-12
       %h3 Conferences You've Attended
-  .row
-    .col-md-12
       %ul
       - @conferences_attended.each do |conference|
         %li= link_to conference.name, conference_path(conference)

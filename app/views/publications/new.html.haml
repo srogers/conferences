@@ -1,0 +1,5 @@
+.row
+  .col-md-12
+    = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+      = render :partial => "form_fields", :locals => {:f => f}
+      = save_or_cancel f, publications_path, 'Create'

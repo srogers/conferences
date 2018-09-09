@@ -13,6 +13,11 @@ Rails.application.routes.draw do
   get '/register/:activation_code', to: 'activations#new',    as: :registration
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
+  namespace :api do
+    resources :presentations
+    resources :publications
+  end
+
   resource  :account
   resources :conferences do
     collection do
@@ -22,13 +27,14 @@ Rails.application.routes.draw do
       get :countries_chart    # queries the data and pushes it to the chart in an array
     end
   end
-  resources :presentation_speakers, only: [:index, :create, :destroy]
   resources :conference_users, only: [:index, :create, :destroy]
   resources :documents do
     member do
       get :download
     end
   end
+  resources :presentation_publications, only: [:create, :destroy]
+  resources :presentation_speakers, only: [:create, :destroy]
   resources :presentations do
     member do
       get :manage_speakers, :manage_publications, :download_handout
@@ -38,7 +44,7 @@ Rails.application.routes.draw do
       get :tags
     end
   end
-  resources :publications, only: [:create, :edit, :update, :destroy]
+  resources :publications
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]

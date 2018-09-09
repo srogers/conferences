@@ -1,14 +1,34 @@
+- if @publication.presentations.empty? && action_name != 'manage_publications'
+  -# These fields matter only for orphan publications in order to later find and attach them to the right presentations
+  .row
+    .col-md-12
+      = f.input :name, input_html: { value: @publication.name || @presentation&.name }
+  .row
+    .col-md-12
+      = f.input :speaker_names, hint: 'Last names separated by commas - used to find the right presentation'
 .row
   .col-md-2
     -# @presentation has to be here explicitly because we never let publications exist standalone
     = f.input :format, collection: Publication::FORMATS, include_blank: false
   .col-md-2
-    = f.input :published_on, as: :date, start_year: 1960, end_year: Date.today.year,  order: [:year], label: "Published"
+    = f.input :published_on, as: :date, start_year: Date.today.year, end_year: 1960,  order: [:year], include_blank: true, label: "Published"
   .col-md-8
     = f.input :url, label: 'URL'
-    = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+    = hidden_field_tag :presentation_id, @presentation.id if @presentation.present?
 .row
   .col-md-2
     = f.input :duration, hint: "total minutes"
   .col-md-10
-    = f.input :notes, hint: 'Any special clarifying info or references'
+    = f.input :notes, hint: 'Users see this - label multi-part items here. Anything clarifying from a reader perspective.'
+- if @presentation.present?
+  .row
+    .col-md-12
+      = check_box_tag :canonical, "true"
+      - label_text = icon('fas', 'crown', :class => 'fa-fw text-warning')
+      - label_text += " This publication is specifically <i>#{ @presentation.name }</i> presented at #{ @presentation.conference_name }".html_safe
+      = label_tag :canonical, label_text
+.row
+  .col-md-12
+    = f.label "Editor's Notes"
+    = f.trix_editor :editors_notes
+    .small Only visible to other editors. Use for source documentation and any notes other editors might find useful.
