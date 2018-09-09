@@ -4,6 +4,9 @@ module Api
     def create
       logger.debug "API presentation create"
 
+      # We don't block duplicates here, because presentations can have the same name, and we might want to push
+      # a presentation with a different description when a presentation with the same name already exists.
+
       presentation = Presentation.create(presentation_params.merge(creator_id: current_user.id))
 
       # The e-store scraper posts a speaker_id, instead of a presentation_speakers => speaker_id
