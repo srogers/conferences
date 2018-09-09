@@ -2,7 +2,7 @@
   %td
     = link_to(truncate(publication.name, length: 80), publication_path(publication))
     %br
-    = pretty_date(publication.published_on, style: :year_only)
+    = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
     = publication.format
     - if publication.notes.present?
       = ' - '
