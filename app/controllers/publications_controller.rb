@@ -26,6 +26,12 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def show
+    @related_presentations = Presentation.where("name @@  phraseto_tsquery(?)", @publication.name)
+    # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
+    @related_presentations = @related_presentations.where("presentations.id NOT IN (?)", @publication.presentation_publications.map{|pp| pp.presentation_id}) if @publication.presentation_publications.present?
+  end
+
   def new
     @publication = Publication.new
   end

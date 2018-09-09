@@ -36,6 +36,25 @@
             = link_to presentation.conference_name, conference_path(presentation.conference)
           = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
 
+-# If the controller identified possible related publications, list them for association
+%br
+.row
+  .col-md-12
+    %h4 Link to a Presentation
+    %ul
+      %p= 'Automatic searching could not find any candidates' if @related_presentations.empty?
+      - @related_presentations.each do |presentation|
+        %li
+          = link_to presentation.name, presentation_path(presentation), target: '_blank'
+          - if presentation.conference_name.present?
+            =  "(#{presentation.conference_name})"
+
+          = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{presentation.id}_#{@publication.id}').submit()", class: "btn btn-sm btn-primary"
+
+          = simple_form_for :presentation_publication, html: { id: "form_for_#{presentation.id}_#{@publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
+            = f.input :presentation_id, as: :hidden, input_html: { value: presentation.id }
+            = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
+
 .row
   .col-md-12
     .form-actions
