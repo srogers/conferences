@@ -3,26 +3,32 @@
     = title "#{ @publication.name }"
 
     %p
-      = format_and_date(@publication)
+      = format_and_date(@publication)  # this contains the publication year, if present
 
-      - if @publication.duration.present?
-        = " - "
-        = @publication.duration
-        mins
-      - if @publication.notes.present?
-        = ' - '
-        = @publication.notes
+    - if @publication.has_duration?
+      %p
+        %b Duration
+        - if @publication.duration.present?
+          = "#{ @publication.duration } mins"
+        -else
+          %i unspecified
+    %p
+      %b Notes
+      = @publication.notes
 
 - if can?(:edit, @publication) && @publication.editors_notes.present?
   .row
     .col-md-12
       %p
         %b Editor's Notes
-        = @publication.editors_notes.try(:html_safe)
+        %br
+        .card
+          .card-body
+            = @publication.editors_notes.try(:html_safe)
 
 .row
   .col-md-12
-    %h5 Associated Presentations
+    %h4 Associated Presentations
     %ul
       - if @publication.presentation_publications.empty?
         %li

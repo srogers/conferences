@@ -46,6 +46,10 @@ class Publication < ApplicationRecord
     presentation&.conference&.start_date
   end
 
+  def has_duration?
+    HAS_DURATION.include? format
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
   TITLES_AND_METHODS = {
       'Conference Name'   => :conference_name,
