@@ -3,8 +3,10 @@
     %h3
       %i
         = @presentation.name
+    %h5
       presented at
       = @presentation.conference_name
+%br
 .row
   .col-md-12
     %h4 Current Publications
@@ -34,20 +36,20 @@
       = save_or_cancel f, presentation_path(@presentation), "Add Publication", "Done"
 
 -# If the controller identified possible related publications, list them for association
-- if @related_publications.present?
-  %br
-  .row
-    .col-md-12
-      %h4 Link an existing publication
-      %ul
-        - @related_publications.each do |publication|
-          %li
-            = link_to publication.name, publication_path(publication), target: '_blank'
-            = render :partial => 'publication', locals: { publication: publication}
+%br
+.row
+  .col-md-12
+    %h4 Link an Existing Publication
+    %ul
+      %p= 'Automatic searching could not find any candidates' if @related_publications.empty?
+      - @related_publications.each do |publication|
+        %li
+          = link_to publication.name, publication_path(publication), target: '_blank'
+          = render :partial => 'publication', locals: { publication: publication}
 
-            = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{@presentation.id}_#{publication.id}').submit()"
+          = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{@presentation.id}_#{publication.id}').submit()", class: "btn btn-sm btn-primary"
 
-            = simple_form_for :presentation_publication, html: { id: "form_for_#{@presentation.id}_#{publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
-              = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-              = f.input :publication_id, as: :hidden, input_html: { value: publication.id }
+          = simple_form_for :presentation_publication, html: { id: "form_for_#{@presentation.id}_#{publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
+            = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+            = f.input :publication_id, as: :hidden, input_html: { value: publication.id }
 
