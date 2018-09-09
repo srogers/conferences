@@ -84,6 +84,7 @@ class PresentationsController < ApplicationController
 
   def create
     @presentation = Presentation.new presentation_params
+    # When created via the UI, a speaker is required, but the model doesn't require it.
     if presentation_speaker_params[:speaker_id].blank?
       flash.now[:error] = "Presentations require at least one speaker"
       render 'new' and return

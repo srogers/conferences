@@ -3,7 +3,7 @@ module Api
 
     def create
       logger.debug "API publication create"
-      publication = Publication.create(publication_params)
+      publication = Publication.create(publication_params.merge(creator_id: current_user.id))
 
       if publication.errors.empty?
         render :json => { status: "201 created" }
