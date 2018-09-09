@@ -20,7 +20,7 @@ class PublicationsController < ApplicationController
     if params[:search_term].present?
       term = params[:search_term]
       @publications = @publications.references(:conferences)
-      @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%", "#{term}%")
+      @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
     end
 
     @publications = @publications.page(params[:page]).per(per_page)
