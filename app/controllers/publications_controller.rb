@@ -66,14 +66,14 @@ class PublicationsController < ApplicationController
   end
 
   def edit
+    @publication.name ||= @presentation.name if @presentation.present?
   end
 
   def update
     # Backfill these values on legacy presentations
-    if @presentation.present?
-      @publication.name ||= @presentation.name
-      @publication.speaker_names ||= 'N/A'        # something meaningful to show Editors when looking at publication details regular users can't see
-    end
+    @publication.name ||= @presentation&.name || 'N/A'
+    @publication.speaker_names ||= 'N/A'        # something meaningful to show Editors when looking at publication details regular users can't see
+
     if @publication.update_attributes publication_params
       if @presentation.present?
         if params[:canonical].present? # then update this attribute of the relationship
