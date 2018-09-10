@@ -1,7 +1,15 @@
 module PublicationsHelper
 
+  # Gets an HTML listing of the publications conference names, with canonical ones marked with an icon
   def conference_names(publication)
-    publication.presentations.collect{|p| truncate(p.conference&.name, length: 40) }.join('<br/>').html_safe
+    names = []
+    publication.presentation_publications.each do |presentation_publication|
+      name = ''
+      name += icon('fas', 'crown', :class => 'fa-fw text-warning') + '&nbsp'.html_safe if presentation_publication.canonical
+      name += truncate(presentation_publication.presentation.conference_name, length: 40)
+      names << name
+    end
+    names.join('<br/>').html_safe
   end
 
   def format_and_date(publication)
