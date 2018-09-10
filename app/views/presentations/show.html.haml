@@ -36,7 +36,8 @@
             = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
             = render :partial => 'publication', locals: { publication: publication }
 
-      %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
+      - if can?(:edit, @presentation)
+        %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 
 - if can?(:edit, @presentation) && @presentation.editors_notes.present?
   .row
