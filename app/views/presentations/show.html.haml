@@ -39,7 +39,7 @@
       - if can?(:edit, @presentation)
         %p= link_to icon('fas', 'search', 'Search for More', class: 'fa-fw'), google_search_url(@presentation), target: "_blank"
 
-- if can?(:edit, @presentation) && @presentation.editors_notes.present?
+- if can?(:edit, @presentation) # && @presentation.editors_notes.present?
   .row
     .col-md-12
       %p
