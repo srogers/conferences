@@ -1,0 +1,22 @@
+.row
+  .col-md-12
+    = link_to "Done", presentations_path(search_term: params[:search_term], tag: params[:tag]), :class => "btn btn-secondary float-right"
+
+    - if params[:search_term].present? || params[:tag].present?
+      - title "Presentations for #{ params[:search_term] }"
+      %h3
+        Presentations for
+        = params[:search_term] || params[:tag]
+
+    - else
+      - title "Presentations by Topic"
+      %h3 Presentations by Topic
+
+    %p
+      Click a topic to see its presentations.
+      - if current_user&.editor? || @current_user&.admin?
+        %br
+        Consider eliminating topics with only one associated presentation.
+    #presentations_chart
+      = render partial: 'shared/presentations_chart'
+
