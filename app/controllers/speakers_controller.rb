@@ -42,7 +42,7 @@ class SpeakersController < ApplicationController
     # a vertical bar chart).
     case params[:type]
     when 'presentations' then
-      @presentations = speaker_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
+      @presentations = presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
       render 'presentations_chart'
     else
       flash[:error] = 'Unknown chart type'
