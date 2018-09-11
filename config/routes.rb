@@ -42,7 +42,11 @@ Rails.application.routes.draw do
       get :tags
     end
   end
-  resources :publications
+  resources :publications do
+    collection do
+      get :chart                       # queries the data and pushes it to the chart in an array
+    end
+  end
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]

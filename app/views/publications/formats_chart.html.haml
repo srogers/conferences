@@ -1,0 +1,24 @@
+.row
+  .col-md-12
+    = render partial: 'shared/return_from_chart_with_params'
+
+    - if params[:search_term].present?
+      - title "Publication formats for #{ params[:search_term] }"
+      %h3
+        Publication formats for
+        = params[:search_term]
+
+    - elsif params[:user_id].present?
+      - title "Your Conference Cities"
+      %h3
+        Your Publication formats
+        = params[:search_term]
+
+    - else
+      - title "Publication formats"
+      %h3 Publication formats
+
+    %p Click a format to see its publications
+    #formats_chart
+      = render partial: 'shared/formats_chart'
+    .text-center Publications

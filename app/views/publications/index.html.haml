@@ -13,9 +13,9 @@
     %span.dropdown.show
       = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
       .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
-        = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), '#', class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(type: 'format', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
         = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), '#', class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
     - if current_user&.editor? || current_user&.admin?
       = link_to icon('fas', 'heart', class: 'fa-sm text-danger'), publications_path(search_term: params[:search_term], heart: 't'), class: "btn btn-sm btn-secondary"

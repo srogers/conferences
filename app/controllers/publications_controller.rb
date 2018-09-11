@@ -1,10 +1,10 @@
 class PublicationsController < ApplicationController
 
-  before_action :get_publication, except: [:index, :create, :new]
+  before_action :get_publication, except: [:index, :create, :new, :chart]
 
   authorize_resource
 
-  include SharedQueries         # defines uniform ways for applying search terms
+  include PublicationsChart         # defines uniform ways for applying search terms
 
   def index
     per_page = params[:per] || 10 # autocomplete specifies :per
@@ -20,7 +20,13 @@ class PublicationsController < ApplicationController
     if params[:search_term].present?
       term = params[:search_term]
       @publications = @publications.references(:conferences)
-      @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
+      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
+      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
+        @publications = @publications.where('conferences.state = ?', term.upcase)
+      else
+        @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+      end
     end
 
     @publications = @publications.page(params[:page]).per(per_page)
@@ -29,6 +35,17 @@ class PublicationsController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render json: { total: @publications.length, users: @publications.map{|p| {id: p.id, text: p.name } } } }
+    end
+  end
+
+  def chart
+    case params[:type]
+    when 'format' then
+      @formats = format_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'formats_chart'
+    else
+      flash[:error] = 'Unknown chart type'
+      redirect_to publications_path
     end
   end
 

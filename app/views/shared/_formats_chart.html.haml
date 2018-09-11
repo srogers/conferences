@@ -1,0 +1,34 @@
+= content_for :pre_application_js do
+  -# Uncomment one or the other of these to use google charts or highcharts
+  =# javascript_include_tag "https://www.gstatic.com/charts/loader.js"
+  = javascript_include_tag "https://code.highcharts.com/highcharts.js"
+
+-# use this method to get the data from an endpoint after the page loads
+=# bar_chart cities_count_by_conferences_path(search_term: params[:search_term], format: :json), library: { yAxis: { allowDecimals: false } }
+
+-# use this method to get the data from the controller action, and set the height based on the result size
+= bar_chart @formats, height: bar_chart_height(@formats.length), library: { yAxis: { allowDecimals: false } }
+
+-# This is a somewhat hacky way of getting the Top Cities chart labels linked to a conference search
+-# The chart has to be rendered into a #formats_chart element so it can appear on pages with other charts without side-effects
+= content_for :footer do
+  :javascript
+    $(document).ready(function() {
+      // wait for stuff to load
+      var handle = setInterval(function(){
+        $('#formats_chart .highcharts-xaxis-labels text').each(function() {
+          // Sometimes Highcharts puts the text into a child tspan element, sometimes it doesn't - because why not?
+          if (this.innerHTML.includes("<tspan>")) {
+            element = this.firstElementChild
+          } else {
+            element = this
+          }
+          console.log(element.innerHTML);
+          element.addEventListener("click", function(e) {
+              var url = '/publications?search_term='+this.innerHTML;  // spaces are OK here
+              window.location.href = url
+          }, false);
+          clearInterval(handle); // if we find one, we're done (probably)
+        });
+      }, 500);                 // This has to be long enough to ensure that if the first one is done, the last one is too
+    });
