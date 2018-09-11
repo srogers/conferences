@@ -22,9 +22,7 @@ Rails.application.routes.draw do
   resources :conferences do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
-      get :cities_chart       # queries the data and pushes it to the chart in an array
-      get :years_chart        # queries the data and pushes it to the chart in an array
-      get :countries_chart    # queries the data and pushes it to the chart in an array
+      get :chart              # queries the data, renders the chart
     end
   end
   resources :conference_users, only: [:index, :create, :destroy]

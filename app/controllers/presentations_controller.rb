@@ -36,11 +36,18 @@ class PresentationsController < ApplicationController
     end
   end
 
+  # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
+  # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
+  # a vertical bar chart).
   def chart
-    # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
-    # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
-    # a vertical bar chart).
-    @presentations = presentation_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
+    case params[:type]
+    when 'years' then
+      @presentations = presentation_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'years_chart'
+    else
+      flash[:error] = 'Unknown chart type'
+      redirect_to presentations_path
+    end
   end
 
   def tags
