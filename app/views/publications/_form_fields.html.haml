@@ -10,7 +10,8 @@
 - if @publication.presentations.empty?
   .row
     .col-md-12
-      = f.input :speaker_names, hint: 'Last names separated by commas - used to find the right presentation'
+      = f.input :speaker_names, hint: 'Free text names - helpful later to find the matching presentation.'
+
 .row
   .col-md-2
     -# @presentation has to be here explicitly because we never let publications exist standalone
