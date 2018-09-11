@@ -1,11 +1,17 @@
-- if @publication.presentations.empty? && action_name != 'manage_publications'
-  -# These fields matter only for orphan publications in order to later find and attach them to the right presentations
+-# Name and Speaker Names matter only for orphan publications in order to later find and attach them to the right presentations.
+-# Name remains editable however, because it is still shown in the publications listing.
+- if @publication.presentations.empty? || controller_name == 'publications'
   .row
     .col-md-12
-      = f.input :name, input_html: { value: @publication.name || @presentation&.name }
+      - hint_text = @publication.presentations.empty? ? 'Match the presentation name, if known, to make association easier' : 'Only Editors see this name in Publications listing'
+      = f.input :name, input_html: { value: @publication.name || @presentation&.name }, hint: hint_text
+-# Once the publication is associated with a presentation, the speaker_names field is totally irrelevant.
+-# The controller ensures that it isn't blank when it's being hidden.
+- if @publication.presentations.empty?
   .row
     .col-md-12
-      = f.input :speaker_names, hint: 'Last names separated by commas - used to find the right presentation'
+      = f.input :speaker_names, hint: 'Free text names - helpful later to find the matching presentation.'
+
 .row
   .col-md-2
     -# @presentation has to be here explicitly because we never let publications exist standalone

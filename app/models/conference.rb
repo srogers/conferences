@@ -20,7 +20,14 @@ class Conference < ApplicationRecord
   before_save       :update_default_name
 
   extend FriendlyId
-  friendly_id :name, use: [:slugged, :history]
+  friendly_id :slug_candidates, use: [:slugged, :history]
+
+  def slug_candidates
+    [
+      :name,
+      [:name, :city]
+    ]
+  end
 
   # This is necessary to make Friendly_id generate a new slug when the current name is changed.
   def should_generate_new_friendly_id?

@@ -1,3 +1,15 @@
+.row
+  .col-md-12
+    - if @publication.presentations.blank?
+      = title 'Editing Unassociated Publication'
+      %h5 Name and Speaker Names may be helpful in finding the presentaiton later.
+    - else
+      %h4
+        Publication of:
+        = @publication.presentations.first.name
+        - if @publication.presentations.length > 1
+          '(and others)'
+
 -# The publications form_fields partial does its own column management
 = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
   = render :partial => "form_fields", :locals => {:f => f}

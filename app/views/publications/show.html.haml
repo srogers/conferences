@@ -19,9 +19,12 @@
           %i unspecified
     %p
       %b Notes
-      = @publication.notes
+      - if @publication.notes.present?
+        = @publication.notes
+      - else
+        %i none
 
-- if can?(:edit, @publication) && @publication.editors_notes.present?
+- if can?(:edit, @publication)
   .row
     .col-md-12
       %p

@@ -4,3 +4,6 @@
   = " - #{ publication.duration } mins"
 - if publication.notes.present?
   = " - #{ publication.notes }"
+
+- if can? :edit, publication
+  = link_to icon('fas', 'eye', class: 'fa-sm'), publication_path(publication)
