@@ -90,9 +90,10 @@ class SpeakersController < ApplicationController
 
   def update
     if @speaker.update_attributes speaker_params
+      @speaker.update_column :sortable_name, params[:speaker][:sortable_name] if params[:update_name] == 'true'
       redirect_to speaker_path(@speaker)
     else
-      flash.now[:error] = 'Your speaker could not be saved.'
+      flash.now[:error] = 'Your changes could not be saved.'
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages }"
       render 'edit'
     end
