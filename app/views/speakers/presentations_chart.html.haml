@@ -19,6 +19,7 @@
       %h3 Most Frequent Speakers
 
     %p Click a name to see their presentations
-    #speakers_chart
+    #- This div ID has to match up with the one in shared/presentations_chart
+    #presentations_chart
       = render partial: 'shared/presentations_chart'
     .text-center Presentations
