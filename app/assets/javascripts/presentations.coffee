@@ -6,3 +6,12 @@ document.addEventListener("trix-initialize", (event) ->
     console.log "fixing trix buttons"
     element.tabIndex = -1
 )
+
+$ ->
+  $("#add_publication_handle").click ->
+    if $(this).hasClass('fa-rotate-90')
+      $(this).removeClass('fa-rotate-90')
+      $("#publication_form_container").slideUp()
+    else
+      $(this).addClass('fa-rotate-90')
+      $("#publication_form_container").slideDown()

@@ -26,14 +26,16 @@
 .row
   .col-md-12
     -# Adds a publication and creates the association in one convenient shot
-    %h4 Add a publication
-
--# The publications form_fields partial does its own column management
-= simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
-  = render partial: "publications/form_fields", locals: {:f => f}
-  .row
-    .col-md-12
-      = save_or_cancel f, presentation_path(@presentation), "Add Publication", "Done"
+    %h4
+      Add a publication
+      = link_to icon('fas', 'caret-right', id: 'add_publication_handle', class: 'fa-fw fa-lg'), "#"
+%div#publication_form_container{style: 'display: none'}
+  -# The publications form_fields partial does its own column management
+  = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|
+    = render partial: "publications/form_fields", locals: {:f => f}
+    .row
+      .col-md-12
+        = save_or_cancel f, presentation_path(@presentation), "Add Publication", "Done"
 
 -# If the controller identified possible related publications, list them for association
 %br
