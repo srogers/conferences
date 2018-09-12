@@ -7,7 +7,7 @@
       = f.input :name, input_html: { value: @publication.name || @presentation&.name }, hint: hint_text
 -# Once the publication is associated with a presentation, the speaker_names field is totally irrelevant.
 -# The controller ensures that it isn't blank when it's being hidden.
-- if @publication.presentations.empty?
+- if @publication.presentations.empty? && action_name != 'manage_publications'
   .row
     .col-md-12
       = f.input :speaker_names, hint: 'Free text names - helpful later to find the matching presentation.'

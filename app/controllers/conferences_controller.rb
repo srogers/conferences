@@ -1,6 +1,6 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index, :cities_chart, :countries_chart, :years_chart, :cities_count_by]
+  before_action :get_conference, except: [:create, :new, :index, :chart, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
   authorize_resource  # friendly_find is incompatible with load_resource
@@ -22,7 +22,7 @@ class ConferencesController < ApplicationController
         # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
         # This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-          @conferences = @conferences.where('conferences.state ILIKE ?', term)
+          @conferences = @conferences.where('conferences.state = ?', term.upcase)
         else
           @conferences = @conferences.where(base_query, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
         end
@@ -47,16 +47,21 @@ class ConferencesController < ApplicationController
   # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
   # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
   # a vertical bar chart).
-  def cities_chart
-    @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
-  end
-
-  def countries_chart
-    @countries = country_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
-  end
-
-  def years_chart
-    @years = year_count_data.to_a
+  def chart
+    case params[:type]
+    when 'cities' then
+      @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'cities_chart'
+    when 'countries' then
+      @countries = country_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'countries_chart'
+    when 'years' then
+      @years = year_count_data.to_a
+      render 'years_chart'
+    else
+      flash[:error] = 'Unknown chart type'
+      redirect_to conferences_path
+    end
   end
 
   # Feeds the frequent cities chart

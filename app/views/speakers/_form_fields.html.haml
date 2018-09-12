@@ -5,9 +5,20 @@
 - if @speaker.photo.present?
   = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'
 = f.input :name, :autofocus => true
--# Let the admin see this, just in case it needs tweaking
-- if current_user.admin? && action_name == 'edit'
-  = f.input :sortable_name
+
+-# Let the admin manage sortable name, but hide it from everyone else, and maintain changes to it.
+-# This should work well so long as an editor doesn't change the last name of a speaker that has been overridden.
+- if action_name == 'edit'
+  - if current_user.admin?
+    = f.input :sortable_name
+    = check_box_tag :update_name, "true", @speaker.name.split(' ').last != @speaker.sortable_name && @speaker.sortable_name.present?
+    = label_tag :update_name, "force an alternate to the default sortable name"
+  - else
+    -# Preserve the alternate name for non-admins, who won't know it's there
+    - if @speaker.name.split(' ').last != @speaker.sortable_name && @speaker.sortable_name.present?
+      = f.hidden_field :sortable_name
+      = hidden_field_tag :update_name, "true"
+
 = f.input :bio_url, label: 'Bio URL', hint: "URL for the speaker's own page, e.g. at ARI Campus or their personal site."
 = f.label :description
 = f.trix_editor :description

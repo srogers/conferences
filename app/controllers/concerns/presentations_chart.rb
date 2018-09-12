@@ -6,7 +6,11 @@ module PresentationsChart
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
     presentations_by_tag  = presentations.tagged_with(term)
-    presentations_by_name = presentations.where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+    if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
+      presentations_by_name = presentations.where('conferences.state = ?', term.upcase)
+    else
+      presentations_by_name = presentations.where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+    end
     return presentations_by_tag + (presentations_by_name - presentations_by_tag)
   end
 
@@ -35,5 +39,28 @@ module PresentationsChart
 
     # Return just the year as the hash key - it may be a date or already a just a year
     return data.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v) }
+  end
+
+  # Builds a hash of presentation counts by topic that looks like: {'economics'=>1, 'epistemology'=>2}
+  # which the endpoint can return as JSON or the action can use directly as an array.
+  def topic_count_data
+
+    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
+
+    # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
+    if params[:search_term].present? || params[:tag].present?
+      term = params[:search_term] || params[:tag]
+
+      @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
+      @presentations = filter_presentations_by_term(@presentations, term)
+    end
+
+    # Build counts
+    keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
+    data = keys.inject({}) { |h, v| h.merge(v => @presentations.select{|p| p.tag_list.include?(v) }.length) }
+
+    logger.debug data
+
+    return data
   end
 end

@@ -40,7 +40,14 @@ class SpeakersController < ApplicationController
     # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
     # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
     # a vertical bar chart).
-    @speakers = speaker_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
+    case params[:type]
+    when 'presentations' then
+      @presentations = presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'presentations_chart'
+    else
+      flash[:error] = 'Unknown chart type'
+      redirect_to speakers_path
+    end
   end
 
   # Feeds the frequent speakers chart - the name gives presentations_count_by_speakers_path
@@ -83,9 +90,10 @@ class SpeakersController < ApplicationController
 
   def update
     if @speaker.update_attributes speaker_params
+      @speaker.update_column :sortable_name, params[:speaker][:sortable_name] if params[:update_name] == 'true'
       redirect_to speaker_path(@speaker)
     else
-      flash.now[:error] = 'Your speaker could not be saved.'
+      flash.now[:error] = 'Your changes could not be saved.'
       logger.debug "Speaker save failed: #{ @speaker.errors.full_messages }"
       render 'edit'
     end

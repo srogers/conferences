@@ -22,9 +22,7 @@ Rails.application.routes.draw do
   resources :conferences do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
-      get :cities_chart       # queries the data and pushes it to the chart in an array
-      get :years_chart        # queries the data and pushes it to the chart in an array
-      get :countries_chart    # queries the data and pushes it to the chart in an array
+      get :chart              # queries the data, renders the chart
     end
   end
   resources :conference_users, only: [:index, :create, :destroy]
@@ -44,7 +42,11 @@ Rails.application.routes.draw do
       get :tags
     end
   end
-  resources :publications
+  resources :publications do
+    collection do
+      get :chart                       # queries the data and pushes it to the chart in an array
+    end
+  end
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]

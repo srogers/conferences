@@ -13,7 +13,7 @@ class Ability
       elsif user.editor?
         can :read, :all
         can :manage, Conference
-        can [:cities_chart, :countries_chart, :years_chart], Conference
+        can [:chart], Conference
         can :manage, ConferenceUser
         can :destroy, Conference, :creator_id => user.id
         can [:read, :download] , Document
@@ -26,7 +26,7 @@ class Ability
 
       elsif user.reader?
         can :read, :all
-        can [:cities_chart, :countries_chart, :years_chart], Conference
+        can [:chart], Conference
         can [:chart, :tags], Presentation
         can [:edit, :update], Speaker, :id => user.speaker_id
         can [:chart], Speaker
@@ -38,7 +38,7 @@ class Ability
     else
       # Some read abilities are going to be required to allow social media linking
       can :read, Conference
-      can [:cities_chart, :countries_chart, :years_chart], Conference
+      can [:chart], Conference
       can :read, Presentation
       can [:chart, :tags], Presentation
       can :read, Speaker
