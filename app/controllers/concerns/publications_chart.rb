@@ -19,7 +19,8 @@ module PublicationsChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = Publication.includes(:presentations => {:conference => :organizer }).where(base_query + ' OR publications.name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%").group("format").order("count(publications.id) DESC").count('publications.id')
+        data = Publication.includes(:presentations => {:conference => :organizer }).includes(:presentations => :speakers)
+        data = data.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%", "#{term}%", "#{term}%").group("format").order("count(publications.id) DESC").count('publications.id')
       end
 
       # Handles the My Conferences case

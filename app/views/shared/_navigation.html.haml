@@ -10,7 +10,7 @@
         %li.nav-item= link_to 'Speakers', speakers_path, class: 'nav-link' + current_tab?('speakers')
         %li.nav-item= link_to 'Presentations', presentations_path, class: 'nav-link' + current_tab?('presentations')
         - if current_user&.admin?
-          %li.nav-item= link_to 'Pubs', publications_path, class: 'nav-link' + current_tab?('publications')
+          %li.nav-item= link_to 'Publications', publications_path, class: 'nav-link' + current_tab?('publications')
           %li.nav-item= link_to 'Orgs', organizers_path, class: 'nav-link' + current_tab?('organizers')
           %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
           %li.nav-item= link_to 'Users', users_path, class: 'nav-link' + current_tab?('users')

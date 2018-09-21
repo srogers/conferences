@@ -5,7 +5,7 @@
         = @presentation.name
     %h5
       presented at
-      = @presentation.conference_name
+      = link_to @presentation.conference_name, conference_path(@presentation.conference)
 %br
 .row
   .col-md-12
@@ -55,3 +55,6 @@
             = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
             = f.input :publication_id, as: :hidden, input_html: { value: publication.id }
 
+.row
+  .col-md-12
+    %p= link_to "Done", presentation_path(@presentation), class: 'btn btn-secondary btn-sm'
