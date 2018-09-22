@@ -7,7 +7,7 @@ class SpeakersController < ApplicationController
   include SpeakersChart
 
   def index
-    @speakers = Speaker.order(:sortable_name)
+    @speakers = Speaker.includes(:presentations).order(:sortable_name)
     per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
