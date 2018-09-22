@@ -81,12 +81,12 @@ class Conference < ApplicationRecord
   # This is referenced by itself in conference/index, so it isn't private
   def date_span
     # Using pretty_date here to avoid having to deal with strftime or build a lookup table for month names
-    start_text = "#{ ApplicationController.helpers.pretty_date start_date, style: :yearless }"
+    start_text = "#{ ApplicationController.helpers.pretty_date start_date, style: start_date.year == end_date.year ? :yearless : ''}"
     if start_date == end_date
       end_text = ", #{ end_date.year}"
     else
       end_text = "#{ end_date.day }, #{ end_date.year }"
-      if start_date.month != end_date.month
+      if start_date.month != end_date.month || start_date.year != end_date.year
         end_text = "#{ I18n.l(end_date, format: "%b") } " + end_text
       end
       end_text = "-" + end_text
