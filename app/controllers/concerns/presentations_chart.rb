@@ -44,7 +44,24 @@ module PresentationsChart
   # Builds a hash of presentation counts by topic that looks like: {'economics'=>1, 'epistemology'=>2}
   # which the endpoint can return as JSON or the action can use directly as an array.
   def topic_count_data
-    # The tag counts are already accumulated in the tags table - we just have to get them.
-    ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
+    # If it weren't for the need to support query terms on presentations, we could get the counts directly from the tags table
+    # data = ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
+
+    # adding taggings and tags with #load seems to speed things up a little
+    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference => :organizer).references(:taggings, :tags).load
+
+    # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
+    if params[:search_term].present? || params[:tag].present?
+      term = params[:search_term] || params[:tag]
+
+      @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
+      @presentations = filter_presentations_by_term(@presentations, term)
+    end
+
+    # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB
+    keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
+    data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }
+
+    return data
   end
 end
