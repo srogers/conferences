@@ -24,7 +24,7 @@ class PresentationsController < ApplicationController
       end
 
       term = params[:search_term] || params[:tag]
-      @presentations = filter_presentations_by_term(@presentations, term)
+      @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
