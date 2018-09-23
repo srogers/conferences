@@ -16,10 +16,9 @@
     %span.dropdown.show
       = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
       .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
-        = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_conferences_path(type: 'cities', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_conferences_path(type: 'cities',    search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
         = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(type: 'countries', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Speakers',  class: 'fa-sm'), chart_speakers_path(search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+        = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years',     search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
     - if current_user&.editor? || current_user&.admin?
       = link_to icon('fas', 'heart', class: 'fa-sm text-danger'), conferences_path(search_term: params[:search_term], heart: 't'), class: "btn btn-sm btn-secondary"
