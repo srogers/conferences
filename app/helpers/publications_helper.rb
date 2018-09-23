@@ -6,7 +6,7 @@ module PublicationsHelper
     publication.presentation_publications.each do |presentation_publication|
       name = ''
       name += icon('fas', 'crown', :class => 'fa-fw text-warning') + '&nbsp'.html_safe if presentation_publication.canonical
-      name += truncate(presentation_publication.presentation.conference_name, length: 40)
+      name += truncate(presentation_publication.presentation.conference_name.to_s, length: 40)
       names << name
     end
     names.join('<br/>').html_safe
