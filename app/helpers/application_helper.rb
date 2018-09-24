@@ -41,6 +41,11 @@ module ApplicationHelper
     return current ? ' active' : ''
   end
 
+  # For throwing the navigation-related params into paths, so the Done button can return to the original context.
+  def nav_params
+    { page: params[:page], search_term: params[:search_term], tag: params[:tag] }
+  end
+
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.

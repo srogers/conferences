@@ -74,9 +74,9 @@
 .row
   .col-md-12
     .form-actions
-      = link_to "Done", publications_path, :class => "btn btn-secondary"
+      = link_to "Done", publications_path(nav_params), :class => "btn btn-secondary"
       - if can? :edit, @publication
-        = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-primary"
+        = link_to "Edit", edit_publication_path(@publication, nav_params), :class => "btn btn-primary"
       .float-right
         - if can? :destroy, @publication
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

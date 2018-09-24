@@ -1,5 +1,5 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
+  %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker, nav_params))
 
   - if params[:heart].present?
     %td
@@ -8,6 +8,6 @@
 
   %td{width: 130}
     - if can? :edit, speaker
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker), :class => "btn btn-sm btn-primary"
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker, nav_params), :class => "btn btn-sm btn-primary"
     -if can?(:destroy, speaker) && speaker.presentations.empty?
       = link_to icon('far', 'trash-alt', class: 'fa-fw'), speaker_path(speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this speaker?' }, :post => true

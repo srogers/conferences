@@ -1,6 +1,6 @@
 %tr{ :class => cycle(:even, :odd) }
   %td
-    = link_to(truncate(presentation.name, length: 80), presentation_path(presentation))
+    = link_to(truncate(presentation.name, length: 80), presentation_path(presentation, nav_params))
     %br
     = clickable_speaker_list(presentation)
     %br
@@ -23,5 +23,5 @@
   %td{width: 150}
     - if can? :edit, presentation
       = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), :class => "btn btn-sm btn-primary", target: "_blank"
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation), :class => "btn btn-sm btn-primary"
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), :class => "btn btn-sm btn-primary"
       = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
