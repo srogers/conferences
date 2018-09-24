@@ -1,6 +1,6 @@
 %tr{ :class => cycle(:even, :odd) }
   %td
-    = link_to(truncate(publication.name, length: 80), publication_path(publication))
+    = link_to(truncate(publication.name, length: 80), publication_path(publication, nav_params))
     %br
     = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
     = publication.format
@@ -18,5 +18,5 @@
 
   %td{width: 150}
     - if can? :edit, publication
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_publication_path(publication), :class => "btn btn-sm btn-primary"
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_publication_path(publication, nav_params), :class => "btn btn-sm btn-primary"
       = link_to icon('far', 'trash-alt', class: 'fa-fw'), publication_path(publication), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

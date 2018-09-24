@@ -3,9 +3,9 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if params[:search_term].present?
-      - title "Speaker Presentations for #{ params[:search_term] }"
+      - title "Speaker Conferences for #{ params[:search_term] }"
       %h3
-        Speaker Presentations for
+        Speaker Conferences for
         = params[:search_term]
 
     - elsif params[:user_id].present?
@@ -18,8 +18,8 @@
       - title "Frequent Conference Speakers"
       %h3 Most Frequent Speakers
 
-    %p Click a name to see the speaker's presentations
+    %p Click a name to see the speaker's conferences
     -# This div ID has to match up with the one in shared/presentations_chart
-    #presentations_chart
-      = render partial: 'shared/presentations_chart'
-    .text-center Presentations
+    #conferences_chart
+      = render partial: 'shared/conferences_chart'
+    .text-center Conferences

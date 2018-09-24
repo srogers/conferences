@@ -4,7 +4,7 @@ class OrganizersController < ApplicationController
   authorize_resource
 
   def index
-    @organizers = Organizer.order(:abbreviation).page(params[:page]).per(20)
+    @organizers = Organizer.includes(:conferences).order(:abbreviation).page(params[:page]).per(20)
   end
 
   def show

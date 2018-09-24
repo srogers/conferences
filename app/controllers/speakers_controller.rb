@@ -7,7 +7,7 @@ class SpeakersController < ApplicationController
   include SpeakersChart
 
   def index
-    @speakers = Speaker.order(:sortable_name)
+    @speakers = Speaker.includes(:presentations).order(:sortable_name)
     per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
@@ -44,6 +44,9 @@ class SpeakersController < ApplicationController
     when 'presentations' then
       @presentations = presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
       render 'presentations_chart'
+    when 'conferences' then
+      @conferences = conference_count_data.to_a
+      render 'conferences_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to speakers_path

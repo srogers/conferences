@@ -10,7 +10,7 @@ class ConferencesController < ApplicationController
   include ConferencesHelper
 
   def index
-    @conferences = Conference.order('start_date DESC').includes(:organizer)
+    @conferences = Conference.includes(:organizer, :presentations).order('start_date DESC')
     per_page = params[:per] || 15 # autocomplete specifies :per
     if params[:search_term].present? || params[:heart].present?
       if params[:heart].present?

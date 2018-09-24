@@ -6,7 +6,7 @@
 -# There's no endpoint for this chart
 
 -# use this method to get the data from the controller action, and set the height based on the result size
-= bar_chart @presentations, height: bar_chart_height(@presentations.length), library: { yAxis: { allowDecimals: false } }
+= bar_chart @conferences, height: bar_chart_height(@conferences.length), library: { yAxis: { allowDecimals: false } }
 
 -# This is a somewhat hacky way of getting the Top Speakers chart labels linked to their speaker pages.
 -# The chart has to be rendered into a #speakers_chart element so it can appear on pages with other charts without side-effects
@@ -16,7 +16,7 @@
       // wait for stuff to load
       var handle = setInterval(function(){
         // The other charts wrap the label in a tspan tag - this one doesn't, because why not?
-        $('#presentations_chart .highcharts-xaxis-labels text').each(function() {
+        $('#conferences_chart .highcharts-xaxis-labels text').each(function() {
           // Sometimes Highcharts puts the text into a child tspan element, sometimes it doesn't - because why not?
           if (this.innerHTML.includes("<tspan>")) {
             element = this.firstElementChild
