@@ -31,7 +31,7 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.page(params[:page]).per(per_page)
 
-    # The JSON result has to be built with the keys in the data expected by select2 for autocomplete
+    # Currently, there is no auto-complete for publications, so the JSON doesn't have to worry about that.
     respond_to do |format|
       format.html
       format.json { render json: PublicationSerializer.new(@publications).serialized_json }

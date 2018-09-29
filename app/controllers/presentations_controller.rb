@@ -32,7 +32,16 @@ class PresentationsController < ApplicationController
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
       format.html
-      format.json { render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } } }
+      format.json do
+        if params[:q].present?
+          # generate a specific format for select2
+          # TODO set up page-specific options for select2,so it can use the generic JSON
+          render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } }
+        else
+          # generate a generic API-like JSON response
+          render json: PresentationSerializer.new(@presentations).serialized_json
+        end
+      end
     end
   end
 
