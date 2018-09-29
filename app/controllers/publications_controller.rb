@@ -34,7 +34,7 @@ class PublicationsController < ApplicationController
     # The JSON result has to be built with the keys in the data expected by select2 for autocomplete
     respond_to do |format|
       format.html
-      format.json { render json: { total: @publications.length, users: @publications.map{|p| {id: p.id, text: p.name } } } }
+      format.json { render json: PublicationSerializer.new(@publications).serialized_json }
     end
   end
 
