@@ -1,5 +1,5 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(conference.name, length: 40), conference_path(conference, nav_params))
+  %td= link_to(truncate(conference.name, length: 40, separator: ' '), conference_path(conference, nav_params))
   %td= conference.date_span
   %td= location_with_non_us_country conference, :short
   %td{ align: 'center' }
