@@ -20,6 +20,7 @@ gem 'carrierwave'
 gem "chartkick"                     # used for charts
 gem 'country_select'                # provides country selector that works with simple_form (country_state_select looks good, but isn't up to Rails 5, and requires Turbolinks)
 gem 'fastimage'                     # for finding the size of reference images to calculate the height for layout
+gem 'fast_jsonapi'                  # for serializing responses to JSON requests
 gem 'fog-aws'                       # naming fog-aws specifically avoids a lot of extra gems
 gem "font-awesome-sass", '~> 5.0'   # bundles font-awesome in a way that is compatible with Rails - 5.x goes with FontAwesome 5.x
 gem 'friendly_id'                   # manages sluggified URLs

@@ -1,6 +1,6 @@
 %tr{ :class => cycle(:even, :odd) }
   %td
-    = link_to(truncate(publication.name, length: 80), publication_path(publication, nav_params))
+    = link_to(truncate(publication.name, length: 80, separator: ' '), publication_path(publication, nav_params))
     %br
     = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
     = publication.format
