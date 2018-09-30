@@ -76,6 +76,11 @@ class PresentationsController < ApplicationController
     else
       @return_path = presentations_path(helpers.nav_params)
     end
+
+    respond_to do |format|
+      format.html
+      format.json { render json: PresentationSerializer.new(@presentation).serialized_json }
+    end
   end
 
   def edit
