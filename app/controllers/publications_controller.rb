@@ -18,7 +18,7 @@ class PublicationsController < ApplicationController
     end
 
     if params[:search_term].present?
-      term = params[:search_term]
+      term = params[:search_term].gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
       @publications = @publications.references(:conferences)
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.

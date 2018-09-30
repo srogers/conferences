@@ -23,7 +23,8 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      term = params[:search_term] || params[:tag]
+      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote
+      term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
