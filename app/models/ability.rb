@@ -41,6 +41,7 @@ class Ability
       can [:chart], Conference
       can :read, Presentation
       can [:chart, :tags], Presentation
+      can :read, Publication
       can :read, Speaker
       can [:chart], Speaker
     end
