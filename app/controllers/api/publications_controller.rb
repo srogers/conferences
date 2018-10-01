@@ -10,7 +10,7 @@ module Api
       publication = Publication.create(publication_params.merge(creator_id: current_user.id))
 
       if publication.errors.empty?
-        render :json => { status: "201 created" }
+        render :json => { status: "201 created", id: publication.id  }
       else
         render :json => { errors: publication.errors.full_messages }
       end

@@ -18,7 +18,7 @@ module Api
 
       # The speaker isn't taken into account in status - if presentation works, it's all good.
       if presentation.errors.empty?
-        render :json => { status: "201 created" }
+        render :json => { status: "201 created", id: presentation.id }
       else
         render :json => { errors: presentation.errors.full_messages }
       end
