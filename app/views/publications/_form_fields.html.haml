@@ -29,7 +29,9 @@
 - if @presentation.present?
   .row
     .col-md-12
-      = check_box_tag :canonical, "true"
+      -# This pair of lines works like the check_box helper, so something gets posted whether its checked or unchecked.
+      = hidden_field_tag :canonical, "false"
+      = check_box_tag :canonical, "true", canonical?(@presentation, @publication)
       - label_text = icon('fas', 'crown', :class => 'fa-fw text-warning')
       - label_text += " This publication is specifically <i>#{ @presentation.name }</i> presented at #{ @presentation.conference_name }".html_safe
       = label_tag :canonical, label_text

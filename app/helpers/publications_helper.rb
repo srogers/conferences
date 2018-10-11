@@ -54,4 +54,13 @@ module PublicationsHelper
     icon = icon_for_format(publication)
     publication.url.present? ? link_to(icon, publication.url, 'data-toggle' => "tooltip", title: publication.notes, target: '_blank') : icon # individual publications may or may not be links
   end
+
+  # Returns true when the presentation/publication relationship is canonical. Used in the form context when we don't
+  # have presentation_publication already.
+  def canonical?(presentation, publication)
+    return false unless presentation.present?
+    return false unless publication.present?
+
+    PresentationPublication.where(presentation_id: presentation.id, publication_id: publication.id).first&.canonical
+  end
 end
