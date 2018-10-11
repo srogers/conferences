@@ -18,7 +18,7 @@ class PublicationsController < ApplicationController
     end
 
     if params[:search_term].present?
-      term = params[:search_term]
+      term = params[:search_term].gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
       @publications = @publications.references(:conferences)
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
@@ -53,6 +53,11 @@ class PublicationsController < ApplicationController
     @related_presentations = Presentation.where("name @@  phraseto_tsquery(?)", @publication.name)
     # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
     @related_presentations = @related_presentations.where("presentations.id NOT IN (?)", @publication.presentation_publications.map{|pp| pp.presentation_id}) if @publication.presentation_publications.present?
+
+    respond_to do |format|
+      format.html
+      format.json { render json: PublicationSerializer.new(@publication).serialized_json }
+    end
   end
 
   def new

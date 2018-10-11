@@ -216,8 +216,8 @@ the default remote is staging. The task pushes the correct branch, migrates, set
 It is also possible to deploy manually with a direct git command. This is generally not a good idea, but it can be
 helpful in special circumstances, such as deploying feature branches (which the rake task doesn't do)
 
-    git push origin develop              # push the develop branch to Unfuddle
-    git push origin <branchname>         # push <branchname> to Unfuddle, creating it if necessary (e.g. a shared feature branch)
+    git push origin develop              # push the develop branch to non-Heroku repo (normally github)
+    git push origin <branchname>         # push <branchname> to non-Heroku repo, creating it if necessary (e.g. a shared feature branch)
     git push staging develop:master      # deploys the develop branch to staging master branch (Heroku always runs master)
     git push staging feature/test:master # deploys the test/feature branch to staging - feature branches can be deployed in-place
     git push production master

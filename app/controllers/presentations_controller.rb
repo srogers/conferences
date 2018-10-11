@@ -23,7 +23,8 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      term = params[:search_term] || params[:tag]
+      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote
+      term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
@@ -74,6 +75,11 @@ class PresentationsController < ApplicationController
       @return_path = conference_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
     else
       @return_path = presentations_path(helpers.nav_params)
+    end
+
+    respond_to do |format|
+      format.html
+      format.json { render json: PresentationSerializer.new(@presentation).serialized_json }
     end
   end
 
@@ -151,9 +157,10 @@ class PresentationsController < ApplicationController
   end
 
   def destroy
+    conference = @presentation.conference
     @presentation.destroy
 
-    redirect_to presentations_path
+    redirect_to conference.present? ? conference_path(conference) : presentations_path
   end
 
   private
