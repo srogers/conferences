@@ -157,9 +157,10 @@ class PresentationsController < ApplicationController
   end
 
   def destroy
+    conference = @presentation.conference
     @presentation.destroy
 
-    redirect_to presentations_path
+    redirect_to conference.present? ? conference_path(conference) : presentations_path
   end
 
   private
