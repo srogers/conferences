@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Organizer, type: :model do
-  describe "when creating a Organizer" do
+  describe "when creating an Organizer" do
 
     let(:valid_attributes) {
       { name: "Valid Organizer", series_name: "Conference Series", abbreviation: "ConSer" }
