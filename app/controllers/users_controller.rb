@@ -51,6 +51,7 @@ class UsersController < ApplicationController
     @presentations_created = Presentation.where(:creator_id => current_user.id).count
     @publications_created = Publication.where(:creator_id => current_user.id).count
     @speakers_created = Speaker.where(:creator_id => current_user.id).count
+    @presentations = current_user.presentations
   end
 
   def edit

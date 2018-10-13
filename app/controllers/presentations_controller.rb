@@ -77,6 +77,10 @@ class PresentationsController < ApplicationController
       @return_path = presentations_path(helpers.nav_params)
     end
 
+    if current_user
+      @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
+    end
+
     respond_to do |format|
       format.html
       format.json { render json: PresentationSerializer.new(@presentation).serialized_json }

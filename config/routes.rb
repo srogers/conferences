@@ -66,5 +66,6 @@ Rails.application.routes.draw do
       get   :supporters
     end
   end
+  resources :user_presentations, only: [:create, :destroy]
   resources :user_sessions, only: [:create, :destroy]
 end

@@ -1,5 +1,17 @@
 .row
   .col-md-12
+    - if current_user
+      .float-right
+        - if @user_presentation.persisted?
+          %p
+            On Your List
+            = link_to icon('far', 'trash-alt', class: 'fa-fw text-danger'), user_presentation_path(@user_presentation), :method => :delete, :data => { :confirm => 'Remove this presentation from your list?' }, :post => true
+        - else
+          = simple_form_for @user_presentation do |f|
+            = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+            = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
+            = f.submit 'Add to my Watchlist', class: 'btn btn-secondary'
+
     = title "#{ @presentation.name }"
     %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
     - if @presentation.conference.present?
