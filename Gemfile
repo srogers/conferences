@@ -62,6 +62,7 @@ end
 group :development do
   gem "better_errors"               # adds some nice error handling in development - MUST NOT escape from the development block - Requires Ruby 2.0.0 now
   gem "binding_of_caller"           # adds variable inspection command line to better_errors
+  gem 'bullet'                      # looks for N+1 queries and unnecessary eager loading
   gem 'letter_opener_web'
   gem 'listen', '~> 3.0.5'
 end
