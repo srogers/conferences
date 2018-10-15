@@ -2,6 +2,10 @@ class UserPresentationsController < ApplicationController
 
   before_action :require_user
 
+  def index
+    @user_presentations = current_user.user_presentations.includes(:presentation)
+  end
+
   def create
     @user_presentation = UserPresentation.new user_presentation_params
     if @user_presentation.save

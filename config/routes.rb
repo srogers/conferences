@@ -58,14 +58,16 @@ Rails.application.routes.draw do
   end
   resources :users do
     member do
-      get   :summary
       patch :approve
     end
     collection do
+      get   :conferences
       get   :names
+      get   :summary
       get   :supporters
+      get   :systat
     end
   end
-  resources :user_presentations, only: [:create, :destroy]
+  resources :user_presentations, only: [:index, :create, :destroy]
   resources :user_sessions, only: [:create, :destroy]
 end

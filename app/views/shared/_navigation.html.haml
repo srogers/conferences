@@ -21,8 +21,8 @@
 
       %ul.navbar-nav.mr-auto.justify-content-end
         - if current_user
-          - if current_user.admin? || current_user.editor?
-            %li.nav-item= link_to 'Summary', summary_user_path(current_user), class: 'nav-link' + current_tab?('summary')
+          - if current_user.present?
+            %li.nav-item= link_to 'Activity', systat_users_path, class: 'nav-link' + current_tab?('summary')
 
           %li.nav-item= link_to 'Profile', account_path, class: 'nav-link' + current_tab?('profile')
           %li.nav-item= link_to 'Logout', logout_path, class: 'nav-link'
