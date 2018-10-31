@@ -1,0 +1,10 @@
+%div{id: "user_presentation_#{ user_presentation.id }"}
+  - presentation = user_presentation.presentation
+  %p
+    = link_to presentation.name, presentation_path(presentation)
+    by
+    = presentation.speaker_names
+    %br
+    = presentation.conference_name
+    %br
+    = render partial: 'manage_wishlist_buttons', locals: { user_presentation: user_presentation }

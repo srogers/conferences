@@ -48,9 +48,20 @@ class UserPresentationsController < ApplicationController
     if @user_presentation
       presentation_id = @user_presentation.presentation.to_param
       @user_presentation.destroy
-      redirect_to presentation_path(presentation_id)
+      success = true
     else
-      render body: nil
+      success = false
+    end
+
+    respond_to do |format|
+      format.html do
+        if @success
+          redirect_to presentation_path(presentation_id)
+        else
+          render body: nil
+        end
+      end
+      format.js
     end
   end
 

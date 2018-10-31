@@ -1,0 +1,16 @@
+-# This is similar to _manage_watchlist_buttons in /presentations, but this one uses Ajax, and the other one doesn't
+- if user_presentation.completed_on.present?
+  Completed
+  = pretty_date user_presentation.completed_on
+  = link_to icon('far', 'eye-slash', 'Unwatch', class: 'fa-fw'), user_presentation_path(user_presentation), data: { method: :patch, remote: true, params: { user_presentation: { completed_on: nil } }.to_param }, title: "Didn't Hear It"
+-else
+  = link_to icon('far', 'heart',     'Watched', class: 'fa-fw'), user_presentation_path(user_presentation), data: { method: :patch, remote: true, params: { user_presentation: { completed_on: Time.now.utc } }.to_param }, title: 'Heard It'
+
+- if user_presentation.notify_pubs
+  = link_to icon('fas', 'envelope', 'Un-notify', class: 'fa-fw'), user_presentation_path(user_presentation), data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: false } }.to_param }, title: "Don't Notify Me"
+-else
+  = link_to icon('far', 'envelope',    'Notify', class: 'fa-fw'), user_presentation_path(user_presentation), data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: true } }.to_param }, title: "Notify Me"
+
+-# Make this one show up last when it appears
+- unless user_presentation.completed_on.present?
+  = link_to icon('far', 'trash-alt', 'Remove', class: 'fa-fw text-danger'), user_presentation_path(user_presentation), data: { :method => :delete, remote: true, :confirm => 'Remove this presentation from your list?' }, title: 'Remove from List'

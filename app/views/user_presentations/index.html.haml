@@ -10,12 +10,4 @@
       You haven't marked any presentations yet
     - else
       - @user_presentations.each do |user_presentation|
-        - presentation = user_presentation.presentation
-        %p
-          = link_to presentation.name, presentation_path(presentation)
-          by
-          = presentation.speaker_names
-          %br
-          = presentation.conference_name
-          %br
-          = render partial: 'presentations/manage_watchlist_buttons', locals: { user_presentation: user_presentation }
+        = render partial: 'user_presentation', locals: { user_presentation: user_presentation }
