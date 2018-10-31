@@ -68,11 +68,6 @@ Rails.application.routes.draw do
       get   :systat
     end
   end
-  resources :user_presentations, only: [:index, :create, :destroy] do
-    member do
-      patch :heard
-      patch :notify
-    end
-  end
+  resources :user_presentations, only: [:index, :create, :update, :destroy]
   resources :user_sessions, only: [:create, :destroy]
 end
