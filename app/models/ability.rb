@@ -18,7 +18,7 @@ class Ability
         can :destroy, Conference, :creator_id => user.id
         can [:read, :download] , Document
         can :manage, Presentation
-        can [:chart, :tags], Presentation
+        can [:chart, :tags, :heard, :notify], Presentation
         can :manage, PresentationSpeaker
         can :manage, Publication
         can :manage, Speaker
@@ -27,7 +27,7 @@ class Ability
       elsif user.reader?
         can :read, :all
         can [:chart], Conference
-        can [:chart, :tags], Presentation
+        can [:chart, :tags, :heard, :notify], Presentation
         can [:edit, :update], Speaker, :id => user.speaker_id
         can [:chart], Speaker
 

@@ -7,17 +7,26 @@ class UserPresentationsController < ApplicationController
   end
 
   def create
-    @user_presentation = UserPresentation.new user_presentation_params
-    if @user_presentation.save
-      redirect_to presentation_path(@user_presentation.presentation.to_param)
-    else
-      flash[:error] = 'The presentation could not be added to your list.'
-      logger.error "UserPresentation save failed: #{ @user_presentation.errors.full_messages }"
-      if @user_presentation&.presentation_id
-        redirect_to presentation_path(@user_presentation.presentation.to_param)
-      else
-        redirect_to presentations_path
+    @user_presentation = UserPresentation.new user_presentation_params.merge(user_id: current_user.id)
+    @success = @user_presentation.save
+    @user_presentations = current_user.user_presentations if current_user.present?
+
+    respond_to do |format|
+      format.html do
+        # TODO - this handles the button on the presentaion page - make that one Ajaxy too and remove this
+        if @success
+          redirect_to presentation_path(@user_presentation.presentation.to_param)
+        else
+          flash[:error] = 'The presentation could not be added to your list.'
+          logger.error "UserPresentation save failed: #{ @user_presentation.errors.full_messages }"
+          if @user_presentation&.presentation_id
+            redirect_to presentation_path(@user_presentation.presentation.to_param)
+          else
+            redirect_to presentations_path
+          end
+        end
       end
+      format.js
     end
   end
 

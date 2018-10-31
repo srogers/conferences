@@ -2,8 +2,6 @@
   %th Name / Speaker(s) / Topics
   - if params[:heart].present?
     %th Needs
-  -# Omit the conference when presentations are being listed on the conference/show page
-  - unless controller_name == "conferences"
-    %th Conference
+  %th Conference
   %th Media
   %th
