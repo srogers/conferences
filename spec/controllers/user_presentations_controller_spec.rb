@@ -1,17 +1,31 @@
 require 'rails_helper'
 
 RSpec.describe UserPresentationsController, type: :controller do
+
+  fixtures :roles
+  setup :activate_authlogic
+
   before do
-    pretend_to_be_authenticated
-    allow(@current_user).to receive(:id).and_return 1
-    allow(@current_user).to receive(:id=).and_return true
+    @current_user = create :user, role: Role.reader, time_zone: "Central Time (US & Canada)"
+    log_in @current_user
   end
 
   let(:presentation) { create :presentation }
 
+  describe "GET #index" do
+
+    let(:user_presentation) { create :user_presentation, user: @current_user }
+
+    it "finds user presentations" do
+      get :index
+      expect(assigns(:user_presentations)).to eq([user_presentation])
+    end
+  end
+
   describe "POST #create" do
     before do
-      post :create, params: { user_presentation: { presentation_id: presentation.id, user_id: 1 }}
+      # Specifically does not require :user_id
+      post :create, params: { user_presentation: { presentation_id: presentation.id }}
     end
 
     it "saves the user presentation" do
@@ -19,7 +33,7 @@ RSpec.describe UserPresentationsController, type: :controller do
       expect(assigns(:user_presentation).id).to be_present
     end
 
-    it "redirects to the preesentation page" do
+    it "redirects to the presentation page" do
       expect(response).to redirect_to presentation_path(presentation)
     end
   end
@@ -42,5 +56,4 @@ RSpec.describe UserPresentationsController, type: :controller do
       expect(response).to redirect_to presentation_path(presentation)
     end
   end
-
 end

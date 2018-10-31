@@ -1,6 +1,6 @@
 class UserPresentationsController < ApplicationController
 
-  before_action :require_user
+  before_action :require_user  # guests shouldn't ever see any buttons that go here
 
   def index
     @user_presentations = current_user.user_presentations.includes(:presentation)
@@ -9,7 +9,7 @@ class UserPresentationsController < ApplicationController
   def create
     @user_presentation = UserPresentation.new user_presentation_params.merge(user_id: current_user.id)
     @success = @user_presentation.save
-    @user_presentations = current_user.user_presentations if current_user.present?
+    @user_presentations = current_user.user_presentations
 
     respond_to do |format|
       format.html do

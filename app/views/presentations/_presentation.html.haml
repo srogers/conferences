@@ -30,11 +30,6 @@
         -else
           = link_to icon('fas', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: "Don't Notify Me"
       - else
-        -# create
-        =# link_to icon('far', 'heart', class: 'fa-fw', id: "heart_#{presentation.id}"), '#', class: "btn btn-sm btn-primary", data: {user_id: current_user.id, presentation_id: presentation.id}, title: 'Want to Hear It'
-        -# form_with model: UserPresentation.new, url: user_presentations_path do |form|
-          -# form.hidden_field :presentation_id, value: presentation.id
-          -# form.button icon('far', 'heart', class: 'fa-fw', id: "heart_#{presentation.id}"), class: "btn btn-sm btn-primary"
         = link_to icon('far', 'heart', class: 'fa-fw', id: "heart_#{presentation.id}"), user_presentations_path, class: "btn btn-sm btn-primary", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: 'Want to Hear It'
     - if can? :edit, presentation
       = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
