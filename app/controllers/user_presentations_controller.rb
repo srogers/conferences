@@ -3,7 +3,7 @@ class UserPresentationsController < ApplicationController
   before_action :require_user  # guests shouldn't ever see any buttons that go here
 
   def index
-    @user_presentations = current_user.user_presentations.includes(:presentation)
+    @user_presentations = current_user.user_presentations.includes(:presentation => :conference).order('conferences.start_date DESC', 'presentations.name')
   end
 
   def create

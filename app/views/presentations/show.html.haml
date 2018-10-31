@@ -4,18 +4,7 @@
       .float-right
         -# This has the same logical structure as the button selection logic in the presentation partial
         - if @user_presentation.persisted?
-          - if @user_presentation.completed_on.present?
-            Completed
-            = pretty_date @user_presentation.completed_on
-            = link_to icon('far', 'eye-slash', 'Unwatch', class: 'fa-fw'), user_presentation_path(@user_presentation, user_presentation: {completed_on: nil}), :method => :patch
-          -else
-            = link_to icon('far', 'heart', 'Watched', class: 'fa-fw'), user_presentation_path(@user_presentation, user_presentation: {completed_on: Time.now.utc}), :method => :patch
-            = link_to icon('far', 'trash-alt', 'Remove', class: 'fa-fw text-danger'), user_presentation_path(@user_presentation), :method => :delete, :data => { :confirm => 'Remove this presentation from your list?' }, :post => true, title: 'Remove from List'
-          - if @user_presentation.notify_pubs
-            = link_to icon('fas', 'envelope', 'Un-notify', class: 'fa-fw'), user_presentation_path(@user_presentation, user_presentation: {notify_pubs: false}), :method => :patch
-          -else
-            = link_to icon('far', 'envelope', 'Notify', class: 'fa-fw'), user_presentation_path(@user_presentation, user_presentation: {notify_pubs: true}), :method => :patch
-
+          = render partial: 'manage_watchlist_buttons', locals: { user_presentation: @user_presentation }
         - else
           = simple_form_for @user_presentation do |f|
             = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
