@@ -12,7 +12,6 @@ class UserPresentationsController < ApplicationController
     get_user_presentation_list
     respond_to do |format|
       format.html do
-        # TODO - this handles the button on the presentation page - make that one Ajaxy too and remove this
         if @success
           redirect_to presentation_path(@user_presentation.presentation.to_param)
         else
