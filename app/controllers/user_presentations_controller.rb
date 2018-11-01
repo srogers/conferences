@@ -55,7 +55,7 @@ class UserPresentationsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        if @success
+        if success
           redirect_to presentation_path(presentation_id)
         else
           render body: nil

@@ -80,9 +80,17 @@ RSpec.describe ConferencesController, type: :controller do
   end
 
   describe "GET #show" do
+
+    let(:user_presentation) { create :user_presentation, user_id: @current_user.id }
+
     it "assigns the requested conference as @conference" do
       get :show, params: {id: conference.to_param}
       expect(assigns(:conference)).to eq(conference)
+    end
+
+    it "assigns the current user's presentations" do
+      get :show, params: {id: conference.to_param}
+      expect(assigns(:user_presentations)).to eq([user_presentation])
     end
 
     # This is checked once for all the methods using get_conference

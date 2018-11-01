@@ -71,9 +71,17 @@ RSpec.describe SpeakersController, type: :controller do
   end
 
   describe "GET #show" do
+
+    let(:user_presentation) { create :user_presentation, user_id: @current_user.id }
+
     it "assigns the requested speaker as @speaker" do
       get :show, params: {id: speaker.to_param}
       expect(assigns(:speaker)).to eq(speaker)
+    end
+
+    it "assigns the current user's presentations" do
+      get :show, params: {id: speaker.to_param}
+      expect(assigns(:user_presentations)).to eq([user_presentation])
     end
 
     # This is checked once for all the methods using get_speaker
