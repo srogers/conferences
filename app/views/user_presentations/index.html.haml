@@ -11,3 +11,5 @@
     - else
       - @user_presentations.each do |user_presentation|
         = render partial: 'user_presentation', locals: { user_presentation: user_presentation }
+
+      = paginate @user_presentations
