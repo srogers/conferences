@@ -14,7 +14,7 @@ class PresentationPublication < ApplicationRecord
   def handle_notifications
     user_presentations = UserPresentation.where(presentation_id: self.presentation_id, notify_pubs: true)
     user_presentations.each do |user_presentation|
-      PublicationNotificationMailer.notify(user_presentation.user, user_presentation.presentation)
+      PublicationNotificationMailer.notify(user_presentation.user, self).deliver_now
     end
     logger.info "#{ user_presentations.length } publication notices sent"
   end
