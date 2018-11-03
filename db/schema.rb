@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_09_210503) do
+ActiveRecord::Schema.define(version: 2018_10_13_040611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,6 +189,18 @@ ActiveRecord::Schema.define(version: 2018_09_09_210503) do
     t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
+  end
+
+  create_table "user_presentations", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "presentation_id"
+    t.date "completed_on"
+    t.boolean "notify_pubs"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["presentation_id"], name: "index_user_presentations_on_presentation_id"
+    t.index ["user_id"], name: "index_user_presentations_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|

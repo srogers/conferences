@@ -1,5 +1,15 @@
 .row
   .col-md-12
+    - if current_user
+      .float-right
+        -# This has the same logical structure as the button selection logic in the presentation partial
+        - if @user_presentation.persisted?
+          = render partial: 'manage_watchlist_buttons', locals: { user_presentation: @user_presentation }
+        - else
+          = simple_form_for @user_presentation do |f|
+            = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+            = f.submit 'Add to my Watchlist', class: 'btn btn-secondary'
+
     = title "#{ @presentation.name }"
     %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
     - if @presentation.conference.present?

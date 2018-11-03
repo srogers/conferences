@@ -1,0 +1,13 @@
+.row
+  .col-md-12
+    = render partial: 'shared/user_nav'
+
+.row
+  .col-md-12
+    %h4 Your Presentations
+
+    - if @user_presentations.empty?
+      You haven't marked any presentations yet
+    - else
+      - @user_presentations.each do |user_presentation|
+        = render partial: 'user_presentation', locals: { user_presentation: user_presentation }

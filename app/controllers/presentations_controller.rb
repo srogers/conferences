@@ -9,6 +9,7 @@ class PresentationsController < ApplicationController
 
   def index
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
+    @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
 
     # TODO - what uses autocomplete for presentations?
@@ -75,6 +76,10 @@ class PresentationsController < ApplicationController
       @return_path = conference_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
     else
       @return_path = presentations_path(helpers.nav_params)
+    end
+
+    if current_user
+      @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
     end
 
     respond_to do |format|

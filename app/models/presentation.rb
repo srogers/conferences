@@ -7,8 +7,11 @@ class Presentation < ApplicationRecord
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :publications, through: :presentation_publications
 
-  has_many    :presentation_speakers,   :dependent => :destroy
+  has_many    :presentation_speakers,       :dependent => :destroy
   has_many    :speakers, through: :presentation_speakers
+
+  has_many    :user_presentations
+  has_many    :presentations, through: :user_presentations
 
   validates :name, presence: true
   validate  :unique_per_conference

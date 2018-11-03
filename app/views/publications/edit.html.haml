@@ -8,7 +8,9 @@
         Publication of:
         = @publication.presentations.first.name
         - if @publication.presentations.length > 1
-          '(and others)'
+          %br
+            %span{ style: 'font-size: small' }
+              (multiple presentations map to this publication)
 
 -# The publications form_fields partial does its own column management
 = simple_form_for @publication, :html => {:autocomplete => "off"} do |f|

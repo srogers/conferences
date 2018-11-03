@@ -1,0 +1,15 @@
+-# This is similar to _manage_watchlist_buttons in /presentations, but this one is conventional and the other uses Ajax.
+- if user_presentation.completed_on.present?
+  Completed
+  = pretty_date user_presentation.completed_on
+  = link_to icon('far', 'eye-slash', 'Unwatch', class: 'fa-fw'), user_presentation_path(user_presentation, user_presentation: {completed_on: nil}), :method => :patch
+-else
+  = link_to icon('far', 'heart', 'Watched', class: 'fa-fw'), user_presentation_path(user_presentation, user_presentation: {completed_on: Time.now.utc}), :method => :patch
+- if user_presentation.notify_pubs
+  = link_to icon('fas', 'envelope', 'Un-notify', class: 'fa-fw'), user_presentation_path(user_presentation, user_presentation: {notify_pubs: false}), :method => :patch
+-else
+  = link_to icon('far', 'envelope', 'Notify', class: 'fa-fw'), user_presentation_path(user_presentation, user_presentation: {notify_pubs: true}), :method => :patch
+
+-# Make this one show up last when it appears
+- unless user_presentation.completed_on.present?
+  = link_to icon('far', 'trash-alt', 'Remove', class: 'fa-fw text-danger'), user_presentation_path(user_presentation), :method => :delete, :data => { :confirm => 'Remove this presentation from your list?' }, :post => true, title: 'Remove from List'

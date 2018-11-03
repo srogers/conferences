@@ -75,6 +75,9 @@ GEM
       popper_js (>= 1.12.9, < 2)
       sass (>= 3.5.2)
     builder (3.2.3)
+    bullet (5.7.6)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11.0)
     byebug (10.0.2)
     cancancan (2.2.0)
     capybara (3.7.0)
@@ -255,7 +258,7 @@ GEM
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    loofah (2.2.2)
+    loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
@@ -278,7 +281,7 @@ GEM
       connection_pool (~> 2.2)
     net_http_timeout_errors (0.3.3)
     nio4r (2.3.1)
-    nokogiri (1.8.4)
+    nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
     numerizer (0.1.1)
     oga (2.15)
@@ -436,6 +439,7 @@ GEM
     uglifier (4.1.18)
       execjs (>= 0.3.0, < 3)
     unicode_utils (1.4.0)
+    uniform_notifier (1.11.0)
     video_info (2.7)
       iso8601 (~> 0.9.1)
       net_http_timeout_errors (~> 0.3.0)
@@ -460,6 +464,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap (~> 4.1)
+  bullet
   byebug
   cancancan
   carrierwave

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
-  before_action :require_admin, except: [:new, :create, :supporters, :summary]   # new, create, and supporters are open
-  before_action :require_user,  only: [:summary]
+  before_action :require_admin, except: [:new, :create, :supporters, :summary, :systat, :conferences]   # new, create, and supporters are open
+  before_action :require_user,  only: [:summary, :systat, :conferences]
 
   def index
     @require_account_approval = Setting.require_account_approval?
@@ -44,13 +44,25 @@ class UsersController < ApplicationController
   end
 
   def summary
-    @user = User.find(params[:id])
+    if current_user.admin? && params[:id].present?
+      @user = User.find(params[:id])
+    else
+      @user = current_user
+    end
     raise CanCan::AccessDenied unless @user == current_user || current_user.admin?
     @conferences_attended = current_user.conferences.order('start_date DESC')
     @conferences_created = Conference.where(:creator_id => current_user.id).count
     @presentations_created = Presentation.where(:creator_id => current_user.id).count
     @publications_created = Publication.where(:creator_id => current_user.id).count
     @speakers_created = Speaker.where(:creator_id => current_user.id).count
+    @presentations = current_user.presentations
+  end
+
+  def systat
+  end
+
+  def conferences
+    @conferences = current_user.conferences.order('start_date DESC')
   end
 
   def edit

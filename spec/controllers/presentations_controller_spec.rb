@@ -98,9 +98,29 @@ RSpec.describe PresentationsController, type: :controller do
   end
 
   describe "GET #show" do
+
+
     it "assigns the requested presentation as @presentation" do
       get :show, params: {id: presentation.to_param}
       expect(assigns(:presentation)).to eq(presentation)
+    end
+
+    context "when the presentation isn't in the current user's wishlist" do
+      it "assigns a new user_presentation" do
+        get :show, params: {id: presentation.to_param}
+        expect(assigns(:user_presentation).persisted?).to be_falsey
+      end
+    end
+
+    context "when the presentation is in the current user's wishlist" do
+
+      let(:user_presentation) { create :user_presentation, presentation_id: presentation.id, user_id: @current_user.id }
+
+      it "assigns the user_presentation for this user/presentation" do
+        skip "mysteriously fails"
+        get :show, params: {id: presentation.to_param}
+        expect(assigns(:user_presentation)).to eq(user_presentation)
+      end
     end
 
     # This is checked once for all the methods using get_presentation

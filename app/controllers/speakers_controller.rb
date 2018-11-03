@@ -65,6 +65,7 @@ class SpeakersController < ApplicationController
 
   def show
     @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.sortable_name')
+    @user_presentations = current_user.user_presentations if current_user.present?
     respond_to do |format|
       format.html
       format.json { render json: @speaker, status: :ok }
