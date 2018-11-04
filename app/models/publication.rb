@@ -1,6 +1,5 @@
 class Publication < ApplicationRecord
 
-  # belongs_to  :presentation
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :presentations, through: :presentation_publications
 
@@ -28,23 +27,6 @@ class Publication < ApplicationRecord
 
   validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
-
-  # Methods used to support CSV export
-  def presentation_url
-    presentation&.url
-  end
-
-  def presentation_name
-    presentation&.name
-  end
-
-  def conference_name
-    presentation&.conference_name
-  end
-
-  def conference_date
-    presentation&.conference&.start_date
-  end
 
   def has_duration?
     HAS_DURATION.include? format
