@@ -32,6 +32,8 @@
       - else
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "btn btn-sm btn-primary", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: 'Want to Hear It'
     - if can? :edit, presentation
-      = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), class: "btn btn-sm btn-primary"
-      = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+      %br
+      %div{style: 'padding-top: 5px;'}
+        = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
+        = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), class: "btn btn-sm btn-primary"
+        = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

@@ -102,6 +102,10 @@ class Conference < ApplicationRecord
     program_url.present?
   end
 
+  def future?
+    start_date > Date.today
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data
   TITLES_AND_METHODS = {
       'Name'        => :name,
