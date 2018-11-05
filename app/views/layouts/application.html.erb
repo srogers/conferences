@@ -15,7 +15,7 @@
     <%= render partial: 'shared/google_analytics' if Rails.env.production? %>
   </head>
 
-  <body>
+  <body class="<%= content_for?(:body_class) ? yield(:body_class) : 'standard' %>" >
     <%= render partial: 'shared/fb_sdk_init' %>
     <%= render partial: 'shared/navigation' %>
 
@@ -32,7 +32,10 @@
     </div>
     <footer class="footer" style="<%= controller_name == 'pages' && action_name == 'index' ? 'display: none;' : '' %>">
       <div class="container">
-        <p>ObjectivistConferences.info - a community supported archive</p>
+        <div class="float-right"><%= link_to "About Us", about_path %></div>
+        <p>
+          ObjectivistConferences.info - a community supported archive
+        </p>
       </div>
       <%= yield :footer %>
     </footer>

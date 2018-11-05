@@ -1,6 +1,6 @@
 class ConferencesController < ApplicationController
 
-  before_action :get_conference, except: [:create, :new, :index, :chart, :cities_count_by]
+  before_action :get_conference, except: [:create, :new, :index, :chart, :upcoming, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
   authorize_resource  # friendly_find is incompatible with load_resource
@@ -42,6 +42,13 @@ class ConferencesController < ApplicationController
       format.html
       format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
+  end
+
+  # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.
+  # Gets called from jQuery in /news and rendered by jQuery append(html).
+  def upcoming
+    @conferences = Conference.includes(:organizer).where("conferences.start_date > ?", Date.today).order('start_date DESC')
+    render layout: false
   end
 
   # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be

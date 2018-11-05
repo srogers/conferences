@@ -1,0 +1,7 @@
+- @conferences.each do |conference|
+  %p
+    = conference.name
+    %br
+    = conference.date_span
+    = location_with_non_us_country conference, :short
+    = link_to icon('fas', 'info-circle', class: 'fa-fw'), conference_path(conference)

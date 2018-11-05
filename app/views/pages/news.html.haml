@@ -1,0 +1,49 @@
+- content_for :body_class do 'news' end
+
+.row
+  .col-md-12.news-primary-block
+    %h1.text-center Objectivist Conferences
+.row
+  .col-md-12.news-secondary-block
+    -#%h4.text-center A Community Supported Archive
+
+.row
+  .col-md-12
+    %p
+
+.row
+  .col-md-6.news-primary-block
+    %h3 Upcoming Conferences
+    %div#upcoming_conferences
+
+  .col-md-6.news-secondary-block
+    %h3 Latest Publications
+    %div#latest_publications
+
+.row
+  .col-md-6.news-primary-block
+    - if current_user
+      %h3 Your Notifications
+    - else
+      %h3 Notifications
+      %p
+        = link_to "Sign up"
+        to get notified when presentations you're interested in get published.
+
+  .col-md-6.news-secondary-block
+    %h3 Something
+
+.row
+  .col-md-6.news-primary-block
+    %h3 Most Watched Presentations
+
+  .col-md-6.news-secondary-block
+    %h3 Most Anticipated Presentations
+
+-# This gets each one of the content areas above loaded Ajaxily, without the pages controller getting involved.
+= content_for :footer do
+  :javascript
+    $(document).ready(function() {
+      $("#upcoming_conferences").load("/conferences/upcoming");
+      $("#latest_publications").load("/publications/latest");
+    });
