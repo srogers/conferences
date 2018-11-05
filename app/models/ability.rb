@@ -28,7 +28,7 @@ class Ability
         can :read, :all
         can [:chart, :upcoming], Conference
         can [:chart, :tags, :heard, :notify], Presentation
-        can [:read, :latest], Publication
+        can [:read, :latest, :chart], Publication
         can [:edit, :update], Speaker, :id => user.speaker_id
         can [:chart], Speaker
 
@@ -42,7 +42,7 @@ class Ability
       can [:chart, :upcoming], Conference
       can :read, Presentation
       can [:chart, :tags], Presentation
-      can [:read, :latest], Publication
+      can [:read, :latest, :chart], Publication
       can :read, Speaker
       can [:chart], Speaker
     end
