@@ -71,6 +71,11 @@ Rails.application.routes.draw do
       get   :systat
     end
   end
-  resources :user_presentations, only: [:index, :create, :update, :destroy]
+  resources :user_presentations, only: [:index, :create, :update, :destroy] do
+    collection do
+      get :most_watched
+      get :most_anticipated
+    end
+  end
   resources :user_sessions, only: [:create, :destroy]
 end

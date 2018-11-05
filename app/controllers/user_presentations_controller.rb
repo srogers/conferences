@@ -1,11 +1,35 @@
 class UserPresentationsController < ApplicationController
 
-  before_action :require_user  # guests shouldn't ever see any buttons that go here
+  before_action :require_user, except: [:most_watched, :most_anticipated]  # guests shouldn't ever see any buttons that go here
 
   def index
     per_page = 10
     @user_presentations = current_user.user_presentations.includes(:presentation => :conference).order('conferences.start_date DESC', 'presentations.name')
     @user_presentations = @user_presentations.page(params[:page]).per(per_page)
+  end
+
+  def most_watched
+    @presentations = Presentation.find_by_sql("
+SELECT p.name as name, p.slug, count(up.presentation_id) as watchers
+FROM presentations p, user_presentations up
+WHERE p.id = up.presentation_id and up.completed_on is not null
+GROUP BY p.name, p.slug, up.presentation_id
+ORDER BY count(up.presentation_id) DESC
+LIMIT 3
+")
+    render layout: false
+  end
+
+  def most_anticipated
+    @presentations = Presentation.find_by_sql("
+SELECT p.name as name, p.slug, count(up.presentation_id) as watchers
+FROM presentations p, user_presentations up
+WHERE p.id = up.presentation_id and up.notify_pubs
+GROUP BY p.name, p.slug, up.presentation_id
+ORDER BY count(up.presentation_id) DESC
+LIMIT 3
+")
+    render layout: false
   end
 
   def create

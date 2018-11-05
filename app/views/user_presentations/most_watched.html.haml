@@ -1,0 +1,7 @@
+- @presentations.each do |presentation|
+  %p
+    = presentation.name
+    = link_to icon('fas', 'info-circle', class: 'fa-fw'), presentation_path(presentation.to_param)
+    %br
+    Seen by:
+    = presentation.watchers
