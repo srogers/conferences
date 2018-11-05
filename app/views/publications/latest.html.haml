@@ -1,0 +1,9 @@
+- @publications.each do |publication|
+  %p
+    %i
+      = publication.name
+    %br
+    = publication.format
+    ,
+    = pretty_date publication.created_at
+    = link_to icon('fas', 'info-circle', class: 'fa-fw'), publication_path(publication)

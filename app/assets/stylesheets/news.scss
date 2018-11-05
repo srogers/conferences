@@ -1,0 +1,33 @@
+// Sets up some experimental styles/colors that may or may not migrate out to the rest of the site.
+// Pass 1 colors
+// #09C7D9 Main blue
+// #F2441D Main orange
+// #C9E2F2 off white
+// #C9E2F2 brick red
+// #C9E2F2 salmon
+
+body.news {
+  /* Add a space for the footer, plus any extra spacing  */
+  background: #C9E2F2 !important;
+}
+
+.news-primary-block {
+  background: #F2441D;
+  padding: 15px;
+  color: #FFFFFF;
+
+  a:link    { color: white; }
+  a:visited { color: white; }
+  a:hover   { color: blue; }
+  a:active  { color: white; }
+}
+
+.news-secondary-block {
+  padding: 15px;
+  background: #09C7D9;
+
+  a:link    { color: black; }
+  a:visited { color: black; }
+  a:hover   { color: blue; }
+  a:active  { color: black; }
+}

@@ -26,8 +26,9 @@ class Ability
 
       elsif user.reader?
         can :read, :all
-        can [:chart], Conference
+        can [:chart, :upcoming], Conference
         can [:chart, :tags, :heard, :notify], Presentation
+        can [:read, :latest, :chart], Publication
         can [:edit, :update], Speaker, :id => user.speaker_id
         can [:chart], Speaker
 
@@ -38,10 +39,10 @@ class Ability
     else
       # Some read abilities are going to be required to allow social media linking
       can :read, Conference
-      can [:chart], Conference
+      can [:chart, :upcoming], Conference
       can :read, Presentation
       can [:chart, :tags], Presentation
-      can :read, Publication
+      can [:read, :latest, :chart], Publication
       can :read, Speaker
       can [:chart], Speaker
     end

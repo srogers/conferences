@@ -18,6 +18,10 @@
         - elsif current_user&.editor?
           %li.nav-item= link_to 'Publications', publications_path, class: 'nav-link' + current_tab?('publications')
           %li.nav-item= link_to 'Docs', documents_path, class: 'nav-link' + current_tab?('documents')
+        - else
+          -# Reader and Guest can see publications, since landing page links to it
+          %li.nav-item= link_to 'Publications', publications_path, class: 'nav-link' + current_tab?('publications')
+
 
       %ul.navbar-nav.mr-auto.justify-content-end
         - if current_user

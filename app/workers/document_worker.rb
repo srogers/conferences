@@ -28,6 +28,7 @@ class DocumentWorker
       document.complete!
     rescue => e
       logger.error "Document PDF generation for ID #{ document.id } failed with error #{ e }"
+      e.backtrace.each { |line| logger.error line unless line.include?('/gem') || line.include?('/rubies') }
       document.failed!
     end
   end
@@ -53,6 +54,7 @@ class DocumentWorker
       document.complete!
     rescue => e
       logger.error "Document CSV generation for ID #{ document.id } failed with error #{ e }"
+      e.backtrace.each { |line| logger.error line unless line.include?('/gem') || line.include?('/rubies') }
       document.failed!
     end
   end
@@ -63,6 +65,7 @@ class DocumentWorker
       document = Document.find document_id
     rescue => e
       logger.error "Document generation failed finding document with ID #{ document_id } with error #{ e }"
+      e.backtrace.each { |line| logger.error line unless line.include?('/gem') || line.include?('/rubies') }
       return
     end
 

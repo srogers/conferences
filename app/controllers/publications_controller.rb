@@ -1,6 +1,6 @@
 class PublicationsController < ApplicationController
 
-  before_action :get_publication, except: [:index, :create, :new, :chart]
+  before_action :get_publication, except: [:index, :create, :new, :chart, :latest]
 
   authorize_resource
 
@@ -36,6 +36,11 @@ class PublicationsController < ApplicationController
       format.html
       format.json { render json: PublicationSerializer.new(@publications).serialized_json }
     end
+  end
+
+  def latest
+    @publications = Publication.includes(:presentations => :speakers).order('publications.created_at DESC').limit(3)
+    render layout: false
   end
 
   def chart

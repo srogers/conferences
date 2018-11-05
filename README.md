@@ -66,7 +66,11 @@ Bootstrap is installed via the bootstrap gem.
 
 ### Sidekiq
 
-Sidekiq is used for PDF generation. Sidekiq requires a queueing system - we're using Redis.
+Sidekiq is used for PDF generation. Sidekiq requires a queueing system - we're using Redis. Start with:
+
+    be sidekiq
+
+The sidekiq web interface ( /sidekiq ) isn't hooked up yet . . .
 
 ### Redis
 

@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
-  root to: 'pages#about'
+  root to: 'pages#news'
 
   get '/logout',  to: 'user_sessions#destroy', as: :logout
   get '/login',   to: 'user_sessions#new',     as: :login
   get '/about',   to: 'pages#about',           as: :about
+  get '/news',    to: 'pages#news',            as: :news
   get '/supporters',   to: 'pages#supporters', as: :supporters
   get '/guidelines',   to: 'pages#guidelines', as: :guidelines
   get '/contact', to: 'pages#contact',         as: :contact
@@ -23,6 +24,7 @@ Rails.application.routes.draw do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
       get :chart              # queries the data, renders the chart
+      get :upcoming           # for the landing page
     end
   end
   resources :conference_users, only: [:index, :create, :destroy]
@@ -44,7 +46,8 @@ Rails.application.routes.draw do
   end
   resources :publications do
     collection do
-      get :chart                       # queries the data and pushes it to the chart in an array
+      get :chart                     # queries the data and pushes it to the chart in an array
+      get :latest                    # for the landing page
     end
   end
   resources :password_resets, only: [:new, :create, :edit, :update]
@@ -68,6 +71,11 @@ Rails.application.routes.draw do
       get   :systat
     end
   end
-  resources :user_presentations, only: [:index, :create, :update, :destroy]
+  resources :user_presentations, only: [:index, :create, :update, :destroy] do
+    collection do
+      get :most_watched
+      get :most_anticipated
+    end
+  end
   resources :user_sessions, only: [:create, :destroy]
 end
