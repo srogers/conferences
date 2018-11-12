@@ -6,18 +6,26 @@
 // #C9E2F2 brick red
 // #C9E2F2 salmon
 
+// Pass 2 colors
+// #02547D Deep blue
+// #0284A8 main blue
+// #02BEC4 turquoise
+// #A9E8DC sea
+// #E1F7E7 sea white
+
 body.news {
   /* Add a space for the footer, plus any extra spacing  */
-  background: #C9E2F2 !important;
+  background: #E1F7E7 !important;
 }
 
 .news-primary-block {
-  //border-style: solid;
-  //border-color: #F2441D;
-  //border-width: 3px;
-  background: #F2441D;
+  border-style: solid;
+  border-color: #0284A8;
+  border-width: 5px;
+  background: #02BEC4;
   padding: 15px;
   color: #FFFFFF;
+  margin-bottom: 15px;
 
   a:link    { color: white; }
   a:visited { color: white; }
@@ -26,8 +34,12 @@ body.news {
 }
 
 .news-secondary-block {
+  border-style: solid;
+  border-color: #0284A8;
+  border-width: 5px;
   padding: 15px;
-  background: #09C7D9;
+  background: #A9E8DC;
+  margin-bottom: 15px;
 
   a:link    { color: black; }
   a:visited { color: black; }
@@ -44,4 +56,10 @@ body.news {
   color: #FFF;
   text-align: center;
   transform: translate(-50%, -10%);
+}
+
+.carousel-container {
+  background: #0284A8;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
