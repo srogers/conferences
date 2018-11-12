@@ -1,0 +1,16 @@
+.carousel.slide#conference_slides{'data-ride' => "carousel"}
+
+  %ul.carousel-indicators
+    %li.active{'data-target' => "#conference_slides", 'data-slide-to' => "0"}
+    %li{'data-target' => "#conference_slides", 'data-slide-to' => "1"}
+
+  .carousel-inner
+    .carousel-item.active
+      = image_tag "ocon_2018.jpg", alt: "OCON 2018"
+    .carousel-item
+      = image_tag "tjs_93.jpg", alt: "TJS 1993"
+
+  = link_to "#conference_slides", class: "carousel-control-prev", 'data-slide' => "prev" do
+    %span.carousel-control-prev-icon
+  = link_to "#conference_slides", class: "carousel-control-next", 'data-slide' => "next" do
+    %span.carousel-control-next-icon

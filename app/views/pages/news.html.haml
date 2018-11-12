@@ -1,11 +1,10 @@
 - content_for :body_class do 'news' end
 
 .row
-  .col-md-12.news-primary-block
-    %h1.text-center Objectivist Conferences
-.row
-  .col-md-12.news-secondary-block
-    -#%h4.text-center A Community Supported Archive
+  .col-md-12#carousel_container
+    %h1.carousel-title Objectivist Conferences
+    = render partial: 'carousel'
+
 
 .row
   .col-md-12

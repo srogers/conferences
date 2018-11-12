@@ -12,6 +12,9 @@ body.news {
 }
 
 .news-primary-block {
+  //border-style: solid;
+  //border-color: #F2441D;
+  //border-width: 3px;
   background: #F2441D;
   padding: 15px;
   color: #FFFFFF;
@@ -30,4 +33,15 @@ body.news {
   a:visited { color: black; }
   a:hover   { color: blue; }
   a:active  { color: black; }
+}
+
+.carousel img { width: 100% }
+.carousel-title {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 100;
+  color: #FFF;
+  text-align: center;
+  transform: translate(-50%, -10%);
 }
