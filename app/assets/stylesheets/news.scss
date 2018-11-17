@@ -18,28 +18,24 @@ body.news {
   background: #E1F7E7 !important;
 }
 
-.news-primary-block {
-  border-style: solid;
-  border-color: #0284A8;
-  border-width: 5px;
-  background: #02BEC4;
+.news {
   padding: 15px;
+  //border-style: solid;
+  //border-color: #0284A8;
+  //border-width: 5px;
+  //margin-bottom: 15px;
+}
+.primary-block {
+  background: #02BEC4;
   color: #FFFFFF;
-  margin-bottom: 15px;
 
   a:link    { color: white; }
   a:visited { color: white; }
   a:hover   { color: blue; }
   a:active  { color: white; }
 }
-
-.news-secondary-block {
-  border-style: solid;
-  border-color: #0284A8;
-  border-width: 5px;
-  padding: 15px;
+.secondary-block {
   background: #A9E8DC;
-  margin-bottom: 15px;
 
   a:link    { color: black; }
   a:visited { color: black; }
@@ -48,6 +44,7 @@ body.news {
 }
 
 .carousel img { width: 100% }
+
 .carousel-title {
   position: absolute;
   top: 10%;
@@ -57,9 +54,8 @@ body.news {
   text-align: center;
   transform: translate(-50%, -10%);
 }
-
 .carousel-container {
   background: #0284A8;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  //padding: 15px 15px;
+  padding: 0;
 }
