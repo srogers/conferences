@@ -120,7 +120,7 @@ module ApplicationHelper
 
   # this does the same thing as the two helpers above, with a separator in between - works with FormBuilder and SimpleForm
   def save_or_cancel(form, path, save_text=false, cancel_text=false)
-    content_tag(:div, :class => 'form-actions btn-group') do
+    content_tag(:div, :class => 'form-actions btn-group save-or-cancel') do
       # concatenate these, cuz it's a helper
       cancel_button(path, cancel_text) + (form.class == SimpleForm::FormBuilder ? my_submit_button(form, save_text) : form.button(save_text))
     end

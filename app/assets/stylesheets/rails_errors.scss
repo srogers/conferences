@@ -1,6 +1,10 @@
 /* Handles the Rails-specific classes associated with flash messages and error notices
  */
 
+.alert-success {
+  background-color: #fff
+}
+
 .alert-notice {
   color: green;
   background-color: #e0ffe0

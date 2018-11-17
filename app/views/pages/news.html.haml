@@ -5,10 +5,24 @@
     %h1.carousel-title Objectivist Conferences
     = render partial: 'carousel'
 
-
+-# Add a space between the carousel and the news . . . or not.
 -#.row
 -#  .col-md-12
 -#    %p
+
+.row
+  .col-md-6.news.primary-block
+    - if current_user
+      %h3 Your Notifications
+      %div#notifications
+      %p None yet
+    - else
+      %h3 Notifications
+      %p
+        = link_to "Sign up", new_user_path
+        to get notified when presentations you're interested in get published.
+
+  .col-md-6.news.secondary-block
 
 .row
   .col-md-6.news.primary-block
@@ -18,28 +32,6 @@
   .col-md-6.news.secondary-block
     %h3 Latest Publications
     %div#latest_publications
-
--#.row
--#  .col-md-6.news-primary-block
--#    - if current_user
--#      %h3 Your Notifications
--#      %div#notifications
--#      %p None yet
--#    - else
--#      %h3 Notifications
--#      %p
--#        = link_to "Sign up", new_user_path
--#        to get notified when presentations you're interested in get published.
--#
--#  .col-md-6.news-secondary-block
--#    - if current_user
--#      %h3 Your Watch List
--#      %div#watch_list
--#    - else
--#      %h3 Notifications
--#      %p
--#        = link_to "Sign up", new_user_path
--#        to get notified when presentations you're interested in get published.
 
 .row
   .col-md-6.news.primary-block

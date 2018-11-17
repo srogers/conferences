@@ -7,3 +7,5 @@ select.form-control { margin-left: 5px; }             /* Because by default the 
 abbr[title='required']   { color: red; }              /* To make the little asterisk by required items red */
 
 input.file { @extend .btn-sm }                        /* adds a little space around the file input Choose File button, and makes it a little more normal */
+
+.btn-group.save-or-cancel { display: inline; }        /* Bootstrap puts inline-flex here, which breaks thinks floating to the right save-or-cancel buttons */
