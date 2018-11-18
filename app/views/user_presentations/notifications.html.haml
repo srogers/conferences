@@ -1,3 +1,6 @@
-- @notifications.each do |notification|
-  = notification.presentation_publication.presentation.name
-  = link_to icon('fas', 'info-circle', class: 'fa-fw'), presentation_path(notification.presentation_publication.presentation.to_param)
+- if @notifications.empty?
+  None yet
+- else
+  - @notifications.each do |notification|
+    = notification.presentation_publication.presentation.name
+    = link_to icon('fas', 'info-circle', class: 'fa-fw'), presentation_path(notification.presentation_publication.presentation.to_param)
