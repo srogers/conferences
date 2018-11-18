@@ -1,53 +1,43 @@
 - content_for :body_class do 'news' end
 
 .row
-  .col-md-12.news-primary-block
-    %h1.text-center Objectivist Conferences
-.row
-  .col-md-12.news-secondary-block
-    -#%h4.text-center A Community Supported Archive
+  .col-md-12.carousel-container
+    %h1.carousel-title Objectivist Conferences
+    = render partial: 'carousel'
+
+-# Add a space between the carousel and the news . . . or not.
+-#.row
+-#  .col-md-12
+-#    %p
 
 .row
-  .col-md-12
-    %p
+  .col-md-6.news.primary-block
+    - if current_user
+      %h3 Your Notifications
+      %div#notifications
+    - else
+      %h3 Notifications
+      %p
+        = link_to "Sign up", new_user_path
+        to get notified when presentations you're interested in get published.
+
+  .col-md-6.news.secondary-block
 
 .row
-  .col-md-6.news-primary-block
+  .col-md-6.news.primary-block
     %h3 Upcoming Conferences
     %div#upcoming_conferences
 
-  .col-md-6.news-secondary-block
+  .col-md-6.news.secondary-block
     %h3 Latest Publications
     %div#latest_publications
 
--#.row
--#  .col-md-6.news-primary-block
--#    - if current_user
--#      %h3 Your Notifications
--#      %div#notifications
--#      %p None yet
--#    - else
--#      %h3 Notifications
--#      %p
--#        = link_to "Sign up", new_user_path
--#        to get notified when presentations you're interested in get published.
--#
--#  .col-md-6.news-secondary-block
--#    - if current_user
--#      %h3 Your Watch List
--#      %div#watch_list
--#    - else
--#      %h3 Notifications
--#      %p
--#        = link_to "Sign up", new_user_path
--#        to get notified when presentations you're interested in get published.
-
 .row
-  .col-md-6.news-primary-block
+  .col-md-6.news.primary-block
     %h3 Most Watched Presentations
     %div#most_watched
 
-  .col-md-6.news-secondary-block
+  .col-md-6.news.secondary-block
     %h3 Most Anticipated Presentations
     %div#most_anticipated
 
@@ -57,7 +47,7 @@
     $(document).ready(function() {
       $("#upcoming_conferences").load("/conferences/upcoming");
       $("#latest_publications").load("/publications/latest");
-      // $("#notifications").load("/user_presentations/notifications");
+      $("#notifications").load("/user_presentations/notifications");
       // $("#notifications").load("/user_presentations/watchlist");
       $("#most_watched").load("/user_presentations/most_watched");
       $("#most_anticipated").load("/user_presentations/most_anticipated");

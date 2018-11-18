@@ -6,28 +6,56 @@
 // #C9E2F2 brick red
 // #C9E2F2 salmon
 
+// Pass 2 colors
+// #02547D Deep blue
+// #0284A8 main blue
+// #02BEC4 turquoise
+// #A9E8DC sea
+// #E1F7E7 sea white
+
 body.news {
   /* Add a space for the footer, plus any extra spacing  */
-  background: #C9E2F2 !important;
+  background: #E1F7E7 !important;
 }
 
-.news-primary-block {
-  background: #F2441D;
+.news {
   padding: 15px;
+  //border-style: solid;
+  //border-color: #0284A8;
+  //border-width: 5px;
+  //margin-bottom: 15px;
+}
+.primary-block {
+  background: #02BEC4;
   color: #FFFFFF;
 
-  a:link    { color: white; }
-  a:visited { color: white; }
-  a:hover   { color: blue; }
+  a:link    { color: blue; }
+  a:visited { color: blue; }
+  a:hover   { color: gold; }
   a:active  { color: white; }
 }
+.secondary-block {
+  background: #A9E8DC;
 
-.news-secondary-block {
-  padding: 15px;
-  background: #09C7D9;
-
-  a:link    { color: black; }
-  a:visited { color: black; }
-  a:hover   { color: blue; }
+  a:link    { color: blue; }
+  a:visited { color: blue; }
+  a:hover   { color: gold; }
   a:active  { color: black; }
+}
+
+.carousel img { width: 100% }
+
+.carousel-title {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 100;
+  color: #FFF;
+  text-align: center;
+  transform: translate(-50%, -10%);
+}
+.carousel-container {
+  background: #0284A8;
+  //padding: 15px 15px;
+  padding: 0;
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_03_212123) do
+ActiveRecord::Schema.define(version: 2018_11_17_154252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,17 @@ ActiveRecord::Schema.define(version: 2018_11_03_212123) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_presentation_id"
+    t.bigint "presentation_publication_id"
+    t.date "sent_at"
+    t.boolean "seen"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["presentation_publication_id"], name: "index_notifications_on_presentation_publication_id"
+    t.index ["user_presentation_id"], name: "index_notifications_on_user_presentation_id"
   end
 
   create_table "organizers", force: :cascade do |t|
