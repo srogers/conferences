@@ -15,7 +15,6 @@
     - if current_user
       %h3 Your Notifications
       %div#notifications
-      %p None yet
     - else
       %h3 Notifications
       %p
@@ -48,7 +47,7 @@
     $(document).ready(function() {
       $("#upcoming_conferences").load("/conferences/upcoming");
       $("#latest_publications").load("/publications/latest");
-      // $("#notifications").load("/user_presentations/notifications");
+      $("#notifications").load("/user_presentations/notifications");
       // $("#notifications").load("/user_presentations/watchlist");
       $("#most_watched").load("/user_presentations/most_watched");
       $("#most_anticipated").load("/user_presentations/most_anticipated");

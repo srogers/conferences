@@ -75,6 +75,7 @@ Rails.application.routes.draw do
     collection do
       get :most_watched
       get :most_anticipated
+      get :notifications
     end
   end
   resources :user_sessions, only: [:create, :destroy]
