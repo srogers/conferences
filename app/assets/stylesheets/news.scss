@@ -18,7 +18,7 @@ body.news {
   background: #E1F7E7 !important;
 }
 
-.news {
+.news-item {           /* remember the news class is automatically assigned to the whole page as the controller name */
   padding: 15px;
   //border-style: solid;
   //border-color: #0284A8;
