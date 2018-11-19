@@ -19,7 +19,7 @@
     <%= render partial: 'shared/fb_sdk_init' %>
     <%= render partial: 'shared/navigation' %>
 
-    <div class="container">
+    <div class="container <%= content_for?(:body_container_class) ? yield(:body_container_class) : 'body-container' %>">
       <% flash.each do |type, message| %>
         <div class="alert alert-<%= type %> alert-dismissable">
           <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -30,7 +30,7 @@
 
       <%= yield %>
     </div>
-    <footer class="footer" style="<%= controller_name == 'pages' && action_name == 'index' ? 'display: none;' : '' %>">
+    <footer class="footer">
       <div class="container">
         <div class="float-right"><%= link_to "About Us", about_path %></div>
         <p>

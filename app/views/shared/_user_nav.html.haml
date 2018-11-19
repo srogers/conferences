@@ -1,8 +1,0 @@
-%nav.nav.nav-pills.flex-column.flex-sm-row
-  = link_to "System Stats", systat_users_path, class: classes_for_user_tab('system_stats')
-  - if current_user.editor? || current_user.admin?
-    = link_to "Your Stats",   summary_users_path(id: current_user.id), class: classes_for_user_tab('user_stats')
-  = link_to "Watch List",   user_presentations_path, class: classes_for_user_tab('watch_list')
-  = link_to "Conferences",  conferences_users_path, class: classes_for_user_tab('conferences')
-%br
-

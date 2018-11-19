@@ -22,15 +22,22 @@ module ApplicationHelper
     when 'organizers'
       controller_name == 'organizers'
     when 'users'
-      controller_name == 'users' && !['supporters', 'systat', 'conferences'].include?(action_name) && !my_summary?
+      controller_name == 'users' && !['supporters', 'conferences'].include?(action_name) && !my_summary?
     when 'settings'
       controller_name == 'settings'
     when 'documents'
       controller_name == 'documents'
-    when 'summary'
-      controller_name == 'users' && (my_summary? || action_name == 'systat' || action_name == 'conferences') || controller_name == 'user_presentations' && action_name == 'index'
+    # Account overlaps with other states, because "You" is highlighted when items in the drop-down are also highlighted
+    when 'account'
+      controller_name == 'accounts' || my_summary? || my_conferences? || my_watchlist?
     when 'profile'
       controller_name == 'accounts'
+    when 'my_conferences'
+      my_conferences?
+    when 'watchlist'
+      my_watchlist?
+    when 'about'
+      ['about', 'supporters', 'contact'].include?(action_name)
     when 'signup'
       controller_name == 'users' && ['new'].include?(action_name)
     when 'login'
@@ -41,9 +48,17 @@ module ApplicationHelper
     return current ? ' active' : ''
   end
 
+  def my_conferences?
+    controller_name == 'users' && action_name == 'conferences'
+  end
+
+  def my_watchlist?
+    controller_name == 'user_presentations' && action_name == 'index'
+  end
+
   # a helper for current_tab? - this requires a param qualifier because admin can look at the same info under the users tab
   def my_summary?
-    action_name == 'summary' && params[:id] == @current_user.id.to_s
+    controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
   end
 
   # For throwing the navigation-related params into paths, so the Done button can return to the original context.

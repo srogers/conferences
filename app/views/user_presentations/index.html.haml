@@ -1,13 +1,33 @@
 .row
   .col-md-12
-    = render partial: 'shared/user_nav'
-
-.row
-  .col-md-12
     %h4 Your Presentations
 
     - if @user_presentations.empty?
-      You haven't marked any presentations yet
+      %p
+        Here's where you'll find presentations that you want to see, or have seen already.
+        Indicate your interest in a presentation by clicking the "heart" icon:
+
+      %p= link_to icon('far', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Want to Hear It'
+
+      %p The heart will become filled, and you'll see the presentation on this list.
+
+      %p= link_to icon('fas', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Heard It'
+
+      %p Once you're seen the presentation, mark it as watched by clicking heart again; it will become a check mark:
+
+      %p= link_to icon('far', 'check-circle', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: "Didn't Hear It"
+
+      %h5 Notifications
+      %p If you want to receive email notifications when the presentation is published, click the envelope icon:
+
+      %p= link_to icon('far', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Notify Me'
+
+      %p The envelope will become filled:
+
+      %p= link_to icon('fas', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: "Don't Notify Me"
+
+      %p If you want to stop notifications, just click the envelope again.
+
     - else
       - @user_presentations.each do |user_presentation|
         = render partial: 'user_presentation', locals: { user_presentation: user_presentation }
