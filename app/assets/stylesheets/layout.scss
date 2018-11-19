@@ -4,11 +4,9 @@ html {
   min-height: 100%;
 }
 
-nav.navbar { margin-bottom: 15px; } /* With Bootstrap 4, everything is jammed right against the top */
-
 body {
   /* Add a space for the footer, plus any extra spacing  */
-  margin-bottom: 100px !important;
+  margin-bottom: 80px !important;
 }
 
 footer.footer {
@@ -16,7 +14,7 @@ footer.footer {
   bottom: 0;
   height: 80px;
   width: 100%;
-  background-color: black;
+  background-color: #343a40;
   color: white;
   font-size: smaller;
   padding-top: 30px;   /* put the text sort of in the center */
@@ -28,4 +26,13 @@ li.wrapping_list {
   list-style-position: inside;
   text-indent: -1em;
   padding-left: 1em;
+}
+
+.listing-controls {
+  padding: 15px 0;
+  /* background: #02547D; */
+}
+
+.chart-controls {
+  padding-top: 15px;
 }
