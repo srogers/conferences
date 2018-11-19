@@ -26,12 +26,14 @@
       %th Time Zone
       %td= current_user.time_zone
 
-    %tr
-      %th Role
-      %td= t current_user.role_name
+    -# Don't encumber readers with the notion that there are other roles they don't have
+    - if @user.editor? || @user.admin?
+      %tr
+        %th Role
+        %td= t current_user.role_name
 
+  %h5 Preferences
   %table.clean-values
-    %caption Preferences
     %tr
       %th
         - if current_user.show_attendance
@@ -39,13 +41,16 @@
         - else
           %span.deny= icon('fas', 'times')
       %td Allow other users to see my conference attendance
-    %tr
-      %th
-        - if current_user.show_contributor
-          %span.confirm= icon('fas', 'check')
-        - else
-          %span.deny= icon('fas', 'times')
-      %td List me on the Supporters page as a contributing editor
+
+    -# This doesn't appliy to readers
+    - if @user.editor? || @user.admin?
+      %tr
+        %th
+          - if current_user.show_contributor
+            %span.confirm= icon('fas', 'check')
+          - else
+            %span.deny= icon('fas', 'times')
+        %td List me on the Supporters page as a contributing editor
 
 
   %p= link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
