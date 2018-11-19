@@ -2,7 +2,9 @@
   .col-md-12
     %h3 Conferences You've Attended
     - if @conferences.length == 0
-      %p You haven't marked any conferences as attended yet.
+      %p
+        You haven't marked any conferences as attended yet.
+        You can do that on the conference details page. Look for a button that says, "I was there!"
     - else
       %ul
       - @conferences.each do |conference|

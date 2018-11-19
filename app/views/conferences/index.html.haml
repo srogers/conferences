@@ -41,7 +41,9 @@
       - if params[:search_term].present?
         %p No conferences match the search terms
       - elsif params[:user_id].present?
-        %p You haven't marked any conferences as attended by you
+        %p
+          You haven't marked any conferences as attended by you.
+          You can do that on the conference details page. Look for a button that says, "I was there!"
       - else
         %p The system doesn't contain any conferences yet
     - else
