@@ -32,6 +32,8 @@ module ApplicationHelper
       controller_name == 'accounts' || my_summary? || my_conferences? || my_watchlist?
     when 'profile'
       controller_name == 'accounts'
+    when 'summary'
+      my_summary?
     when 'my_conferences'
       my_conferences?
     when 'watchlist'
