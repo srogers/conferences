@@ -153,7 +153,13 @@ class ConferenceDirectoryPdf < Prawn::Document
         image_url = speaker.photo.url
       end
 
-      opened_image = open image_url
+      begin
+        opened_image = open image_url
+      rescue => e
+        # Images are often not found in development when the remote database is downloaded, so just ignore that
+        Rails.logger.warn "Error opening speaker image (ignored): #{ e }"
+        opened_image = nil
+      end
 
       if opened_image.present?
         begin
@@ -167,7 +173,7 @@ class ConferenceDirectoryPdf < Prawn::Document
           Rails.logger.error "Error getting PDF image for speaker #{ speaker.name }: #{ e }"
         end
       else
-        logger.debug "Opened image not present"
+        Rails.logger.debug "Opened speaker image not present"
         image_height = 0
       end
 
