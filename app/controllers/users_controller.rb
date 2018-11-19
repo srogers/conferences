@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
-  before_action :require_admin, except: [:new, :create, :supporters, :summary, :systat, :conferences]   # new, create, and supporters are open
-  before_action :require_user,  only: [:summary, :systat, :conferences]
+  before_action :require_admin, except: [:new, :create, :supporters, :summary, :conferences]   # new, create, and supporters are open
+  before_action :require_user,  only: [:summary, :conferences]
 
   def index
     @require_account_approval = Setting.require_account_approval?
@@ -15,7 +15,7 @@ class UsersController < ApplicationController
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
   def supporters
-    @editors = User.editors.where('show_contributor')
+    @editors = User.editors.where('show_contributor') # TODO: consider adding sortable_name .order(:sortable_name)
   end
 
   # finds names for autocomplete
@@ -56,9 +56,6 @@ class UsersController < ApplicationController
     @publications_created = Publication.where(:creator_id => current_user.id).count
     @speakers_created = Speaker.where(:creator_id => current_user.id).count
     @presentations = current_user.presentations
-  end
-
-  def systat
   end
 
   def conferences
