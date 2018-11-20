@@ -12,7 +12,7 @@
             = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
             = f.submit 'Add to my Watchlist', class: 'btn btn-secondary'
 
-    = title "#{ @presentation.name }"
+    = title @presentation.name
     %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
     - if @presentation.conference.present?
       %h5

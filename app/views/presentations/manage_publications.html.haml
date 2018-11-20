@@ -1,8 +1,6 @@
 .row
   .col-md-12
-    %h3
-      %i
-        = @presentation.name
+    = title @presentation.name
     %h5
       presented at
       = link_to @presentation.conference_name, conference_path(@presentation.conference)
