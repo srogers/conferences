@@ -1,32 +1,6 @@
 - title 'Conferences'
-.row.listing-controls
-  .col-md-4
-    = form_for :search, html: { class: 'form-inline'}, url: conferences_path, method: :get do |f|
-      = text_field_tag :search_term, params[:search_term]
-      %span{style: 'margin-right: 5px;'}
-      = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
-        = icon('fas', 'search', class: 'fa-sm')
-      - if params[:search_term].present? || params[:user_id].present?
-        = link_to 'All', conferences_path, class: "btn btn-sm btn-primary ml-2"
 
-  .col-md-6
-    - if current_user.present?
-      = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "btn btn-sm btn-primary mr-2 #{params[:user_id].present? ? 'disabled' : ''}"
-
-    %span.dropdown.show
-      = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
-      .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
-        = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_conferences_path(type: 'cities',    search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(type: 'countries', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years',     search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-
-    - if current_user&.editor? || current_user&.admin?
-      = link_to icon('fas', 'heart', class: 'fa-sm text-danger'), conferences_path(search_term: params[:search_term], heart: 't'), class: "btn btn-sm btn-secondary"
-
-  .col-md-2
-    - if can? :create, Conference
-      .float-right
-        =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_conference_path, class: 'btn btn-sm btn-primary'
+= render partial: 'control_bar'
 
 - if params[:user_id].present?
   .row

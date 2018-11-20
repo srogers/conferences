@@ -18,6 +18,7 @@
   <body class="<%= content_for?(:body_class) ? yield(:body_class) : 'standard' %>" >
     <%= render partial: 'shared/fb_sdk_init' %>
     <%= render partial: 'shared/navigation' %>
+    <%= yield :body %>
 
     <div class="container <%= content_for?(:body_container_class) ? yield(:body_container_class) : 'body-container' %>">
       <% flash.each do |type, message| %>
