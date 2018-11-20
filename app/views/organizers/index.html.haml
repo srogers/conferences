@@ -1,10 +1,6 @@
 - title 'Organizers'
-.row.listing-controls
-  .col-md-12
-    -# Currently there is no search facility because organizers are expected to always be relatively small
-    - if can? :create, Organizer
-      .float-right
-        =link_to "Add Organizer", new_organizer_path, class: 'btn btn-sm btn-primary'
+
+= render partial: 'control_bar'
 
 .row
   .col-md-12

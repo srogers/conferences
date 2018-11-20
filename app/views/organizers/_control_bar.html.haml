@@ -1,0 +1,8 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark{style: 'background: #02547D'}
+    .container
+      %ul.navbar-nav.mr-auto
+        - if can? :create, Organizer
+          %li.nav-item
+            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_organizer_path, class: 'nav-link', title: 'Add an Organization'
