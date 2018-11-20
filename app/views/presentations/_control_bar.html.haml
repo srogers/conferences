@@ -7,10 +7,9 @@
           %li.nav-item
             =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_presentation_path, class: 'nav-link', title: 'Add a Presentation'
 
-          %li.nav-item{style: action_name == 'tags' ? 'active' : ''}
-            - if current_user&.editor? || current_user&.admin?
-              = link_to icon('fas', 'heart', 'Needs Work', class: 'fa-sm text-danger'), presentations_path(search_term: params[:search_term], heart: 't'), class: "nav-link"
-
+        - if current_user&.editor? || current_user&.admin?
+          %li.nav-item{class: params[:heart].present? ? 'active' : ''}
+            = link_to icon('fas', 'heart', 'Needs Work', class: 'fa-sm text-danger'), presentations_path(search_term: params[:search_term], heart: 't'), class: "nav-link"
 
           %li.nav-item{style: action_name == 'tags' ? 'active' : ''}
             = link_to 'Topics', tags_presentations_path, class: "nav-link"

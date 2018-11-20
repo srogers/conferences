@@ -1,3 +1,5 @@
+= render partial: 'control_bar'
+
 .row.chart-controls
   .col-md-12
     = render partial: 'shared/return_from_chart_with_params'
@@ -16,7 +18,7 @@
 
     - else
       - title "Frequent Conference Speakers"
-      %h3 Most Frequent Speakers
+      %h3 Most Frequent Speakers by Presentation
 
     %p Click a name to see the speaker's presentations
     -# This div ID has to match up with the one in shared/presentations_chart

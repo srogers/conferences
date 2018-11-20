@@ -7,13 +7,13 @@
           %li.nav-item
             =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_conference_path, class: 'nav-link', title: 'Add a Conference'
 
-        - if current_user.present?
-          %li.nav-item{ class: params[:user_id].present? ? 'active' : ''}
-            = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "nav-link"
-
         - if current_user&.editor? || current_user&.admin?
           %li.nav-item{ class: params[:heart].present? ? 'active' : ''}
             = link_to icon('fas', 'heart', 'Needs Work', class: 'fa-sm text-danger').html_safe, conferences_path(search_term: params[:search_term], heart: 't'), class: "nav-link"
+
+        - if current_user.present?
+          %li.nav-item{ class: params[:user_id].present? ? 'active' : ''}
+            = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "nav-link"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
