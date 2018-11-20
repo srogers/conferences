@@ -1,0 +1,12 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark{style: 'background: #02547D'}
+    .container
+      %ul.navbar-nav.mr-auto
+        %li.nav-item
+          =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_user_path, class: 'nav-link'
+
+        - if @require_account_approval
+          %li.nav-item{class: params[:needs_approval].present? ? 'active' : ''}
+            =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
+

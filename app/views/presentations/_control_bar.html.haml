@@ -1,0 +1,31 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark{style: 'background: #02547D'}
+    .container
+      %ul.navbar-nav.mr-auto
+        - if can? :create, Presentation
+          %li.nav-item
+            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_presentation_path, class: 'nav-link', title: 'Add a Presentation'
+
+        - if current_user&.editor? || current_user&.admin?
+          %li.nav-item{class: params[:heart].present? ? 'active' : ''}
+            = link_to icon('fas', 'heart', 'Needs Work', class: 'fa-sm text-danger'), presentations_path(search_term: params[:search_term], heart: 't'), class: "nav-link"
+
+          %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
+            = link_to 'Topics', tags_presentations_path, class: "nav-link"
+
+        %li.nav-item.dropdown
+          = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+            = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
+          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(type: 'years', search_term: params[:search_term], tag: params[:tag]), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(type: 'topic', search_term: params[:search_term], tag: params[:tag]), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: 'presentations', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+
+      = form_for :search, html: { class: 'form-inline' }, url: presentations_path, method: :get do |f|
+        = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
+        %span{style: 'margin-right: 5px;'}
+        = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
+          = icon('fas', 'search', class: 'fa-sm')
+        - if params[:search_term].present? || params[:tag].present? || params[:heart].present?
+          = link_to 'All', presentations_path, class: "btn btn-sm btn-primary ml-2"

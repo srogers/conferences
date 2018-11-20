@@ -15,7 +15,8 @@ class ConferenceUsersController < ApplicationController
       end
       render 'conferences/index'
     elsif params[:conference_id]
-      @attendees = Conference.find(params[:conference_id]).users.where("users.show_attendance").page(params[:page]).per(20)
+      @conference = Conference.find(params[:conference_id])
+      @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(20)
     else
     end
   end

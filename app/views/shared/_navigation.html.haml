@@ -23,7 +23,7 @@
           %li.nav-item= link_to 'Publications', publications_path, class: 'nav-link' + current_tab?('publications')
 
 
-      %ul.navbar-nav.mr-auto.justify-content-end
+      %ul.navbar-nav.justify-content-end
         %li.nav-item= link_to "Us", about_path, class: 'nav-link' + current_tab?('about')
         - if current_user.present?
           %li.nav-item.dropdown{class: current_tab?('account')}

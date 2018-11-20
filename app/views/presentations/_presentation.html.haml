@@ -12,9 +12,10 @@
       = icon('fas', 'align-left', class: 'fa-fw') if presentation.description.blank?
       = icon('fas', 'puzzle-piece', class: 'fa-fw') if presentation.parts.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if presentation.conference.blank?
-  %td
-    - if presentation.conference.present?
-      = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
+  - unless controller_name == 'conferences' && params[:id].present?
+    %td
+      - if presentation.conference.present?
+        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
   %td= linked_format_icons(presentation)
 
   %td{width: 150}

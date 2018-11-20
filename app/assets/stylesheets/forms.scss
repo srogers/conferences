@@ -9,3 +9,4 @@ abbr[title='required']   { color: red; }              /* To make the little aste
 input.file { @extend .btn-sm }                        /* adds a little space around the file input Choose File button, and makes it a little more normal */
 
 .btn-group.save-or-cancel { display: inline; }        /* Bootstrap puts inline-flex here, which breaks things floating to the right of save-or-cancel buttons */
+.save-or-cancel-wrapper { margin-top: 15px }          /* Gets some space after the last form element */

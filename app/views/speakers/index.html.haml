@@ -1,28 +1,6 @@
 - title 'Speakers'
-.row.listing-controls
-  .col-md-4
-    = form_for :search, html: { class: 'form-inline' }, url: speakers_path, method: :get do |f|
-      = text_field_tag :search_term, params[:search_term]
-      %span{style: 'margin-right: 5px;'}
-      = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
-        = icon('fas', 'search', class: 'fa-sm')
-      - if params[:search_term].present?
-        = link_to 'all', speakers_path, class: "btn btn-sm btn-primary ml-2"
 
-  .col-md-5
-    %span.dropdown.show
-      = link_to icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm'), '#', class: "btn btn-sm btn-primary dropdown-toggle", role: "button", id: "dropdownMenuLink", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": false
-      .dropdown-menu{ "aria-labelledby": "dropdownMenuLink" }
-        = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(type: 'presentations', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-        = link_to icon('fas', 'chart-bar', 'Conferences'  , class: 'fa-sm'), chart_speakers_path(type: 'conferences',   search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-
-    - if current_user&.editor? || current_user&.admin?
-      = link_to icon('fas', 'heart', class: 'fa-sm text-danger'), speakers_path(search_term: params[:search_term], heart: 't'), class: "btn btn-sm btn-secondary"
-
-  .col-md-3
-    - if can? :create, Speaker
-      .float-right
-        =link_to "Add Speaker", new_speaker_path, class: 'btn btn-sm btn-primary'
+= render partial: 'control_bar'
 
 .row
   .col-md-12
