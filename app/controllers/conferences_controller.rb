@@ -47,7 +47,7 @@ class ConferencesController < ApplicationController
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.
   # Gets called from jQuery in /news and rendered by jQuery append(html).
   def upcoming
-    @conferences = Conference.includes(:organizer).where("conferences.start_date > ?", Date.today).order('start_date DESC')
+    @conferences = Conference.includes(:organizer).where("conferences.start_date > ?", Date.today).order('start_date ASC')
     render layout: false
   end
 
