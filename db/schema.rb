@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_17_154252) do
+ActiveRecord::Schema.define(version: 2018_11_24_041710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(version: 2018_11_17_154252) do
     t.string "slug"
     t.text "description"
     t.string "bio_url"
+    t.string "title"
     t.index ["creator_id"], name: "index_speakers_on_creator_id"
   end
 

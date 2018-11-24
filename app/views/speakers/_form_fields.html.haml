@@ -16,6 +16,7 @@
     - if @speaker.name.split(' ').last != @speaker.sortable_name && @speaker.sortable_name.present?
       = f.hidden_field :sortable_name
 
+= f.input :title
 = f.input :bio_url, label: 'Bio URL', hint: "URL for the speaker's own page, e.g. at ARI Campus or their personal site."
 = f.label :description
 = f.trix_editor :description

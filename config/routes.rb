@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :presentations
     resources :publications
+    resources :speakers
   end
 
   resource  :account
