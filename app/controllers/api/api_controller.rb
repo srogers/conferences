@@ -3,6 +3,7 @@ module Api
   # The API handles only creates/updates requiring auth.
 
   class ApiController < ActionController::Base
+    include ActionController::RequestForgeryProtection
 
     protect_from_forgery with: :null_session              # Prevents the API from being locked down by CSRF checks
     before_action       :require_http_auth_user           # Use HTTP Basic Auth instead of standard auth

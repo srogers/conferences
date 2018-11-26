@@ -60,5 +60,17 @@ RSpec.describe Speaker, type: :model do
       end
     end
 
+    context "manually changing the sortable name" do
+      before do
+        speaker.sortable_name = 'Manually Changed'
+      end
+
+      it "retains the change to sortable name" do
+        speaker.save
+        speaker.reload
+        expect(speaker.sortable_name).to eq('Manually Changed')
+      end
+    end
+
   end
 end

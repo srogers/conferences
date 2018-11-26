@@ -11,7 +11,7 @@ class Speaker < ApplicationRecord
   validates_uniqueness_of :name, :case_sensitive => false
 
   before_create :capitalize_name        # do this only once, so the user can fix exceptions like Fred de Cordova
-  before_save   :update_sortable_name   # always do this
+  before_save   :update_sortable_name   # always do this unless it's been manually changed
 
   extend FriendlyId
   friendly_id :name, use: [:slugged, :history]
@@ -28,7 +28,13 @@ class Speaker < ApplicationRecord
   end
 
   def update_sortable_name
+    # If the sortable name has been updated manually, but the name hasn't, then treat that as a manual override.
+    # This is necessary with a few unusual names. If the name is updated, sortable name will have to be updated again,
+    # but that is unavoidable.
+    logger.debug "name_changed?  #{name_changed?}  sortable_name_changed? #{sortable_name_changed?}"
+    return if !name_changed? && sortable_name_changed?
     self.sortable_name = name.split(' ').last
+    logger.debug "sortable name now:  #{sortable_name}"
   end
 
   # Gives the description with any HTML tags stripped out

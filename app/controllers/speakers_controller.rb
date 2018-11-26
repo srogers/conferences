@@ -94,7 +94,6 @@ class SpeakersController < ApplicationController
 
   def update
     if @speaker.update_attributes speaker_params
-      @speaker.update_column :sortable_name, params[:speaker][:sortable_name] if params[:update_name] == 'true'
       redirect_to speaker_path(@speaker)
     else
       flash.now[:error] = 'Your changes could not be saved.'
@@ -121,6 +120,6 @@ class SpeakersController < ApplicationController
   end
 
   def speaker_params
-    params.require(:speaker).permit(:name, :description, :bio_url, :photo, :remove_photo, :sortable_name)
+    params.require(:speaker).permit(:name, :description, :title, :bio_url, :photo, :remove_photo, :sortable_name)
   end
 end
