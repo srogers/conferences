@@ -23,15 +23,15 @@
       - user_presentation = @user_presentations.select{|up| up.presentation_id == presentation.id}.first
       - if user_presentation.present?
         - if user_presentation.completed_on.present?
-          = link_to icon('far', 'check-circle', class: 'fa-fw'), user_presentation_path(user_presentation), class: "btn btn-sm btn-primary", data: { method: :patch, remote: true, params: { user_presentation: { completed_on: nil } }.to_param }, title: ht_unwatch
+          = link_to icon('far', 'check-circle', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { completed_on: nil } }.to_param }, title: ht_unwatch
         - else
-          = link_to icon('fas', 'heart', class: 'fa-fw'), user_presentation_path(user_presentation), class: "btn btn-sm btn-primary", data: { method: :patch, remote: true, params: { user_presentation: { completed_on: Time.now.utc } }.to_param }, title: ht_heard
+          = link_to icon('fas', 'heart', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { completed_on: Time.now.utc } }.to_param }, title: ht_heard
         - if user_presentation.notify_pubs
-          = link_to icon('fas', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "btn btn-sm btn-primary", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: false } }.to_param }, title: ht_unnotify
+          = link_to icon('fas', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: false } }.to_param }, title: ht_unnotify
         -else
-          = link_to icon('far', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "btn btn-sm btn-primary", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: true } }.to_param }, title: ht_notify
+          = link_to icon('far', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: true } }.to_param }, title: ht_notify
       - else
-        = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "btn btn-sm btn-primary", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
+        = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
     - if can? :edit, presentation
       %br
       %div{style: 'padding-top: 5px;'}
