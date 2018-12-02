@@ -36,4 +36,25 @@ module PresentationsHelper
     url += "+%22#{ google_safe(presentation.speakers.first.name) }%22" if presentation.speakers.present?
     return url
   end
+
+  # Define hovertip text for buttons that appear in multiple places so they get consistent messaging
+  def ht_watch
+    'Click to mark as Want to Hear'
+  end
+
+  def ht_unwatch
+    'Click to revert to Want to Hear'
+  end
+
+  def ht_heard
+    'Click to mark as Heard'
+  end
+
+  def ht_notify
+    'Click to receive publication notifications'
+  end
+
+  def ht_unnotify
+    'Click to stop notifications for this item'
+  end
 end

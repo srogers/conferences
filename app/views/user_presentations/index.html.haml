@@ -7,24 +7,24 @@
         Here's where you'll find presentations that you want to see, or have seen already.
         Indicate your interest in a presentation by clicking the "heart" icon:
 
-      %p= link_to icon('far', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Want to Hear It'
+      %p= link_to icon('far', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: ht_watch
 
       %p The heart will become filled, and you'll see the presentation on this list.
 
-      %p= link_to icon('fas', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Heard It'
+      %p= link_to icon('fas', 'heart', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: ht_heard
 
       %p Once you're seen the presentation, mark it as watched by clicking heart again; it will become a check mark:
 
-      %p= link_to icon('far', 'check-circle', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: "Didn't Hear It"
+      %p= link_to icon('far', 'check-circle', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: ht_unwatch
 
       %h5 Notifications
       %p If you want to receive email notifications when the presentation is published, click the envelope icon:
 
-      %p= link_to icon('far', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: 'Notify Me'
+      %p= link_to icon('far', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: ht_notify
 
       %p The envelope will become filled:
 
-      %p= link_to icon('fas', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: "Don't Notify Me"
+      %p= link_to icon('fas', 'envelope', class: 'fa-fw'), '#', class: "btn btn-sm btn-primary", title: ht_unnotify
 
       %p If you want to stop notifications, just click the envelope again.
 
