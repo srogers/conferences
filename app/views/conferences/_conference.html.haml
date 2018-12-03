@@ -1,6 +1,8 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(conference.name, length: 40, separator: ' '), conference_path(conference, nav_params))
-  %td= conference.date_span
+  %td
+    = link_to(truncate(conference.name, length: 40, separator: ' '), conference_path(conference, nav_params))
+    %br
+    = conference.date_span
   %td= location_with_non_us_country conference, :short
   %td{ align: 'center' }
     - if conference.program_url.present?
@@ -8,8 +10,8 @@
   - if can? :edit, Conference
     %td{ align: 'center' }= icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
 
-  %td{width: 130}
-    - if can? :edit, conference
+  - if can? :edit, conference
+    %td{width: 130}
       = link_to icon('far', 'edit', class: 'fa-fw'), edit_conference_path(conference, nav_params), :class => "btn btn-sm btn-primary"
-    - if can?(:destroy, conference) && conference.presentations.empty?
-      = link_to icon('far', 'trash-alt', class: 'fa-fw'), conference_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+      - if can?(:destroy, conference) && conference.presentations.empty?
+        = link_to icon('far', 'trash-alt', class: 'fa-fw'), conference_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
