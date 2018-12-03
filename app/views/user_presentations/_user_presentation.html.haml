@@ -1,10 +1,16 @@
-%div{id: "user_presentation_#{ user_presentation.id }"}
-  - presentation = user_presentation.presentation
-  %p
-    = link_to presentation.name, presentation_path(presentation)
-    by
-    = presentation.speaker_names
-    %br
-    = presentation.conference_name
-    %br
+.row{id: "user_presentation_#{ user_presentation.id }"}
+  .col.col-md-8
+    - presentation = user_presentation.presentation
+    %p
+      = link_to presentation.name, presentation_path(presentation)
+      by
+      = presentation.speaker_names
+      %br
+      = presentation.conference_name
+      - if user_presentation.completed_on.present?
+        %br
+        Completed
+        = pretty_date user_presentation.completed_on
+
+  .col.col-md-4.text-right
     = render partial: 'manage_wishlist_buttons', locals: { user_presentation: user_presentation }

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.4.4'
 
-gem 'rails', '5.2.1'
+gem 'rails', '5.2.1.1'
 gem 'pg'
 gem 'puma'
 gem 'sass-rails'
@@ -41,7 +41,7 @@ gem 'sidekiq'
 gem 'sidekiq-status'
 gem 'simple_form'
 gem 'social-share-button'
-gem 'trix', git: 'https://github.com/bcoia/trix.git'    # rich text editing for presentation descriptions - fork fixes a bug in Rails 5.2 that breaks input
+gem 'trix', git: 'https://github.com/bcoia/trix.git', ref: '56d84ae42e34488b0bb301bd9bd0f54fac7fc811'    # rich text editing for presentation descriptions - fork fixes a bug in Rails 5.2 that breaks input
 #gem 'turbolinks', '~> 5.x'         # removed because the caching breaks select2
 
 # Use Redis adapter to run Action Cable in production
