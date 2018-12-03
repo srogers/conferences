@@ -2,23 +2,25 @@
   %td
     = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
     %br
+    by
     = clickable_speaker_list(presentation)
+    - unless controller_name == 'conferences' && params[:id].present?
+      - if presentation.conference.present?
+        %br
+        at
+        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
     %br
     %i= linked_tag_names(presentation)
 
   - if params[:heart].present?
     %td
-      = icon('fas', 'tag', class: 'fa-fw') if presentation.tags.empty?
-      = icon('fas', 'align-left', class: 'fa-fw') if presentation.description.blank?
-      = icon('fas', 'puzzle-piece', class: 'fa-fw') if presentation.parts.blank?
-      = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if presentation.conference.blank?
-  - unless controller_name == 'conferences' && params[:id].present?
-    %td
-      - if presentation.conference.present?
-        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
+      = icon('fas', 'tag', class: 'fa-fw', title: 'Needs topic tags') if presentation.tags.empty?
+      = icon('fas', 'align-left', class: 'fa-fw', title: 'Needs a description') if presentation.description.blank?
+      = icon('fas', 'puzzle-piece', class: 'fa-fw', title: 'Needs number of parts') if presentation.parts.blank?
+      = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with a conference') if presentation.conference.blank?
   %td= linked_format_icons(presentation)
 
-  %td{width: 150}
+  %td{width: can?(:edit, presentation) ? 150 : 70 }
     - if current_user.present?
       - user_presentation = @user_presentations.select{|up| up.presentation_id == presentation.id}.first
       - if user_presentation.present?
