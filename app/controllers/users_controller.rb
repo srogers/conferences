@@ -50,12 +50,12 @@ class UsersController < ApplicationController
       @user = current_user
     end
     raise CanCan::AccessDenied unless @user == current_user || current_user.admin?
-    @conferences_attended = current_user.conferences.order('start_date DESC')
-    @conferences_created = Conference.where(:creator_id => current_user.id).count
-    @presentations_created = Presentation.where(:creator_id => current_user.id).count
-    @publications_created = Publication.where(:creator_id => current_user.id).count
-    @speakers_created = Speaker.where(:creator_id => current_user.id).count
-    @presentations = current_user.presentations
+    @conferences_attended = @user.conferences.order('start_date DESC')
+    @conferences_created = Conference.where(:creator_id => @user.id).count
+    @presentations_created = Presentation.where(:creator_id => @user.id).count
+    @publications_created = Publication.where(:creator_id => @user.id).count
+    @speakers_created = Speaker.where(:creator_id => @user.id).count
+    @presentations = @user.presentations
   end
 
   def conferences
