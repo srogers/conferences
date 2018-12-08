@@ -33,7 +33,10 @@
       = hidden_field_tag :canonical, "false"
       = check_box_tag :canonical, "true", canonical?(@presentation, @publication)
       - label_text = icon('fas', 'crown', :class => 'fa-fw text-warning')
-      - label_text += " This publication is specifically <i>#{ @presentation.name }</i> presented at #{ @presentation.conference_name }".html_safe
+      - label_text += " This publication is specifically <i>".html_safe
+      - label_text += @presentation.name
+      - label_text += '</i> presented at '.html_safe
+      - label_text += @presentation.conference_name
       = label_tag :canonical, label_text
 .row
   .col-md-12
