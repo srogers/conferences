@@ -119,19 +119,20 @@ describe UsersController do
         end
       end
 
-      describe "with a GDPR country" do
-        before do
-          post :create, params: { :user => valid_attributes.merge(country: "EE") }
-        end
-
-        it "redirects to the root path" do
-          expect(response).to redirect_to root_path
-        end
-
-        it "sets a flash message" do
-          expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
-        end
-      end
+      # Currently not in effect
+      # describe "with a GDPR country" do
+      #   before do
+      #     post :create, params: { :user => valid_attributes.merge(country: "EE") }
+      #   end
+      #
+      #   it "redirects to the root path" do
+      #     expect(response).to redirect_to root_path
+      #   end
+      #
+      #   it "sets a flash message" do
+      #     expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
+      #   end
+      # end
 
       describe "with invalid params" do
         it "does not create a new User" do
@@ -189,19 +190,20 @@ describe UsersController do
         end
       end
 
-      describe "with a GDPR country" do
-        before do
-          post :create, params: { :user => valid_attributes.merge(country: "EE") }
-        end
-
-        it "redirects to the root path" do
-          expect(response).to redirect_to root_path
-        end
-
-        it "sets a flash message" do
-          expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
-        end
-      end
+      # Currently not restricted
+      # describe "with a GDPR country" do
+      #   before do
+      #     post :create, params: { :user => valid_attributes.merge(country: "EE") }
+      #   end
+      #
+      #   it "redirects to the root path" do
+      #     expect(response).to redirect_to root_path
+      #   end
+      #
+      #   it "sets a flash message" do
+      #     expect(flash[:notice]).to eq("This site does not support accounts from that country at this time.")
+      #   end
+      # end
 
       describe "with invalid params" do
         it "assigns a newly created but unsaved user as @user" do

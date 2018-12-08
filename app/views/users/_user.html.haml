@@ -16,4 +16,4 @@
     = link_to icon('far', 'edit', :class => 'fa-fw'), edit_user_path(user), class: 'btn btn-sm btn-primary'  + (user.active ? '' : ' disabled')
     = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), user_path(user), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
     -if @require_account_approval && !user.approved
-      = link_to icon('fas', 'check', "Approve"), approve_user_path(user), class: "btn btn-sm btn-primary btn-success", method: :patch
+      = link_to icon('fas', 'check', "Approve"), approve_user_path(user), class: "btn btn-sm btn-primary btn-success #{(user.name == 'Self Deleted' ? 'disabled' : '')}", method: :patch
