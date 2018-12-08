@@ -13,7 +13,7 @@ class PresentationPublication < ApplicationRecord
   # TODO - hand this off to a sidekiq worker
   def handle_notifications
     logger.debug "handling notifications"
-    user_presentations = UserPresentation.where(presentation_id: self.presentation_id, notify_pubs: true)
+    user_presentations = UserPresentation.includes(:user).references(:user).where("presentation_id = ? AND notify_pubs AND users.approved AND users.active", self.presentation_id)
     user_presentations.each do |user_presentation|
       PublicationNotificationMailer.notify(user_presentation.user, self).deliver_now
 
