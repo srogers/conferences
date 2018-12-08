@@ -5,8 +5,9 @@
       = link_to presentation.name, presentation_path(presentation)
       by
       = presentation.speaker_names
-      %br
-      = presentation.conference_name
+      - if presentation.conference.present?
+        %br
+        = presentation.conference_name
       - if user_presentation.completed_on.present?
         %br
         Completed
