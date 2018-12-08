@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_24_041710) do
+ActiveRecord::Schema.define(version: 2018_12_08_150923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2018_11_24_041710) do
     t.string "name"
     t.text "editors_notes"
     t.string "registration_url"
+    t.text "description"
     t.index ["creator_id"], name: "index_conferences_on_creator_id"
     t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
   end
@@ -93,6 +94,7 @@ ActiveRecord::Schema.define(version: 2018_11_24_041710) do
     t.string "abbreviation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
   end
 
   create_table "presentation_publications", force: :cascade do |t|

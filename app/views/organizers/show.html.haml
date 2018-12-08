@@ -4,13 +4,21 @@
 
 .row
   .col-md-12
-    %b Series Name:
-    = @organizer.series_name
+    %p
+      %b Series Name:
+      = @organizer.series_name
 
 .row
   .col-md-12
-    %b Abbreviation:
-    = @organizer.abbreviation
+    %p
+      %b Abbreviation:
+      = @organizer.abbreviation
+
+.row
+  .col-md-12
+    %p
+      %b Description:
+      = @organizer.description.try(:html_safe)
 
 .row
   .col-md-12

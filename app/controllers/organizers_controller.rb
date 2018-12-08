@@ -59,6 +59,6 @@ class OrganizersController < ApplicationController
   end
 
   def organizer_params
-    params.require(:organizer).permit(:name, :series_name, :abbreviation)
+    params.require(:organizer).permit(:name, :series_name, :abbreviation, :description)
   end
 end

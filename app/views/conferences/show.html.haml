@@ -36,6 +36,10 @@
         = link_to icon('far', 'file', class: 'fa-fw'), @conference.program_url, target: '_blank'
       - else
         %i none
+    %p
+      %b Description:
+      = @conference.description.try(:html_safe)
+
     - if can? :edit, Conference
       %p
         %b Data entry completed:
