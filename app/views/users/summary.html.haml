@@ -23,7 +23,24 @@
         %tr
           %th Publications Created
           %td= @publications_created
+
+      -# Show all these whether they are zero or not, to reinforce the idea that they exist
       %tr
         %th Conferences Attended
         %td= @conferences_attended.length
 
+      %tr
+        %th Presentations want to see
+        %td= @presentations.select{|p| p.completed_on.blank?}.length
+
+      %tr
+        %th Presentations seen
+        %td= @presentations.select{|p| p.completed_on.present?}.length
+
+      %tr
+        %th Presentations with notifications
+        %td= @presentations.select{|p| p.notify_pubs}.length
+
+      %tr
+        %th Notifications sent
+        %td= @notifications.length

@@ -13,7 +13,8 @@ class User < ApplicationRecord
   has_many  :created_presentation_speakers,  :foreign_key => :creator_id,  :class_name => 'PresentationSpeaker'
 
   has_many  :user_presentations
-  has_many  :presentations, through: :user_presentations
+  has_many  :presentations, through: :user_presentations    # watches with notify on/off
+  has_many  :notifications, through: :user_presentations    # sent notifications
 
   validates :name, presence: true
   validates :role, presence: true
