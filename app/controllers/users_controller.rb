@@ -50,12 +50,17 @@ class UsersController < ApplicationController
       @user = current_user
     end
     raise CanCan::AccessDenied unless @user == current_user || current_user.admin?
-    @conferences_attended = current_user.conferences.order('start_date DESC')
-    @conferences_created = Conference.where(:creator_id => current_user.id).count
-    @presentations_created = Presentation.where(:creator_id => current_user.id).count
-    @publications_created = Publication.where(:creator_id => current_user.id).count
-    @speakers_created = Speaker.where(:creator_id => current_user.id).count
-    @presentations = current_user.presentations
+
+    # System activity
+    @conferences_created = Conference.where(:creator_id => @user.id).count
+    @presentations_created = Presentation.where(:creator_id => @user.id).count
+    @publications_created = Publication.where(:creator_id => @user.id).count
+    @speakers_created = Speaker.where(:creator_id => @user.id).count
+
+    # Personal activity
+    @conferences_attended = @user.conferences.order('start_date DESC')
+    @presentations = @user.user_presentations     # presentations the user is watching
+    @notifications = @user.notifications          # notifications sent
   end
 
   def conferences
@@ -81,10 +86,10 @@ class UsersController < ApplicationController
       # only admin can create new users directly
       redirect_to root_path and return
     end
-    if params[:user] && GDPR_COUNTRIES.include?(params[:user][:country])
-      flash[:notice] = "This site does not support accounts from that country at this time."
-      redirect_to root_path and return
-    end
+    # if params[:user] && GDPR_COUNTRIES.include?(params[:user][:country])
+    #   flash[:notice] = "This site does not support accounts from that country at this time."
+    #   redirect_to root_path and return
+    # end
     @user = User.new(users_params)
     @user.role = Role.reader unless @user.role_id.present? && current_user && current_user.admin?
     if @user.save

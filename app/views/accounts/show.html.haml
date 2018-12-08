@@ -1,83 +1,95 @@
 =title 'Your Account'
 
-.well.well-lg
-  =image_tag current_user.photo.url, class: 'float-right', style: 'max-height: 100px'
+.row
+  .col-md-12
+    .well.well-lg
+      =image_tag current_user.photo.url, class: 'float-right', style: 'max-height: 100px'
 
-  %table.clean-values
-    %tr
-      %th Name
-      %td= current_user.name
+      %table.clean-values
+        %tr
+          %th Name
+          %td= current_user.name
 
-    %tr
-      %th Location
-      %td
-        = location_with_non_us_country current_user, :short
+        %tr
+          %th Location
+          %td
+            = location_with_non_us_country current_user, :short
 
-    %tr
-      %th Email
-      %td= current_user.email
+        %tr
+          %th Email
+          %td= current_user.email
 
-    - if @user.speaker.present?
-      %tr
-        %th Associated Speaker
-        %td= link_to @user.speaker.name, speaker_path(@user.speaker)
+        - if @user.speaker.present?
+          %tr
+            %th Associated Speaker
+            %td= link_to @user.speaker.name, speaker_path(@user.speaker)
 
-    %tr
-      %th Time Zone
-      %td= current_user.time_zone
+        %tr
+          %th Time Zone
+          %td= current_user.time_zone
 
-    -# Don't encumber readers with the notion that there are other roles they don't have
-    - if @user.editor? || @user.admin?
-      %tr
-        %th Role
-        %td= t current_user.role_name
+        -# Don't encumber readers with the notion that there are other roles they don't have
+        - if @user.editor? || @user.admin?
+          %tr
+            %th Role
+            %td= t current_user.role_name
 
-  %h5 Preferences
-  %table.clean-values
-    %tr
-      %th
-        - if current_user.show_attendance
-          %span.confirm= icon('fas', 'check')
-        - else
-          %span.deny= icon('fas', 'times')
-      %td Allow other users to see my conference attendance
-
-    -# This doesn't appliy to readers
-    - if @user.editor? || @user.admin?
+.row
+  .col-md-12
+    %h5 Preferences
+    %table.clean-values
       %tr
         %th
-          - if current_user.show_contributor
+          - if current_user.show_attendance
             %span.confirm= icon('fas', 'check')
           - else
             %span.deny= icon('fas', 'times')
-        %td List me on the Supporters page as a contributing editor
+        %td Allow other users to see my conference attendance
 
+      -# This doesn't apply to readers
+      - if @user.editor? || @user.admin?
+        %tr
+          %th
+            - if current_user.show_contributor
+              %span.confirm= icon('fas', 'check')
+            - else
+              %span.deny= icon('fas', 'times')
+          %td List me on the Supporters page as a contributing editor
 
-  %p= link_to "Edit", edit_account_path, class: 'btn btn-primary btn-sm'
+.row
+  .col-md-6
+    = link_to icon('far', 'edit', 'Edit'), edit_account_path, class: 'btn btn-primary btn-sm'
+  .col-md-6
+    - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
+    Remove your account
+    -#.float-right
+    = link_to icon('far', 'trash-alt', 'Delete'), account_path, :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => confirm_msg }, :post => true
 
--# Don't show users this stuff about themselves
-- if current_user.admin?
-  %h4 System Activity
-  .well.well-lg
-    %table.clean-values
-      %tr
-        %th Login count:
-        %td= current_user.login_count
-      %tr
-        %th Failed login count:
-        %td= current_user.failed_login_count
-      %tr
-        %th Last request:
-        %td= pretty_date current_user.last_request_at, style: :full
-      %tr
-        %th Current login at:
-        %td= pretty_date current_user.current_login_at, style: :full
-      %tr
-        %th Last login at:
-        %td= pretty_date current_user.last_login_at, style: :full
-      %tr
-        %th Current login IP:
-        %td= current_user.current_login_ip
-      %tr
-        %th Last login IP:
-        %td= current_user.last_login_ip
+.row
+  .col-md-12
+    -# Don't show users this stuff about themselves
+    - if current_user.admin?
+      %h4 System Activity
+      .well.well-lg
+        %table.clean-values
+          %tr
+            %th Login count:
+            %td= current_user.login_count
+          %tr
+            %th Failed login count:
+            %td= current_user.failed_login_count
+          %tr
+            %th Last request:
+            %td= pretty_date current_user.last_request_at, style: :full
+          %tr
+            %th Current login at:
+            %td= pretty_date current_user.current_login_at, style: :full
+          %tr
+            %th Last login at:
+            %td= pretty_date current_user.last_login_at, style: :full
+          %tr
+            %th Current login IP:
+            %td= current_user.current_login_ip
+          %tr
+            %th Last login IP:
+            %td= current_user.last_login_ip

@@ -71,6 +71,26 @@ RSpec.describe PresentationPublication, type: :model do
           expect(Notification.where(presentation_publication: presentation_publication, user_presentation: user_presentation)).to be_empty
         end
       end
+
+      context "when user is not active" do
+        it "does not send notifications" do
+          presentation_publication = PresentationPublication.create(valid_attributes)
+
+          # This seems like the obvious thing to do, but it doesn't work - never receives notify - so look in the log
+          # expect(PublicationNotificationMailer).not_to receive(:notify)
+          expect(Notification.where(presentation_publication: presentation_publication, user_presentation: user_presentation)).to be_empty
+        end
+      end
+
+      context "when user is not approved" do
+        it "does not send notifications" do
+          presentation_publication = PresentationPublication.create(valid_attributes)
+
+          # This seems like the obvious thing to do, but it doesn't work - never receives notify - so look in the log
+          # expect(PublicationNotificationMailer).not_to receive(:notify)
+          expect(Notification.where(presentation_publication: presentation_publication, user_presentation: user_presentation)).to be_empty
+        end
+      end
     end
   end
 end

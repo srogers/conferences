@@ -22,6 +22,29 @@ class AccountsController < ApplicationController
     end
   end
 
+  # Removes all PII and leaves the account in a permanently deactivated state
+  def destroy
+    logger.info "User ID #{ @user.id } #{ @user.name } self-deleted"
+    @user.name = 'Self Deleted'
+    @user.email = "self-deleted-#{@user.id}@example.com"
+    @user.active = false
+    @user.approved = false
+    @user.city = ''
+    @user.state = ''
+    @user.country = ''
+    @user.time_zone = ''
+    @user.remove_photo = true
+    @user.speaker_id = 0
+    if @user.save
+      logger.info "User #{@user.id} #{ @user.name } self-deleted"
+      # redirect_to logout_path  This happens automatically because active and approved were disabled
+    else
+      logger.error "Error self-deleting user #{@user.id}: #{ @user.errors.full_messages.join(', ')}"
+      flash[:notice] = "There was a problem removing your account - please contact an admin."
+    end
+    redirect_to root_path
+  end
+
   private
 
   def get_current_user
