@@ -80,7 +80,7 @@ class PublicationsController < ApplicationController
     end
     if @publication.save
       if @presentation.present?
-        @presentation_publication = PresentationPublication.create presentation_id: @presentation.id, publication_id: @publication.id, creator_id: current_user.id, canonical: params[:canonical].present?
+        @presentation_publication = PresentationPublication.create presentation_id: @presentation.id, publication_id: @publication.id, creator_id: current_user.id, canonical: params[:canonical] == 'true'
         redirect_to manage_publications_presentation_path(@presentation)
       else
         redirect_to publication_path(@publication)

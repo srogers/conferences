@@ -112,10 +112,27 @@ RSpec.describe PublicationsController, type: :controller do
 
     context "when a presentation is specified" do
 
-      let(:params) { { publication: valid_attributes, presentation_id: presentation.id  } }
+      let(:params) { { publication: valid_attributes, presentation_id: presentation.id, canonical: 'false'  } }
+
+      it "associates the publication and presentation" do
+        expect(assigns(:publication).presentation_publications.first.presentation).to eq(presentation)
+      end
+
+      it "leaves canonical false by default" do
+        expect(assigns(:publication).presentation_publications.first.reload.canonical).to be_falsey
+      end
 
       it "redirects to the manage_publications page for the presentation" do
         expect(response).to redirect_to manage_publications_presentation_path(presentation)
+      end
+
+      context "with canonical specified in params" do
+
+        let(:params) { { publication: valid_attributes, presentation_id: presentation.id, canonical: 'true'  } }
+
+        it "sets canonical true" do
+          expect(assigns(:publication).presentation_publications.first.reload.canonical).to be_truthy
+        end
       end
     end
   end
