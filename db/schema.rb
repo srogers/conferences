@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_08_150923) do
+ActiveRecord::Schema.define(version: 2018_12_26_165802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,7 +139,6 @@ ActiveRecord::Schema.define(version: 2018_12_08_150923) do
   end
 
   create_table "publications", force: :cascade do |t|
-    t.bigint "presentation_id"
     t.bigint "creator_id"
     t.date "published_on"
     t.string "format"
@@ -152,7 +151,6 @@ ActiveRecord::Schema.define(version: 2018_12_08_150923) do
     t.string "speaker_names"
     t.text "editors_notes"
     t.index ["creator_id"], name: "index_publications_on_creator_id"
-    t.index ["presentation_id"], name: "index_publications_on_presentation_id"
   end
 
   create_table "roles", id: :serial, force: :cascade do |t|
