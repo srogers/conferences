@@ -12,9 +12,9 @@ class PresentationsController < ApplicationController
     @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
 
-    # TODO - what uses autocomplete for presentations?
     if params[:q].present?
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     elsif params[:search_term].present? || params[:tag].present? || params[:heart].present?
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
@@ -101,6 +101,7 @@ class PresentationsController < ApplicationController
     @related_publications = Publication.where("name @@  phraseto_tsquery(?)", @presentation.name)
     # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
     @related_publications = @related_publications.where("publications.id NOT IN (?)", @presentation.presentation_publications.map{|pp| pp.publication_id}) if @presentation.presentation_publications.present?
+    @current_publication_ids = @presentation.publications.map{|p| p.id}.join(',')
     @publication = Publication.new
   end
 

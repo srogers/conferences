@@ -51,13 +51,25 @@
             at
             = link_to presentation.conference_name, conference_path(presentation.conference)
           = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
+          - if can?(:edit, @publication)
+            = link_to icon('fas', 'unlink', :class => 'fa-fw'), presentation_publication_path(presentation_publication), :method => :delete, :post => true, class: 'text-danger'
 
 -# If the controller identified possible related publications, list them for association
 - if can?(:edit, @publication)
+  .row
+    .col-md-12
+      %h4= "Associate a Presentation"
+
+      = simple_form_for :presentation_publication, url: presentation_publications_path do |f|
+        = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
+        = f.input :presentation_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a presentation name...", source: presentations_path(format: :json), exclude: @current_presentation_ids }, class: "select2-autocomplete", id: "presentation_picker" }
+        = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+
   %br
   .row
     .col-md-12
-      %h4= "Link to #{ @publication.presentation_publications.present? ? 'Another' : 'A' } Presentation"
+      -# TODO: Can this whole idea and use manual the manual method exclusively?
+      %h4= "Automated Presentation Candidates"
       %ul
         - if @related_presentations.empty?
           %p

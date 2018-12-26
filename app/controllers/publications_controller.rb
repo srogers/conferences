@@ -10,7 +10,11 @@ class PublicationsController < ApplicationController
     per_page = params[:per] || 10 # autocomplete specifies :per
     @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers).order('publications.name')  #order('conferences.start_date DESC')
 
-    if params[:heart].present?
+    if params[:q].present?
+      @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
+
+    elsif params[:heart].present?
       @publications = @publications.where("
         publications.published_on IS NULL OR (publications.duration IS NULL AND publications.format IN (?)) OR
         (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1
@@ -31,10 +35,17 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.page(params[:page]).per(per_page)
 
-    # Currently, there is no auto-complete for publications, so the JSON doesn't have to worry about that.
     respond_to do |format|
       format.html
-      format.json { render json: PublicationSerializer.new(@publications).serialized_json }
+      format.json do
+        if params[:q].present?
+          # generate a specific format for select2
+          # TODO set up page-specific options for select2,so it can use the generic JSON
+          render json: { total: @publications.length, users: @publications.map{|p| {id: p.id, text: "#{ p.name } (#{ p.format }) (#{ p.published_on })" } } }
+        else
+          format.json { render json: PublicationSerializer.new(@publications).serialized_json }
+        end
+      end
     end
   end
 
@@ -58,6 +69,7 @@ class PublicationsController < ApplicationController
     @related_presentations = Presentation.where("name @@  phraseto_tsquery(?)", @publication.name)
     # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
     @related_presentations = @related_presentations.where("presentations.id NOT IN (?)", @publication.presentation_publications.map{|pp| pp.presentation_id}) if @publication.presentation_publications.present?
+    @current_presentation_ids = @publication.presentations.map{|p| p.id}.join(',')
 
     respond_to do |format|
       format.html
