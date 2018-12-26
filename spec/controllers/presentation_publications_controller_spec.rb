@@ -8,10 +8,13 @@ RSpec.describe PresentationPublicationsController, type: :controller do
   end
 
   let(:presentation) { create :presentation }
+  let(:publication)  { create :publication }
+  let(:referrer)     { 'http://site/publications/1' }
 
   describe "POST #create" do
     before do
-      post :create, params: { presentation_publication: { presentation_id: presentation.id, publication_id: 1 }}
+      request.env['HTTP_REFERER'] = referrer
+      post :create, params: { presentation_publication: { presentation_id: presentation.id, publication_id: publication.id, }}
     end
 
     it "sets the creator" do
@@ -23,14 +26,27 @@ RSpec.describe PresentationPublicationsController, type: :controller do
       expect(assigns(:presentation_publication).id).to be_present
     end
 
-    it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(presentation)
+    context "from the manage_publications page" do
+      let(:referrer) { 'http://site/presentations/title/manage_publications' }
+
+      it "redirects to the manage_publications page for the presentation" do
+        expect(response).to redirect_to manage_publications_presentation_path(presentation)
+      end
+    end
+
+    context "from the publication show page" do
+      let(:referrer) { 'http://site/publications/1' }
+
+      it "redirects to the publications page for the presentation" do
+        expect(response).to redirect_to publication_path(publication)
+      end
     end
   end
 
   describe "DELETE #destroy" do
     before do
-      @presentation_publication = create :presentation_publication, presentation_id: presentation.id
+      request.env['HTTP_REFERER'] = referrer
+      @presentation_publication = create :presentation_publication, presentation_id: presentation.id, publication_id: publication.id
       delete :destroy, params: {id: @presentation_publication.to_param}
     end
 
@@ -42,8 +58,20 @@ RSpec.describe PresentationPublicationsController, type: :controller do
       expect { @presentation_publication.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
-    it "redirects to the manage_publications page for the presentation" do
-      expect(response).to redirect_to manage_publications_presentation_path(presentation)
+    context "from the manage_publications page" do
+      let(:referrer) { 'http://site/presentations/title/manage_publications' }
+
+      it "redirects to the manage_publications page for the presentation" do
+        expect(response).to redirect_to manage_publications_presentation_path(presentation)
+      end
+    end
+
+    context "from the publication show page" do
+      let(:referrer) { 'http://site/publications/1' }
+
+      it "redirects to the publications page for the presentation" do
+        expect(response).to redirect_to publication_path(publication)
+      end
     end
   end
 
