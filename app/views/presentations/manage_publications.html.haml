@@ -4,8 +4,12 @@
   .col-md-12
     = title @presentation.name
     %h5
+    - if @presentation.conference.present?
       presented at
       = link_to @presentation.conference_name, conference_path(@presentation.conference)
+    - else
+      %i Conference not yet identified
+
 %br
 .row
   .col-md-12
@@ -37,11 +41,22 @@
       .col-md-12
         = save_or_cancel f, presentation_path(@presentation), "Add Publication", "Done"
 
+%br
+.row
+  .col-md-12
+    %h4 Associate a Publication
+
+    = simple_form_for :presentation_publication, url: presentation_publications_path do |f|
+      = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
+      = f.input :publication_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a publication name...", source: publications_path(format: :json), exclude: @current_publication_ids }, class: "select2-autocomplete", id: "publication_picker" }
+      = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+
 -# If the controller identified possible related publications, list them for association
 %br
 .row
   .col-md-12
-    %h4 Link an Existing Publication
+    -# TODO: Can this in favor of manually identified candidates?
+    %h4 Automatated Publication Candidates
     %ul
       %p= 'Automatic searching could not find any candidates' if @related_publications.empty?
       - @related_publications.each do |publication|
