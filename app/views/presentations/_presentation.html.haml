@@ -6,7 +6,6 @@
     = clickable_speaker_list(presentation)
     - unless controller_name == 'conferences' && params[:id].present?
       - if presentation.conference.present?
-        %br
         at
         = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
     %br
