@@ -11,7 +11,7 @@ class ConferencesController < ApplicationController
 
   def index
     @conferences = Conference.includes(:organizer, :presentations).order('start_date DESC')
-    per_page = params[:per] || 15 # autocomplete specifies :per
+    per_page = params[:per] || 10 # autocomplete specifies :per
     if params[:search_term].present? || params[:heart].present?
       if params[:heart].present?
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
