@@ -8,7 +8,7 @@ class PublicationsController < ApplicationController
 
   def index
     per_page = params[:per] || 10 # autocomplete specifies :per
-    @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers).order('publications.name')  #order('conferences.start_date DESC')
+    @publications = Publication.includes(:presentations => { :conference => :organizer } ).includes(:presentations => :speakers)
 
     if params[:q].present?
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
@@ -32,6 +32,8 @@ class PublicationsController < ApplicationController
         @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", "#{term}%")
       end
     end
+
+    @publications = @publications.order(sort_by_params_or_default 'publications.name')  # 'conferences.start_date DESC'
 
     @publications = @publications.page(params[:page]).per(per_page)
 

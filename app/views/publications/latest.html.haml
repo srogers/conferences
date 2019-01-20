@@ -7,3 +7,5 @@
     ,
     = pretty_date publication.created_at
     = link_to icon('fas', 'info-circle', class: 'fa-fw'), publication_path(publication)
+%p
+  = link_to 'more...', publications_path(sort: '-created_at')
