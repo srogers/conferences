@@ -9,7 +9,7 @@ module PresentationsChart
     if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
       presentations_by_name = presentations.where('conferences.state = ?', term.upcase)
     else
-      presentations_by_name = presentations.where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
+      presentations_by_name = presentations.references('conferences').where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
     end
     return presentations_by_tag + (presentations_by_name - presentations_by_tag)
   end
