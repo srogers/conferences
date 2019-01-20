@@ -59,7 +59,7 @@ class Presentation < ApplicationRecord
     else
       self.sortable_name = name
     end
-    self.sortable_name[0] = '' if ['"', "'"].include? name[0] # probably other characters will turn up that should be included
+    self.sortable_name[0] = '' if ['"', "'"].include? sortable_name[0] # probably other characters will turn up that should be included
   end
 
   def speaker_names

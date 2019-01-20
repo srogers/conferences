@@ -32,7 +32,7 @@ class PresentationsController < ApplicationController
     unless @presentations.is_a?(Array)
       @presentations = @presentations.order(sort_by_params_or_default 'conferences.start_date DESC, presentations.sortable_name')
     end
-    
+
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2
