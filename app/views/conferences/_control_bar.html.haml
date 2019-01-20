@@ -9,7 +9,7 @@
 
         - if current_user&.editor? || current_user&.admin?
           %li.nav-item{ class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'heart', 'Needs Work', class: 'fa-sm text-danger').html_safe, conferences_path(search_term: params[:search_term], heart: 't'), class: "nav-link"
+            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, conferences_path(search_term: params[:search_term], heart: 't'), class: "nav-link", title: 'Needs some work'
 
         - if current_user.present?
           %li.nav-item{ class: params[:user_id].present? ? 'active' : ''}
