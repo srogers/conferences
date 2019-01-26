@@ -33,7 +33,7 @@ class PublicationsController < ApplicationController
       end
     end
 
-    @publications = @publications.order(sort_by_params_or_default 'publications.name')  # 'conferences.start_date DESC'
+    @publications = @publications.order(sort_by_params_or_default 'conferences.start_date DESC') # because name and pub date are available through the headers
 
     @publications = @publications.page(params[:page]).per(per_page)
 
