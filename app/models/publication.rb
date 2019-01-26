@@ -1,5 +1,7 @@
 class Publication < ApplicationRecord
 
+  include SortableNames
+
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :presentations, through: :presentation_publications
 
@@ -27,6 +29,8 @@ class Publication < ApplicationRecord
 
   validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
+
+  before_save :update_sortable_name
 
   def has_duration?
     HAS_DURATION.include? format
