@@ -1,5 +1,7 @@
 %tr
-  %th Name / Published / Format
+  %th
+    = link_to 'Name', publications_path(sort: '+sortable_name')
+    = ' / Published / Format'
   %th Conferences
   - if params[:heart].present?
     %th Needs

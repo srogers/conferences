@@ -8,7 +8,7 @@ class PresentationsController < ApplicationController
   include PresentationsChart    # gets chart data
 
   def index
-    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
+    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
     @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
 
@@ -27,6 +27,10 @@ class PresentationsController < ApplicationController
       # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote
       term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
+    end
+
+    unless @presentations.is_a?(Array)
+      @presentations = @presentations.order(sort_by_params_or_default 'conferences.start_date DESC, presentations.sortable_name')
     end
 
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)

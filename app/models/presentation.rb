@@ -1,5 +1,7 @@
 class Presentation < ApplicationRecord
 
+  include SortableNames
+
   belongs_to  :conference
   belongs_to  :creator,   class_name: "User"
 
@@ -49,17 +51,6 @@ class Presentation < ApplicationRecord
       end
       errors.add(:conference, "already has a presentation with the same name.") if duplicate_count > 0
     end
-  end
-
-  def update_sortable_name
-    name_parts = name.split(' ')
-    if ["A", "An", "The"].include? name_parts[0]
-      name_parts.delete_at(0)
-      self.sortable_name = name_parts.join(" ")
-    else
-      self.sortable_name = name
-    end
-    self.sortable_name[0] = '' if ['"', "'"].include? name[0] # probably other characters will turn up that should be included
   end
 
   def speaker_names

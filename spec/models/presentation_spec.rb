@@ -27,6 +27,15 @@ RSpec.describe Presentation, type: :model do
       end
     end
 
+    context "when name starts with an article followed by a quote" do
+      it "removes the quote from name for sortable name" do
+        presentation = Presentation.new name: 'The "Quote" is Not For Sorting'
+        presentation.save
+        presentation.reload
+        expect(presentation.sortable_name).to eq('Quote" is Not For Sorting')
+      end
+    end
+
     context "when the name starts with an quote" do
       it "removes the quote from name for sortable name" do
         presentation = Presentation.new name: '"Quote" is Not For Sorting'

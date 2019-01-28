@@ -1,5 +1,7 @@
 %tr
-  %th Name / Speaker(s) / Topics
+  %th
+    = link_to 'Name', presentations_path(sort: '+sortable_name')
+    = ' / Speaker(s) / Topics'
   - if params[:heart].present?
     %th Needs
   %th Media
