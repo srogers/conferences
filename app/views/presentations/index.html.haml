@@ -2,16 +2,24 @@
 
 = render partial: 'control_bar'
 
-.row
-  .col-md-12
-    - if @presentations.blank?
+- if @presentations.blank?
+  .row
+    .col-md-12
       - if params[:search_term].present? || params[:tag].present?
         %p No presentations match that search term
       - else
         %p You haven't created any presentations yet.
-    - else
+- else
+  .row
+    .col-md-12
       %table.table
         = render :partial => "table_head"
         = render :partial => "presentation", :collection => @presentations
 
+  .row
+    .col-md-10
       = paginate @presentations
+    .col-md-2
+      = form_tag presentations_path, method: :get do
+        = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || 10), onchange: 'this.form.submit()'
+        = hidden_field_tag :page, params[:page]
