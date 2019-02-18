@@ -3,9 +3,10 @@
   .col-md-8
     = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: "Conference Name", input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
   .col-md-4
-    %br
-    %p
-      = link_to icon('fas', 'unlink', :class => 'fa-fw') + " Disassociate", presentation_path(@presentation, presentation: { conference_id: nil } ), method: :patch, class: "btn btn-primary btn-sm #{ @presentation.conference_id.present? ? '' : 'disabled' }"
+    - if @presentation.persisted?
+      %br
+      %p
+        = link_to icon('fas', 'unlink', :class => 'fa-fw') + " Disassociate", presentation_path(@presentation, presentation: { conference_id: nil } ), method: :patch, class: "btn btn-primary btn-sm #{ @presentation.conference_id.present? ? '' : 'disabled' }"
 = f.label :description
 = f.trix_editor :description
 = f.input :tag_list, input_html: { value: @tags, autocomplete: "off" }, label: 'Topics', hint: "economics, politics, psychology, etc. - separate with commas"
