@@ -62,7 +62,7 @@ GEM
       activesupport (>= 4.2, < 5.3)
       request_store (~> 1.0)
       scrypt (>= 1.2, < 4.0)
-    autoprefixer-rails (9.4.4)
+    autoprefixer-rails (9.4.9)
       execjs
     backports (3.11.4)
     better_errors (2.5.0)
@@ -71,7 +71,7 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bootstrap (4.2.1)
+    bootstrap (4.3.1)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
@@ -211,7 +211,7 @@ GEM
       haml (>= 4.0, < 6)
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
-    i18n (1.4.0)
+    i18n (1.5.3)
       concurrent-ruby (~> 1.0)
     i18n_data (0.8.0)
     image_info (1.1.2)
@@ -280,7 +280,7 @@ GEM
       connection_pool (~> 2.2)
     net_http_timeout_errors (0.3.3)
     nio4r (2.3.1)
-    nokogiri (1.9.1)
+    nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
     numerizer (0.1.1)
     oga (2.15)
@@ -529,4 +529,4 @@ RUBY VERSION
    ruby 2.4.4p296
 
 BUNDLED WITH
-   1.17.1
+   1.17.3
