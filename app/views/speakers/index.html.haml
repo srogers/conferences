@@ -20,6 +20,4 @@
     .col-md-10
       = paginate @speakers
     .col-md-2
-      = form_tag speakers_path, method: :get do
-        = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || 15), onchange: 'this.form.submit()'
-        = hidden_field_tag :page, params[:page]
+      = per_page_selector speakers_path, 15

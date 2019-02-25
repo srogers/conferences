@@ -23,10 +23,4 @@
             = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(type: 'countries', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
             = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years',     search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-      = form_for :search, html: { class: 'form-inline'}, url: conferences_path, method: :get do |f|
-        = text_field_tag :search_term, params[:search_term], placeholder: "Search"
-        %span{style: 'margin-right: 5px;'}
-        = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
-          = icon('fas', 'search', class: 'fa-sm')
-        - if params[:search_term].present? || params[:user_id].present? || params[:heart].present?
-          = link_to 'All', conferences_path, class: "btn btn-sm btn-primary ml-2"
+      = index_search_form conferences_path(per: params[:per])

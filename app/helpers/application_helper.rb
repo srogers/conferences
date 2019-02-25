@@ -129,6 +129,33 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
+  def per_page_selector(index_path, initial_per_page=10)
+    per_page_selector = form_tag index_path, method: :get do
+      content = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()'
+      content << hidden_field_tag( :page, params[:page])
+      content << hidden_field_tag(:search_term, params[:search_term])
+      content
+    end
+    per_page_selector.html_safe
+  end
+
+  # pass in the index path with (per: params[:per]) attached
+  def index_search_form(index_path)
+    search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
+      content = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
+      content << hidden_field_tag(:per, params[:per])
+      content << content_tag(:span, '', style: 'margin-right: 5px;')
+      buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
+        icon('fas', 'search', class: 'fa-sm')
+      end
+      if params[:search_term].present? || params[:tag].present? || params[:heart].present?
+        buttons << link_to('All', index_path, class: "btn btn-sm btn-primary ml-2")
+      end
+      content << buttons
+    end
+    search_form.html_safe
+  end
+
   # create a submit button with a uniform look - we use a link to get around variations in browser styling of submit
   def my_submit_button(form, text=nil, html_options={})
     #, html_options  TODO - verify that a distinct DOM ID no longer needs to be forced on the save-and-continue button
