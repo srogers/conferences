@@ -140,10 +140,10 @@ module ApplicationHelper
   end
 
   # pass in the index path with (per: params[:per]) attached
-  def index_search_form(index_path)
+  def index_search_form(index_path, initial_per_page=10)
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
       content = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
-      content << hidden_field_tag(:per, params[:per])
+      content << hidden_field_tag(:per, params[:per] || initial_per_page)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         icon('fas', 'search', class: 'fa-sm')
