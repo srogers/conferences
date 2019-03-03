@@ -1,2 +1,45 @@
 span.confirm  { color: green }
 span.deny     { color: red }
+
+// Bootstrap wants special classes attached to the blockquote tag and tags within it, which doesn't fit well with the
+// way Trix works - so we stle directly on the blockquote tag here, to target text created by Trix in form fields.
+// https://getbootstrap.com/docs/4.1/content/typography/#blockquotes
+// style from here:  https://codepen.io/cliftwalker/pen/XJaEXY
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
+blockquote{
+  font-size: 1.2em;
+  width: 90%;
+  margin: 1em auto;
+  font-family: 'Open Sans';
+  font-style:italic;
+  color: #555555;
+  padding: 1.2em 2em 1.2em 3em;
+  border-left: 8px solid #037dba;
+  line-height: 1.6;
+  position: relative;
+  background: #EDEDED;
+}
+
+blockquote::before{
+  font-family: Arial;
+  content: "\201C";
+  color: #037dba;
+  font-size: 4em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
+}
+
+blockquote::after{
+  content: '';
+}
+
+// This allows for a citation at the end - but isn't useful with Trix, because there is not way to inject a span
+blockquote span{
+  display: block;
+  color: #333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 1em;
+}
