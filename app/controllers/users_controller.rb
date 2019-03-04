@@ -5,12 +5,13 @@ class UsersController < ApplicationController
 
   def index
     @require_account_approval = Setting.require_account_approval?
+    per_page = params[:per] || 10 # autocomplete specifies :per
     if params[:needs_approval].present?
       @users = User.needing_approval.order(:created_at)
     else
-      @users = User.all.order(:email)
+      @users = User.all.order(:sortable_name)
     end
-    @users = @users.includes(:role).page(params[:page]).per(20)
+    @users = @users.limit(params[:per]).includes(:role).page(params[:page]).per(per_page)
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
