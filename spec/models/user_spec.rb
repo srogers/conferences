@@ -15,19 +15,19 @@ RSpec.describe User, :type => :model do
       }
     }
 
-    it "should be valid with valid attributes" do
+    it "is valid with valid attributes" do
       expect(User.new(valid_attributes)).to be_valid
     end
 
-    it "should have a working factory" do
+    it "has a working factory" do
       expect(create :user).to be_valid
     end
 
-    it "should require a name" do
+    it "requires a name" do
       expect { User.create! valid_attributes.merge(name: '') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Name can't be blank")
     end
 
-    it "should require an email" do
+    it "requires an email" do
       expect { User.create! valid_attributes.merge(email: '') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Email should look like an email address.")
     end
 
@@ -37,16 +37,23 @@ RSpec.describe User, :type => :model do
       expect(user.email).to eq('bob@example.com')
     end
 
-    it "should require a plausible email" do
+    it "requirea a plausible email" do
       expect { User.create! valid_attributes.merge(email: 'bipity.bop') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Email should look like an email address.")
     end
 
-    it "should require matching password and confirmation" do
+    it "requirea matching password and confirmation" do
       expect { User.create! valid_attributes.merge(password: 'bogus', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password is too short (minimum is 7 characters), Password confirmation doesn't match Password")
     end
 
-    it "should require a role" do
+    it "requires a role" do
       expect(User.new(role_id: nil)).not_to be_valid
+    end
+
+    it "sets the sortable name" do
+      speaker = Speaker.new name: "Distinctively Named Speakerperson"
+      speaker.save
+      speaker.reload
+      expect(speaker.sortable_name).to eq('Speakerperson')
     end
   end
 
@@ -211,6 +218,34 @@ RSpec.describe User, :type => :model do
         end
       end
     end
+  end
+
+  describe "when updating a user" do
+
+    let(:user) { create :user, name: "Original Name" }
+
+    context "changing the name" do
+      before do
+        user.update(name: "Distinctively named Userperson")
+      end
+
+      it "updates the sortable name" do
+        expect(user.sortable_name).to eq('Userperson')
+      end
+    end
+
+    context "manually changing the sortable name" do
+      before do
+        user.sortable_name = 'Manually Changed'
+      end
+
+      it "retains the change to sortable name" do
+        user.save
+        user.reload
+        expect(user.sortable_name).to eq('Manually Changed')
+      end
+    end
+
   end
 
   describe "when destroying a user" do

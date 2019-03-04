@@ -1,5 +1,7 @@
 class Speaker < ApplicationRecord
 
+  include SortableNames
+
   belongs_to  :creator,   class_name: "User"
 
   has_one     :user
@@ -10,8 +12,8 @@ class Speaker < ApplicationRecord
   validates :name, presence: true
   validates_uniqueness_of :name, :case_sensitive => false
 
-  before_create :capitalize_name        # do this only once, so the user can fix exceptions like Fred de Cordova
-  before_save   :update_sortable_name   # always do this unless it's been manually changed
+  before_create :capitalize_name              # do this only once, so the user can fix exceptions like Fred de Cordova
+  before_save   :update_sortable_human_name   # always do this unless it's been manually changed
 
   extend FriendlyId
   friendly_id :name, use: [:slugged, :history]

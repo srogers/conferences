@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_26_022259) do
+ActiveRecord::Schema.define(version: 2019_03_03_232336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,6 +245,8 @@ ActiveRecord::Schema.define(version: 2019_01_26_022259) do
     t.boolean "show_attendance", default: true
     t.boolean "show_contributor", default: true
     t.integer "speaker_id"
+    t.string "sortable_name"
+    t.index ["sortable_name"], name: "index_users_on_sortable_name"
   end
 
 end

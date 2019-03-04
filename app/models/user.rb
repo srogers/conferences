@@ -1,5 +1,7 @@
 class User < ApplicationRecord
 
+  include SortableNames
+
   belongs_to :role
   belongs_to :speaker
 
@@ -20,6 +22,7 @@ class User < ApplicationRecord
   validates :role, presence: true
 
   before_validation :clean_email
+  before_save       :update_sortable_human_name   # always do this unless it's been manually changed
 
   mount_uploader :photo, PhotoUploader
 
