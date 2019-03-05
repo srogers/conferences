@@ -9,6 +9,9 @@
       = truncate(user.email, :length => 20, :omission => '...')
   %td= t user.role_name
   %td
+    - if user.speaker.present?
+      = link_to icon('fas', 'user', :class => 'fa-fw'), speaker_path(user.speaker)
+  %td
     %span.has_tip{'data-toggle' => 'tooltip', :title => pretty_date(user.last_login_at, :style => :full, :undefined_text => '---')}
       = pretty_date(user.last_login_at, :style => :short, :undefined_text => '---')
   %td.actions
