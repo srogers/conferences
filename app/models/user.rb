@@ -43,11 +43,6 @@ class User < ApplicationRecord
     c.transition_from_crypto_providers = [Authlogic::CryptoProviders::Sha512]
     c.crypto_provider = Authlogic::CryptoProviders::SCrypt
     c.perishable_token_valid_for 2.days
-
-    # Disable these in preparation for AuthLogic 5 where they're deprecated entirely
-    c.validate_email_field = false
-    c.validate_login_field = false
-    c.validate_password_field = false
   end
 
   mount_uploader :photo, PhotoUploader

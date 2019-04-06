@@ -12,7 +12,7 @@ gem "haml-rails"                    # enables HAML in the asset pipeline
 gem 'jquery-rails'                  # Bootstrap also requires this
 
 gem 'acts-as-taggable-on'
-gem 'authlogic' , '~> 4.4'          # Hold at version 4 pending validation changes
+gem 'authlogic'                     # Bumped to version 5 which removes user-validation shortcuts
 gem 'autoprefixer-rails'            # bootstrap needs this
 gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x installed, and determines the current version
 gem 'cancancan'
