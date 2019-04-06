@@ -10,3 +10,32 @@ input.file { @extend .btn-sm }                        /* adds a little space aro
 
 .btn-group.save-or-cancel { display: inline; }        /* Bootstrap puts inline-flex here, which breaks things floating to the right of save-or-cancel buttons */
 .save-or-cancel-wrapper { margin-top: 15px }          /* Gets some space after the last form element */
+
+/* SimpleForm works in a weird way so that buttons always get 'btn btn-default', so when form helper calls set the primary class,
+   this results in a button with btn-default and btn-primary together - so these two classes have to play nice.
+   Maybe it will change someday: https://github.com/plataformatec/simple_form/issues/1307
+ */
+.btn-primary { color: #fff !important; } /* makes btn-default btn-primary look OK when combined */
+
+/* Override the color for Bootstrap secondary and default buttons so they don't look like non-buttons */
+.btn-secondary, .btn-secondary:active, .btn-secondary:visited {
+  background-color: #d0d5e0;
+  color: #222;
+}
+
+.btn-secondary:hover {
+
+}
+
+.btn-default, .btn-default:active, .btn-default:visited  {
+  border: 2px solid #007bff;
+  color: #007bff;
+  margin: 1px;
+}
+
+.btn-default:hover {
+  color: #0069d9;
+  border: 3px solid #0069d9;
+  margin: 0;
+}
+
