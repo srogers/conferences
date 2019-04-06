@@ -24,6 +24,7 @@
 @import "font-awesome";
 
 @import 'bootstrap';
+@import "cookies_eu";
 
 /* now import everything else that would have been imported by =require_tree .   TODO - don't forget to update when a new file is added */
 @import 'news';
@@ -36,8 +37,3 @@
 @import 'speakers';
 @import 'tables';
 @import 'text';
-
-/* Override the color for Bootstrap secondary button so they don't look like non-buttons */
-.btn-secondary, .btn-secondary:hover, .btn-secondary:active, .btn-secondary:visited {
-  background-color: #d0d5e0 !important;
-}

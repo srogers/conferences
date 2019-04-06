@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby '2.4.4'
+ruby '2.5.1'
 
-gem 'rails', '5.2.2'
+gem 'rails', '5.2.3'
 gem 'pg'
 gem 'puma'
 gem 'sass-rails'
@@ -12,12 +12,13 @@ gem "haml-rails"                    # enables HAML in the asset pipeline
 gem 'jquery-rails'                  # Bootstrap also requires this
 
 gem 'acts-as-taggable-on'
-gem 'authlogic'                     # As of version 3.5, authlogic is now compatible with Rails 5
+gem 'authlogic'                     # Bumped to version 5 which removes user-validation shortcuts
 gem 'autoprefixer-rails'            # bootstrap needs this
 gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x installed, and determines the current version
 gem 'cancancan'
 gem 'carrierwave'
 gem "chartkick"                     # used for charts
+gem 'cookies_eu'                    # Handles the pop-up and content
 gem 'country_select'                # provides country selector that works with simple_form (country_state_select looks good, but isn't up to Rails 5, and requires Turbolinks)
 gem 'fastimage'                     # for finding the size of reference images to calculate the height for layout
 gem 'fast_jsonapi'                  # for serializing responses to JSON requests

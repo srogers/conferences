@@ -42,8 +42,7 @@ RSpec.describe User, :type => :model do
     end
 
     it "requirea matching password and confirmation" do
-      expect { User.create! valid_attributes.merge(password: 'bogus', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password is too short (minimum is 7 characters), Password confirmation doesn't match Password")
-    end
+      expect { User.create! valid_attributes.merge(password: 'robosity', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password confirmation doesn't match Password")    end
 
     it "requires a role" do
       expect(User.new(role_id: nil)).not_to be_valid

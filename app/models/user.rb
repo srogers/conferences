@@ -2,6 +2,9 @@ class User < ApplicationRecord
 
   include SortableNames
 
+  #           mailbox             subdomains        TLD
+  EMAIL = /\A[A-Z0-9_.&%+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,25})\z/ix
+
   belongs_to :role
   belongs_to :speaker
 
@@ -18,22 +21,31 @@ class User < ApplicationRecord
   has_many  :presentations, through: :user_presentations    # watches with notify on/off
   has_many  :notifications, through: :user_presentations    # sent notifications
 
-  validates :name, presence: true
-  validates :role, presence: true
-
   before_validation :clean_email
   before_save       :update_sortable_human_name   # always do this unless it's been manually changed
 
-  mount_uploader :photo, PhotoUploader
+  validates :name, presence: true
+  validates :role, presence: true
+
+
+  validates :email, format: { with: EMAIL, message: "should look like an email address." },
+            length: { maximum: 100 },
+            uniqueness: { case_sensitive: false, if: :will_save_change_to_email? }
+
+  validates :password,
+            confirmation: { if: :require_password? },
+            length: { minimum: 7, if: :require_password? }
+
+  validates :password_confirmation,
+            length: { minimum: 7, if: :require_password? }
 
   acts_as_authentic do |c|
     c.transition_from_crypto_providers = [Authlogic::CryptoProviders::Sha512]
     c.crypto_provider = Authlogic::CryptoProviders::SCrypt
-
-    c.validates_uniqueness_of_email_field_options
     c.perishable_token_valid_for 2.days
-    c.merge_validates_length_of_password_field_options({:minimum => 7})
   end
+
+  mount_uploader :photo, PhotoUploader
 
   scope :needing_approval, -> { where('not users.approved') }
   scope :editors,          -> { includes('role').references('role').where("roles.name = ?", Role::EDITOR) }
