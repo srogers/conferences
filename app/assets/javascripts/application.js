@@ -22,6 +22,7 @@
 //  don't require turbolinks because the caching breaks select2
 //= require trix
 //= require social-share-button
+//= require cookies_eu
 // Everything loads everywhere, so we just suck up all the JS here
 //= require_tree .
 

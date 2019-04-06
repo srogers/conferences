@@ -18,6 +18,7 @@ gem 'bootstrap' , '~> 4.1'          # This is what actually gets bootstrap 4.x i
 gem 'cancancan'
 gem 'carrierwave'
 gem "chartkick"                     # used for charts
+gem 'cookies_eu'                    # Handles the pop-up and content
 gem 'country_select'                # provides country selector that works with simple_form (country_state_select looks good, but isn't up to Rails 5, and requires Turbolinks)
 gem 'fastimage'                     # for finding the size of reference images to calculate the height for layout
 gem 'fast_jsonapi'                  # for serializing responses to JSON requests
