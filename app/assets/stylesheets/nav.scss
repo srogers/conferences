@@ -1,0 +1,20 @@
+/* Styles related to menus */
+
+/* Allows list items to have multiple lines and BRs and still line up inside the bullet */
+li.wrapping_list {
+  list-style-type: disc;
+  list-style-position: inside;
+  text-indent: -1em;
+  padding-left: 1em;
+}
+
+div.listing-controls { margin-bottom: 15px; }
+
+.listing-controls {
+  padding: 15px 0;
+  /* background: #02547D; */
+}
+
+.chart-controls {
+  padding-top: 15px;
+}
