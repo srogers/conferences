@@ -24,20 +24,3 @@ footer.footer {
   font-size: smaller;
   padding-top: 30px;   /* put the text sort of in the center */
 }
-
-/* Allows list items to have multiple lines and BRs and still line up inside the bullet */
-li.wrapping_list {
-  list-style-type: disc;
-  list-style-position: inside;
-  text-indent: -1em;
-  padding-left: 1em;
-}
-
-.listing-controls {
-  padding: 15px 0;
-  /* background: #02547D; */
-}
-
-.chart-controls {
-  padding-top: 15px;
-}

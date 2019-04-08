@@ -26,11 +26,13 @@
 @import 'bootstrap';
 @import "cookies_eu";
 
-/* now import everything else that would have been imported by =require_tree .   TODO - don't forget to update when a new file is added */
-@import 'news';
+/* now import everything else that would have been imported by =require_tree .
+   TODO - don't forget to update when a new file is added */
 @import 'conferences';
 @import 'forms';
 @import 'layout';
+@import 'nav';
+@import 'news';
 @import 'organizers';
 @import 'presentations';
 @import 'rails_errors';
