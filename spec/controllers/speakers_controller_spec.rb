@@ -20,7 +20,7 @@ RSpec.describe SpeakersController, type: :controller do
   setup :activate_authlogic
 
   before do
-    @current_user = create :user, role: Role.admin
+    @current_user = create :user, role: Role.reader
     log_in @current_user
   end
 
@@ -104,9 +104,19 @@ RSpec.describe SpeakersController, type: :controller do
   end
 
   describe "GET #new" do
-    it "assigns a new speaker as @speaker" do
+    it "redirects" do
       get :new, params: {}
-      expect(assigns(:speaker)).to be_a_new(Speaker)
+      expect(response).to be_redirected
+    end
+
+    context "as an editor" do
+
+      before { assign_role @current_user, Role::EDITOR }
+
+      it "assigns a new speaker as @speaker" do
+        get :new, params: {}
+        expect(assigns(:speaker)).to be_a_new(Speaker)
+      end
     end
   end
 
@@ -118,66 +128,88 @@ RSpec.describe SpeakersController, type: :controller do
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Speaker" do
-        expect {
-          post :create, params: {speaker: valid_attributes}
-        }.to change(Speaker, :count).by(1)
-      end
-
-      it "assigns a newly created speaker as @speaker" do
-        post :create, params: {speaker: valid_attributes}
-        expect(assigns(:speaker)).to be_a(Speaker)
-        expect(assigns(:speaker)).to be_persisted
-      end
-
-      it "redirects to the created speaker" do
-        post :create, params: {speaker: valid_attributes}
-        expect(response).to redirect_to(Speaker.last)
-      end
+    it "redirects" do
+      get :new, params: {}
+      expect(response).to be_redirected
     end
 
-    context "with invalid params" do
-      it "assigns a newly created but unsaved speaker as @speaker" do
-        post :create, params: {speaker: invalid_attributes}
-        expect(assigns(:speaker)).to be_a_new(Speaker)
+    context "as an editor" do
+      context "with valid params" do
+
+        before { assign_role @current_user, Role::EDITOR }
+
+        it "creates a new Speaker" do
+          expect {
+            post :create, params: {speaker: valid_attributes}
+          }.to change(Speaker, :count).by(1)
+        end
+
+        it "assigns a newly created speaker as @speaker" do
+          post :create, params: {speaker: valid_attributes}
+          expect(assigns(:speaker)).to be_a(Speaker)
+          expect(assigns(:speaker)).to be_persisted
+        end
+
+        it "redirects to the created speaker" do
+          post :create, params: {speaker: valid_attributes}
+          expect(response).to redirect_to(Speaker.last)
+        end
+
+        context "with invalid params" do
+          it "assigns a newly created but unsaved speaker as @speaker" do
+            post :create, params: {speaker: invalid_attributes}
+            expect(assigns(:speaker)).to be_a_new(Speaker)
+          end
+
+          it "re-renders the 'new' template" do
+            post :create, params: {speaker: invalid_attributes}
+            expect(response).to render_template("new")
+          end
+        end
       end
 
-      it "re-renders the 'new' template" do
-        post :create, params: {speaker: invalid_attributes}
-        expect(response).to render_template("new")
-      end
     end
   end
 
   describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        { name: 'Updated Title' }
-      }
-
-      it "updates the requested speaker" do
-        expect(speaker.name).to eq('Valid Speaker')
-        put :update, params: {id: speaker.to_param, speaker: new_attributes}
-        expect(assigns(:speaker).name).to eq(new_attributes[:name])
-      end
-
-      it "redirects to the speaker" do
-        put :update, params: {id: speaker.to_param, speaker: valid_attributes}
-        expect(response).to redirect_to(speaker)
-      end
+    it "redirects" do
+      get :new, params: {}
+      expect(response).to be_redirected
     end
 
-    context "with invalid params" do
-      it "assigns the speaker as @speaker" do
-        put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
-        expect(assigns(:speaker)).to eq(speaker)
+    context "as an editor" do
+
+      before { assign_role @current_user, Role::EDITOR }
+
+      context "with valid params" do
+        let(:new_attributes) {
+          { name: 'Updated Title' }
+        }
+
+        it "updates the requested speaker" do
+          expect(speaker.name).to eq('Valid Speaker')
+          put :update, params: {id: speaker.to_param, speaker: new_attributes}
+          expect(assigns(:speaker).name).to eq(new_attributes[:name])
+        end
+
+        it "redirects to the speaker" do
+          put :update, params: {id: speaker.to_param, speaker: valid_attributes}
+          expect(response).to redirect_to(speaker)
+        end
       end
 
-      it "re-renders the 'edit' template" do
-        put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
-        expect(response).to render_template("edit")
+      context "with invalid params" do
+        it "assigns the speaker as @speaker" do
+          put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
+          expect(assigns(:speaker)).to eq(speaker)
+        end
+
+        it "re-renders the 'edit' template" do
+          put :update, params: {id: speaker.to_param, speaker: invalid_attributes}
+          expect(response).to render_template("edit")
+        end
       end
+
     end
   end
 
@@ -186,27 +218,38 @@ RSpec.describe SpeakersController, type: :controller do
       expect(speaker).to be_present # in these cases, touch it in advance to create it
     end
 
-    it "destroys the requested speaker" do
-      expect {
-        delete :destroy, params: {id: speaker.to_param}
-      }.to change(Speaker, :count).by(-1)
+    it "redirects" do
+      get :new, params: {}
+      expect(response).to be_redirected
     end
 
-    context "with owned presentations" do
+    context "as an editor" do
 
-      let!(:presentation) { create :presentation }
-      let!(:presentation_speaker) { create :presentation_speaker, presentation_id: presentation.id, speaker_id: speaker.id }
+      before { assign_role @current_user, Role::EDITOR }
 
-      it "does not destroy the requested speaker" do
+      it "destroys the requested speaker" do
         expect {
           delete :destroy, params: {id: speaker.to_param}
-        }.not_to change(Speaker, :count)
+        }.to change(Speaker, :count).by(-1)
       end
-    end
 
-    it "redirects to the speakers list" do
-      delete :destroy, params: {id: speaker.to_param}
-      expect(response).to redirect_to(speakers_url)
+      context "with owned presentations" do
+
+        let!(:presentation) { create :presentation }
+        let!(:presentation_speaker) { create :presentation_speaker, presentation_id: presentation.id, speaker_id: speaker.id }
+
+        it "does not destroy the requested speaker" do
+          expect {
+            delete :destroy, params: {id: speaker.to_param}
+          }.not_to change(Speaker, :count)
+        end
+      end
+
+      it "redirects to the speakers list" do
+        delete :destroy, params: {id: speaker.to_param}
+        expect(response).to redirect_to(speakers_url)
+      end
+
     end
   end
 end
