@@ -5,20 +5,11 @@ class ConferenceUsersController < ApplicationController
   # authorize_resource - authorization is handled manually via before_filter, and checking show_attendance pref
 
   def index
-    if params[:user_id]
-      @user = User.find(params[:user_id])
-      redirect_to conferences_path and return unless current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
-      if @user.show_attendance || current_user.id.to_s == params[:user_id]
-        @conferences = @user.conferences.order("start_date DESC").page(params[:page]).per(20)
-      else
-        @conferences = []
-      end
-      render 'conferences/index'
-    elsif params[:conference_id]
-      @conference = Conference.find(params[:conference_id])
-      @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(20)
-    else
-    end
+    # Users see their own or someone else's conferences in conference/index, where they are searchable as normal.
+    # This controller only handles the user side--listing users for a conference.
+    redirect_to conferences_path and return unless params[:conference_id]
+    @conference = Conference.find(params[:conference_id])
+    @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(10)
   end
 
   def create

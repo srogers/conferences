@@ -18,4 +18,4 @@
             = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(type: 'presentations', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
             = link_to icon('fas', 'chart-bar', 'Conferences'  , class: 'fa-sm'), chart_speakers_path(type: 'conferences',   search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-      = index_search_form speakers_path(per: params[:per]), 15
+      = index_search_form 'speakers'

@@ -22,4 +22,4 @@
             =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(type: 'year', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
             =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-      = index_search_form publications_path(per: params[:per])
+      = index_search_form 'publications'

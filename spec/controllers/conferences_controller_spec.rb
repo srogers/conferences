@@ -64,6 +64,70 @@ RSpec.describe ConferencesController, type: :controller do
         get :index, params:{ search_term: 'Zebras' }
         expect(assigns(:conferences)).to be_empty
       end
+
+      context "for a user" do
+
+        context "that is the current user" do
+
+          let(:conference)            { create :conference, name: "My Conference" }
+          let!(:this_conference_user) { create :conference_user, user_id: @current_user.id, conference_id: conference.id }
+
+          it "lists the user's conferences" do
+            get :index, params:{ user_id: @current_user.id }
+
+            expect(assigns(:conferences)).to eq([conference])
+          end
+        end
+
+        context "other than the current user" do
+
+          let(:other_user)       { create :user }
+          let(:other_conference) { create :conference, name: "Other Conference" }
+          let!(:conference_user) { create :conference_user, user_id: other_user.id, conference_id: other_conference.id }
+
+          context "with show_attendance preference disabled" do
+
+            before { other_user.update show_attendance: false }
+
+            it "lists all conferences" do
+              get :index, params:{ user_id: other_user.id }
+
+              expect(assigns(:conferences)).to match_array([conference, other_conference])
+            end
+
+            it "doesn't have a found user" do
+              get :index, params:{ user_id: other_user.id }
+
+              expect(assigns(:user)).to be_nil
+            end
+
+            context "as an admin viewer" do
+
+              before { allow(@current_user).to receive(:admin?).and_return true }
+
+              it "shows the user's conferences" do
+                get :index, params: { user_id: other_user.id }
+
+                expect(assigns(:conferences)).to eq([other_conference])
+              end
+
+            end
+          end
+
+          context "with show_attendance preference enabled" do
+
+            before { other_user.update show_attendance: true }
+
+            it "lists the user's conferences" do
+              get :index, params:{ user_id: other_user.id }
+
+              expect(assigns(:conferences)).to eq([other_conference])
+            end
+          end
+
+        end
+      end
+
     end
 
     context "with an auto-complete search term" do
