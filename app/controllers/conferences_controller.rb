@@ -10,7 +10,20 @@ class ConferencesController < ApplicationController
   include ConferencesHelper
 
   def index
-    @conferences = Conference.includes(:organizer, :presentations).order('start_date DESC')
+    # This handles "My Conferences" and the ability to list conferences attended by other users
+    if params[:user_id].present?
+      @user = User.find(params[:user_id])
+      if current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
+        @conferences = @user.conferences
+      else
+        @user = nil
+        @conferences = Conference
+      end
+    else
+      @conferences = Conference
+    end
+
+    @conferences = @conferences.includes(:organizer, :presentations).order('start_date DESC')
     per_page = params[:per] || 10 # autocomplete specifies :per
     if params[:search_term].present? || params[:heart].present?
       if params[:heart].present?

@@ -209,3 +209,10 @@ def log_out
   @session.destroy if @session
   @session = nil
 end
+
+# use this to switch roles in before blocks when mocking the role response won't work
+def assign_role(user, role_name)
+  role = Role.find_by_name role_name
+  user.role = role
+  user.save!
+end

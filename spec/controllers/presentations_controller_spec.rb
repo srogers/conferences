@@ -16,7 +16,7 @@ RSpec.describe PresentationsController, type: :controller do
   setup :activate_authlogic
 
   before do
-    @current_user = create :user, role: Role.admin
+    @current_user = create :user, role: Role.editor
     log_in @current_user
   end
 

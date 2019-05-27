@@ -12,8 +12,8 @@
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, conferences_path(search_term: params[:search_term], heart: 't'), class: "nav-link", title: 'Needs some work'
 
         - if current_user.present?
-          %li.nav-item{ class: params[:user_id].present? ? 'active' : ''}
-            = link_to "My Conferences", conference_users_path(user_id: current_user.id), class: "nav-link"
+          %li.nav-item{ class: params[:user_id].present? && params[:user_id] == current_user.id.to_s ? 'active' : ''}
+            = link_to "My Conferences", conferences_path(user_id: current_user.id), class: "nav-link"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
@@ -23,4 +23,4 @@
             = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(type: 'countries', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
             = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years',     search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-      = index_search_form conferences_path(per: params[:per])
+      = index_search_form 'conferences' unless controller_name == 'conference_users'

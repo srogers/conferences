@@ -51,23 +51,12 @@ RSpec.describe ConferenceUsersController, type: :controller do
     let(:conference)       { create :conference }
     let!(:conference_user) { create :conference_user, user_id: user.id, conference_id: conference.id }
 
-    context "with a user ID" do
-      it "lists conferences for a user" do
+    context "without a conference_id" do
+      it "redirects to conferences listing" do
         get :index, params: { user_id: user.id }
 
-        expect(assigns(:conferences)).to eq([conference])
-      end
-
-      context "and a non-admin user" do
-        before do
-          allow(@current_user).to receive(:admin?).and_return false
-        end
-
-        it "lists the conferences for a different user when they have enabled show_attendance preference (the default)" do
-          get :index, params: { user_id: user.id }
-
-          expect(assigns(:conferences)).to eq([conference])
-        end
+        expect(assigns(:conferences)).to be_nil
+        expect(response).to redirect_to(conferences_path)
       end
 
       context "when user has disabled show_attendance preference" do

@@ -14,25 +14,15 @@ Rails.application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Set this to false - avoid loading anything in public that needs serving
-  config.public_file_server.enabled = false
-  # This comes from https://devcenter.heroku.com/articles/getting-started-with-rails5
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
-
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
   config.assets.css_compressor = :sass
 
-  # Old comment says this:
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  # Setting this to true is required to get image assets to be served.
-  # But Heroku/StackOverflow says not to set this to true - maybe no longer necessary?
+  # Heroku/StackOverflow says not to set this to true in production - used to be necessary, but not anymore.
+  # It must be explicitly set to false. The name is deceptive: pre-compile still happens, but not compile per request.
   # https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
-  # config.assets.compile = true
+  # This must be paired with "config.public_file_server.enabled = true" or no assets will be served at all.
+  config.assets.compile = false
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
@@ -57,13 +47,6 @@ Rails.application.configure do
     config.force_ssl = true
     config.ssl_options = {  redirect: { status: 307, port: 81 } }
   end
-
-  # For now, use :debug to ensure availability of diagnostic information when problems arise.
-  # TODO - switch this to :warn when things look more solid
-  config.log_level = :debug
-
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -98,7 +81,19 @@ Rails.application.configure do
   # config.i18n.fallbacks = [I18n.default_locale] This might be necessary with  I18n (>= 1.1.0) and Rails (< 5.2.2)
 
   # Send deprecation notices to registered listeners.
-  config.active_support.deprecation = :notify
+  config.active_support.deprecation = :silence
+
+  config.log_level = :info
+
+  # Suppress ActionView logging of render times:
+  ActiveSupport::on_load :action_view do
+    %w{render_template render_partial render_collection}.each do |event|
+      ActiveSupport::Notifications.unsubscribe "#{event}.action_view"
+    end
+  end
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :request_id ]
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
@@ -106,6 +101,10 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  # This comes from https://devcenter.heroku.com/articles/getting-started-with-rails5
+  # Has to be true when assets.compile = false
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
