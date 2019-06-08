@@ -65,7 +65,7 @@
     -#.float-right
     = link_to icon('far', 'trash-alt', 'Delete'), account_path, :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => confirm_msg }, :post => true
 
-.row
+.row.mt-5
   .col-md-12
     -# Don't show users this stuff about themselves
     - if current_user.admin?
