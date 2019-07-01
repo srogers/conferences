@@ -22,4 +22,12 @@
             =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(type: 'year', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
             =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
 
-      = index_search_form 'publications'
+      = index_search_form 'publications' unless ['show', 'edit'].include?(action_name)
+
+      -# action-specific buttons
+      - if action_name == 'show'
+        - if can? :destroy, @publication
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+        - if can? :edit, @publication
+          = link_to "Edit", edit_publication_path(@publication, nav_params), :class => "btn btn-primary ml-3"
+        = link_to "Done", publications_path(nav_params), :class => "btn btn-secondary ml-3"

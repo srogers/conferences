@@ -22,7 +22,7 @@
 
       -# action-specific buttons
       - if action_name == 'show'
-        - if can?(:destroy, @speaker) # && @presentations.empty?
+        - if can?(:destroy, @speaker) && @presentations.empty?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Permanently remove this speaker?' }, :post => true
         - if can? :edit, @speaker
           = link_to "Edit Speaker", edit_speaker_path(@speaker, nav_params), :class => "btn btn-primary ml-3"

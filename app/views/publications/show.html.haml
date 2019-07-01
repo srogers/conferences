@@ -85,13 +85,3 @@
             = simple_form_for :presentation_publication, html: { id: "form_for_#{presentation.id}_#{@publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
               = f.input :presentation_id, as: :hidden, input_html: { value: presentation.id }
               = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
-
-.row
-  .col-md-12
-    .form-actions
-      = link_to "Done", publications_path(nav_params), :class => "btn btn-secondary"
-      - if can? :edit, @publication
-        = link_to "Edit", edit_publication_path(@publication, nav_params), :class => "btn btn-primary"
-      .float-right
-        - if can? :destroy, @publication
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
