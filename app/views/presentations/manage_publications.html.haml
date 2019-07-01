@@ -69,7 +69,3 @@
           = simple_form_for :presentation_publication, html: { id: "form_for_#{@presentation.id}_#{publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
             = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
             = f.input :publication_id, as: :hidden, input_html: { value: publication.id }
-
-.row
-  .col-md-12
-    %p= link_to "Done", presentation_path(@presentation), class: 'btn btn-secondary btn-sm'
