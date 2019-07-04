@@ -4,5 +4,18 @@
     .container
       %ul.navbar-nav.mr-auto
         - if can? :create, Organizer
-          %li.nav-item
+          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
             =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_organizer_path, class: 'nav-link', title: 'Add an Organization'
+
+      -# action-specific buttons
+      - if action_name == 'show'
+        - if can?(:destroy, @organizer) && @organizer.conferences.empty?
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), organizer_path(@organizer), :method => :delete, :class => "btn btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
+        - if can? :edit, @organizer
+          = link_to "Edit", edit_organizer_path(@organizer), :class => "btn btn-primary"
+        = link_to "Done", organizers_path, :class => "btn btn-secondary ml-3"
+
+      - if action_name == 'edit'
+        = link_to "Cancel", organizer_path(@organizer), :class => "btn btn-secondary ml-3"
+      - elsif action_name == 'new'
+        = link_to "Cancel",  organizers_path, :class => "btn btn-secondary ml-3"

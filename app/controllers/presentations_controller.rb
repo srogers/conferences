@@ -75,7 +75,7 @@ class PresentationsController < ApplicationController
   def show
   # Pick a path for the Done button that goes back to the context we came from
     if params[:page].present?
-      @return_path = presentations_path(helpers.nav_params)                                     # clicked show from conferences listing
+      @return_path = presentations_path(helpers.nav_params)                                   # clicked show from conferences listing
     elsif @presentation.conference_id.present?
       @return_path = conference_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
     else

@@ -68,18 +68,3 @@
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
           = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
           = f.submit 'Associate', class: 'btn btn-primary btn-sm'
-
-.row
-  .col-md-12
-    .form-actions
-
-      = link_to "Done", @return_path, :class => "btn btn-secondary"
-      - if can? :edit, @presentation
-        = link_to "Edit", edit_presentation_path(@presentation, nav_params), :class => "btn btn-primary"
-        - if request&.referrer&.split('?')&.first == new_presentation_url # ignore any trailing params
-          = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-primary"
-        = link_to "Manage Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-primary"
-        = link_to "Manage Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary"
-      .float-right
-        - if can? :destroy, @presentation
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

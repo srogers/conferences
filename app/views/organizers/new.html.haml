@@ -1,6 +1,7 @@
-.row
-  .col-md-12
-    = title "Add a New Organizer"
+- title 'Add an Organizer'
+
+= render partial: 'control_bar'
+
 .row
   .col-md-12
     = simple_form_for @organizer, :html => {:autocomplete => "off"} do |f|

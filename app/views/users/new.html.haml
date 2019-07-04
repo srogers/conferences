@@ -2,6 +2,8 @@
   .col-md-12
     = title current_user ? "Add a New User" : "Register for an account"
 
+= render partial: 'control_bar'
+
 .row
   .col-md-12
     = simple_form_for @user do |f|

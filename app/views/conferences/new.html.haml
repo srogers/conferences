@@ -1,9 +1,10 @@
 = content_for :pre_application_js do
   = Gon::Base.render_data
 
-.row
-  .col-md-12
-    = title "Add a New Conference"
+- title "Add a New Conference"
+
+= render partial: 'control_bar'
+
 .row
   .col-md-12
     = simple_form_for @conference do |f|
