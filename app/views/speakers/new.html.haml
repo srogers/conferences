@@ -1,6 +1,7 @@
-.row
-  .col-md-12
-    = title "Add a New Speaker"
+- title 'Add A New Speaker'
+
+= render partial: 'control_bar'
+
 .row
   .col-md-12
     = simple_form_for @speaker, :html => {:autocomplete => "off"} do |f|
