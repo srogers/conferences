@@ -23,6 +23,10 @@ class Publication < ApplicationRecord
   PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
   FORMATS = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
 
+  MINUTES = 'minutes'.freeze
+  HMS     = 'hh:mm'.freeze
+  TIME_FORMATS = [MINUTES, HMS]
+
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]

@@ -20,6 +20,29 @@ module PublicationsHelper
     end
   end
 
+  # Converts the duration (integer minutes) into either minutes or hh:mm format, depending on user prefs.
+  # For guest users, hh:mm is the default.
+  def formatted_time(duration)
+    return 'N/A' if duration.nil? || duration == 0
+    time_code = (duration * 60).to_f
+    if defined?(current_user) && current_user.try(:time_format) == Publication::MINUTES
+      (time_code / 60).round.to_s                  # show raw minutes
+    else
+      Time.at(time_code).utc.strftime("%H:%M")     # show hh:mm format
+    end
+  end
+
+  # Converts time in mm or hh:mm format to seconds - simple but not strict format checking
+  def unformatted_time(hms)
+    return 'n/a' unless hms.include?(':')
+    return 'n/a' if hms.count(':') > 2
+
+    # if there is one colon, assume hh:mm - if there are two, assume hh:mm:ss
+    factor = hms.count(':') == 2 ? 60.0 : 1.0
+
+    (hms.split(':').reverse.map.with_index{|value, place| value.to_i * 60**place.to_i }.sum / factor).round
+  end
+
   def icon_for_format(publication)
     icon = case publication.format
       # Put the tooltip directly on the icons that are unlikely to have links - TODO - enforce which does and doesn't get a link
