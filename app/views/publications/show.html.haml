@@ -17,6 +17,8 @@
         %b Duration
         - if @publication.duration.present?
           = formatted_time @publication.duration
+          - unless current_user&.hms_duration?
+            mins
         -else
           %i unspecified
     %p

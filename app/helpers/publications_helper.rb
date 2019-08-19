@@ -38,7 +38,7 @@ module PublicationsHelper
     if current_user&.hms_duration?
       Time.at(seconds).utc.strftime("%H:%M")     # show hh:mm format
     else
-      "#{ (seconds / 60).round.to_s } mins"      # show raw minutes
+      (seconds / 60).round.to_s                  # show raw minutes
     end
   end
 
