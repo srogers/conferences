@@ -16,7 +16,7 @@
       %p
         %b Duration
         - if @publication.duration.present?
-          = "#{ @publication.duration } mins"
+          = formatted_time @publication.duration
         -else
           %i unspecified
     %p

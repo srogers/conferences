@@ -2,6 +2,8 @@ class Publication < ApplicationRecord
 
   include SortableNames
 
+  include PublicationsHelper # for unformatting time
+
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :presentations, through: :presentation_publications
 
@@ -35,6 +37,8 @@ class Publication < ApplicationRecord
 
   validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
+  validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
+  validates :ui_duration, duration_format: true
 
   before_validation :format_duration
 

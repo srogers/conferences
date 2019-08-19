@@ -65,6 +65,48 @@ RSpec.describe Publication, type: :model do
     it "requires a speaker name" do
       expect(Publication.new(valid_attributes.merge(speaker_names: ""))).not_to be_valid
     end
+
+    context "with duration" do
+      context "blank" do
+        it "is valid" do  # Have to allow this, because sometimes we just don't have it
+          expect(Publication.new(valid_attributes.merge(duration: nil))).to be_valid
+        end
+      end
+
+      context "negative" do
+        it "is invalid" do
+          expect(Publication.new(valid_attributes.merge(duration: -1))).not_to be_valid
+        end
+      end
+
+      { '18:20': 1100, '8:20': 500, '90': 90, '1:18:20': 78, '01:18:20': 78, '4700': 4700 }.each do |hms, minutes|
+        context "from UI as #{hms}" do
+          let(:valid_user_attributes) { valid_attributes.merge(ui_duration: hms.to_s)}
+
+          it "is valid" do
+            publication = Publication.new(valid_user_attributes)
+            expect(publication).to be_valid
+          end
+
+          it "saves the duration as #{minutes} minutes" do
+            publication = Publication.create(valid_user_attributes)
+            expect(publication.errors).to be_empty
+            expect(publication.duration).to eq(minutes)
+          end
+        end
+      end
+
+      ['1:70', '01:88:10'].each do |hms|
+        context "from UI as #{hms}" do
+          let(:valid_user_attributes) { valid_attributes.merge(ui_duration: hms)}
+
+          it "is not valid" do
+            publication = Publication.new(valid_user_attributes)
+            expect(publication).not_to be_valid
+          end
+        end
+      end
+    end
   end
 
   describe "when destroying a Publication" do

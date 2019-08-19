@@ -23,7 +23,7 @@
     = hidden_field_tag :presentation_id, @presentation.id if @presentation.present?
 .row
   .col-md-2
-    = f.input :duration, hint: "total minutes"
+    = f.input :ui_duration, as: :string, input_html: { value: duration_for_display(@publication) }, hint: "duration in minutes or as hh:mm or hh:mm:ss"
   .col-md-10
     = f.input :notes, hint: 'Users see this - label multi-part items here. Anything clarifying from a reader perspective.'
 - if @presentation.present?
