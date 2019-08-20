@@ -44,7 +44,7 @@
             %span.confirm= icon('fas', 'check')
           - else
             %span.deny= icon('fas', 'times')
-        %td Allow other users to see my conference attendance
+        %td Allow other users to see my event attendance
       -# This doesn't apply to readers
       - if @user.editor? || @user.admin?
         %tr

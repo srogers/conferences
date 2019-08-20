@@ -30,7 +30,7 @@ module PublicationsChart
     else
       # Show the top publications - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off publications with the same count as publications shown, which is misleading.
-      # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = Publication.group("format").order("count(publications.id) DESC").count
     end

@@ -1,6 +1,7 @@
 -# Conferences get a name generated from the organizer - allow the user to change it at create time so special events
 -# can get a sensible name, and the friendly URL will be based on that name.
 = f.input :organizer_id, as: 'select', collection: @organizer_selections, include_blank: false
+= f.input :event_type, as: :select, collection: Conference::EVENT_TYPES, include_blank: false
 = f.input :start_date, as: :date, start_year: 1960, end_year: Date.today.year + 1, order: [:month, :day, :year]
 = f.input :end_date, as: :date, start_year: 1960, end_year: Date.today.year + 1, order: [:month, :day, :year]
 = f.input :name, hint: "Don't change this unless absolutely necessary for clarity (e.g. special events) #{ name_blank_or_default?(@conference) ? ' -  AUTO-UPDATING' : '' }"

@@ -5,22 +5,22 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if params[:search_term].present?
-      - title "Conference Cities for #{ params[:search_term] }"
+      - title "Event Cities for #{ params[:search_term] }"
       %h3
-        Conference Cities for
+        Event Cities for
         = params[:search_term]
 
     - elsif params[:user_id].present?
-      - title "Your Conference Cities"
+      - title "Your Event Cities"
       %h3
-        Your Conference Cities
+        Your Event Cities
         = params[:search_term]
 
     - else
-      - title "Top Conference Cities"
-      %h3 Top Conference Cities
+      - title "Top Event Cities"
+      %h3 Top Event Cities
 
-    %p Click a city to see its conferences
+    %p Click a city to see its events
     #cities_chart
       = render partial: 'shared/cities_chart'
-    .text-center Conferences
+    .text-center Events

@@ -29,7 +29,7 @@ module SpeakersChart
     else
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
-      # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
     end
@@ -61,7 +61,7 @@ module SpeakersChart
     else
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
-      # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = Conference.includes(:presentations => :speakers).group("speakers.name").having(["count(conferences.id) >= ?", Setting.speaker_chart_floor]).count('conferences.id').sort_by { |name, count| count }.reverse.to_h
     end

@@ -5,15 +5,15 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if params[:search_term].present?
-      - title "Speaker Conferences for #{ params[:search_term] }"
+      - title "Speaker Events for #{ params[:search_term] }"
       %h3
         Speaker Conferences for
         = params[:search_term]
 
     - elsif params[:user_id].present?
-      - title "Your Conference Speakers"
+      - title "Your Event Speakers"
       %h3
-        Your Conference Speakers
+        Your Event Speakers
         = params[:search_term]
 
     - else

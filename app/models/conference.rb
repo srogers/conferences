@@ -12,6 +12,13 @@ class Conference < ApplicationRecord
   has_many :conference_users,                   :dependent => :destroy
   has_many :users, through: :conference_users
 
+  CONFERENCE = 'Conference'.freeze
+  DEBATE     = 'Debate'.freeze
+  SERIES     = 'Series'.freeze
+  SPEECH     = 'Speech'.freeze
+  EVENT_TYPES = [CONFERENCE, DEBATE, SERIES, SPEECH, ].freeze
+
+  validates :event_type, inclusion: { in: EVENT_TYPES, message: "%{value} is not a recognized event type" }
   validates :name, :organizer_id, :start_date, :end_date, presence: true
   validate  :starts_before_ending
   validate  :us_state_existence

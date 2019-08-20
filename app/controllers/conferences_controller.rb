@@ -10,7 +10,7 @@ class ConferencesController < ApplicationController
   include ConferencesHelper
 
   def index
-    # This handles "My Conferences" and the ability to list conferences attended by other users
+    # This handles "My Events" and the ability to list events attended by other users
     if params[:user_id].present?
       @user = User.find(params[:user_id])
       if current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
@@ -117,9 +117,9 @@ class ConferencesController < ApplicationController
     if @conference.save
       redirect_to conference_path(@conference)
     else
-      flash.now[:error] = 'Your conference could not be saved.'
+      flash.now[:error] = 'Your event could not be saved.'
       get_organizer_selections
-      logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
+      logger.debug "Event save failed: #{ @conference.errors.full_messages }"
       render 'new'
     end
   end
@@ -128,9 +128,9 @@ class ConferencesController < ApplicationController
     if @conference.update_attributes conference_params
       redirect_to conference_path(@conference)
     else
-      flash.now[:error] = 'Your conference could not be saved.'
+      flash.now[:error] = 'Your event could not be saved.'
       get_organizer_selections
-      logger.debug "Conference save failed: #{ @conference.errors.full_messages }"
+      logger.debug "Event save failed: #{ @conference.errors.full_messages }"
       render 'edit'
     end
   end
@@ -139,7 +139,7 @@ class ConferencesController < ApplicationController
     if can?(:destroy, @conference) && @conference.presentations.empty?
       @conference.destroy
     else
-      flash[:notice] = "That conference can't be deleted because it has presentations linked to it."
+      flash[:notice] = "That event can't be deleted because it has presentations linked to it."
     end
 
     redirect_to conferences_path
@@ -158,6 +158,9 @@ class ConferencesController < ApplicationController
   end
 
   def conference_params
-    params.require(:conference).permit(:name, :description, :organizer_id, :registration_url, :program_url, :start_date, :end_date, :venue, :venue_url, :city, :state, :country, :completed, :editors_notes)
+    params.require(:conference).permit(
+      :name, :event_type, :description, :organizer_id, :registration_url, :program_url, :start_date, :end_date,
+      :venue, :venue_url, :city, :state, :country, :completed, :editors_notes
+    )
   end
 end
