@@ -7,7 +7,7 @@
 = f.input :name, hint: "Don't change this unless absolutely necessary for clarity (e.g. special events) #{ name_blank_or_default?(@conference) ? ' -  AUTO-UPDATING' : '' }"
 = f.label :description
 = f.trix_editor :description
-.small.mb-3 Historic or organizational details specific to this conference (e.g., attendance)
+.small.mb-3 Historic or organizational details specific to this event (e.g., attendance)
 = f.input :registration_url, input_html: { autocomplete: "off" }, hint: "A link where attendees can sign up"
 = f.input :program_url, input_html: { autocomplete: "off" }, hint: "A link where the schedule can be found"
 = f.input :venue

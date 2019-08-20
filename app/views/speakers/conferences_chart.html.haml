@@ -7,7 +7,7 @@
     - if params[:search_term].present?
       - title "Speaker Events for #{ params[:search_term] }"
       %h3
-        Speaker Conferences for
+        Speaker Events for
         = params[:search_term]
 
     - elsif params[:user_id].present?
@@ -17,11 +17,11 @@
         = params[:search_term]
 
     - else
-      - title "Frequent Conference Speakers"
-      %h3 Most Frequent Speakers by Conference
+      - title "Frequent Event Speakers"
+      %h3 Most Frequent Speakers by Events
 
     %p Click a name to see the speaker's conferences
     -# This div ID has to match up with the one in shared/presentations_chart
     #conferences_chart
       = render partial: 'shared/conferences_chart'
-    .text-center Conferences
+    .text-center Events
