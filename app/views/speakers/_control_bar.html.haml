@@ -15,8 +15,8 @@
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(type: 'presentations', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Events'  , class: 'fa-sm'), chart_speakers_path(type: 'conferences',   search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'presentations')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Events'  , class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'conferences')), class: "dropdown-item"
 
       = index_search_form 'speakers' unless ['show', 'edit', 'new'].include?(action_name)
 

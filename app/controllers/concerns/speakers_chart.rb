@@ -19,7 +19,8 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
+        event_type = event_type_or_wildcard
+        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case
@@ -51,7 +52,8 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = Conference.includes(:organizer, :presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
+        event_type = event_type_or_wildcard
+        data = Conference.includes(:organizer, :presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
       end
 
       # Handles the My Conferences case

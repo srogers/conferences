@@ -25,19 +25,25 @@ class ConferencesController < ApplicationController
 
     @conferences = @conferences.includes(:organizer, :presentations).order('start_date DESC')
     per_page = params[:per] || 10 # autocomplete specifies :per
-    if params[:search_term].present? || params[:heart].present?
+    # This structure separates out the :q from everything else. It's one or the other, but not both.
+    if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
+      if params[:event_type].present?
+        @conferences = @conferences.where(event_type: params[:event_type])
+      end
+
       if params[:heart].present?
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
       end
 
       if params[:search_term].present?
         term = params[:search_term]
+        event_type = event_type_or_wildcard
         # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
         # This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
           @conferences = @conferences.where('conferences.state = ?', term.upcase)
         else
-          @conferences = @conferences.where(base_query, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
+          @conferences = @conferences.where(base_query, event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
         end
       end
     elsif params[:q].present?

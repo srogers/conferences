@@ -8,19 +8,20 @@ module PublicationsChart
   def format_count_data
     # The search term restrictions have the same effect as conferences/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
+    event_type = event_type_or_wildcard
     if params[:search_term].present?
       term = params[:search_term]
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        data = Publication.includes(:presentations => :conference).where("conferences.state = ?", term.upcase).group("publications.format").order("count(publications.id) DESC").count('publications.id')
+        data = Publication.includes(:presentations => :conference).where("conferences.state = ? AND conferences.event_type LIKE ?", event_type, term.upcase).group("publications.format").order("count(publications.id) DESC").count('publications.id')
 
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
         data = Publication.includes(:presentations => {:conference => :organizer }).includes(:presentations => :speakers)
-        data = data.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%", "#{term}%", "#{term}%").group("format").order("count(publications.id) DESC").count('publications.id')
+        data = data.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%", "#{term}%", "#{term}%").group("format").order("count(publications.id) DESC").count('publications.id')
       end
 
       # Handles the My Conferences case

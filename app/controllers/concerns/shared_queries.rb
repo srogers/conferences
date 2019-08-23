@@ -9,6 +9,6 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query
-    "conferences.name ILIKE ? OR conferences.city ILIKE ? OR conferences.country = ? OR cast(date_part('year',conferences.start_date) as text) = ? OR conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
+    "conferences.event_type LIKE ? AND (conferences.name ILIKE ? OR conferences.city ILIKE ? OR conferences.country = ? OR cast(date_part('year',conferences.start_date) as text) = ? OR conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?))"
   end
 end

@@ -12,16 +12,23 @@
 - if @conferences.blank?
   .row
     .col-md-12
-      - if params[:search_term].present?
-        %p No events match the search terms
-      - elsif @user.present?
+      - if @user.present?
         - if @user == current_user
           %p
-            You haven't marked any events as attended by you.
-            You can do that on the conference details page. Look for a button that says, "I was there!"
+            You haven't marked any
+            = current_event_type.pluralize
+            as attended by you.
+            - if @user.conferences.empty?
+              You can do that on the conference details page. Look for a button that says, "I was there!"
         - else
           %p
-            This user hasn't marked any events as attended yet
+            This user hasn't marked any
+            = current_event_type.pluralize
+            as attended.
+      - elsif params[:search_term].present?
+        %p No events match the search terms
+      - elsif params[:event_type].present?
+        %p No events match the event type
       - else
         %p The system doesn't contain any events yet
 - else

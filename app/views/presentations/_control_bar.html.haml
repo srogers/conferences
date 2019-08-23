@@ -21,9 +21,9 @@
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(type: 'years', search_term: params[:search_term], tag: params[:tag]), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(type: 'topic', search_term: params[:search_term], tag: params[:tag]), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: 'presentations', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(nav_params.merge(type: 'years')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(nav_params.merge(type: 'topic')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'presentations')), class: "dropdown-item"
 
       = index_search_form 'presentations' unless ['show', 'edit', 'new', 'manage_publications', 'manage_speakers'].include?(action_name)
 
