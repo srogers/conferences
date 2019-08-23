@@ -37,13 +37,12 @@ class ConferencesController < ApplicationController
 
       if params[:search_term].present?
         term = params[:search_term]
-        event_type = event_type_or_wildcard
         # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
         # This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
           @conferences = @conferences.where('conferences.state = ?', term.upcase)
         else
-          @conferences = @conferences.where(base_query, event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
+          @conferences = @conferences.where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
         end
       end
     elsif params[:q].present?

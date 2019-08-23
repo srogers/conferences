@@ -23,7 +23,7 @@ class SpeakersController < ApplicationController
       if params[:search_term].present?
         term = params[:search_term]
         @speakers = @speakers.includes(:presentations => { :conference => :organizer }).references(:conferences)
-        @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
+        @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
       end
     end
 

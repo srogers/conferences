@@ -29,8 +29,7 @@ class PublicationsController < ApplicationController
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
         @publications = @publications.where('conferences.state = ?', term.upcase)
       else
-        event_type = event_type_or_wildcard
-        @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", "#{term}%")
+        @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", "#{term}%")
       end
     end
 

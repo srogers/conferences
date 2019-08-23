@@ -9,7 +9,6 @@ module ConferencesChart
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
-      event_type = event_type_or_wildcard
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -17,7 +16,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:city).where(base_query, event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(city) DESC").count(:city)
+        results = Conference.group(:city).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(city) DESC").count(:city)
       end
 
       # Handles the My Conferences case
@@ -41,7 +40,6 @@ module ConferencesChart
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
-      event_type = event_type_or_wildcard
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -49,7 +47,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:country).where(base_query, event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(country) DESC").count
+        results = Conference.group(:country).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(country) DESC").count
       end
 
       # Handles the My Conferences case
@@ -72,7 +70,6 @@ module ConferencesChart
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
-      event_type = event_type_or_wildcard
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -80,7 +77,7 @@ module ConferencesChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group_by_year("conferences.start_date").where(base_query, event_type, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").count
+        results = Conference.group_by_year("conferences.start_date").where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").count
       end
 
       # Handles the My Conferences case
