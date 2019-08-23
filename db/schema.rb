@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 2019_08_20_022526) do
     t.boolean "show_contributor", default: true
     t.integer "speaker_id"
     t.string "sortable_name"
-    t.string "time_format", default: "hh:mm:ss"
+    t.string "time_format", default: "hh:mm"
     t.index ["sortable_name"], name: "index_users_on_sortable_name"
   end
 
