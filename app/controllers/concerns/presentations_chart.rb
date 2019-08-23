@@ -5,14 +5,12 @@ module PresentationsChart
   def filter_presentations_by_term(presentations, term)
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
-    #presentations_by_tag  = presentations.tagged_with(term)
-    # if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-    #   presentations_by_name = presentations.where('conferences.state = ?', term.upcase)
-    # else
-    #   presentations_by_name = presentations.references('conferences').where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?", event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%")
-    # end
-    # return presentations_by_tag + (presentations_by_name - presentations_by_tag)
-    presentations.includes(:taggings => :tag).references(:taggings => :tag).references('conferences').where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?", event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", term)
+    presentations.includes(:taggings => :tag).references(:taggings => :tag).references('conferences').
+      where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?",
+            # base query bind vars
+            event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
+            # bind vars for the 4 literals introduced above
+            "%#{term}%", "#{term}%", "#{term}%", term)
   end
 
   # Builds a hash of presentation counts by year that looks like: {Fri, 01 Jan 1982=>1, Sat, 01 Jan 1983=>2, Sun, 01 Jan 1984=>1, Tue, 01 Jan 1985=>3}
