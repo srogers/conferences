@@ -50,6 +50,10 @@ class User < ApplicationRecord
   scope :needing_approval, -> { where('not users.approved') }
   scope :editors,          -> { includes('role').references('role').where("roles.name = ?", Role::EDITOR) }
 
+  def hms_duration?
+    time_format == Publication::HMS
+  end
+
   def attended?(conference)
     conferences.include? conference
   end

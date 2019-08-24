@@ -9,6 +9,7 @@ class PresentationsController < ApplicationController
 
   def index
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
+    @presentations = @presentations.order(sort_by_params_or_default 'conferences.start_date DESC, presentations.sortable_name')
     @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
 
@@ -29,9 +30,6 @@ class PresentationsController < ApplicationController
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-    unless @presentations.is_a?(Array)
-      @presentations = @presentations.order(sort_by_params_or_default 'conferences.start_date DESC, presentations.sortable_name')
-    end
 
     @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
 

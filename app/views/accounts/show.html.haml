@@ -44,8 +44,7 @@
             %span.confirm= icon('fas', 'check')
           - else
             %span.deny= icon('fas', 'times')
-        %td Allow other users to see my conference attendance
-
+        %td Allow other users to see my event attendance
       -# This doesn't apply to readers
       - if @user.editor? || @user.admin?
         %tr
@@ -55,6 +54,10 @@
             - else
               %span.deny= icon('fas', 'times')
           %td List me on the Supporters page as a contributing editor
+      %tr
+        %th
+          = @user.time_format
+        %td Display format for times in publications
 
 .row
   .col-md-6

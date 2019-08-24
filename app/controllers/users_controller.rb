@@ -150,6 +150,7 @@ class UsersController < ApplicationController
 
   def users_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation, :role_id, :speaker_id, :city, :state, :country,
-                                 :active, :approved, :role_id, :photo, :remove_photo, :time_zone, :show_attendance, :show_contributor)
+                                 :active, :approved, :role_id, :photo, :remove_photo, :time_zone,
+                                 :show_attendance, :show_contributor, :time_format)
   end
 end

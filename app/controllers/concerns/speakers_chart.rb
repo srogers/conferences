@@ -18,8 +18,12 @@ module SpeakersChart
       else
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
-        # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").order("count(presentation_id) DESC").count(:presentation_id)
+        # This repeats as much of the WHERE clause from the presentations controller (filter_presentations_by_term) as
+        # possible, so the the chart results will match the search results.
+        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).includes(:presentation => { :taggings => :tag }).group("speakers.name").
+          where(base_query + ' OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?',
+                event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
+                "%#{term}%", "#{term}%", "#{term}%", term).order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case
@@ -29,7 +33,7 @@ module SpeakersChart
     else
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
-      # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = PresentationSpeaker.includes(:speaker).group("speakers.name").having(["count(presentation_id) >= ?", Setting.speaker_chart_floor]).order("count(presentation_id) DESC").count(:presentation_id)
     end
@@ -51,7 +55,7 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = Conference.includes(:organizer, :presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
+        data = Conference.includes(:organizer, :presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
       end
 
       # Handles the My Conferences case
@@ -61,7 +65,7 @@ module SpeakersChart
     else
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
-      # The floor value is a setting, because it changes fairly dynamically as more conferences are entered.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
       data = Conference.includes(:presentations => :speakers).group("speakers.name").having(["count(conferences.id) >= ?", Setting.speaker_chart_floor]).count('conferences.id').sort_by { |name, count| count }.reverse.to_h
     end

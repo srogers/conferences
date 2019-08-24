@@ -15,6 +15,7 @@
 = f.input :password, :hint => 'Minimum 8 characters with at least 1 number. Leave this blank to keep your current password.'
 = f.input :password_confirmation
 %h4 Preferences
-= f.input :show_attendance, as: :boolean, label: "Allow other users to see my conference attendance"
-- if @user.editor?
+= f.input :show_attendance, as: :boolean, label: "Allow other users to see my event attendance"
+- if @user.editor? || @user.admin?
   = f.input :show_contributor, as: :boolean, label: "List me on the Supporters page as a contributing editor"
+  = f.input :time_format, as: 'select', collection: Publication::TIME_FORMATS, include_blank: false, label: 'Publication Time Format'

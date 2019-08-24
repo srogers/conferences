@@ -50,6 +50,11 @@ module ApplicationHelper
     return current ? ' active' : ''
   end
 
+  # A UI helper that provides a user-facing name for the current event type
+  def current_event_type
+    params[:event_type].present? ? params[:event_type] : 'Event'
+  end
+
   def my_conferences?
     controller_name == 'users' && action_name == 'conferences'
   end
@@ -65,7 +70,7 @@ module ApplicationHelper
 
   # For throwing the navigation-related params into paths, so the Done button can return to the original context.
   def nav_params
-    { page: params[:page], search_term: params[:search_term], tag: params[:tag] }
+    { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id] }.compact
   end
 
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!

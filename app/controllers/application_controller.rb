@@ -51,6 +51,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def event_type_or_wildcard
+    params[:event_type].present? ? params[:event_type] : '%'
+  end
+
   # Converts a two character code like "US" to full name "United States"
   def country_name(country_code)
     country_object = ISO3166::Country[country_code]

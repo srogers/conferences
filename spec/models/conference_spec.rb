@@ -6,6 +6,7 @@ RSpec.describe Conference, type: :model do
 
   let(:valid_attributes) {
     {
+      :event_type  => Conference::CONFERENCE,
       :organizer_id => organizer.id,
       :start_date   => '2005/07/15'.to_date,
       :end_date     => '2005/07/23'.to_date

@@ -13,15 +13,23 @@
 
         - if current_user.present?
           %li.nav-item{ class: params[:user_id].present? && params[:user_id] == current_user.id.to_s ? 'active' : ''}
-            = link_to "My Conferences", conferences_path(user_id: current_user.id), class: "nav-link"
+            = link_to "My Events", conferences_path(user_id: current_user.id), class: "nav-link"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_conferences_path(type: 'cities',    search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(type: 'countries', search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(type: 'years',     search_term: params[:search_term], user_id: params[:user_id]), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_conferences_path(nav_params.merge(type: 'cities')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_conferences_path(nav_params.merge(type: 'countries')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_conferences_path(nav_params.merge(type: 'years')), class: "dropdown-item"
+
+        %li.nav-item.dropdown
+          = link_to('#', class: "nav-link dropdown-toggle #{params[:event_type].present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+            = icon('fas', 'chart-bar', 'Event Type',   class: 'fa-sm')
+          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+            = link_to 'Any', conferences_path(nav_params.merge(event_type: nil)), class: "dropdown-item"
+            - Conference::EVENT_TYPES.each do |event_type|
+              = link_to event_type, conferences_path(nav_params.merge(event_type: event_type)), class: "dropdown-item"
 
       = index_search_form 'conferences' unless controller_name == 'conference_users' || ['show', 'edit', 'new'].include?(action_name)
 

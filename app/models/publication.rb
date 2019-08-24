@@ -2,6 +2,8 @@ class Publication < ApplicationRecord
 
   include SortableNames
 
+  include PublicationsHelper # for unformatting time
+
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :presentations, through: :presentation_publications
 
@@ -23,14 +25,35 @@ class Publication < ApplicationRecord
   PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
   FORMATS = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
 
+  MINUTES = 'minutes'.freeze
+  HMS     = 'hh:mm'.freeze
+  TIME_FORMATS = [MINUTES, HMS]
+
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
 
+  attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
+
   validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
+  validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
+  validates :ui_duration, duration_format: true
+
+  before_validation :format_duration
 
   before_save :update_sortable_name
+
+  # Move the contents of #ui_duration into #duration as raw seconds
+  def format_duration
+    if ui_duration.present? && ui_duration&.respond_to?(:include?)
+      if ui_duration&.include?(':')
+        self.duration =  unformatted_time(ui_duration)  # expect hh:mm or hh:mm:ss format
+      else
+        self.duration = ui_duration.to_i                # expect raw minutes format
+      end
+    end
+  end
 
   def has_duration?
     HAS_DURATION.include? format

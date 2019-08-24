@@ -14,6 +14,7 @@ RSpec.describe ConferencesController, type: :controller do
   let(:valid_attributes) {
     {
       name:         'Test Conference',
+      event_type:   Conference::CONFERENCE,
       organizer_id: organizer.id,
       start_date:   '2005/07/15'.to_date,
       end_date:     '2005/07/23'.to_date

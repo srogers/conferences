@@ -20,6 +20,39 @@ module PublicationsHelper
     end
   end
 
+  # Only the field value itself needs to use this - ordinary show views can use formatted_time()
+  def duration_for_display(publication)
+    if publication.ui_duration.nil? && !publication.persisted?
+      # this is what a create field will get, rather than the normal translation of nil to N/A
+      ''
+    else
+      formatted_time(publication.duration)
+    end
+  end
+
+  # Converts the duration (integer minutes) into either minutes or hh:mm format, depending on user prefs.
+  # For guest users, hh:mm is the default.
+  def formatted_time(duration)
+    return 'N/A' if duration.nil? || duration == 0
+    seconds = (duration * 60).to_f
+    if current_user&.hms_duration?
+      Time.at(seconds).utc.strftime("%H:%M")     # show hh:mm format
+    else
+      (seconds / 60).round.to_s                  # show raw minutes
+    end
+  end
+
+  # Converts time in mm or hh:mm format to seconds - simple but not strict format checking
+  def unformatted_time(hms)
+    return 'n/a' unless hms.include?(':')
+    return 'n/a' if hms.count(':') > 2
+
+    # if there is one colon, assume hh:mm - if there are two, assume hh:mm:ss
+    factor = hms.count(':') == 2 ? 60.0 : 1.0
+
+    (hms.split(':').reverse.map.with_index{|value, place| value.to_i * 60**place.to_i }.sum / factor).round
+  end
+
   def icon_for_format(publication)
     icon = case publication.format
       # Put the tooltip directly on the icons that are unlikely to have links - TODO - enforce which does and doesn't get a link

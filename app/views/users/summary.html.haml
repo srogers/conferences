@@ -11,7 +11,7 @@
       -# Only show these where they're > 0 because we want to show the user what they've done, not what they haven't done
       - if @conferences_created > 0
         %tr
-          %th Conferences Created
+          %th Events Created
           %td= @conferences_created
       - if @speakers_created > 0
         %tr
@@ -28,7 +28,7 @@
 
       -# Show all these whether they are zero or not, to reinforce the idea that they exist
       %tr
-        %th Conferences Attended
+        %th Events Attended
         %td= @conferences_attended.length
 
       %tr
