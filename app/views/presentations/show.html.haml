@@ -19,6 +19,16 @@
         %b Presented at:
         =link_to @presentation.conference.name, conference_path(@presentation.conference)
 
+    -# Don't show Venue or Date unless the presentation is attached to a multi-venue event
+    - if @presentation.try(:conference).try(:multi_venue?)
+      %p
+        %b Venue:
+        = location(@presentation, :full)
+
+      %p
+        %b Date:
+        = pretty_date @presentation.date, style: :pretty
+
     %p= @presentation.description.try(:html_safe)
 
     %p

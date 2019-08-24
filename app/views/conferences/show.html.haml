@@ -24,13 +24,7 @@
       = @conference.organizer&.name
     %p
       %b Venue:
-      - if @conference.venue_url.present?
-        = link_to @conference.venue, @conference.venue_url, target: '_blank'
-      - else
-        = @conference.venue
-      - if @conference.location.present?
-        &mdash;
-        = location_with_non_us_country @conference, :full
+      = location(@conference, :full)
     %p
       %b Program:
       - if @conference.program_url.present?

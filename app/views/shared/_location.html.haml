@@ -1,0 +1,10 @@
+= f.input :location, as: 'select', collection: Conference::LOCATION_TYPES, include_blank: false, selected: venue
+-# This backs up the visible venue field so that when the selector changes it to Multiple/virtual and the field is
+-# disabled, the changed value will still be submitted.
+-# The initial state is set by JS in conferences.coffee
+.location-conditional-fields
+  = f.input :venue
+  = f.input :venue_url
+  = f.input :city
+  = f.input :state
+  = f.input :country, priority: ['US'], include_blank: false
