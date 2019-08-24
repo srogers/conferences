@@ -122,19 +122,4 @@ class Conference < ApplicationRecord
   def default_name(an_organizer)
     "#{an_organizer&.abbreviation} #{start_date&.year}"
   end
-
-  # This is necessary because there isn't currently a place for events to have a distinct name, and this is confusing
-  # when selecting the conference from autocomplete in presentation/create.
-  # TODO - Maybe conferences should have an explicit name that is initialized from the organizer data, which could be modified for special events.
-  def special_event?
-    # this is pretty janky, because it relies on the organizer having "Event" for the series abbreviation
-    # TODO - maybe conference should have an explicit special event designator, or allow explicit titles to be assigned
-    #        and detect special events based on whether the title has been modified from the default.
-    organizer&.abbreviation == "Event"
-  end
-
-  # Necessary because of special events.
-  def fully_qualified_name
-    "#{ organizer.series_name.singularize }, #{ date_span } – #{ location }"
-  end
 end
