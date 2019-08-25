@@ -11,11 +11,14 @@
     %br
     %i= linked_tag_names(presentation)
 
-  -if @conference.present? && @conference.multi_venue?
+  -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %td
-      = presentation.venue
-      %br
-      = location_with_non_us_country presentation
+      - if @conference.virtual?
+        = pretty_date presentation.date
+      - if @conference.multi_venue?
+        = presentation.venue
+        %br
+        = location_with_non_us_country presentation
 
   - if params[:heart].present?
     %td

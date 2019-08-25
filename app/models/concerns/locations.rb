@@ -11,6 +11,10 @@ module Locations
   MULTIPLE = 'Multiple'.freeze
   LOCATION_TYPES = [PHYSICAL, VIRTUAL, MULTIPLE].freeze
 
+  def virtual?
+    venue == VIRTUAL
+  end
+
   def multi_venue?
     venue == MULTIPLE
   end
