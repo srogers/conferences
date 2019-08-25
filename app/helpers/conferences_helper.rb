@@ -20,6 +20,16 @@ module ConferencesHelper
     end
   end
 
+  def conference_chart_title
+    if params[:user_id].present?
+       title("Your #{ current_event_type.pluralize } by Year")
+    elsif params[:search_term].present?
+      title("#{ current_event_type.pluralize } by Year For #{ params[:search_term]}")
+    else
+      title("#{ current_event_type.pluralize} by Year")
+    end
+  end
+
   # Returns a value that can be passed into ChartKick for height that will generate a reasonable size for all bars
   def bar_chart_height(bar_count)
     "#{bar_count * 25 + 50}px"

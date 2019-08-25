@@ -4,21 +4,9 @@
   .col-md-12
     = render partial: 'shared/return_from_chart_with_params'
 
-    - if params[:search_term].present? || params[:event_type].present?
-      - title "#{ current_event_type } Cities #{ params[:search_term].present? ? "For #{ params[:search_term]}" : '' }"
-      %h3= "#{ current_event_type } Cities #{ params[:search_term].present? ? "For #{ params[:search_term]}" : '' }"
-
-    - elsif params[:user_id].present?
-      - title "Your Event Cities"
-      %h3
-        Your Event Cities
-        = params[:search_term]
-
-    - else
-      - title "Top #{ current_event_type } Cities"
-      %h3= "Top #{ current_event_type } Cities"
+    = conference_chart_title
 
     %p Click a city to see its events
     #cities_chart
       = render partial: 'shared/cities_chart'
-    .text-center Events
+    .text-center= current_event_type.pluralize

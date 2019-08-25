@@ -7,7 +7,11 @@ module ConferencesChart
   def city_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:search_term].present? || params[:event_type].present?
+    if params[:user_id].present?
+      # Handles the My Conferences case - doesn't work with search term
+      results = Conference.group(:city).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(city) DESC").count(:city)
+
+    elsif params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
@@ -18,10 +22,6 @@ module ConferencesChart
         # Just have to let the results fly, and hope it's not too huge.
         results = Conference.group(:city).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(city) DESC").count(:city)
       end
-
-      # Handles the My Conferences case
-    elsif params[:user_id].present?
-      results = Conference.group(:city).where("id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).order("count(city) DESC").count(:city)
 
     else
       # Show the top cities - otherwise it's too big - limit is not great here, because even though results are sorted
@@ -38,7 +38,11 @@ module ConferencesChart
   def country_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:search_term].present? || params[:event_type].present?
+    if params[:user_id].present?
+      # Handles the My Conferences case - doesn't play well with search terms
+      results = Conference.group(:country).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(country) DESC").count
+
+    elsif params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
@@ -49,10 +53,6 @@ module ConferencesChart
         # Just have to let the results fly, and hope it's not too huge.
         results = Conference.group(:country).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(country) DESC").count
       end
-
-      # Handles the My Conferences case
-    elsif params[:user_id].present?
-      results = Conference.group(:country).where("id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).order("count(country) DESC").count
 
     else
       # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted
@@ -68,7 +68,11 @@ module ConferencesChart
   def year_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:search_term].present? || params[:event_type].present?
+    if params[:user_id].present?
+      # Handles the My Conferences case - doesn't play well with search term
+      results = Conference.group_by_year("conferences.start_date").where(by_user_query, current_user.id, event_type_or_wildcard).count
+
+    elsif params[:search_term].present? || params[:event_type].present?
       term = params[:search_term] || ''
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
@@ -79,10 +83,6 @@ module ConferencesChart
         # Just have to let the results fly, and hope it's not too huge.
         results = Conference.group_by_year("conferences.start_date").where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").count
       end
-
-      # Handles the My Conferences case
-    elsif params[:user_id].present?
-      results = Conference.group_by_year("conferences.start_date").where("id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).count
 
     else
       # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted
