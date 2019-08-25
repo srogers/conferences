@@ -2,6 +2,9 @@
   %th
     = link_to 'Name', presentations_path(sort: '+sortable_name')
     = ' / Speaker(s) / Topics'
+  -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
+    %th
+      = [@conference.virtual? || @conference.multi_venue? ? 'Date' : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ')
   - if params[:heart].present?
     %th Needs
   %th Media

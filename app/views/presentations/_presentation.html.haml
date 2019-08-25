@@ -11,12 +11,23 @@
     %br
     %i= linked_tag_names(presentation)
 
+  -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
+    %td
+      - if @conference.virtual? || @conference.multi_venue?
+        = pretty_date presentation.date
+        %br
+      - if @conference.multi_venue?
+        = presentation.venue
+        %br
+        = location_with_non_us_country presentation
+
   - if params[:heart].present?
     %td
       = icon('fas', 'tag', class: 'fa-fw', title: 'Needs topic tags') if presentation.tags.empty?
       = icon('fas', 'align-left', class: 'fa-fw', title: 'Needs a description') if presentation.description.blank?
       = icon('fas', 'puzzle-piece', class: 'fa-fw', title: 'Needs number of parts') if presentation.parts.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with a conference') if presentation.conference.blank?
+
   %td= linked_format_icons(presentation)
 
   %td{width: can?(:edit, presentation) ? 150 : 70 }

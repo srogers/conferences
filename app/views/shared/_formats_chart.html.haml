@@ -1,4 +1,4 @@
-= content_for :pre_application_js do
+- content_for :pre_application_js do
   -# Uncomment one or the other of these to use google charts or highcharts
   =# javascript_include_tag "https://www.gstatic.com/charts/loader.js"
   = javascript_include_tag "https://code.highcharts.com/highcharts.js"
@@ -11,7 +11,7 @@
 
 -# This is a somewhat hacky way of getting the Top Cities chart labels linked to a conference search
 -# The chart has to be rendered into a #formats_chart element so it can appear on pages with other charts without side-effects
-= content_for :footer do
+- content_for :footer do
   :javascript
     $(document).ready(function() {
       // wait for stuff to load

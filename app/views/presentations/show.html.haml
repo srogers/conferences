@@ -25,6 +25,7 @@
         %b Venue:
         = location(@presentation, :full)
 
+    - if @presentation.try(:conference).try(:multi_venue?) || @presentation.try(:conference).try(:virtual?)
       %p
         %b Date:
         = pretty_date @presentation.date, style: :pretty

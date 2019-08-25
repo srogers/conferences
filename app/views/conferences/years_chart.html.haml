@@ -4,21 +4,9 @@
   .col-md-12
     = render partial: 'shared/return_from_chart_with_params'
 
-    - if params[:search_term].present? || params[:event_type].present?
-      - title "#{ current_event_type.pluralize } by Year #{ params[:search_term].present? ? "For #{ params[:search_term]}" : '' }"
-      %h3= "#{ current_event_type.pluralize } by Year #{ params[:search_term].present? ? "For #{ params[:search_term]}" : '' }"
-
-    - elsif params[:user_id].present?
-      - title "Your Events by Year"
-      %h3
-        Your Events by Year for
-        = params[:search_term]
-
-    - else
-      - title "Events by Year"
-      %h3 Events by Year
+    = conference_chart_title('Year')
 
     %p Click a year to see its events
     #years_chart
       = render partial: 'shared/years_chart'
-    .text-center Events
+    .text-center= current_event_type.pluralize
