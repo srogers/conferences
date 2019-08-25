@@ -44,7 +44,7 @@
     %div#most_anticipated
 
 -# This gets each one of the content areas above loaded Ajaxily, without the pages controller getting involved.
-= content_for :footer do
+- content_for :footer do
   :javascript
     $(document).ready(function() {
       $("#upcoming_conferences").load("/conferences/upcoming");

@@ -1,7 +1,7 @@
 -# NOTE: this no longer works without a Google API key with billing enabled
 -#       see:  https://developers.google.com/maps/documentation/javascript/get-api-key
 
-= content_for :pre_application_js do
+- content_for :pre_application_js do
   -# Uncomment one or the other of these to use google charts or highcharts
   = javascript_include_tag "https://www.gstatic.com/charts/loader.js"
   =# javascript_include_tag "https://code.highcharts.com/highcharts.js"
