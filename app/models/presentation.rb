@@ -1,6 +1,7 @@
 class Presentation < ApplicationRecord
 
   include SortableNames
+  include Locations
 
   belongs_to  :conference
   belongs_to  :creator,   class_name: "User"

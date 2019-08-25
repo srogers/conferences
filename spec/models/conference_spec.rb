@@ -72,6 +72,18 @@ RSpec.describe Conference, type: :model do
         expect(Conference.new(valid_attributes.merge(country: 'Wombatistan', state: 'Plutopia'))).to be_valid
       end
     end
+
+    context "when venue is #{Conference::VIRTUAL}" do
+      it "is valid without state" do
+        expect(Conference.new(valid_attributes.merge(venue: Conference::VIRTUAL, state: ''))).to be_valid
+      end
+    end
+
+    context "when venue is #{Conference::MULTIPLE}" do
+      it "is valid without state" do
+        expect(Conference.new(valid_attributes.merge(venue: Conference::MULTIPLE, state: ''))).to be_valid
+      end
+    end
   end
 
   describe "when updating a conference" do

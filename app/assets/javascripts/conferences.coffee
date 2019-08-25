@@ -3,6 +3,18 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $ ->
+  # This is used in Conference and Preseentation to manage the location fields
+  set_location_fields = (location) ->
+    if location == 'Physical'
+      $('.location-conditional-fields').slideDown()
+      $('#conference_venue').val('')
+    if location == 'Virtual'
+      $('.location-conditional-fields').slideUp()
+      $('#conference_venue').val('Virtual')
+    if location == 'Multiple'
+      $('.location-conditional-fields').slideUp()
+      $('#conference_venue').val('Multiple')
+
   # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date,
   # But it shouldn't change the name once it's been set. A gon flag is used to wave it off.
   set_conference_name = ->
@@ -13,10 +25,16 @@ $ ->
     $("#conference_name").val(name)
     $('#conference_name').css("background-color", "yellow")
 
-  set_conference_name() # do it once on page load
+  set_conference_name() # do it once on page load - TODO pull this from the pipeline and put it on the page where it needs to run
 
   $("#conference_organizer_id").change ->
     set_conference_name()
+
+  set_location_fields($('#conference_location').val())
+
+  # Use the location selector to set the venue and show/hide appropriate fields
+  $('#conference_location').change ->
+    set_location_fields($(this).val())
 
   # Make Start/End date a little less tedious by setting the end dates to the start dates as selected.
   # Then the end date selectors should be in the right general range.

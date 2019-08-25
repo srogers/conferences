@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_20_022526) do
+ActiveRecord::Schema.define(version: 2019_08_24_183525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,6 +135,12 @@ ActiveRecord::Schema.define(version: 2019_08_20_022526) do
     t.string "handout"
     t.string "sortable_name"
     t.text "editors_notes"
+    t.date "date"
+    t.string "venue"
+    t.string "venue_url"
+    t.string "city"
+    t.string "state"
+    t.string "country"
     t.index ["conference_id"], name: "index_presentations_on_conference_id"
     t.index ["creator_id"], name: "index_presentations_on_creator_id"
   end

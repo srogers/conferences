@@ -203,6 +203,22 @@ module ApplicationHelper
     %w(a e i o u).include?(word[0].downcase) ? "an #{word}" : "a #{word}"
   end
 
+  # Shows a complete location for an Event or Presentation - country_format can be false, :short, or :full
+  def location(thing, country_format=:short)
+    return 'N/A' unless thing.present? && thing.respond_to?(:venue) && thing.venue.present?
+    return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
+
+    if thing.venue_url.present?
+      elements =  [link_to(@conference.venue, @conference.venue_url, target: '_blank')]
+    else
+      elements = [thing.venue]
+    end
+    if thing.location.present?
+      elements << ['––', location_with_non_us_country(thing, country_format)]
+    end
+    elements.join(' ').html_safe
+  end
+
   # shows the location and includes the long or short country name when it's not "US" - takes a User or Conference
   def location_with_non_us_country(thing, format=:short)
     thing.location(thing.country == 'US' ? false : format)
