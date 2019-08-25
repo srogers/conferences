@@ -20,13 +20,13 @@ module ConferencesHelper
     end
   end
 
-  def conference_chart_title
+  def conference_chart_title(pivot)
     if params[:user_id].present?
-       title("Your #{ current_event_type.pluralize } by Year")
+       title("Your #{ current_event_type.pluralize } by #{pivot}")
     elsif params[:search_term].present?
-      title("#{ current_event_type.pluralize } by Year For #{ params[:search_term]}")
+      title("#{ current_event_type.pluralize } by #{pivot} For #{ params[:search_term]}")
     else
-      title("#{ current_event_type.pluralize} by Year")
+      title("#{ current_event_type.pluralize} by #{pivot}")
     end
   end
 
