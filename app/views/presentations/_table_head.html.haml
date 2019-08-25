@@ -2,6 +2,8 @@
   %th
     = link_to 'Name', presentations_path(sort: '+sortable_name')
     = ' / Speaker(s) / Topics'
+  -if @conference.present? && @conference.multi_venue?
+    %th Location
   - if params[:heart].present?
     %th Needs
   %th Media
