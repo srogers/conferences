@@ -13,8 +13,9 @@
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %td
-      - if @conference.virtual?
+      - if @conference.virtual? || @conference.multi_venue?
         = pretty_date presentation.date
+        %br
       - if @conference.multi_venue?
         = presentation.venue
         %br
