@@ -6,7 +6,17 @@
 = form_for @user_session do |f|
   .row
     .col-md-6
-      = render 'shared/errors', object: @user_session
+      -# we use a login-specific message here, instead of 'shared/errors'
+      - if @user_session.errors.any?
+        .panel.panel-warning.errors
+          .panel-heading
+            %h5
+              %i.glyphicon.glyphicon-exclamation-sign
+                Unable to log in
+            %ul.panel-body
+              -#- @user_session.errors.full_messages.each do |msg|
+              -#  %li= msg
+              User name or password are incorrect
 
       .form-group
         = f.label :email
