@@ -1,6 +1,6 @@
 - title 'Attendees'
 
-= render partial: 'conferences/control_bar'
+= render partial: 'events/control_bar'
 
 .row
   .col-md-12
@@ -17,4 +17,4 @@
 
 .row
   .col-md-12
-    %p= link_to "Done", conference_path(params[:conference_id]), :class => "btn btn-secondary"
+    %p= link_to "Done", event_path(params[:conference_id]), :class => "btn btn-secondary"

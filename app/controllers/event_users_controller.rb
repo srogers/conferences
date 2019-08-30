@@ -1,4 +1,4 @@
-class ConferenceUsersController < ApplicationController
+class EventUsersController < ApplicationController
 
   before_action :require_user
 
@@ -7,7 +7,7 @@ class ConferenceUsersController < ApplicationController
   def index
     # Users see their own or someone else's conferences in conference/index, where they are searchable as normal.
     # This controller only handles the user side--listing users for a conference.
-    redirect_to conferences_path and return unless params[:conference_id]
+    redirect_to events_path and return unless params[:conference_id]
     @conference = Conference.find(params[:conference_id])
     @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(10)
   end
@@ -17,11 +17,11 @@ class ConferenceUsersController < ApplicationController
     @conference_user.user_id = current_user.id unless current_user.admin? # it's all about you unless you're an admin
     @conference_user.creator_id = current_user.id
     if @conference_user.save
-      redirect_to conference_path(@conference_user.conference_id)
+      redirect_to event_path(@conference_user.conference_id)
     else
-      flash[:error] = 'The user/conference association could not be saved.'
-      logger.debug "Conference Speaker save failed: #{ @conference_user.errors.full_messages }"
-      redirect_to conferences_path
+      flash[:error] = 'The user/event association could not be saved.'
+      logger.debug "Event Speaker save failed: #{ @conference_user.errors.full_messages }"
+      redirect_to events_path
     end
   end
 
@@ -30,7 +30,7 @@ class ConferenceUsersController < ApplicationController
     if @conference_user
       conference_id = @conference_user.conference_id
       @conference_user.destroy if @conference_user.user_id == current_user.id || current_user.admin?
-      redirect_to conference_path(conference_id)
+      redirect_to event_path(conference_id)
     else
       render body: nil
     end

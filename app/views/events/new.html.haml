@@ -7,6 +7,6 @@
 
 .row
   .col-md-12
-    = simple_form_for @conference do |f|
+    = simple_form_for @conference, url: events_path do |f|
       = render :partial => "form_fields", :locals => {:f => f}
-      = save_or_cancel f, conferences_path, 'Create'
+      = save_or_cancel f, events_path, 'Create'

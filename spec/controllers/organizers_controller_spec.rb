@@ -138,7 +138,7 @@ RSpec.describe OrganizersController, type: :controller do
       }.to change(Organizer, :count).by(-1)
     end
 
-    context "with an organizer owning conferences" do
+    context "with an organizer owning events" do
 
       let!(:conference) { create :conference, organizer_id: organizer.id }
 

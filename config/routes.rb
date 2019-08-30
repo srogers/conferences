@@ -21,14 +21,14 @@ Rails.application.routes.draw do
   end
 
   resource  :account
-  resources :conferences do
+  resources :events do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
       get :chart              # queries the data, renders the chart
       get :upcoming           # for the landing page
     end
   end
-  resources :conference_users, only: [:index, :create, :destroy]
+  resources :event_users, only: [:index, :create, :destroy]
   resources :documents do
     member do
       get :download
@@ -65,7 +65,7 @@ Rails.application.routes.draw do
       patch :approve
     end
     collection do
-      get   :conferences
+      get   :events
       get   :names
       get   :summary
       get   :supporters

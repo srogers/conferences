@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ConferenceUsersController, type: :controller do
+RSpec.describe EventUsersController, type: :controller do
   before do
     pretend_to_be_authenticated
     allow(@current_user).to receive(:id).and_return 1
@@ -22,7 +22,7 @@ RSpec.describe ConferenceUsersController, type: :controller do
     end
 
     it "redirects to the conference show page" do
-      expect(response).to redirect_to conference_path(1)
+      expect(response).to redirect_to event_path(1)
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe ConferenceUsersController, type: :controller do
     end
 
     it "redirects to the conference show page" do
-      expect(response).to redirect_to conference_path(1)
+      expect(response).to redirect_to event_path(1)
     end
   end
 
@@ -52,11 +52,11 @@ RSpec.describe ConferenceUsersController, type: :controller do
     let!(:conference_user) { create :conference_user, user_id: user.id, conference_id: conference.id }
 
     context "without a conference_id" do
-      it "redirects to conferences listing" do
+      it "redirects to events listing" do
         get :index, params: { user_id: user.id }
 
         expect(assigns(:conferences)).to be_nil
-        expect(response).to redirect_to(conferences_path)
+        expect(response).to redirect_to(events_path)
       end
 
       context "when user has disabled show_attendance preference" do

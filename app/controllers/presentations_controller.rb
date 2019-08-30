@@ -75,7 +75,7 @@ class PresentationsController < ApplicationController
     if params[:page].present?
       @return_path = presentations_path(helpers.nav_params)                                   # clicked show from conferences listing
     elsif @presentation.conference_id.present?
-      @return_path = conference_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
+      @return_path = event_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
     else
       @return_path = presentations_path(helpers.nav_params)
     end
@@ -168,7 +168,7 @@ class PresentationsController < ApplicationController
     conference = @presentation.conference
     @presentation.destroy
 
-    redirect_to conference.present? ? conference_path(conference) : presentations_path
+    redirect_to conference.present? ? event_path(conference) : presentations_path
   end
 
   private

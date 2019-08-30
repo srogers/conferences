@@ -11,8 +11,8 @@ module ApplicationHelper
   # Returns true when the selected tab name is active, which we wheedle out of the controller and action names.
   def current_tab?(name)
     current = case name
-    when 'conferences'
-      controller_name == 'conferences' || controller_name == 'conference_users'
+    when 'events'
+      controller_name == 'events' || controller_name == 'conference_users'
     when 'speakers'
       controller_name == 'speakers'
     when 'presentations'
@@ -94,7 +94,7 @@ module ApplicationHelper
     # and copy link buttons don't really make sense.
     if @conference.present?
       copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
-      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ conference_url(@conference) }", class: "btn btn-xs btn-default", target: "_blank") : ''
+      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ event_url(@conference) }", class: "btn btn-xs btn-default", target: "_blank") : ''
     elsif @presentation.present?
       copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
       admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ presentation_url(@presentation) }", class: "btn btn-xs btn-default", target: "_blank") : ''

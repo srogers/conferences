@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
-  before_action :require_admin, except: [:new, :create, :supporters, :summary, :conferences]   # new, create, and supporters are open
-  before_action :require_user,  only: [:summary, :conferences]
+  before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
+  before_action :require_user,  only: [:summary, :events]
 
   def index
     @require_account_approval = Setting.require_account_approval?
@@ -64,7 +64,7 @@ class UsersController < ApplicationController
     @notifications = @user.notifications          # notifications sent
   end
 
-  def conferences
+  def events
     @conferences = current_user.conferences.order('start_date DESC')
   end
 

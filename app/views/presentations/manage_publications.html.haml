@@ -6,7 +6,7 @@
     %h5
     - if @presentation.conference.present?
       presented at
-      = link_to @presentation.conference_name, conference_path(@presentation.conference)
+      = link_to @presentation.conference_name, event_path(@presentation.conference)
     - else
       %i Conference not yet identified
 

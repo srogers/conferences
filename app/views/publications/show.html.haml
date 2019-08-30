@@ -51,7 +51,7 @@
           = link_to presentation.name, presentation_path(presentation)
           - if presentation.conference.present?
             at
-            = link_to presentation.conference_name, conference_path(presentation.conference)
+            = link_to presentation.conference_name, event_path(presentation.conference)
           = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
           - if can?(:edit, @publication)
             = link_to icon('fas', 'unlink', :class => 'fa-fw'), presentation_publication_path(presentation_publication), :method => :delete, :post => true, class: 'text-danger'

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ConferencesController, type: :controller do
+RSpec.describe EventsController, type: :controller do
   fixtures :roles
   fixtures :settings
 
@@ -36,32 +36,32 @@ RSpec.describe ConferencesController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # ConferencesController. Be sure to keep this updated too.
+  # EventsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "when listing conferences" do
-    it "assigns all conferences as @conferences" do
+  describe "when listing events" do
+    it "assigns all events as @conferences" do
       get :index, params: {}
       expect(assigns(:conferences)).to eq([conference])
     end
 
     context "with a search term" do
-      it "finds conferences with organizer abbreviation partial matching" do
+      it "finds events with organizer abbreviation partial matching" do
         get :index, params:{ search_term: 'WOM' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "finds conferences with conference name matching" do
+      it "finds events with conference name matching" do
         get :index, params:{ search_term: 'Test Conference' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "does not find conferences with organizer name matching" do
+      it "does not find events with organizer name matching" do
         get :index, params:{ search_term: 'Organization' }               # see organizer create above
         expect(assigns(:conferences)).to be_empty
       end
 
-      it "it doesn't find non-matching conferences" do
+      it "it doesn't find non-matching events" do
         get :index, params:{ search_term: 'Zebras' }
         expect(assigns(:conferences)).to be_empty
       end
@@ -73,7 +73,7 @@ RSpec.describe ConferencesController, type: :controller do
           let(:conference)            { create :conference, name: "My Conference" }
           let!(:this_conference_user) { create :conference_user, user_id: @current_user.id, conference_id: conference.id }
 
-          it "lists the user's conferences" do
+          it "lists the user's events" do
             get :index, params:{ user_id: @current_user.id }
 
             expect(assigns(:conferences)).to eq([conference])
@@ -90,7 +90,7 @@ RSpec.describe ConferencesController, type: :controller do
 
             before { other_user.update show_attendance: false }
 
-            it "lists all conferences" do
+            it "lists all events" do
               get :index, params:{ user_id: other_user.id }
 
               expect(assigns(:conferences)).to match_array([conference, other_conference])
@@ -106,7 +106,7 @@ RSpec.describe ConferencesController, type: :controller do
 
               before { allow(@current_user).to receive(:admin?).and_return true }
 
-              it "shows the user's conferences" do
+              it "shows the user's events" do
                 get :index, params: { user_id: other_user.id }
 
                 expect(assigns(:conferences)).to eq([other_conference])
@@ -119,7 +119,7 @@ RSpec.describe ConferencesController, type: :controller do
 
             before { other_user.update show_attendance: true }
 
-            it "lists the user's conferences" do
+            it "lists the user's events" do
               get :index, params:{ user_id: other_user.id }
 
               expect(assigns(:conferences)).to eq([other_conference])
@@ -132,12 +132,12 @@ RSpec.describe ConferencesController, type: :controller do
     end
 
     context "with an auto-complete search term" do
-      it "finds conferences with years matching the search term" do
+      it "finds events with years matching the search term" do
         get :index, params:{ q: '2005' }
         expect(assigns(:conferences)).to eq([conference])
       end
 
-      it "it doesn't find non-matching conferences" do
+      it "it doesn't find non-matching events" do
         get :index, params:{ q: '2003' }
         expect(assigns(:conferences)).to be_empty
       end
@@ -207,7 +207,7 @@ RSpec.describe ConferencesController, type: :controller do
 
       it "redirects to the created conference" do
         post :create, params: {conference: valid_attributes}
-        expect(response).to redirect_to(Conference.last)
+        expect(response).to redirect_to(event_path(Conference.last))
       end
     end
 
@@ -239,7 +239,7 @@ RSpec.describe ConferencesController, type: :controller do
       end
 
       it "redirects to the conference" do
-        expect(response).to redirect_to(conference)
+        expect(response).to redirect_to(event_path(conference))
       end
     end
 
@@ -285,9 +285,9 @@ RSpec.describe ConferencesController, type: :controller do
       end
     end
 
-    it "redirects to the conferences list" do
+    it "redirects to the events list" do
       delete :destroy, params: {id: conference.to_param}
-      expect(response).to redirect_to(conferences_url)
+      expect(response).to redirect_to(events_path)
     end
   end
 end

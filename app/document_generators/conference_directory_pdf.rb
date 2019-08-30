@@ -93,7 +93,7 @@ class ConferenceDirectoryPdf < Prawn::Document
     table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
     Conference.all.order('start_date DESC').each do |conference|
       table_data << [
-        "<link href='#{ conference_url(conference) }'>#{ conference.name }</link>",
+        "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
         conference.date_span,
         conference.location
       ]
@@ -112,7 +112,7 @@ class ConferenceDirectoryPdf < Prawn::Document
       table_data << [
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
         linked_speaker_names(presentation),
-        presentation.conference.present? ? "<link href='#{ conference_url(presentation.conference) }'>#{ presentation.conference_name }</link>" : presentation.conference_name,
+        presentation.conference.present? ? "<link href='#{ event_url(presentation.conference) }'>#{ presentation.conference_name }</link>" : presentation.conference_name,
         linked_format_icons(presentation)
       ]
     end
