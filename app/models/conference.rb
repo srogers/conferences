@@ -16,9 +16,10 @@ class Conference < ApplicationRecord
 
   CONFERENCE = 'Conference'.freeze
   DEBATE     = 'Debate'.freeze
+  INTERVIEW  = 'Interview'.freeze
   SERIES     = 'Series'.freeze
   SPEECH     = 'Speech'.freeze
-  EVENT_TYPES = [CONFERENCE, DEBATE, SERIES, SPEECH, ].freeze
+  EVENT_TYPES = [CONFERENCE, DEBATE, INTERVIEW, SERIES, SPEECH, ].freeze
 
   validates :event_type, inclusion: { in: EVENT_TYPES, message: "%{value} is not a recognized event type" }
   validates :name, :organizer_id, :start_date, :end_date, presence: true
