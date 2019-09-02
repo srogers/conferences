@@ -117,6 +117,42 @@ RSpec::Matchers.define :be_redirected do
   end
 end
 
+RSpec::Matchers.define :be_moved_permanently do
+  match do |actual|
+    actual.status == 301
+  end
+
+  failure_message do |actual|
+    "expected HTTP success status 301 Moved Permanently but got #{actual.status} instead."
+  end
+
+  failure_message_when_negated do |actual|
+    "expected HTTP status would not be success (#{actual.status})"
+  end
+
+  description do
+    "be HTTP status redirect 301 Moved Permanently"
+  end
+end
+
+RSpec::Matchers.define :be_moved_temporarily do
+  match do |actual|
+    actual.status == 302
+  end
+
+  failure_message do |actual|
+    "expected HTTP success status 302 Moved Temporarily but got #{actual.status} instead."
+  end
+
+  failure_message_when_negated do |actual|
+    "expected HTTP status would not be success (#{actual.status})"
+  end
+
+  description do
+    "be HTTP status redirect 302 Moved Temporarily"
+  end
+end
+
 RSpec::Matchers.define :be_found do
   match do |actual|
     actual.status == 302

@@ -14,6 +14,12 @@ Rails.application.routes.draw do
   get '/register/:activation_code', to: 'activations#new',    as: :registration
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
+  # Provide redirects for legacy conference routes
+  get "/conferences",         to: redirect(QueryRedirector.new("/events"))
+  get 'conferences/upcoming', to: redirect('/events/upcoming')
+  get "/conferences/chart",   to: redirect(QueryRedirector.new("/events/chart"))
+  get 'conferences/:slug',    to: redirect('/events/%{slug}')
+
   namespace :api do
     resources :presentations
     resources :publications
