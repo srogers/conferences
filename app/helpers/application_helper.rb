@@ -73,11 +73,26 @@ module ApplicationHelper
     { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id] }.compact
   end
 
+  def url_by_class(object)
+    if object.is_a? Conference
+      event_url(object)
+    elsif object.is_a? Presentation
+      presentation_url(object)
+    elsif object.is_a? Publication
+      publication_url(object)
+    elsif object.is_a? Speaker
+      speaker_url(object)
+    else
+      false
+    end
+  end
+
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.
   def fb_social_bar(options={})
-    return unless @conference.present? || @presentation.present?
+    @sharable_object = @conference || @presentation || @publication || @speaker || false
+
     og_url         = options[:url]          || request.base_url + request.path
     og_type        = options[:type]         || "article"
     og_title       = options[:title]
@@ -92,16 +107,20 @@ module ApplicationHelper
     fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
     # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
-    if @conference.present?
-      copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
-      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ event_url(@conference) }", class: "btn btn-xs btn-default", target: "_blank") : ''
-    elsif @presentation.present?
-      copy_link_button = link_to(icon('far', 'copy', "Copy Link"), '#', :class => "btn btn-primary btn-xs copy_link_to_clipboard")
-      admin_dashboard_button =  current_user.try(:admin?) && Rails.env.production? ? link_to(icon('facebook', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ presentation_url(@presentation) }", class: "btn btn-xs btn-default", target: "_blank") : ''
+    if @sharable_object.present?
+      copy_link_button = link_to(icon('far', 'copy', class: 'fa-md fa-fw'), '#', :class => "mr-3 btn btn-primary btn-sm copy_link_to_clipboard", title: 'Copy page URL')
+      admin_dashboard_button =  if current_user.try(:admin?) && Rails.env.production?
+        link_to(icon('fab', 'facebook-square', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ url_by_class(@sharable_object) }", class: "btn btn-sm btn-default", target: "_blank")
+      elsif current_user.try(:admin?)
+        link_to(icon('fab', 'facebook-square', "Sharing Debug"), "#", class: "btn btn-sm btn-default disabled", title: 'only available in staging and production')
+      else
+        ''
+      end
     else
       copy_link_button = ''
       admin_dashboard_button = ''
     end
+
     # Wrap the FaceBook like/share buttons and the social_sharing gem buttons in one DIV of fixed height, so the page
     # content won't bounce down when FB responds with the share/like button content.
     content_tag :div, id: "social-sharing-container" do
