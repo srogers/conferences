@@ -79,3 +79,7 @@
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
           = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
           = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+
+.row
+  .col-md-12
+    %p= fb_social_bar
