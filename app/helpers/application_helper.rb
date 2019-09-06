@@ -73,6 +73,38 @@ module ApplicationHelper
     { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id] }.compact
   end
 
+  # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
+  # ASC, DESC, and no sort. Set defaults in the controller, not here.
+  def params_with_sort(expression)
+    if params[:sort].present?
+      if params[:sort].from(1) == expression
+        # Reverse the direction of the existing sort, or remove it
+        if params[:sort][0] == '+'
+          nav_params.merge(sort: '-' + expression, page: 1)
+        else
+          nav_params.merge(sort: nil, page: 1)
+        end
+      else
+        # We're changing to the default sort on a new column
+        nav_params.merge(sort: '+' + expression, page: 1)
+      end
+    else
+      # Go from no sort to the default sort on the column
+      nav_params.merge(sort: '+' + expression, page: 1)
+    end
+  end
+
+  # Use this in the column header to build a clickable sorter that shows the current sort direction
+  def sorting_header(text, path_helper, expression, icon='sort-alpha')
+    new_sort = params_with_sort(expression)
+    if params && params[:sort].present? && params[:sort].from(1) == expression
+      sort_indicator = params[:sort][0] == '-' ? icon('fas', icon + '-up', :class => 'fa-fw')  : icon('fas', icon + '-down', :class => 'fa-fw')
+    else
+      sort_indicator = ''
+    end
+    (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+  end
+
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.
@@ -163,14 +195,14 @@ module ApplicationHelper
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
       content = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
       content << hidden_field_tag(:per, params[:per] || initial_per_page)
-      content << hidden_field_tag(:user_id, params[:user_id])
+      content << hidden_field_tag(:user_id, params[:user_id]) if params[:user_id].present?
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         icon('fas', 'search', class: 'fa-sm')
       end
       if params[:search_term].present? || params[:tag].present? || params[:heart].present?
-        # For continuity, certain params need to be preserved in the "All" button
-        index_path_with_params = controller.send("#{index_name}_path", params.permit(:heart, :per, :user_id, :conference_id))
+        # For continuity, keep existing params and just eliminate :search_term, :tag, :heart, and :page
+        index_path_with_params = controller.send("#{index_name}_path", nav_params.merge(search_term: nil, tag: nil, heart: nil, page: 1))
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
       content << buttons

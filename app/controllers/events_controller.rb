@@ -8,6 +8,7 @@ class EventsController < ApplicationController
   include ConferencesChart
   include SpeakersChart
   include ConferencesHelper
+  include Sortability
 
   def index
     # This handles "My Events" and the ability to list events attended by other users
@@ -23,7 +24,8 @@ class EventsController < ApplicationController
       @conferences = Conference
     end
 
-    @conferences = @conferences.includes(:organizer, :presentations).order('start_date DESC')
+    # default_sort('-start_date')
+    @conferences = @conferences.includes(:organizer, :presentations).order(params_to_sql('-start_date'))
     per_page = params[:per] || 10 # autocomplete specifies :per
     # This structure separates out the :q from everything else. It's one or the other, but not both.
     if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
@@ -100,7 +102,7 @@ class EventsController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    @presentations = @conference.presentations.order(sort_by_params_or_default "presentations.sortable_name ASC")
+    @presentations = @conference.presentations.order(params_to_sql "+presentations.sortable_name")
     @user_presentations = current_user.user_presentations if current_user.present?
   end
 

@@ -5,6 +5,7 @@ class SpeakersController < ApplicationController
   authorize_resource  # friendly_find is incompatible with load_resource
 
   include SpeakersChart
+  include Sortability
 
   def index
     @speakers = Speaker.includes(:presentations).order(:sortable_name)

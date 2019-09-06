@@ -36,21 +36,6 @@ class ApplicationController < ActionController::Base
       "GB", # United Kingdom
   ]
 
-  def sort_by_params_or_default(default)
-    if params[:sort].present?
-      direction = case params[:sort].first
-      when '+' then ' ASC'
-      when '-' then ' DESC'
-      else
-        ' DESC'
-      end
-      column = ['+','-'].include?(params[:sort][0]) ? params[:sort].from(1) : params[:sort]
-      return column + direction
-    else
-      return default
-    end
-  end
-
   def event_type_or_wildcard
     params[:event_type].present? ? params[:event_type] : '%'
   end

@@ -1,6 +1,6 @@
 %tr
   %th
-    = link_to 'Name', presentations_path(nav_params.merge(sort: '+sortable_name'))
+    = link_to 'Name', presentations_path(nav_params.merge(sort: '+sortable_name', page: 1))
     = ' / Speaker(s) / Topics'
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %th

@@ -1,11 +1,11 @@
 -# show uses this when listing presentations for an event. The heading links are different, so sortability works correctly.
 %tr
   %th
-    = link_to 'Name', event_path(@conference, nav_params.merge(sort: '+sortable_name'))
+    = link_to 'Name', event_path(@conference, nav_params.merge(sort: '+sortable_name', page: 1))
     = ' / Speaker(s) / Topics'
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %th
-      = [@conference.virtual? || @conference.multi_venue? ? link_to('Date', event_path(@conference, nav_params.merge(sort: '+date'))) : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ').html_safe
+      = [@conference.virtual? || @conference.multi_venue? ? link_to('Date', event_path(@conference, nav_params.merge(sort: '+date', page: 1))) : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ').html_safe
   - if params[:heart].present?
     %th Needs
   %th Media
