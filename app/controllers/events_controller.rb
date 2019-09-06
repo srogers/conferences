@@ -100,7 +100,7 @@ class EventsController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    @presentations = @conference.presentations.order("presentations.sortable_name")
+    @presentations = @conference.presentations.order(sort_by_params_or_default "presentations.sortable_name ASC")
     @user_presentations = current_user.user_presentations if current_user.present?
   end
 
