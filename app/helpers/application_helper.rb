@@ -311,7 +311,9 @@ module ApplicationHelper
     elsif object.is_a? Presentation
       presentation_url(object)
     elsif object.is_a? Publication
-      publication_url(object)
+      # Not every publication type has a URL - in that case, just use the site page as the URL.
+      # This determines the source of the FB share preview image, but the click-through always goes to the shared page.
+      object.url || publication_url(object)
     elsif object.is_a? Speaker
       speaker_url(object)
     else
