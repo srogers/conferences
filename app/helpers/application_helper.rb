@@ -79,8 +79,10 @@ module ApplicationHelper
     if params[:sort].present?
       if params[:sort].from(1) == expression
         # Reverse the direction of the existing sort, or remove it
-        if params[:sort][0] == '+'
+        if ['+', '>'].include? params[:sort][0]
           nav_params.merge(sort: '-' + expression, page: 1)
+        elsif params[:sort][0] == '<'
+          nav_params.merge(sort: '#' + expression, page: 1) # this will be sent in the header click and neutralize the default
         else
           nav_params.merge(sort: nil, page: 1)
         end
@@ -97,7 +99,8 @@ module ApplicationHelper
   # Use this in the column header to build a clickable sorter that shows the current sort direction
   def sorting_header(text, path_helper, expression, icon='sort-alpha')
     new_sort = params_with_sort(expression)
-    if params && params[:sort].present? && params[:sort].from(1) == expression
+    if params[:sort].present? && params[:sort].from(1) == expression
+      logger.debug "params[:sort] = #{ params[:sort]}"
       sort_indicator = params[:sort][0] == '-' ? icon('fas', icon + '-up', :class => 'fa-fw')  : icon('fas', icon + '-down', :class => 'fa-fw')
     else
       sort_indicator = ''

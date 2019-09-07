@@ -10,13 +10,21 @@ module Sortability
     params[:sort] = expression if params[:sort].blank?
   end
 
-  # Builds the current sort SQL based on a param string like: [+,-]expression
+  # Builds the current sort SQL based on a param string like: [<,>]expression.
+  # default DESC and ASC are indicated here by [<, >] and in header clicks by [-, +] because we need to distinguish default
+  # sort from advancing the sort with a header click in order for cycling to work in the transition from DESC to nothing
+  # when DESC is the default.
   # The sort param can only be a single expression or column. Can't do multi-sort. That doesn't fit with the column select UI.
   def params_to_sql(default=nil)
     if params[:sort].present?
-      sqlize_sort_param(params[:sort])
+      if params[:sort].first == '#'  # this is the case where a default DESC sort overrides the default to cycle to no sort
+        params[:sort] = ''
+        return nil
+      else
+        sqlize_sort_param(params[:sort])
+      end
     else
-      params[:sort] = default     # awkward direct tweaking of params - but needed to make this stick and flow up
+      params[:sort] = default  # awkward direct tweaking of params - but needed to make this stick and flow up
       sqlize_sort_param(default)
     end
   end
@@ -27,12 +35,12 @@ module Sortability
   # The expression can be any legit SQL, but only about a single column - not column_1,column_2
   def sqlize_sort_param(expression)
     direction = case expression.first
-    when '+' then ' ASC'
-    when '-' then ' DESC'
+    when '+', '>' then ' ASC'
+    when '-', '<' then ' DESC'
     else
       ' DESC'
     end
-    column = ['+','-'].include?(expression[0]) ? expression.from(1) : expression
+    column = ['+','-','<',">"].include?(expression[0]) ? expression.from(1) : expression
     return sanitize_sql_for_order column + direction
   end
 end

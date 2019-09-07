@@ -1,12 +1,9 @@
 %tr
   %th
-    =# link_to current_event_type, events_path(params_with_sort('conferences.name'))
     = sorting_header current_event_type, :events_path, 'conferences.name'
     = '/'
-    -#= link_to 'Date', events_path(params_with_sort('conferences.start_date'))
-    = sorting_header 'Date', :events_path, 'conferences.start_date'
+    = sorting_header 'Date', :events_path, 'conferences.start_date', 'sort-numeric'
   %th
-    -#= link_to 'Location', events_path(params_with_sort('concat(conferences.city, conferences.state)'))
     = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
   %th{ style: 'text-align: center' } Program
   - if can? :edit, Conference

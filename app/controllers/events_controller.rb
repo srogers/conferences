@@ -24,8 +24,7 @@ class EventsController < ApplicationController
       @conferences = Conference
     end
 
-    # default_sort('-start_date')
-    @conferences = @conferences.includes(:organizer, :presentations).order(params_to_sql('-conferences.start_date'))
+    @conferences = @conferences.includes(:organizer, :presentations).order(params_to_sql('<conferences.start_date'))
     per_page = params[:per] || 10 # autocomplete specifies :per
     # This structure separates out the :q from everything else. It's one or the other, but not both.
     if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
