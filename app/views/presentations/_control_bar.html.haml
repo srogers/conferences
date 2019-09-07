@@ -14,7 +14,7 @@
         %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
           = link_to 'Topics', tags_presentations_path, class: "nav-link"
 
-        %li.nav-item{class: params[:sort].present? ? 'active' : ''}
+        %li.nav-item{class: params[:sort] == '-created_at' ? 'active' : ''}
           = link_to 'Latest', presentations_path(sort: '-created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
