@@ -6,10 +6,11 @@ class PresentationsController < ApplicationController
 
   include SharedQueries         # defines uniform ways for applying search terms
   include PresentationsChart    # gets chart data
+  include Sortability
 
   def index
     @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
-    @presentations = @presentations.order(sort_by_params_or_default 'conferences.start_date DESC, presentations.sortable_name')
+    @presentations = @presentations.order(params_to_sql '-conferences.start_date')
     @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
 
@@ -75,7 +76,7 @@ class PresentationsController < ApplicationController
     if params[:page].present?
       @return_path = presentations_path(helpers.nav_params)                                   # clicked show from conferences listing
     elsif @presentation.conference_id.present?
-      @return_path = conference_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
+      @return_path = event_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
     else
       @return_path = presentations_path(helpers.nav_params)
     end
@@ -168,7 +169,7 @@ class PresentationsController < ApplicationController
     conference = @presentation.conference
     @presentation.destroy
 
-    redirect_to conference.present? ? conference_path(conference) : presentations_path
+    redirect_to conference.present? ? event_path(conference) : presentations_path
   end
 
   private

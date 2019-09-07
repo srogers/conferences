@@ -1,6 +1,6 @@
 %tr
   %th
-    = link_to 'Name', publications_path(sort: '+sortable_name')
+    = sorting_header 'Name', :publications_path, 'publications.sortable_name'
     = ' / Published / Format'
   %th Events
   - if params[:heart].present?

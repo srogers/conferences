@@ -5,6 +5,7 @@ class PublicationsController < ApplicationController
   authorize_resource
 
   include PublicationsChart         # defines uniform ways for applying search terms
+  include Sortability
 
   def index
     per_page = params[:per] || 10 # autocomplete specifies :per
@@ -33,7 +34,7 @@ class PublicationsController < ApplicationController
       end
     end
 
-    @publications = @publications.order(sort_by_params_or_default 'conferences.start_date DESC, publications.sortable_name') # because name and pub date are available through the headers
+    @publications = @publications.order(params_to_sql '-conferences.start_date')
 
     @publications = @publications.page(params[:page]).per(per_page)
 

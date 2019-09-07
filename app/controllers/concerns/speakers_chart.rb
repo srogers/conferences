@@ -6,7 +6,7 @@ module SpeakersChart
   # Builds a hash of speaker counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
   # which the endpoint can return as JSON or the action can use directly as an array.
   def presentation_count_data
-    # The search term restrictions have the same effect as conferences/index, but are applied differently since this is an aggregate query.
+    # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if params[:search_term].present?
       term = params[:search_term]
@@ -42,7 +42,7 @@ module SpeakersChart
   end
 
   def conference_count_data
-    # The search term restrictions have the same effect as conferences/index, but are applied differently since this is an aggregate query.
+    # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if params[:search_term].present?
       term = params[:search_term]

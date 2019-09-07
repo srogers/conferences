@@ -1,6 +1,6 @@
 - title 'Conferences'
 
-= render partial: 'conferences/control_bar'
+= render partial: 'events/control_bar'
 
 - if @user.present?
   .row
@@ -35,11 +35,11 @@
   .row
     .col-md-12
       %table.table
-        = render :partial => "conferences/table_head"
-        = render :partial => "conferences/conference", :collection => @conferences
+        = render :partial => "events/table_head"
+        = render :partial => "events/conference", :collection => @conferences
 
   .row
     .col-md-10
       = paginate @conferences
     .col-md-2
-      = per_page_selector conferences_path
+      = per_page_selector events_path

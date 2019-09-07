@@ -1,13 +1,14 @@
-class ConferencesController < ApplicationController
+class EventsController < ApplicationController
 
   before_action :get_conference, except: [:create, :new, :index, :chart, :upcoming, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
-  authorize_resource  # friendly_find is incompatible with load_resource
+  authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   include ConferencesChart
   include SpeakersChart
   include ConferencesHelper
+  include Sortability
 
   def index
     # This handles "My Events" and the ability to list events attended by other users
@@ -23,7 +24,7 @@ class ConferencesController < ApplicationController
       @conferences = Conference
     end
 
-    @conferences = @conferences.includes(:organizer, :presentations).order('start_date DESC')
+    @conferences = @conferences.includes(:organizer, :presentations).order(params_to_sql('<conferences.start_date'))
     per_page = params[:per] || 10 # autocomplete specifies :per
     # This structure separates out the :q from everything else. It's one or the other, but not both.
     if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
@@ -85,7 +86,7 @@ class ConferencesController < ApplicationController
       render 'years_chart'
     else
       flash[:error] = 'Unknown chart type'
-      redirect_to conferences_path
+      redirect_to events_path
     end
   end
 
@@ -100,7 +101,7 @@ class ConferencesController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    @presentations = @conference.presentations.order("presentations.sortable_name")
+    @presentations = @conference.presentations.order(params_to_sql ">presentations.sortable_name")
     @user_presentations = current_user.user_presentations if current_user.present?
   end
 
@@ -120,7 +121,7 @@ class ConferencesController < ApplicationController
     @conference.state&.strip!
     @conference.creator_id = current_user.id
     if @conference.save
-      redirect_to conference_path(@conference)
+      redirect_to event_path(@conference)
     else
       flash.now[:error] = 'Your event could not be saved.'
       get_organizer_selections
@@ -131,7 +132,7 @@ class ConferencesController < ApplicationController
 
   def update
     if @conference.update_attributes conference_params
-      redirect_to conference_path(@conference)
+      redirect_to event_path(@conference)
     else
       flash.now[:error] = 'Your event could not be saved.'
       get_organizer_selections
@@ -147,14 +148,14 @@ class ConferencesController < ApplicationController
       flash[:notice] = "That event can't be deleted because it has presentations linked to it."
     end
 
-    redirect_to conferences_path
+    redirect_to events_path
   end
 
   private
 
   def get_conference
     @conference = Conference.friendly.find params[:id]
-    redirect_to(@conference, :status => :moved_permanently) and return if params[:id] != @conference.slug
+    redirect_to(event_path(@conference, :status => :moved_permanently)) and return if params[:id] != @conference.slug
   end
 
   def get_organizer_selections

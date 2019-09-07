@@ -304,7 +304,7 @@ RSpec.describe PresentationsController, type: :controller do
       it "redirects to the parent conference" do
         presentation.update_attribute :conference_id, conference.id
         delete :destroy, params: {id: presentation.to_param}
-        expect(response).to redirect_to(conference_path(conference))
+        expect(response).to redirect_to(event_path(conference))
       end
     end
   end

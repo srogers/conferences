@@ -19,6 +19,7 @@ class UserSessionsController < ApplicationController
       flash[:success] = "Welcome back!"
       redirect_to root_path
     else
+      Rails.logger.debug "Login attempt failed #{ @user_session.errors.full_messages.join(", ") }"
       render :new
     end
   end

@@ -13,9 +13,9 @@
         - if current_user.attended? @conference
           %p
             = attendance_status_message(@conference)
-            = link_to icon('far', 'trash-alt', class: 'fa-fw'), conference_user_path(@conference_user), :method => :delete, :style => "color: #F00", :data => { :confirm => 'Remove your association with this conference?' }, :post => true
+            = link_to icon('far', 'trash-alt', class: 'fa-fw'), event_user_path(@conference_user), :method => :delete, :style => "color: #F00", :data => { :confirm => 'Remove your association with this conference?' }, :post => true
         - else
-          = simple_form_for @conference_user do |f|
+          = simple_form_for @conference_user, url: event_users_path do |f|
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
             = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
             = f.submit attendance_status_message(@conference)
@@ -44,7 +44,7 @@
       = @conference.users.length
       - if @conference.users.length > 0 && current_user
         %span.ml-3
-          = link_to icon('fas', 'users', class: 'fa-fw'), conference_users_path(conference_id: @conference.id)
+          = link_to icon('fas', 'users', class: 'fa-fw'), event_users_path(conference_id: @conference.id)
 
 - if can?(:edit, @conference) && @conference.editors_notes.present?
   .row
@@ -60,5 +60,8 @@
       %p None Yet
     - else
       %table.table
-        = render :partial => "presentations/table_head"
+        = render :partial => "presentations_table_head"
         = render :partial => "presentations/presentation", :collection =>  @presentations
+.row
+  .col-md-12
+    %p= fb_social_bar

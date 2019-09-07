@@ -1,7 +1,7 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(organizer.name, length: 40, separator: ' '), organizer_path(organizer))
   %td= organizer.series_name
-  %td= link_to organizer.abbreviation, conferences_path(search_term: organizer.abbreviation)
+  %td= link_to organizer.abbreviation, events_path(search_term: organizer.abbreviation)
 
   %td{width: 130}
     - if can? :edit, organizer

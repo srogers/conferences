@@ -7,7 +7,7 @@
     - unless controller_name == 'conferences' && params[:id].present?
       - if presentation.conference.present?
         at
-        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), conference_path(presentation.conference)
+        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
     %br
     %i= linked_tag_names(presentation)
 

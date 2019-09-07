@@ -3,6 +3,7 @@ class Publication < ApplicationRecord
   include SortableNames
 
   include PublicationsHelper # for unformatting time
+  include ApplicationHelper  # for pretty_date()
 
   has_many    :presentation_publications,   :dependent => :destroy
   has_many    :presentations, through: :presentation_publications
@@ -57,6 +58,16 @@ class Publication < ApplicationRecord
 
   def has_duration?
     HAS_DURATION.include? format
+  end
+
+  # synthesize a description for FB sharing
+  def description
+    text = ['A']
+    text << [duration, 'minute'] if duration.present?
+    text << [format, 'publication']
+    text << ['by', presentations.first.speaker_names] if presentations.present?
+    text << [ 'on', pretty_date(published_on) ] if published_on.present?
+    text.join(' ')
   end
 
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export

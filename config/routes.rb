@@ -14,6 +14,12 @@ Rails.application.routes.draw do
   get '/register/:activation_code', to: 'activations#new',    as: :registration
   get 'tags/:tag',                  to: 'presentations#index', as: :tag
 
+  # Provide redirects for legacy conference routes
+  get "/conferences",         to: redirect(QueryRedirector.new("/events"))
+  get 'conferences/upcoming', to: redirect('/events/upcoming')
+  get "/conferences/chart",   to: redirect(QueryRedirector.new("/events/chart"))
+  get 'conferences/:slug',    to: redirect('/events/%{slug}')
+
   namespace :api do
     resources :presentations
     resources :publications
@@ -21,14 +27,14 @@ Rails.application.routes.draw do
   end
 
   resource  :account
-  resources :conferences do
+  resources :events do
     collection do
       get :cities_count_by    # the chart data endpoint - returns JSON
       get :chart              # queries the data, renders the chart
       get :upcoming           # for the landing page
     end
   end
-  resources :conference_users, only: [:index, :create, :destroy]
+  resources :event_users, only: [:index, :create, :destroy]
   resources :documents do
     member do
       get :download
@@ -65,7 +71,7 @@ Rails.application.routes.draw do
       patch :approve
     end
     collection do
-      get   :conferences
+      get   :events
       get   :names
       get   :summary
       get   :supporters

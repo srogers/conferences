@@ -10,7 +10,7 @@ module SortableNames
       self.sortable_name = name
     end
     # If the name starts with a quote, or has a quote after removing fluff words, then throw that character away.
-    self.sortable_name[0] = '' if ['"', "'"].include? sortable_name[0] # probably other characters will turn up that should be included
+    self.sortable_name[0] = '' if ['"', "'", '“'].include? sortable_name[0] # probably other characters will turn up that should be included
   end
 
   # Speaker and User call this method

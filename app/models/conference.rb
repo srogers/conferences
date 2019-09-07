@@ -83,7 +83,7 @@ class Conference < ApplicationRecord
   end
 
   def url
-    Rails.application.routes.url_helpers.conference_url(self)
+    Rails.application.routes.url_helpers.event_url(self)
   end
 
   def has_program?

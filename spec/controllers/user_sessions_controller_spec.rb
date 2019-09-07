@@ -18,7 +18,7 @@ describe UserSessionsController do
   describe "when logging in" do
     before do
       @mock_valid_session = double(UserSession, save: true)
-      @mock_invalid_session = double(UserSession, save: false)
+      @mock_invalid_session = double(UserSession, save: false, errors: double(StandardError, full_messages: ['it failed']))
     end
 
     it "strips off leading spaces from user name and password" do

@@ -20,6 +20,10 @@ module ConferencesHelper
     end
   end
 
+  def activated_event_class(event_type, default_class)
+    params[:event_type] == event_type ? default_class + ' active' : default_class
+  end
+
   def conference_chart_title(pivot)
     if params[:user_id].present?
        title("Your #{ current_event_type.pluralize } by #{pivot}")

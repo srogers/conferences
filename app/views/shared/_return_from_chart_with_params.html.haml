@@ -1,6 +1,6 @@
 -# TODO - is it necessary to single out this case?
 - if false # params[:user_id].present?
-  = link_to "Done", conferences_path(user_id: params[:user_id]), :class => "btn btn-secondary float-right"
+  = link_to "Done", events_path(user_id: params[:user_id]), :class => "btn btn-secondary float-right"
 - else
   - if request.referrer&.include?('speakers')
     = link_to "Done", speakers_path(nav_params), :class => "btn btn-secondary float-right"
@@ -9,4 +9,4 @@
   - elsif request.referrer&.include?('publications')
     = link_to "Done", publications_path(nav_params), :class => "btn btn-secondary float-right"
   - else
-    = link_to "Done", conferences_path(nav_params), :class => "btn btn-secondary float-right"
+    = link_to "Done", events_path(nav_params), :class => "btn btn-secondary float-right"

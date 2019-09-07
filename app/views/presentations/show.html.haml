@@ -17,7 +17,7 @@
     - if @presentation.conference.present?
       %h5
         %b Presented at:
-        =link_to @presentation.conference.name, conference_path(@presentation.conference)
+        =link_to @presentation.conference.name, event_path(@presentation.conference)
 
     -# Don't show Venue or Date unless the presentation is attached to a multi-venue event
     - if @presentation.try(:conference).try(:multi_venue?)
@@ -77,5 +77,9 @@
         %h5 Link to a Conference
         = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-          = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: conferences_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
+          = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
           = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+
+.row
+  .col-md-12
+    %p= fb_social_bar

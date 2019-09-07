@@ -1,0 +1,11 @@
+%tr
+  %th
+    = sorting_header current_event_type, :events_path, 'conferences.name'
+    = '/'
+    = sorting_header 'Date', :events_path, 'conferences.start_date', 'sort-numeric'
+  %th
+    = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
+  %th{ style: 'text-align: center' } Program
+  - if can? :edit, Conference
+    %th{ style: 'text-align: center' } Done
+  %th
