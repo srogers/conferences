@@ -1,6 +1,8 @@
 # manages things controllers use to do sorting
 module Sortability
 
+  include ActiveRecord::Sanitization::ClassMethods
+
   # Pass in an expression before getting the current sort.
   # Use the param form '-start_date', not the SQL form 'start_date DESC'
   # Must use the same expression defined in sort_params() for column sort indicators to work.
@@ -14,6 +16,7 @@ module Sortability
     if params[:sort].present?
       sqlize_sort_param(params[:sort])
     else
+      params[:sort] = default     # awkward direct tweaking of params - but needed to make this stick and flow up
       sqlize_sort_param(default)
     end
   end
@@ -30,6 +33,6 @@ module Sortability
       ' DESC'
     end
     column = ['+','-'].include?(expression[0]) ? expression.from(1) : expression
-    return column + direction
+    return sanitize_sql_for_order column + direction
   end
 end
