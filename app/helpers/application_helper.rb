@@ -79,11 +79,11 @@ module ApplicationHelper
     if params[:sort].present?
       if params[:sort].from(1) == expression
         # Reverse the direction of the existing sort, or remove it
-        if ['+', '>'].include? params[:sort][0]
+        if ['+'].include? params[:sort][0]
           nav_params.merge(sort: '-' + expression, page: 1)
-        elsif params[:sort][0] == '<'
+        elsif ['<', '>'].include? params[:sort][0]
           nav_params.merge(sort: '#' + expression, page: 1) # this will be sent in the header click and neutralize the default
-        else
+        else # '-'
           nav_params.merge(sort: nil, page: 1)
         end
       else
