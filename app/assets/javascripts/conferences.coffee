@@ -7,7 +7,9 @@ $ ->
   set_location_fields = (location) ->
     if location == 'Physical'
       $('.location-conditional-fields').slideDown()
-      $('#conference_venue').val('')
+      if $('#conference_venue').val() == 'Virtual'
+        # clear the flag value so the user can enter something
+        $('#conference_venue').val('')
     if location == 'Virtual'
       $('.location-conditional-fields').slideUp()
       $('#conference_venue').val('Virtual')
