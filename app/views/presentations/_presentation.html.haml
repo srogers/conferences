@@ -1,15 +1,10 @@
 %tr{ :class => cycle(:even, :odd), id: "presentation_#{presentation.id}" }
   %td
-    = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
-    %br
-    by
-    = clickable_speaker_list(presentation)
-    - unless controller_name == 'conferences' && params[:id].present?
-      - if presentation.conference.present?
-        at
-        = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
-    %br
-    %i= linked_tag_names(presentation)
+    .detail-selector
+      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
+      = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
+      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true }.to_param }, title: ht_details
+      = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %td

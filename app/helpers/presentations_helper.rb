@@ -57,4 +57,12 @@ module PresentationsHelper
   def ht_unnotify
     'Click to stop notifications for this item'
   end
+
+  def ht_details
+    'Show details'
+  end
+
+  def ht_hide_details
+    'Hide details'
+  end
 end

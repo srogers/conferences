@@ -9,7 +9,7 @@ class PresentationsController < ApplicationController
   include Sortability
 
   def index
-    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
+    @presentations = Presentation.includes(:publications, :speakers, :conference)  # but currently not :conference => :organizer)
     @presentations = @presentations.order(params_to_sql '-conferences.start_date')
     @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
@@ -86,7 +86,7 @@ class PresentationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html
+      format.html { params[:details].present? ? render('presentations/details', layout: false) : render('show') } # details responds to an ajax action on the index page
       format.json { render json: PresentationSerializer.new(@presentation).serialized_json }
     end
   end
