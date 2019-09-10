@@ -5,7 +5,7 @@ module PresentationsChart
   def filter_presentations_by_term(presentations, term)
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
-    presentations.includes(:taggings => :tag).references(:taggings => :tag).references(:conferences, :speakers).
+    presentations.includes(:speakers, :taggings => :tag).references(:taggings => :tag).references(:conferences, :speakers).
       where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?",
             # base query bind vars
             event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
