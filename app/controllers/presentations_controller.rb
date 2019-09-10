@@ -13,7 +13,7 @@ class PresentationsController < ApplicationController
     @presentations = Presentation.includes(:conference)  # the simplest query base for guest user (and robots)
     # TODO why is this so terrible for "latest" query - builds a giant where clause using IN with a list of all IDs instead of a simple join
     @presentations = @presentations.includes(:speakers, :publications) if @current_user
-    @presentations = @presentations.order(params_to_sql '<conferences.start_date')
+    @presentations = @presentations.order(params_to_sql '<presentations.date')
     # This is necessary for getting the presentation status
     @user_presentations = current_user.user_presentations if current_user.present?
 

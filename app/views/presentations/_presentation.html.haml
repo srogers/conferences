@@ -6,6 +6,12 @@
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
 
+  - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
+    %td
+      = pretty_date presentation.date, style: :pretty
+      %br
+      = pretty_date presentation.created_at, style: :pretty
+
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %td
       - if @conference.virtual? || @conference.multi_venue?
