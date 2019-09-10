@@ -3,7 +3,7 @@
     .detail-selector
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
       = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
-      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true }.to_param }, title: ht_details
+      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
