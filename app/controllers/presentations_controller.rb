@@ -9,10 +9,13 @@ class PresentationsController < ApplicationController
   include Sortability
 
   def index
-    @presentations = Presentation.includes(:publications, :speakers, :conference)  # but currently not :conference => :organizer)
-    @presentations = @presentations.order(params_to_sql '-conferences.start_date')
-    @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
+    @presentations = Presentation.includes(:conference)  # the simplest query base for guest user (and robots)
+    # TODO why is this so terrible for "latest" query - builds a giant where clause using IN with a list of all IDs instead of a simple join
+    @presentations = @presentations.includes(:speakers, :publications) if @current_user
+    @presentations = @presentations.order(params_to_sql '<conferences.start_date')
+    # This is necessary for getting the presentation status
+    @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])

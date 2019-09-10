@@ -79,6 +79,7 @@ RSpec.describe SpeakersController, type: :controller do
       expect(assigns(:speaker)).to eq(speaker)
     end
 
+    # This is necessary for setting up the watchlist buttons according to current status
     it "assigns the current user's presentations" do
       get :show, params: {id: speaker.to_param}
       expect(assigns(:user_presentations)).to eq([user_presentation])
