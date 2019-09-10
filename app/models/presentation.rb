@@ -14,7 +14,7 @@ class Presentation < ApplicationRecord
   has_many    :speakers, through: :presentation_speakers
 
   has_many    :user_presentations
-  has_many    :presentations, through: :user_presentations
+  has_many    :users, through: :user_presentations  # answers: who's watching this presentation
 
   validates :name, presence: true
   validate  :unique_per_conference
