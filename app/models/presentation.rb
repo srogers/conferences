@@ -62,6 +62,17 @@ class Presentation < ApplicationRecord
     conference&.name
   end
 
+  # Brings over attributes from the conference that also live in presentation to make querying and reporting easier
+  def inherit_conference_defaults
+    return unless conference.present?
+    self.date    = conference.start_date if date.blank?
+    self.city    = conference.city if city.blank?
+    self.state   = conference.state if state.blank?
+    self.country = conference.country if country.blank?
+    self.venue   = conference.venue if venue.blank?
+    # the caller must save
+  end
+
   def tag_names
     tag_list.join(', ')
   end

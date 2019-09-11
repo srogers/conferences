@@ -117,11 +117,13 @@ class PresentationsController < ApplicationController
   end
 
   def new
-    # Pre-populate the conference when we're doing the 'create another' flow
+    # Pre-populate the event-related fields when the presentation is created in the context of an event
     @speaker = Speaker.new
     if params[:conference_id]
       @conference = Conference.find(params[:conference_id])
+      # Set the conference ID, plus inherit any of these that may show up in the form now or later.
       @presentation = Presentation.new conference_id: @conference.id
+      @presentation.inherit_conference_defaults
     else
       @presentation = Presentation.new
     end
@@ -129,6 +131,7 @@ class PresentationsController < ApplicationController
 
   def create
     @presentation = Presentation.new presentation_params
+    @presentation.inherit_conference_defaults
     # When created via the UI, a speaker is required, but the model doesn't require it.
     if presentation_speaker_params[:speaker_id].blank?
       flash.now[:error] = "Presentations require at least one speaker"
