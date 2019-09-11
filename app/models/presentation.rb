@@ -14,7 +14,7 @@ class Presentation < ApplicationRecord
   has_many    :speakers, through: :presentation_speakers
 
   has_many    :user_presentations
-  has_many    :presentations, through: :user_presentations
+  has_many    :users, through: :user_presentations  # answers: who's watching this presentation
 
   validates :name, presence: true
   validate  :unique_per_conference
@@ -60,6 +60,17 @@ class Presentation < ApplicationRecord
 
   def conference_name
     conference&.name
+  end
+
+  # Brings over attributes from the conference that also live in presentation to make querying and reporting easier
+  def inherit_conference_defaults
+    return unless conference.present?
+    self.date    = conference.start_date if date.blank?
+    self.city    = conference.city if city.blank?
+    self.state   = conference.state if state.blank?
+    self.country = conference.country if country.blank?
+    self.venue   = conference.venue if venue.blank?
+    # the caller must save
   end
 
   def tag_names

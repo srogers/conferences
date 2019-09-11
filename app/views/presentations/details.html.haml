@@ -1,0 +1,9 @@
+.details-container.ml-4{style: 'display: none'}
+  by
+  = clickable_speaker_list(@presentation)
+  - unless controller_name == 'conferences' && params[:id].present?
+    - if @presentation.conference.present? && params[:skip_event] == 'false'
+      at
+      = link_to truncate(@presentation.conference_name, length: 45, separator: ' '), event_path(@presentation.conference)
+  %br
+  %i= linked_tag_names(@presentation)

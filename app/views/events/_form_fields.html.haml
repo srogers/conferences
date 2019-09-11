@@ -2,15 +2,15 @@
 -# can get a sensible name, and the friendly URL will be based on that name.
 = f.input :organizer_id, as: 'select', collection: @organizer_selections, include_blank: false
 = f.input :event_type, as: :select, collection: Conference::EVENT_TYPES, include_blank: false
-= f.input :start_date, as: :date, start_year: 1960, end_year: Date.today.year + 1, order: [:month, :day, :year]
-= f.input :end_date, as: :date, start_year: 1960, end_year: Date.today.year + 1, order: [:month, :day, :year]
+= f.input :start_date, as: :date, start_year: 1959, end_year: Date.today.year + 1, order: [:month, :day, :year]
+= f.input :end_date, as: :date, start_year: 1959, end_year: Date.today.year + 1, order: [:month, :day, :year]
 = f.input :name, hint: "Don't change this unless absolutely necessary for clarity (e.g. special events) #{ name_blank_or_default?(@conference) ? ' -  AUTO-UPDATING' : '' }"
 = f.label :description
 = f.trix_editor :description
 .small.mb-3 Historic or organizational details specific to this event (e.g., attendance)
 = f.input :registration_url, input_html: { autocomplete: "off" }, hint: "A link where attendees can sign up"
 = f.input :program_url, input_html: { autocomplete: "off" }, hint: "A link where the schedule can be found"
-= render partial: 'shared/location', locals:  {f: f, venue: @conference.venue}
+= render partial: 'shared/location', locals:  {f: f, venue_type: @conference.venue}
 = f.input :completed, as: :boolean, hint: "Check this when all the conference's presentations have been entered."
 - if current_user.editor? || current_user.admin?
   = f.label :editors_notes, "Editor's Notes"

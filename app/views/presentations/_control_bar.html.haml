@@ -14,8 +14,8 @@
         %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
           = link_to 'Topics', tags_presentations_path, class: "nav-link"
 
-        %li.nav-item{class: params[:sort] == '-created_at' ? 'active' : ''}
-          = link_to 'Latest', presentations_path(sort: '-created_at'), class: "nav-link", title: 'Show most recently added first'
+        %li.nav-item{class: params[:sort] == '-presentations.created_at' ? 'active' : ''}
+          = link_to 'Latest', presentations_path(sort: '-presentations.created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do

@@ -65,7 +65,8 @@ class SpeakersController < ApplicationController
   end
 
   def show
-    @presentations = @speaker.presentations.includes(:conference).order('conferences.start_date DESC, presentations.sortable_name')
+    @presentations = @speaker.presentations.includes(:conference, :presentation_publications => :publication).order(params_to_sql ">presentations.sortable_name")
+    # TODO - see if there is a way to get this with an additional include
     @user_presentations = current_user.user_presentations if current_user.present?
     respond_to do |format|
       format.html

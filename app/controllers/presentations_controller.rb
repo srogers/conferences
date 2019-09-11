@@ -9,10 +9,13 @@ class PresentationsController < ApplicationController
   include Sortability
 
   def index
-    @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer)
-    @presentations = @presentations.order(params_to_sql '-conferences.start_date')
-    @user_presentations = current_user.user_presentations if current_user.present?
     per_page = params[:per] || 10 # autocomplete specifies :per
+    @presentations = Presentation.includes(:conference)  # the simplest query base for guest user (and robots)
+    # TODO why is this so terrible for "latest" query - builds a giant where clause using IN with a list of all IDs instead of a simple join
+    @presentations = @presentations.includes(:speakers, :publications) if @current_user
+    @presentations = @presentations.order(params_to_sql '<presentations.date')
+    # This is necessary for getting the presentation status
+    @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
@@ -86,7 +89,7 @@ class PresentationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html
+      format.html { params[:details].present? ? render('presentations/details', layout: false) : render('show') } # details responds to an ajax action on the index page
       format.json { render json: PresentationSerializer.new(@presentation).serialized_json }
     end
   end
@@ -114,11 +117,13 @@ class PresentationsController < ApplicationController
   end
 
   def new
-    # Pre-populate the conference when we're doing the 'create another' flow
+    # Pre-populate the event-related fields when the presentation is created in the context of an event
     @speaker = Speaker.new
     if params[:conference_id]
       @conference = Conference.find(params[:conference_id])
+      # Set the conference ID, plus inherit any of these that may show up in the form now or later.
       @presentation = Presentation.new conference_id: @conference.id
+      @presentation.inherit_conference_defaults
     else
       @presentation = Presentation.new
     end
@@ -126,6 +131,7 @@ class PresentationsController < ApplicationController
 
   def create
     @presentation = Presentation.new presentation_params
+    @presentation.inherit_conference_defaults
     # When created via the UI, a speaker is required, but the model doesn't require it.
     if presentation_speaker_params[:speaker_id].blank?
       flash.now[:error] = "Presentations require at least one speaker"

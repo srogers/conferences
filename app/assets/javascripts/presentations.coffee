@@ -15,3 +15,26 @@ $ ->
     else
       $(this).addClass('fa-rotate-90')
       $("#publication_form_container").slideDown()
+
+  # First click on the initiator fetches the data, hides the query initiator, and shows the data.
+  # Subsequent clicks just show/hide the data area and toggle the button
+  $(".detail-selector").on("ajax:success", (event, data, status, xhr) ->
+    detail_selector = $(event.currentTarget)
+    detail_selector.after xhr.responseText
+    detail_selector.children('.detail-initiator').hide()
+    detail_selector.children('.detail-hide').show()
+    detail_selector.siblings('.details-container').slideDown()
+  ).on "ajax:error", (event) ->
+    $(".detail-selector").append "<p>ERROR</p>"
+
+  $('.detail-hide').click ->
+    clicked = $(this)
+    clicked.hide()
+    clicked.siblings('.detail-show').show()
+    clicked.parent().siblings('.details-container').slideUp()
+
+  $('.detail-show').click ->
+    clicked = $(this)
+    clicked.hide()
+    clicked.siblings('.detail-hide').show()
+    clicked.parent().siblings('.details-container').slideDown()

@@ -14,11 +14,10 @@
 = f.input :handout, label: @presentation.handout.present? ? 'Change handout' : 'Add handout'
 - if @presentation.handout.present?
   = f.input :remove_handout, as: :boolean
--# Don't show Venue or Date unless the presentation is attached to a multi-venue event
-- if @presentation.try(:conference).try(:multi_venue?) || @presentation.try(:conference).try(:virtual?)
-  = f.input :date, as: :date, start_year: 1960, end_year: Date.today.year + 1, order: [:month, :day, :year]
+= f.input :date, as: :date, start_year: 1959, end_year: Date.today.year + 1, order: [:month, :day, :year]
+-# Don't show Venue unless the presentation is attached to a multi-venue event
 - if @presentation.try(:conference).try(:multi_venue?)
-  = render partial: 'shared/location', locals:  {f: f, venue: @presentation.venue}
+  = render partial: 'shared/location', locals:  {f: f, venue_type: @presentation.venue}
 - if current_user.editor? || current_user.admin?
   = f.label :editors_notes, "Editor's Notes"
   = f.trix_editor :editors_notes

@@ -39,7 +39,7 @@
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
         - if @conference.future? && @conference.registration_url.present?
           = link_to "Register", @conference.registration_url, :class => "btn btn-primary ml-3", target: '_blank'
-        - if can? :create, Presentation
+        - if !@conference.completed && can?(:create, Presentation)
           = link_to "+ Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-primary ml-3"
         - if can? :edit, @conference
           = link_to "Edit", edit_event_path(@conference, nav_params), :class => "btn btn-primary ml-3"

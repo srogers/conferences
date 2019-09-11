@@ -7,7 +7,9 @@ $ ->
   set_location_fields = (location) ->
     if location == 'Physical'
       $('.location-conditional-fields').slideDown()
-      $('#conference_venue').val('')
+      if $('#conference_venue').val() == 'Virtual'
+        # clear the flag value so the user can enter something
+        $('#conference_venue').val('')
     if location == 'Virtual'
       $('.location-conditional-fields').slideUp()
       $('#conference_venue').val('Virtual')
@@ -31,9 +33,14 @@ $ ->
     set_conference_name()
 
   set_location_fields($('#conference_location').val())
+  set_location_fields($('#presentation_location').val())
 
   # Use the location selector to set the venue and show/hide appropriate fields
   $('#conference_location').change ->
+    set_location_fields($(this).val())
+
+  # Use the location selector to set the venue and show/hide appropriate fields
+  $('#presentation_location').change ->
     set_location_fields($(this).val())
 
   # Make Start/End date a little less tedious by setting the end dates to the start dates as selected.

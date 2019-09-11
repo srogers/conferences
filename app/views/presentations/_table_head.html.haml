@@ -1,7 +1,9 @@
 %tr
+  %th= sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
   %th
-    = sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
-    = ' / Speaker(s) / Topics'
+    = sorting_header 'Presented', :presentations_path, 'presentations.date'
+    = '/'
+    = sorting_header 'Added', :presentations_path, 'presentations.created_at'
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     %th
       = [@conference.virtual? || @conference.multi_venue? ? 'Date' : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ')
