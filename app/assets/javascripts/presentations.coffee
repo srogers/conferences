@@ -32,9 +32,11 @@ $ ->
     clicked.hide()
     clicked.siblings('.detail-show').show()
     clicked.parent().siblings('.details-container').slideUp()
+    return false
 
   $('.detail-show').click ->
     clicked = $(this)
     clicked.hide()
     clicked.siblings('.detail-hide').show()
     clicked.parent().siblings('.details-container').slideDown()
+    return false
