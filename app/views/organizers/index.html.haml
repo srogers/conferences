@@ -2,13 +2,20 @@
 
 = render partial: 'control_bar'
 
-.row
-  .col-md-12
-    - if @organizers.blank?
-      %p You haven't created any organizers yet.
-    - else
+- if @organizers.blank?
+  .row
+    .col-md-12
+    %p You haven't created any organizers yet.
+
+- else
+  .row
+    .col-md-12
       %table.table
         = render :partial => "table_head"
         = render :partial => "organizer", :collection => @organizers
 
+  .row
+    .col-md-10
       = paginate @organizers
+    .col-md-2
+      = per_page_selector organizers_path
