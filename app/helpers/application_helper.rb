@@ -99,9 +99,9 @@ module ApplicationHelper
   # Use this in the column header to build a clickable sorter that shows the current sort direction
   def sorting_header(text, path_helper, expression, icon='sort-alpha')
     new_sort = params_with_sort(expression)
-    if params[:sort].present? && params[:sort].from(1) == expression
+    if params[:sort].present? && params[:sort].from(1) == expression  # Then the current sort is about this column
       logger.debug "params[:sort] = #{ params[:sort]}"
-      sort_indicator = params[:sort][0] == '-' ? icon('fas', icon + '-up', :class => 'fa-fw')  : icon('fas', icon + '-down', :class => 'fa-fw')
+      sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw')  : icon('fas', icon + '-down', :class => 'fa-fw')
     else
       sort_indicator = ''
     end
