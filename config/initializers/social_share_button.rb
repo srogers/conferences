@@ -1,5 +1,6 @@
 SocialShareButton.configure do |config|
   # The available sites:
-  # twitter facebook google_plus weibo qq douban google_bookmark delicious tumblr pinterest email linkedin wechat vkontakte xing reddit hacker_news
-  config.allow_sites = %w(twitter google_plus google_bookmark delicious tumblr reddit email)
+  # Facebook, Twitter, Douban, Google+, Weibo, QZone, Google Bookmark, Delicious, Tumblr, Pinterest, Email, LinkedIn,
+  # WeChat (Weixin), Vkontakte, Odnoklassniki, Xing, Reddit, Hacker News, Telegram, WhatsApp
+  config.allow_sites = %w(twitter google_bookmark delicious tumblr reddit email)
 end

@@ -132,8 +132,12 @@ module ApplicationHelper
       }
     end
 
+    if Setting.facebook_sharing?
+      fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
+    else
+      fb_share = ''.html_safe
+    end
     social_share_buttons = social_share_button_tag("Objectivist Conferences")
-    fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
     # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
     if @sharable_object.present?

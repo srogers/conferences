@@ -15,6 +15,11 @@ class Setting < ApplicationRecord
     return @setting.api_open
   end
 
+  def self.facebook_sharing?
+    get_settings
+    return @setting.facebook_sharing
+  end
+
   private
 
   def self.get_settings
