@@ -1,8 +1,8 @@
 %tr
   %th Status
-  %th Name
-  %th Email
-  %th Role
+  %th= sorting_header 'Name', :users_path, 'users.sortable_name'
+  %th= sorting_header 'Email', :users_path, 'lower(users.email)'
+  %th= sorting_header 'Role', :users_path, 'roles.name'
   %th
-  %th Login
+  %th= sorting_header 'Login', :users_path, 'users.last_login_at', 'sort-numeric'
   %th

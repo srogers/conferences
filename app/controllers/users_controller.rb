@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  include Sortability
+
   before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
   before_action :require_user,  only: [:summary, :events]
 
@@ -9,7 +11,7 @@ class UsersController < ApplicationController
     if params[:needs_approval].present?
       @users = User.needing_approval.order(:created_at)
     else
-      @users = User.all.order(:sortable_name)
+      @users = User.all.order(params_to_sql('>users.sortable_name'))
     end
     @users = @users.limit(params[:per]).includes(:role).page(params[:page]).per(per_page)
   end
