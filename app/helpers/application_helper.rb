@@ -70,7 +70,7 @@ module ApplicationHelper
 
   # For throwing the navigation-related params into paths, so the Done button can return to the original context.
   def nav_params
-    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id] }.compact
+    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.compact
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
