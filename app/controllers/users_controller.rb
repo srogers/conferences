@@ -98,7 +98,8 @@ class UsersController < ApplicationController
     #   redirect_to root_path and return
     # end
     @user = User.new(users_params)
-    @user.role = Role.reader unless @user.role_id.present? && current_user && current_user.admin?
+    @user.approved = true unless Setting.require_account_approval?
+    @user.role = Role.reader unless @user.role_id.present? && current_user&.admin?
     if @user.save
       @user.deliver_verify_email!(current_user)
       if current_user && current_user.admin?
