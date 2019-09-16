@@ -39,6 +39,7 @@ class DocumentWorker
       temp_file = Tempfile.new(['document', '.csv'])
 
       class_name = document.options.map{|k,v| k.to_s if v}.compact.first # for CSV, there can be only one
+      class_name = 'conference' if class_name == 'events' # patch events back to existing conferences model
       klass = class_name.classify.safe_constantize
 
       # To make this work, implement Class method #csv_header and instance method #csv_row on conference, presentation, and speaker.
