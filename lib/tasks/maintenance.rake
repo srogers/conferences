@@ -21,4 +21,27 @@ namespace :db do
     end
     puts
   end
+
+  desc 'A data maintenance task to catch up legacy accounts to the new standard where all are approved.'
+  task :approve_all_accounts => :environment do
+    puts
+    puts "collecting users . . ."
+    count = 0
+    User.find_each do |user|
+      # Don't change the state of users waiting on approval, but approve the ones already active
+      next unless user.active? and !user.approved?
+      user.approve!
+      if user.errors.present?
+        puts # get on a new line
+        puts "Failed to save user ID #{ user.id} - #{ user.errors.full_messages }"
+      end
+      count += 1
+      if count % 100 == 0
+        print "." # I'm not hung!
+        STDOUT.flush
+      end
+    end
+    puts "updated #{ count } users"
+    puts
+  end
 end
