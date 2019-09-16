@@ -2,13 +2,14 @@ class DocumentsController < ApplicationController
 
   before_action :require_user
   before_action :require_admin,  only: [:generate]
-  #before_action :get_document,   only: [:show, :edit, :update, :destroy, :download]
 
   load_resource only: [:show, :edit, :update, :destroy, :download]
   authorize_resource
 
   def index
-    @documents = Document.all.order("created_at DESC").page(params[:page])
+    @documents = Document.order("created_at DESC")
+    @documents = @documents.where("status = ?", Document::COMPLETE) unless current_user.admin?
+    @documents = @documents.page(params[:page]).per(params[:per] || 10)
   end
 
   # Saves the document with options for generation and queues it for processing

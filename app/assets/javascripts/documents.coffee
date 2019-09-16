@@ -16,14 +16,22 @@ $ ->
       $(".form-group#radio_fields input").prop('disabled', false)
 
   # Force exclusivity onto the radio fields - doesn't happen automatically because they aren't for the same attribute
-  $('#document_conferences_true').click ->
+  $('#document_events_true').click ->
     $("#document_presentations_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
+    $("#document_publications_true").prop('checked', false)
 
   $('#document_presentations_true').click ->
-    $("#document_conferences_true").prop('checked', false)
+    $("#document_events_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
+    $("#document_publications_true").prop('checked', false)
 
   $('#document_speakers_true').click ->
-    $("#document_conferences_true").prop('checked', false)
+    $("#document_events_true").prop('checked', false)
     $("#document_presentations_true").prop('checked', false)
+    $("#document_publications_true").prop('checked', false)
+
+  $('#document_publications_true').click ->
+    $("#document_events_true").prop('checked', false)
+    $("#document_presentations_true").prop('checked', false)
+    $("#document_speakers_true").prop('checked', false)

@@ -32,6 +32,9 @@
 .row
   .col-md-12
     %h2 Generated Documents
+    %p
+      The site data is available in CSV and PDF format, so you can search and sort the data the way you want, and have your own backup copy.
+      The PDF contains embedded links back to the site.
     - if @documents.blank?
       %p There are no documents
     - else
