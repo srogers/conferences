@@ -33,10 +33,10 @@ class Speaker < ApplicationRecord
     # If the sortable name has been updated manually, but the name hasn't, then treat that as a manual override.
     # This is necessary with a few unusual names. If the name is updated, sortable name will have to be updated again,
     # but that is unavoidable.
-    logger.debug "name_changed?  #{name_changed?}  sortable_name_changed? #{sortable_name_changed?}"
+    # logger.debug "name_changed?  #{name_changed?}  sortable_name_changed? #{sortable_name_changed?}"
     return if !name_changed? && sortable_name_changed?
     self.sortable_name = name.split(' ').last
-    logger.debug "sortable name now:  #{sortable_name}"
+    # logger.debug "sortable name now:  #{sortable_name}"
   end
 
   # Gives the description with any HTML tags stripped out
