@@ -17,7 +17,7 @@ RSpec.describe Document, type: :model do
     end
 
     it "sets a default format and option if nothing is set" do
-      expect(@document.name).to eq('conferences.pdf')
+      expect(@document.name).to eq('events.pdf')
     end
   end
 

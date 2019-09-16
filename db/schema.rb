@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_12_153825) do
+ActiveRecord::Schema.define(version: 2019_09_16_184016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2019_09_12_153825) do
     t.string "name"
     t.integer "creator_id"
     t.string "format"
-    t.boolean "conferences"
+    t.boolean "events"
     t.boolean "presentations"
     t.boolean "speakers"
     t.string "status"

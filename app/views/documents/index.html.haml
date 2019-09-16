@@ -13,8 +13,8 @@
             = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :publications, :as => :boolean, input_html: { class: 'ml-4' }
           .form-group#radio_fields{style: 'display: none;'}
-            = content_tag :label, for: 'document_conferences_true' do
-              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[conferences]", id: "document_conferences_true"
+            = content_tag :label, for: 'document_events_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[events]", id: "document_events_true"
               Events
             = content_tag :label, for: 'document_presentations_true' do
               = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[presentations]", id: "document_presentations_true"

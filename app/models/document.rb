@@ -53,9 +53,10 @@ class Document < ApplicationRecord
     update_column :status, FAILED
   end
 
+  # options are boolean attributes of the model that are set from the creation form.
   def options
     # Currently publications only affects CSV
-    { conferences: conferences, presentations: presentations, speakers: speakers, publications: publications }
+    { events: events, presentations: presentations, speakers: speakers, publications: publications }
   end
 
   def destroy_uploader
