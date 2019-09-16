@@ -8,7 +8,7 @@
         = simple_form_for :document, html: { class: 'form-inline' } do |f|
           = f.input :format, collection: Document::FORMATS, include_blank: false
           .form-group#checkbox_fields
-            = f.input :conferences, :as => :boolean, input_html: { class: 'ml-4' }
+            = f.input :events, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :presentations, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :publications, :as => :boolean, input_html: { class: 'ml-4' }

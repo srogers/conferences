@@ -25,7 +25,7 @@ class Document < ApplicationRecord
     # set a default option if nothing is set
     self.conferences = true if options.map{|k,v| k.to_s if v}.compact.empty?
     # Set the name based on the options - what will be in the file
-    self.name   = [options.map{|k,v| k.to_s if v}.compact.join('_'),  '.', format&.downcase].join('')
+    self.name   = [options.map{|k,v| k.to_s if v}.map{|s| s == 'conferences' ? 'events' : s }.compact.join('_'),  '.', format&.downcase].join('')
   end
 
   def working?
