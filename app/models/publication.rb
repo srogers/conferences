@@ -70,16 +70,31 @@ class Publication < ApplicationRecord
     text.join(' ')
   end
 
+  # Inefficient - use this only for PDF/CSV export. Different from the similarly named helper, which produces HTML
+  def event_names
+    presentations.map{|p| p.conference_name}.join(', ')
+  end
+
+  # Inefficient - use this only for PDF/CSV export.
+  def speaker_names
+    presentations.map{|p| p.speaker_names}.flatten.uniq.join(', ')
+  end
+
+  def publication_url
+    Rails.application.routes.url_helpers.publication_url(self)
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
   TITLES_AND_METHODS = {
-      'Conference Name'   => :conference_name,
-      'Date'              => :conference_date,
-      'Presentation Name' => :presentation_name,
+      'Name'              => :name,
+      'Event Names'       => :event_names,
+      'Speaker Names'     => :speaker_names,
+      'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,
       'Notes'             => :notes,
       'Media URL'         => :url,
-      'Presentation URL'  => :presentation_url
+      'Presentation URL'  => :publication_url
   }
 
   # DocumentWorker uses this to get the header for generated CSV output

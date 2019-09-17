@@ -25,7 +25,6 @@ class EventsController < ApplicationController
     end
 
     @conferences = @conferences.includes(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
-    per_page = params[:per] || 10 # autocomplete specifies :per
     # This structure separates out the :q from everything else. It's one or the other, but not both.
     if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
       if params[:event_type].present?
@@ -54,7 +53,7 @@ class EventsController < ApplicationController
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
       @conferences = @conferences.limit(7)
     end
-    @conferences = @conferences.page(params[:page]).per(per_page)
+    @conferences = @conferences.page(params[:page]).per(params[:per] || 10)
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|

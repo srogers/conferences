@@ -23,9 +23,9 @@ class Document < ApplicationRecord
     self.status = PENDING
     self.format = PDF if format.blank?
     # set a default option if nothing is set
-    self.conferences = true if options.map{|k,v| k.to_s if v}.compact.empty?
+    self.events = true if options.map{|k,v| k.to_s if v}.compact.empty?
     # Set the name based on the options - what will be in the file
-    self.name   = [options.map{|k,v| k.to_s if v}.compact.join('_'),  '.', format&.downcase].join('')
+    self.name = [options.map{|k,v| k.to_s if v}.compact.join('_'),  '.', format&.downcase].join('')
   end
 
   def working?
@@ -53,9 +53,10 @@ class Document < ApplicationRecord
     update_column :status, FAILED
   end
 
+  # options are boolean attributes of the model that are set from the creation form.
   def options
     # Currently publications only affects CSV
-    { conferences: conferences, presentations: presentations, speakers: speakers, publications: publications }
+    { events: events, presentations: presentations, speakers: speakers, publications: publications }
   end
 
   def destroy_uploader

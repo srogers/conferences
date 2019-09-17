@@ -1,17 +1,23 @@
 class UsersController < ApplicationController
 
+  include Sortability
+
   before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
   before_action :require_user,  only: [:summary, :events]
 
   def index
     @require_account_approval = Setting.require_account_approval?
-    per_page = params[:per] || 10 # autocomplete specifies :per
+    @users = User.includes(:role).order(params_to_sql('>users.sortable_name'))
     if params[:needs_approval].present?
-      @users = User.needing_approval.order(:created_at)
+      @users = @users.needing_approval.order(:created_at)
     else
-      @users = User.all.order(:sortable_name)
+      if params[:search_term].present?
+        term = params[:search_term]
+        @users = @users.where('users.name ILIKE ? OR users.sortable_name ILIKE ? OR users.email ILIKE ?', "#{term}%", "#{term}%", "%#{term}%")
+      end
     end
-    @users = @users.limit(params[:per]).includes(:role).page(params[:page]).per(per_page)
+
+    @users = @users.limit(params[:per]).page(params[:page]).per(params[:per] || 10)
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
@@ -92,7 +98,8 @@ class UsersController < ApplicationController
     #   redirect_to root_path and return
     # end
     @user = User.new(users_params)
-    @user.role = Role.reader unless @user.role_id.present? && current_user && current_user.admin?
+    @user.approved = true unless Setting.require_account_approval?
+    @user.role = Role.reader unless @user.role_id.present? && current_user&.admin?
     if @user.save
       @user.deliver_verify_email!(current_user)
       if current_user && current_user.admin?

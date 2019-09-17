@@ -11,6 +11,8 @@
           %li.nav-item{class: params[:needs_approval].present? ? 'active' : ''}
             =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
 
+      = index_search_form 'users' unless ['show', 'edit', 'new'].include?(action_name)
+
       - if action_name == 'show'
         = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
         -# Don't allow editing an inactive user, because it will change the perishable_token and break the user's validation link

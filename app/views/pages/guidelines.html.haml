@@ -8,12 +8,16 @@
       help keep the data consistent. Guidelines will evolve over time. Feel free to make suggestions.
 
     %h4 Events
+    The following characteristics are captured for each event.
     %ul
       %li
-        What is an event? Generally what immediately comes to mind: a multi-day conference with presentations and activities.
-        We're also including many of the single-day and weekend events, and some special events that consist of a single
-        lecture. We're also including the Ford Hall Forum talks, because they are so important to the overall flow of
-        topics. And recently, branching into webinars and other virtual events, because they're generating so much content.
+        %b Event Type
+        %br
+        Currently, events include:
+      %ul
+        - Conference::EVENT_TYPES.each do |event_type|
+          %li= event_type
+      %p See the venue section for more info related to series events.
       %li
         %b Name
         %br
@@ -35,24 +39,39 @@
         series. For example, ARI hosts a student conference AynRandCon, as well as a general summer conference OCON, plus
         occasional special events. Organizers are not expected to change very often. If you discover a new organizer, contact
         the admin.
-
-    %h4 Speakers
-    %ul
       %li
-        Try to create the speaker only once. Watch out for variations with and without the middle initial.
-      %li
-        If you're entering data from an old conference and find it necessary to create many new speakers, you can simply
-        keep the Speaker Add page open in a different browser window to save time.
+        %b Venue and location
+        %br
+        Both Events and Presentations can be assigned a venue and location. Events may be:
+        %ul
+          - Conference::LOCATION_TYPES.each do |location_type|
+            %li= location_type
+        When the event has a physical location, it will have a venue (such as a hotel or conference center), a city, state,
+        and country. The event location supersedes the presentation location unless the event is marked as a series.
+        %br
+        Series events may be virtual or have multiple locations. A virtual event and its presentations (such as the
+        = link_to 'Philosophy for Living On Earth', events_path('philosophy-for-living-on-earth')
+        webinars) have no locations.
+        %br
+        A series may have multiple locations (such as the
+        = link_to "ARI Road to a Free Society", event_path('ari-road-to-a-free-society')
+        series). In this case, each presentation has a separate date and location.
 
     %h4 Presentations
+    %p
+      Presentations represent a speaker appearning before an audience on a specific topic. This might be a physical
+      presentation at a conference, a panel, an interview, a webinar, etc. Currently we are focusing on situations that
+      are likely to generate some sort of media. Receptions, social events, talent contests, etc. are omitted. We hope
+      to document the social aspects of conferences, but in other ways.
+    %p Some general guidelines:
     %ul
-      %li
-        What is a presentation? Generally, it's a conference session with a speaker or a panel. It may be in a workshop
-        format with audience participation. But it doesn't include things like receptions, social events, talent contests, etc.
-        The social aspects of the conference will be documented in other ways.
       %li
         If you just know the presentation name and speaker, but not the conference (e.g., an old tape or CD, or an e-store listing)
         you can still enter it. Eventually we'll figure it out.
+      %li
+        The date selector for a conference presentation is automatically set to the first day. If you are entering info
+        for a multi-day conference and know which day the talk was given, change this info from the default. If not, leave
+        it on the first day - approximately right is better than nothing, because we use these dates for reporting.
       %li
         The OCON schedule puts "Panel:" and "Lunch:" qualifiers on some session names. We're not including that in the title.
         So the listing in the OCON schedule as "Panel: Transforming Burnout with Selfishness" is just "
@@ -77,7 +96,15 @@
       %li
         The ARI schedules from 2014 forward include JavaScript to show/hide descriptions which makes them difficult to copy.
         To get around that, open the schedule in a different browser and turn JavaScript off in the browser preferences.
-        Then then text will behave normally. You have to re-enable it to navigate between days though.
+        Then then text will behave normally. You have to re-enable Javascript to navigate between days.
+
+      %li
+        %b Venue and location
+        %br
+        Presentations inherit venue/location information from their parent event unless that event is a series.
+        A series may have multiple locations (such as the
+        = link_to "ARI Road to a Free Society", event_path('ari-road-to-a-free-society')
+        series). In this case, each presentation has a separate date and location.
 
     %h5 Presentation Topics
     %p
@@ -102,6 +129,18 @@
         You can see the existing tags on the Presentations page, under the
         = link_to "Topics", "https://objectivistconferences.info/presentations/tags"
         button.
+
+    %h4 Speakers
+    %p
+      Presentations must have at least one speaker to be created. Speakers have individual entries which are linked to
+      their presentations.
+    %p Some general guidelines:
+    %ul
+      %li
+        Try to create the speaker only once. Watch out for variations with and without the middle initial.
+      %li
+        If you're entering data from an old conference and find it necessary to create many new speakers, you can simply
+        keep the Speaker Add page open in a different browser window to save time.
 
     %h4 Publications
     %p

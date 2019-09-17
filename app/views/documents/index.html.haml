@@ -8,13 +8,13 @@
         = simple_form_for :document, html: { class: 'form-inline' } do |f|
           = f.input :format, collection: Document::FORMATS, include_blank: false
           .form-group#checkbox_fields
-            = f.input :conferences, :as => :boolean, input_html: { class: 'ml-4' }
+            = f.input :events, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :presentations, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :speakers, :as => :boolean, input_html: { class: 'ml-4' }
             = f.input :publications, :as => :boolean, input_html: { class: 'ml-4' }
           .form-group#radio_fields{style: 'display: none;'}
-            = content_tag :label, for: 'document_conferences_true' do
-              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[conferences]", id: "document_conferences_true"
+            = content_tag :label, for: 'document_events_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[events]", id: "document_events_true"
               Events
             = content_tag :label, for: 'document_presentations_true' do
               = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[presentations]", id: "document_presentations_true"
@@ -32,6 +32,9 @@
 .row
   .col-md-12
     %h2 Generated Documents
+    %p
+      The site data is available in CSV and PDF format, so you can search and sort the data the way you want, and have your own backup copy.
+      The PDF contains embedded links back to the site.
     - if @documents.blank?
       %p There are no documents
     - else

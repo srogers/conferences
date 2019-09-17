@@ -1,10 +1,12 @@
 class OrganizersController < ApplicationController
 
+  include Sortability
+
   load_resource except: [:create, :new, :index]
   authorize_resource
 
   def index
-    @organizers = Organizer.includes(:conferences).order(:abbreviation).page(params[:page]).per(20)
+    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(params[:page]).per(params[:per] || 10)
   end
 
   def show

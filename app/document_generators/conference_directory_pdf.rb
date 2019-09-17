@@ -79,26 +79,28 @@ class ConferenceDirectoryPdf < Prawn::Document
 
   def cover_page
     move_down 100
-    text "Objectivist Conferences", size: 42, style: :bold, align: :center
-    text "Directory", size: 36, style: :bold, align: :center
+    text "Objectivist Events", size: 42, style: :bold, align: :center
+    text "Media Directory", size: 36, style: :bold, align: :center
     text "Generated #{ pretty_date Time.now }", size: 16, align: :center
   end
 
   def conferences
-    start_new_page
-    text "Conferences", size: 14, style: :bold
-    font_size 10
+    Conference::EVENT_TYPES.each do |event_type|
+      start_new_page
+      text event_type.pluralize, size: 14, style: :bold
+      font_size 10
 
-    # Use #all because #find_each doesn't allow sorting.
-    table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
-    Conference.all.order('start_date DESC').each do |conference|
-      table_data << [
-        "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
-        conference.date_span,
-        conference.location
-      ]
+      # find_each doesn't allow sorting.
+      table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
+      Conference.where("event_type = ?", event_type).order('start_date DESC').each do |conference|
+        table_data << [
+          "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
+          conference.date_span,
+          conference.location
+        ]
+      end
+      table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
     end
-    table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
   end
 
   def presentations

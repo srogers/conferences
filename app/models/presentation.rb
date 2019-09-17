@@ -97,7 +97,12 @@ class Presentation < ApplicationRecord
   # Hash of human-friendly CSV column names and the methods that get the data
   TITLES_AND_METHODS = {
     'Name'        => :name,
-    'Conference'  => :conference_name,
+    'Event'       => :conference_name,
+    'Date'        => :date,
+    'Venue'       => :venue,
+    'City'        => :city,
+    'State'       => :state,
+    'Country'     => :country,
     'Speakers'    => :speaker_names,
     'Tags'        => :tag_names,
     'Handout'     => :has_handout?,

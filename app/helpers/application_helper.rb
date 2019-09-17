@@ -70,7 +70,7 @@ module ApplicationHelper
 
   # For throwing the navigation-related params into paths, so the Done button can return to the original context.
   def nav_params
-    { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id] }.compact
+    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.compact
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -99,13 +99,15 @@ module ApplicationHelper
   # Use this in the column header to build a clickable sorter that shows the current sort direction
   def sorting_header(text, path_helper, expression, icon='sort-alpha')
     new_sort = params_with_sort(expression)
-    if params[:sort].present? && params[:sort].from(1) == expression
+    if params[:sort].present? && params[:sort].from(1) == expression  # Then the current sort is about this column
       logger.debug "params[:sort] = #{ params[:sort]}"
-      sort_indicator = params[:sort][0] == '-' ? icon('fas', icon + '-up', :class => 'fa-fw')  : icon('fas', icon + '-down', :class => 'fa-fw')
+      sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw') : icon('fas', icon + '-down', :class => 'fa-fw')
     else
       sort_indicator = ''
     end
-    (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+    content_tag :span, class: 'sort-indicator-wrapper' do
+      (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+    end
   end
 
   # This renders the FaceBook like/share buttons with descriptive text (e.g., "be the first of your friends to like this!
@@ -132,8 +134,12 @@ module ApplicationHelper
       }
     end
 
+    if Setting.facebook_sharing?
+      fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
+    else
+      fb_share = ''.html_safe
+    end
     social_share_buttons = social_share_button_tag("Objectivist Conferences")
-    fb_share = content_tag(:div, nil, :class => "fb-like", "data-share" => "true",  "data-width" => "450", "data-show-faces" => "true")
     # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
     if @sharable_object.present?

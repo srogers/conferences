@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_24_183525) do
+ActiveRecord::Schema.define(version: 2019_09_16_184016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2019_08_24_183525) do
     t.string "name"
     t.integer "creator_id"
     t.string "format"
-    t.boolean "conferences"
+    t.boolean "events"
     t.boolean "presentations"
     t.boolean "speakers"
     t.string "status"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 2019_08_24_183525) do
     t.boolean "require_account_approval", default: true
     t.integer "speaker_chart_floor"
     t.boolean "api_open"
+    t.boolean "facebook_sharing"
   end
 
   create_table "speakers", force: :cascade do |t|

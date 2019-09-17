@@ -3,7 +3,8 @@
 
   %td= number_to_human_size document.file_size
   %td= pretty_date document.created_at, style: :full, localize: true
-  %td= document.status
+  - if current_user&.admin?
+    %td= document.status
 
   %td{width: 80}
     - icon_name = document.format == Document::PDF ? 'file-pdf' : 'file-alt'  # file-download would be perfect for both, but it doesn't work
