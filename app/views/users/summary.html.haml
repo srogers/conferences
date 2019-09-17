@@ -1,4 +1,6 @@
-= render partial: 'control_bar'
+-# The control bar has search, which doesn't make sense for non-admins
+- if current_user.admin?
+  = render partial: 'control_bar'
 
 .row
   .col-md-12
