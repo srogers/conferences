@@ -75,9 +75,14 @@ class Publication < ApplicationRecord
     presentations.map{|p| p.conference_name}.join(', ')
   end
 
+  # Collects the speakers from associated presentations if possible (probably most accurate), otherwise falls back to speaker names
   # Inefficient - use this only for PDF/CSV export.
-  def speaker_names
-    presentations.map{|p| p.speaker_names}.flatten.uniq.join(', ')
+  def available_speaker_names
+    if presentations.present?
+      presentations.map{|p| p.speaker_names}.flatten.uniq.join(', ')
+    else
+      speaker_names
+    end
   end
 
   def publication_url
@@ -88,7 +93,7 @@ class Publication < ApplicationRecord
   TITLES_AND_METHODS = {
       'Name'              => :name,
       'Event Names'       => :event_names,
-      'Speaker Names'     => :speaker_names,
+      'Speaker Names'     => :available_speaker_names,
       'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,

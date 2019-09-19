@@ -89,7 +89,7 @@ class SpeakersController < ApplicationController
       redirect_to speaker_path(@speaker)
     else
       flash.now[:error] = "Your speaker could not be saved: #{ @speaker.errors.full_messages.join(", ") }"
-      logger.debug "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
+      logger.error "Speaker save failed: #{ @speaker.errors.full_messages.join(", ") }"
       render 'new'
     end
   end
@@ -98,8 +98,8 @@ class SpeakersController < ApplicationController
     if @speaker.update_attributes speaker_params
       redirect_to speaker_path(@speaker)
     else
-      flash.now[:error] = 'Your changes could not be saved.'
-      logger.debug "Speaker save failed: #{ @speaker.errors.full_messages }"
+      flash.now[:error] = "Your changes could not be saved: #{ @speaker.errors.full_messages.join(', ') }"
+      logger.error "Speaker save failed: #{ @speaker.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

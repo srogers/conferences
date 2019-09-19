@@ -29,7 +29,7 @@ class OrganizersController < ApplicationController
       redirect_to organizer_path(@organizer)
     else
       flash.now[:error] = "Your organizer could not be saved: #{ @organizer.errors.full_messages.join(", ") }"
-      logger.debug "Organizer save failed: #{ @organizer.errors.full_messages.join(", ") }"
+      logger.error "Organizer save failed: #{ @organizer.errors.full_messages.join(", ") }"
       render 'new'
     end
   end
@@ -38,8 +38,8 @@ class OrganizersController < ApplicationController
     if @organizer.update_attributes organizer_params
       redirect_to organizer_path(@organizer)
     else
-      flash.now[:error] = 'Your organizer could not be saved.'
-      logger.debug "Organizer save failed: #{ @organizer.errors.full_messages }"
+      flash.now[:error] = "Your organizer could not be saved: #{ @organizer.errors.full_messages.join(', ') }"
+      logger.error "Organizer save failed: #{ @organizer.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

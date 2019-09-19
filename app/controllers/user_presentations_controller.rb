@@ -48,8 +48,8 @@ LIMIT 3
         if @success
           redirect_to presentation_path(@user_presentation.presentation.to_param)
         else
-          flash[:error] = 'The presentation could not be added to your list.'
-          logger.error "UserPresentation save failed: #{ @user_presentation.errors.full_messages }"
+          flash[:error] = "The presentation could not be added to your list: #{ @user_presentation.errors.full_messages.join(', ') }"
+          logger.error "UserPresentation save failed: #{ @user_presentation.errors.full_messages.join(', ') }"
           if @user_presentation&.presentation_id
             redirect_to presentation_path(@user_presentation.presentation.to_param)
           else

@@ -68,7 +68,7 @@ module ApplicationHelper
     controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
   end
 
-  # For throwing the navigation-related params into paths, so the Done button can return to the original context.
+  # For throwing the navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
     { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.compact
   end

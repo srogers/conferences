@@ -20,9 +20,9 @@ class DocumentsController < ApplicationController
       DocumentWorker.perform_async(@document.id)
       flash[:notice] = "Document generation job queued for processing."
     else
-      flash[:error] = 'Your document generation request could not be saved.'
+      flash[:error] = "Your document generation request could not be saved: #{ @document.errors.full_messages.join(', ') }"
       get_organizer_selections
-      logger.debug "Document creation failed: #{ @document.errors.full_messages }"
+      logger.error "Document creation failed: #{ @document.errors.full_messages.join(', ') }"
     end
     redirect_to documents_path
   end

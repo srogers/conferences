@@ -87,6 +87,20 @@ When the Redis Cloud add-on is installed, the URL is automatically added to the 
 password. The host and password are available in the Heroku resources tab, by double-clicking the Redis Cloud icon. Only
 one database is allowed for Heroku apps, so the database name doesn't matter.
 
+#### Restore Redis After Delete
+
+On the free plan, the Redis DB will be destroyed after 30 days of inactivity. To create a new one, follow these steps:
+ - On the landing or resources page, click on "Redis Cloud"
+ - This will go to a Redis Labs page with an empty list of databases
+ - Click the "+" and add
+   * Name:  doesn't matter
+   * You can copy the password from the original URL, or use the default - endpoint will be different anyway
+   * Use the password and endpoint to update the connection string in app settings REDISCLOUD_URL
+   
+The Redis cloud URL is:  redis://rediscloud:[password]@[endpoint]
+
+    redis://rediscloud:[password]@redis-12345.c47.us-east-1-2.ec2.cloud.redislabs.com:12345
+
 ## Tests
 
 ### Rspec

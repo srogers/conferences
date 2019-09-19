@@ -24,6 +24,7 @@ namespace :db do
 
   desc 'A data maintenance task to catch up legacy accounts to the new standard where all are approved.'
   task :approve_all_accounts => :environment do
+    raise "Don't run this while approval is required" if Setting.require_account_approval?
     puts
     puts "collecting users . . ."
     count = 0
