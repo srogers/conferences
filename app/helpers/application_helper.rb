@@ -263,7 +263,7 @@ module ApplicationHelper
     return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
 
     if thing.venue_url.present?
-      elements =  [link_to(@conference.venue, @conference.venue_url, target: '_blank')]
+      elements =  [link_to(thing.venue, thing.venue_url, target: '_blank')]
     else
       elements = [thing.venue]
     end
