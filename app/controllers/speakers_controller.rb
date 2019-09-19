@@ -8,7 +8,7 @@ class SpeakersController < ApplicationController
   include Sortability
 
   def index
-    @speakers = Speaker.includes(:presentations).order(:sortable_name)
+    @speakers = Speaker.select('speakers.*').references(:presentations).order(:sortable_name)
     per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
@@ -23,7 +23,7 @@ class SpeakersController < ApplicationController
 
       if params[:search_term].present?
         term = params[:search_term]
-        @speakers = @speakers.includes(:presentations => { :conference => :organizer }).references(:conferences)
+        @speakers = @speakers.references(:presentations => { :conference => :organizer }).includes(:presentations => :conference)
         @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
       end
     end

@@ -1,11 +1,11 @@
 module PresentationsChart
 
-  # The controller index action and the chart-building action share this filtering code that ensures both tags and searchable
-  # items in the presentation are found, but duplicates are eliminated.
+  # The controller index action and the chart-building action share this WHERE clause for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but necessary.
   def filter_presentations_by_term(presentations, term)
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
-    presentations.includes(:speakers, :taggings => :tag).references(:taggings => :tag).references(:conferences, :speakers).
+    presentations.includes(:taggings => :tag).references(:taggings => :tag).includes(:conference, :speakers).
       where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?",
             # base query bind vars
             event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
