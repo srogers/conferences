@@ -24,7 +24,7 @@ class EventsController < ApplicationController
       @conferences = Conference
     end
 
-    @conferences = @conferences.includes(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
+    @conferences = @conferences.select('conferences.*').references(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
     # This structure separates out the :q from everything else. It's one or the other, but not both.
     if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
       if params[:event_type].present?
@@ -65,7 +65,7 @@ class EventsController < ApplicationController
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.
   # Gets called from jQuery in /news and rendered by jQuery append(html).
   def upcoming
-    @conferences = Conference.includes(:organizer).where("conferences.start_date > ?", Date.today).order('start_date ASC')
+    @conferences = Conference.references(:organizer).where("conferences.start_date > ?", Date.today).order('start_date ASC')
     render layout: false
   end
 

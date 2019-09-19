@@ -9,7 +9,8 @@ class PublicationsController < ApplicationController
 
   def index
     per_page = params[:per] || 10 # autocomplete specifies :per
-    @publications = Publication.includes(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
+    @publications = Publication.references(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
+    @publications = Publication.includes(:presentation_publications, :presentations => :conference )
 
     if params[:q].present?
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
@@ -24,7 +25,7 @@ class PublicationsController < ApplicationController
 
     if params[:search_term].present?
       term = params[:search_term].gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
-      @publications = @publications.includes(:presentations => :speakers).references(:speakers, :conferences)
+      @publications = @publications.includes(:presentations => :speakers)
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)

@@ -10,9 +10,13 @@ class PresentationsController < ApplicationController
 
   def index
     per_page = params[:per] || 10 # autocomplete specifies :per
-    @presentations = Presentation.includes(:conference)  # the simplest query base for guest user (and robots)
-    # TODO why is this so terrible for "latest" query - builds a giant where clause using IN with a list of all IDs instead of a simple join
-    @presentations = @presentations.includes(:speakers, :publications) if @current_user
+    @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
+    # The most efficient query depends on whether the user is logged in, because we show slightly different info
+    if @current_user
+      @presentations = @presentations.references(:speakers, :publications)
+    else
+      @presentations = @presentations.includes(:publications).references(:speakers)
+    end
     @presentations = @presentations.order(params_to_sql '<presentations.date')
     # This is necessary for getting the presentation status
     @user_presentations = current_user.user_presentations if current_user.present?
@@ -24,7 +28,7 @@ class PresentationsController < ApplicationController
     elsif params[:search_term].present? || params[:tag].present? || params[:heart].present?
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
-        @presentations = @presentations.includes("taggings").where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
+        @presentations = @presentations.includes(:taggings, :conference).where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
         # Skip conferences in the future - we know they're not done
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
