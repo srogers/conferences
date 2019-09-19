@@ -13,8 +13,8 @@ class PresentationPublicationsController < ApplicationController
         redirect_to publication_path(@presentation_publication.publication.to_param)
       end
     else
-      flash[:error] = 'The publication/presentation association could not be saved.'
-      logger.debug "Presentation Publication save failed: #{ @presentation_publication.errors.full_messages }"
+      flash[:error] = "The publication/presentation association could not be saved: #{ @presentation_publication.errors.full_messages.join(', ') }"
+      logger.error "Presentation Publication save failed: #{ @presentation_publication.errors.full_messages.join(', ') }"
       if @presentation_publication&.presentation_id
         redirect_to manage_publications_presentation_path(@presentation_publication.presentation.to_param)
       else

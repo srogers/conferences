@@ -122,9 +122,9 @@ class EventsController < ApplicationController
     if @conference.save
       redirect_to event_path(@conference)
     else
-      flash.now[:error] = 'Your event could not be saved.'
+      flash.now[:error] = "Your event could not be saved: #{ @conference.errors.full_messages.join(', ') }"
       get_organizer_selections
-      logger.debug "Event save failed: #{ @conference.errors.full_messages }"
+      logger.error "Event save failed: #{ @conference.errors.full_messages.join(', ') }"
       render 'new'
     end
   end
@@ -133,9 +133,9 @@ class EventsController < ApplicationController
     if @conference.update_attributes conference_params
       redirect_to event_path(@conference)
     else
-      flash.now[:error] = 'Your event could not be saved.'
+      flash.now[:error] = "Your event could not be saved: #{ @conference.errors.full_messages.join(', ') }"
       get_organizer_selections
-      logger.debug "Event save failed: #{ @conference.errors.full_messages }"
+      logger.error "Event save failed: #{ @conference.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

@@ -19,8 +19,8 @@ class EventUsersController < ApplicationController
     if @conference_user.save
       redirect_to event_path(@conference_user.conference_id)
     else
-      flash[:error] = 'The user/event association could not be saved.'
-      logger.debug "Event Speaker save failed: #{ @conference_user.errors.full_messages }"
+      flash[:error] = "The user/event association could not be saved: #{ @conference_user.errors.full_messages.join(', ') }"
+      logger.error "Event Speaker save failed: #{ @conference_user.errors.full_messages.join(', ') }"
       redirect_to events_path
     end
   end
