@@ -1,4 +1,6 @@
 -# There is only one setting, but we use index as the default view
+= render partial: 'control_bar'
+
 .row
   .col-md-12
     =title "System Settings"
@@ -23,8 +25,3 @@
     %p
       Facebook Analytics
       = link_to_if ENV['FB_APP_ID'].present?, "Dashboard", "https://www.facebook.com/analytics/#{ ENV['FB_APP_ID'] }/", target: '_blank'
-.row
-  .col-md-6
-    .form-actions.btn-group
-      = link_to "Done", root_path, :class => "btn btn-secondary"
-      = link_to "Edit", edit_setting_path(@setting), :class => "btn btn-primary"
