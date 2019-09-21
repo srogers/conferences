@@ -33,13 +33,13 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote
+      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
       term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
 
-    @presentations = Kaminari.paginate_array(@presentations.to_a).page(params[:page]).per(per_page)
+    @presentations = @presentations.page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
