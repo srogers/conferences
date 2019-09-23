@@ -70,7 +70,7 @@ module ApplicationHelper
 
   # For throwing the navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.compact
+    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -190,9 +190,12 @@ module ApplicationHelper
 
   def per_page_selector(index_path, initial_per_page=10)
     per_page_selector = form_tag index_path, method: :get do
-      content = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()'
-      content << hidden_field_tag( :page, params[:page])
-      content << hidden_field_tag(:search_term, params[:search_term])
+      content = label_tag 'per page', nil, for: 'per', class: 'small'
+      content << "&nbsp;".html_safe
+      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
+      nav_params.each_pair do |param, value|
+        content << hidden_field_tag(param, value) unless param == :per
+      end
       content
     end
     per_page_selector.html_safe
