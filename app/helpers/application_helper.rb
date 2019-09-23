@@ -188,8 +188,8 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  def per_page_selector(index_path, initial_per_page=10)
-    per_page_selector = form_tag index_path, method: :get do
+  def per_page_selector(initial_per_page=10)
+    selector = form_tag url_for(action: :index), method: :get do
       content = label_tag 'per page', nil, for: 'per', class: 'small'
       content << "&nbsp;".html_safe
       content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
@@ -198,7 +198,7 @@ module ApplicationHelper
       end
       content
     end
-    per_page_selector.html_safe
+    selector.html_safe
   end
 
   # Pass in the controller name for the index path to be searched - it can't always be deduced from the view.
