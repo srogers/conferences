@@ -1,8 +1,8 @@
-.row
-  .col-md-12
-    %h4 Your Presentations
+=title  'Your Presentations'
 
-    - if @user_presentations.empty?
+- if @user_presentations.empty?
+  .row
+    .col-md-12
       %p
         Here's where you'll find presentations that you want to see, or have seen already.
         Indicate your interest in a presentation by clicking the "heart" icon:
@@ -28,8 +28,10 @@
 
       %p If you want to stop notifications, just click the envelope again.
 
-    - else
-      - @user_presentations.each do |user_presentation|
+- else
+  - @user_presentations.each do |user_presentation|
+    .row
+      .col-md-12
         = render partial: 'user_presentation', locals: { user_presentation: user_presentation }
 
-      = paginate @user_presentations
+  = render :partial => 'shared/pagination', locals: { collection: @user_presentations }

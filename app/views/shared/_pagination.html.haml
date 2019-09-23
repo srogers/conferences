@@ -1,0 +1,8 @@
+-# build a pagination row that works on desktop and mobile for all classes
+.row
+  .col-md-10.d-none.d-md-block
+    = paginate collection
+  .col-sm-10.d-md-none
+    = paginate collection, pagination_class: "pagination-sm", window: 2
+  .col-md-2
+    = per_page_selector

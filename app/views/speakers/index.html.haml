@@ -16,8 +16,4 @@
         = render :partial => "table_head"
         = render :partial => "speaker", :collection => @speakers
 
-  .row
-    .col-md-10
-      = paginate @speakers
-    .col-md-2
-      = per_page_selector 15
+  = render :partial => 'shared/pagination', locals: { collection: @speakers }

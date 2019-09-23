@@ -1,6 +1,10 @@
+-# Generated with: rails g kaminari:views bootstrap4
+-# Modifications to support pagination class from https://github.com/KamilDzierbicki/bootstrap4-kaminari-views/blob/master/app/views/kaminari/twitter-bootstrap-4/_paginator.html.erb
+- pagination_class ||= ''
+- nav_class ||= ''
 = paginator.render do
-  %nav
-    %ul.pagination
+  %nav{ class: nav_class }
+    %ul.pagination{ class: pagination_class }
       = first_page_tag unless current_page.first?
       = prev_page_tag unless current_page.first?
       - each_page do |page|
