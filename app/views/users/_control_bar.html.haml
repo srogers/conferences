@@ -11,7 +11,7 @@
           %li.nav-item{class: params[:needs_approval].present? ? 'active' : ''}
             =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
 
-      = index_search_form 'users' unless ['show', 'edit', 'new'].include?(action_name)
+      = index_search_form 'users' unless ['show', 'edit', 'new', 'summary', 'events'].include?(action_name)
 
       - if action_name == 'show'
         = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
@@ -19,8 +19,11 @@
         = link_to "Edit", edit_user_path(@user, per: params[:per], page: params[:page]), :class => "btn btn-primary ml-3" + (@user.active ? '' : ' disabled')
         = link_to "Summary", summary_users_path(id: @user.id), :class => "btn btn-primary ml-3"
 
-      - if ['show', 'summary'].include?(action_name)
-        = link_to "Done", users_path(per: params[:per], page: params[:page]), :class => "btn btn-secondary ml-3"
+      - if ['show'].include?(action_name)
+        = link_to "Done", users_path(nav_params), :class => "btn btn-secondary ml-3"
+
+      - if ['summary', 'events'].include?(action_name)
+        = link_to "Done", root_path, :class => "btn btn-secondary ml-3"
 
       - if action_name == 'edit'
         = link_to "Cancel", user_path(@user), :class => "btn btn-secondary ml-3"
