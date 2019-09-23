@@ -188,8 +188,8 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  def per_page_selector(index_path, initial_per_page=10)
-    per_page_selector = form_tag index_path, method: :get do
+  def per_page_selector(initial_per_page=10)
+    per_page_selector = form_tag url_for(action: :index), method: :get do
       content = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()'
       content << hidden_field_tag( :page, params[:page])
       content << hidden_field_tag(:search_term, params[:search_term])
