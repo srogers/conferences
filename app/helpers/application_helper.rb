@@ -29,13 +29,13 @@ module ApplicationHelper
       controller_name == 'documents'
     # Account overlaps with other states, because "You" is highlighted when items in the drop-down are also highlighted
     when 'account'
-      controller_name == 'accounts' || my_summary? || my_conferences? || my_watchlist?
+      controller_name == 'accounts' || my_summary? || my_events? || my_watchlist?
     when 'profile'
       controller_name == 'accounts'
     when 'summary'
       my_summary?
-    when 'my_conferences'
-      my_conferences?
+    when 'my_events'
+      my_events?
     when 'watchlist'
       my_watchlist?
     when 'about'
@@ -55,8 +55,8 @@ module ApplicationHelper
     params[:event_type].present? ? params[:event_type] : 'Event'
   end
 
-  def my_conferences?
-    controller_name == 'users' && action_name == 'conferences'
+  def my_events?
+    controller_name == 'users' && action_name == 'events'
   end
 
   def my_watchlist?
