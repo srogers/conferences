@@ -87,8 +87,17 @@ describe ApplicationHelper do
           expect(doc.css("meta[property='og:title']").first.attributes["content"].value).to eq(@conference.name)
         end
 
-        it "includes description" do
-          expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq(@conference.description)
+        context "description" do
+          it "matches conference description" do
+            expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq(@conference.description)
+          end
+
+          context "with HTML" do
+            before { @conference.description = '<div>here is <b>some</b> rich text</div>' }
+            it "has tags stripped out" do
+              expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq('here is some rich text')
+            end
+          end
         end
 
         it "includes site name" do

@@ -129,7 +129,10 @@ module ApplicationHelper
 
     content_for :meta do
       render partial: 'shared/fb_og_meta_tags', locals: {
-        og_url: og_url, og_type: og_type, og_title: og_title, og_description: og_description,
+        og_url: og_url,
+        og_type: og_type,
+        og_title: og_title,
+        og_description: ActionController::Base.helpers.strip_tags(og_description),
         og_image_url: og_image_url, og_image_type: og_image_type, og_image_width: og_image_width, og_image_height: og_image_height,
       }
     end
