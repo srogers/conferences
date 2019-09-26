@@ -16,8 +16,4 @@
         = render :partial => "table_head"
         = render :partial => "publication", :collection => @publications
 
-  .row
-    .col-md-10
-      = paginate @publications
-    .col-md-2
-      = per_page_selector
+  = render :partial => 'shared/pagination', locals: { collection: @publications }

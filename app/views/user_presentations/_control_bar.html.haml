@@ -1,0 +1,6 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark
+    .container
+      %ul.navbar-nav.mr-auto
+      = link_to "Done", root_path, :class => "btn btn-secondary ml-3"

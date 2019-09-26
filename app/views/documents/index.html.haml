@@ -42,4 +42,4 @@
         = render :partial => "header"
         = render :partial => "document", :collection => @documents
 
-      = paginate @documents
+= render :partial => 'shared/pagination', locals: { collection: @documents }

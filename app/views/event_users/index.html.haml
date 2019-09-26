@@ -13,7 +13,7 @@
         =# render :partial => "table_head"
         = render :partial => "attendee", :collection => @attendees
 
-      = paginate @attendees
+= render :partial => 'shared/pagination', locals: { collection: @attendees }
 
 .row
   .col-md-12
