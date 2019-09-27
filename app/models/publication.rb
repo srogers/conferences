@@ -24,7 +24,7 @@ class Publication < ApplicationRecord
   ONLINE  = 'Online'       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'      # This is going away . . .
   PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
-  FORMATS = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
