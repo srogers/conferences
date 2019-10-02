@@ -54,9 +54,9 @@ group :development, :test do
   gem 'byebug', platform: :mri      # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'dotenv-rails'
   gem "factory_bot_rails"           # consider setting up factories as tests get more robust
-  gem "foreman"                     # runs the server specified by Procfile - a Heroku-compatible way of running the server
   gem "pry"                         # debug console support for development and cucumber
-  gem "thin"                        # for the times when Puma is unstable
+  # gem "foreman"                     # runs the server specified by Procfile - a Heroku-compatible way of running the server
+  # gem "thin"                        # for the times when Puma is unstable
 end
 
 group :development do

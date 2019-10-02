@@ -34,29 +34,16 @@ File storage is defined in config/initializers/carrierwave.rb
 
 In development, attachments are stored as files, which resolves to /public/uploads
 
-## Foreman for Development Server
+## Development Server
 
-Foreman is a good local server to use with Heroku because it matches how Heroku looks at the Procfile and rackup files.
-(see http://ddollar.github.com/foreman ). It's not necessary to 'bundle exec' foreman. Foreman runs the Procfile in
-project root, which gets the environment from a .env file in the project root, typically containing the one
-line: RACK_ENV=development  It can also specify the port, if desired. Obviously - don't check in the .env file.
-To start foreman, run:
-
-    foreman start  (optionally with -p<port-number>)
-
-Foreman works with the new puma server. Foreman also runs the workers (named in Procfile). It's possible to start
-Puma directly without the workers using a command like:
-
-    PORT=8080 SSL_KEY_PATH=~/.ssl/server.key SSL_CERT_PATH=~/.ssl/server.crt bundle exec puma -C config/puma.rb -p 3001
-    
-Puma can sometimes be flakey, hanging up on certificate errors. In order to get around that, it's possible to run thin
-instead, which is much more reliable (but doesn't handle ActionCable well). 
-
-    thin start --ssl --ssl-key-file ~/.ssl/server.key --ssl-cert-file ~/.ssl/server.crt --port 3001
+Start the development server with the standard `bundle exec rails s`. This won't start Sidekiq though. It can be started
+in a separate window in the foreground (which is usually preferable) or the whole Procfile can be run from the same 
+process with `heroku local`.
 
 ### Background Workers
 
-Background tasks are handled by Sidekiq. 
+Background tasks are handled by Sidekiq.  Start the sidekiq process in development in the foreground 
+with `bundle exec sidekiq`.
 
 ## Special Gems and Configuration
 
@@ -121,7 +108,7 @@ and part is only visible from the Heroku command line.
 Various little tweaks are required to make Heroku happy:
 
  - config.assets.initialize_on_precompile = false in config/application.rb, see https://devcenter.heroku.com/articles/rails3x-asset-pipeline-cedar#troubleshooting
- - Add 'thin' gem to the bundle, add a Procfile, and add config.ru
+ - Add a Procfile, and add config.ru
  - define development environment in .env (and git ignore that file)
  - list vendor assets in config/environments/production.rb for precompilation (if compiling assets at deployment)
 
