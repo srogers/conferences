@@ -38,8 +38,4 @@
         = render :partial => "events/table_head"
         = render :partial => "events/conference", :collection => @conferences
 
-  .row
-    .col-md-10
-      = paginate @conferences
-    .col-md-2
-      = per_page_selector events_path
+  = render :partial => 'shared/pagination', locals: { collection: @conferences }

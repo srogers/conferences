@@ -32,7 +32,7 @@
                 = link_to "Your Stats",   summary_users_path(id: current_user.id), class: "dropdown-item" + current_tab?('summary')
               = link_to 'Profile',  account_path,       class: "dropdown-item" + current_tab?('profile')
               = link_to "Watch List",   user_presentations_path, class: "dropdown-item" + current_tab?('watchlist')
-              = link_to "Events",  events_users_path,  class: "dropdown-item" + current_tab?('my_conferences')
+              = link_to "Events",  events_users_path,  class: "dropdown-item" + current_tab?('my_events')
               .dropdown-divider
               = link_to 'Logout',   logout_path,        class: "dropdown-item"
           %li.nav-item{style: 'background: white; height: 20px; margin-top: 8px;'}

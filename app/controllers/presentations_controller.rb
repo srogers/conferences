@@ -38,7 +38,6 @@ class PresentationsController < ApplicationController
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-
     @presentations = @presentations.page(params[:page]).per(per_page)
 
     # The json result has to be built with the keys in the data expected by select2

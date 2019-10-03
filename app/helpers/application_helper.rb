@@ -29,13 +29,13 @@ module ApplicationHelper
       controller_name == 'documents'
     # Account overlaps with other states, because "You" is highlighted when items in the drop-down are also highlighted
     when 'account'
-      controller_name == 'accounts' || my_summary? || my_conferences? || my_watchlist?
+      controller_name == 'accounts' || my_summary? || my_events? || my_watchlist?
     when 'profile'
       controller_name == 'accounts'
     when 'summary'
       my_summary?
-    when 'my_conferences'
-      my_conferences?
+    when 'my_events'
+      my_events?
     when 'watchlist'
       my_watchlist?
     when 'about'
@@ -55,8 +55,8 @@ module ApplicationHelper
     params[:event_type].present? ? params[:event_type] : 'Event'
   end
 
-  def my_conferences?
-    controller_name == 'users' && action_name == 'conferences'
+  def my_events?
+    controller_name == 'users' && action_name == 'events'
   end
 
   def my_watchlist?
@@ -68,9 +68,9 @@ module ApplicationHelper
     controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
   end
 
-  # For throwing the navigation-related params into paths, so header sort and Done buttons can return to the original context.
+  # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.compact
+    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -129,7 +129,10 @@ module ApplicationHelper
 
     content_for :meta do
       render partial: 'shared/fb_og_meta_tags', locals: {
-        og_url: og_url, og_type: og_type, og_title: og_title, og_description: og_description,
+        og_url: og_url,
+        og_type: og_type,
+        og_title: og_title,
+        og_description: ActionController::Base.helpers.strip_tags(og_description),
         og_image_url: og_image_url, og_image_type: og_image_type, og_image_width: og_image_width, og_image_height: og_image_height,
       }
     end
@@ -188,14 +191,23 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  def per_page_selector(index_path, initial_per_page=10)
-    per_page_selector = form_tag index_path, method: :get do
-      content = select_tag :per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()'
-      content << hidden_field_tag( :page, params[:page])
-      content << hidden_field_tag(:search_term, params[:search_term])
+  def per_page_selector(initial_per_page=10)
+    selector = form_tag url_for(action: :index), method: :get do
+      content = label_tag 'per page', nil, for: 'per', class: 'small'
+      content << "&nbsp;".html_safe
+      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
+      nav_params.each_pair do |param, value|
+        if param == :per
+          next
+        elsif param == :page
+          hidden_field_tag(:page, 1)
+        else
+          content << hidden_field_tag(param, value)
+        end
+      end
       content
     end
-    per_page_selector.html_safe
+    selector.html_safe
   end
 
   # Pass in the controller name for the index path to be searched - it can't always be deduced from the view.

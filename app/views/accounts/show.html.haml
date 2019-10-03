@@ -1,3 +1,5 @@
+= render partial: 'control_bar'
+
 =title 'Your Account'
 
 .row
@@ -61,7 +63,6 @@
 
 .row
   .col-md-6
-    = link_to icon('far', 'edit', 'Edit'), edit_account_path, class: 'btn btn-primary btn-sm'
   .col-md-6
     - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
     Remove your account

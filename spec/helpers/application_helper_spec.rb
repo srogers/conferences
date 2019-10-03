@@ -14,6 +14,26 @@ describe ApplicationHelper do
       @basis_utc = "2016-07-29T16:22:45+00:00".to_datetime
     end
 
+    context "retaining params for navigation" do
+      before do
+        params[:page] = 3
+        params[:per]  = 6
+      end
+
+      it "retains params with values" do
+        expect(helper.nav_params[:page]).to eq(3)
+      end
+
+      it "ignores params that aren't present" do
+        expect(helper.nav_params.has_key?(:search_term)).to be_falsey
+      end
+
+      it "ignores params that are blank" do
+        params[:tag] = ''
+        expect(helper.nav_params.has_key?(:tag)).to be_falsey
+      end
+    end
+
     context "with current_user" do
       before do
         @current_user = create :user, role: Role.reader, time_zone: "Central Time (US & Canada)"
@@ -87,8 +107,17 @@ describe ApplicationHelper do
           expect(doc.css("meta[property='og:title']").first.attributes["content"].value).to eq(@conference.name)
         end
 
-        it "includes description" do
-          expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq(@conference.description)
+        context "description" do
+          it "matches conference description" do
+            expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq(@conference.description)
+          end
+
+          context "with HTML" do
+            before { @conference.description = '<div>here is <b>some</b> rich text</div>' }
+            it "has tags stripped out" do
+              expect(doc.css("meta[property='og:description']").first.attributes["content"].value).to eq('here is some rich text')
+            end
+          end
         end
 
         it "includes site name" do

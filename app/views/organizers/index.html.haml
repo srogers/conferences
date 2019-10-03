@@ -14,8 +14,4 @@
         = render :partial => "table_head"
         = render :partial => "organizer", :collection => @organizers
 
-  .row
-    .col-md-10
-      = paginate @organizers
-    .col-md-2
-      = per_page_selector organizers_path
+  = render :partial => 'shared/pagination', locals: { collection: @organizers }
