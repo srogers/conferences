@@ -197,7 +197,13 @@ module ApplicationHelper
       content << "&nbsp;".html_safe
       content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
       nav_params.each_pair do |param, value|
-        content << hidden_field_tag(param, value) unless param == :per
+        if param == :per
+          next
+        elsif param == :page
+          hidden_field_tag(:page, 1)
+        else
+          content << hidden_field_tag(param, value)
+        end
       end
       content
     end
