@@ -1,6 +1,7 @@
+-# Modified from generated code to use simple indicators for next and previous to fit mobile
 - if page.current?
   %li.page-item.active
-    = content_tag :a, page, data: { remote: remote }, rel: (page.next? ? 'next' : (page.prev? ? 'prev' : nil)), class: 'page-link'
+    = content_tag :a, page, data: { remote: remote }, rel: page.rel, class: 'page-link'
 - else
   %li.page-item
-    = link_to page, url, remote: remote, rel: (page.next? ? 'next' : (page.prev? ? 'prev' : nil)), class: 'page-link'
+    = link_to page, url, data: { remote: remote }, rel: page.rel, class: 'page-link'

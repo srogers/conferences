@@ -43,3 +43,11 @@ blockquote span{
   font-weight: bold;
   margin-top: 1em;
 }
+
+/* This restores the old btn-xs style from Bootstrap 3 that was removed in Bootstrap 4 */
+.btn-group-xs > .btn, .btn-xs {
+  padding  : .25rem .4rem;
+  font-size  : .875rem;
+  line-height  : .5;
+  border-radius : .2rem;
+}
