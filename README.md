@@ -37,12 +37,12 @@ In development, attachments are stored as files, which resolves to /public/uploa
 ## Development Server
 
 Start the development server with the standard `bundle exec rails s`. This won't start Sidekiq though. It can be started
-in a separate window in the foreground (which is usually preferable) or the whole Procfile can be run from the same 
+in a separate window in the foreground (which is usually preferable) or the whole Procfile can be run from the same
 process with `heroku local`.
 
 ### Background Workers
 
-Background tasks are handled by Sidekiq.  Start the sidekiq process in development in the foreground 
+Background tasks are handled by Sidekiq.  Start the sidekiq process in development in the foreground
 with `bundle exec sidekiq`.
 
 ## Special Gems and Configuration
@@ -53,10 +53,11 @@ Bootstrap is installed via the bootstrap gem.
 
 ### Sidekiq
 
-Sidekiq is used for PDF generation. Sidekiq requires a queueing system - we're using Redis. Start with:
+Sidekiq is used for PDF generation. Sidekiq requires a queueing system - we're using Redis. Start in the foreground with:
 
     be sidekiq
 
+Or run in the background by starting the server with `heroku local`.
 The sidekiq web interface ( /sidekiq ) isn't hooked up yet . . .
 
 ### Redis
@@ -69,7 +70,7 @@ The format for the Redis Cloud URL is:
 The REDIS_PROVIDER is not automatically added, and it won't work without that. Manually add:
 
     heroku config:set REDIS_PROVIDER=REDISCLOUD_URL
-    
+
 When the Redis Cloud add-on is installed, the URL is automatically added to the environment with an arbitrary name and
 password. The host and password are available in the Heroku resources tab, by double-clicking the Redis Cloud icon. Only
 one database is allowed for Heroku apps, so the database name doesn't matter.
@@ -83,7 +84,7 @@ On the free plan, the Redis DB will be destroyed after 30 days of inactivity. To
    * Name:  doesn't matter
    * You can copy the password from the original URL, or use the default - endpoint will be different anyway
    * Use the password and endpoint to update the connection string in app settings REDISCLOUD_URL
-   
+
 The Redis cloud URL is:  redis://rediscloud:[password]@[endpoint]
 
     redis://rediscloud:[password]@redis-12345.c47.us-east-1-2.ec2.cloud.redislabs.com:12345
@@ -135,9 +136,9 @@ New Relic removed - no replacement chosen
 ### SSL (TLS) and Certificates
 
 The site config and DNS hosting is migrated from the old appname.herokuapp.com format to the new name.com.herokudns.com format.
-The details are explained [here](https://devcenter.heroku.com/articles/custom-domains). 
+The details are explained [here](https://devcenter.heroku.com/articles/custom-domains).
 Once paid dynos are turned on, [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management)
-can be enabled, which easily and cheaply gets the site secure. 
+can be enabled, which easily and cheaply gets the site secure.
 
 ### Heroku Database Configuration
 
@@ -145,7 +146,7 @@ When the new app gets its first push, a Postgres database will be allocated to i
 set that up. But it is necessary to run
 
     heroku run rake db:seed --remote staging
-    
+
 to set up the database. The initial admin user must be created manually.
 
 It's possible to connect a PostgreSQL client directly the Heroku instance. The connection information is stored in the
@@ -172,16 +173,16 @@ then run rake db:migrate again, and your schema.rb should be back in sync.
 Backups are scheduled at 2 AM for both staging and production. The command is:
 
     heroku pg:backups:schedule DATABASE_URL --at '02:00 America/Chicago' --remote staging
-    
-Production was bootstrapped from a copy of the staging database 
+
+Production was bootstrapped from a copy of the staging database
 
 #### Pushing and Restoring Data
 
-The easiest way to move data up and down from Heroku is using the 
+The easiest way to move data up and down from Heroku is using the
 [pg-push/pg-pull](https://devcenter.heroku.com/articles/heroku-postgresql#pg-pull) commands.
 
     PGUSER=steve PGPASSWORD='' heroku pg:pull postgresql-rigid-18515 conferences_development --remote production
-    
+
 This command creates the named database, so rename the existing database before performing the download.
 For this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
 unless you can change your local Postgres version to match what's running on Heroku.
@@ -192,14 +193,14 @@ To transfer production data back to staging for testing (ensure the staging data
 
     heroku maintenance:on --remote staging
     heroku pg:copy conference-media::DATABASE_URL DATABASE_URL -a conference-media-staging
-    # this will ask to confirm the copy by typing the name of the staging app
+    # this will ask to confirm the copy by typing the name of the staging app - the DB that will be blasted
     heroku maintenance:off --remote staging
 
 After that, staging is ready to go with the production data. Remember - this blasts the users also.
 
 ### Outgoing Email
 
-Mail is configured to use Sendgrid. When the Add-On is provisioned, the username and password are added to the Heroku 
+Mail is configured to use Sendgrid. When the Add-On is provisioned, the username and password are added to the Heroku
 config vars automatically. ActionMailer configuration is here: https://devcenter.heroku.com/articles/sendgrid#ruby-rails
 
 To access the dashboard:  heroku addons:open sendgrid  Or click on the SendGrid icon in Heroku Add-Ons list.
@@ -256,12 +257,12 @@ eligible for ACM. Domains have to be [configured](https://devcenter.heroku.com/a
 ## Facebook Integration
 
 Facebook likes and shares are handled using the FB SDK. FB defines an App ID and secret for use with the JS SDK, which
-allows for easy generation of Like and Share buttons. There is a separate Test App for staging, and a full app for 
+allows for easy generation of Like and Share buttons. There is a separate Test App for staging, and a full app for
 production (with IDs specified in .env). Test Apps are described here:
 
     https://developers.facebook.com/docs/apps/test-apps
-    
-The quickstart guide for the JS SDK is here:    
+
+The quickstart guide for the JS SDK is here:
 
     https://developers.facebook.com/quickstarts/735327976605607/?platform=web
 
