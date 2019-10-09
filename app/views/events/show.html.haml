@@ -59,9 +59,8 @@
     - if @presentations.empty?
       %p None Yet
     - else
-      %table.table
-        = render :partial => "presentations_table_head"
-        = render :partial => "presentations/presentation", :collection =>  @presentations
+      = render :partial => "presentations_header"
+      = render :partial => "presentations/presentation", :collection =>  @presentations
 .row
   .col-md-12
     %p= fb_social_bar

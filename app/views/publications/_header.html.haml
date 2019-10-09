@@ -1,8 +1,8 @@
-%tr
-  %th
+.row.mb-2
+  .col-md-6
     = sorting_header 'Name', :publications_path, 'publications.sortable_name'
     = ' / Published / Format'
-  %th Events
+  .col Events
   - if params[:heart].present?
-    %th Needs
-  %th
+    .col Needs
+  .col.d-none.d-md-block

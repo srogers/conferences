@@ -1,8 +1,8 @@
 -# Lists presentations for presentation/index and conference/show - so some items are conditional based on context.
 -# if @conference exists, then it's conference/show
 
-%tr{ :class => cycle(:even, :odd), id: "presentation_#{presentation.id}" }
-  %td
+.row.mb-2{ id: "presentation_#{presentation.id}" }
+  .col-md-5
     .detail-selector
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
       = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
@@ -10,13 +10,19 @@
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
 
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
-    %td
+    -# For medium up
+    .col.d-none.d-md-block
       = pretty_date presentation.date, style: :pretty
       %br
       = pretty_date presentation.created_at, style: :pretty
+    -# For small down, use two columns and put these on the same line - make the dates unbreakable so it's one line on mobile
+    .col.d-inline.d-md-none
+      = pretty_date(presentation.date, style: :pretty).gsub(' ','&nbsp;').html_safe
+    .col.d-inline.d-md-none.text-right
+      = pretty_date(presentation.created_at, style: :pretty).gsub(' ','&nbsp;').html_safe
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
-    %td
+    .col.col-sm-8.col-md-2
       - if @conference.virtual? || @conference.multi_venue?
         = pretty_date presentation.date
         %br
@@ -26,16 +32,16 @@
         = location_with_non_us_country presentation
 
   - if params[:heart].present?
-    %td
+    .col
       = icon('fas', 'tag', class: 'fa-fw', title: 'Needs topic tags') if presentation.tags.empty?
       = icon('fas', 'align-left', class: 'fa-fw', title: 'Needs a description') if presentation.description.blank?
       = icon('fas', 'puzzle-piece', class: 'fa-fw', title: 'Needs number of parts') if presentation.parts.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with a conference') if presentation.conference.blank?
 
-  %td= linked_format_icons(presentation)
+  .col.col-sm-2.col-md-2.text-right= linked_format_icons(presentation)
 
-  %td{width: can?(:edit, presentation) ? 150 : 70 }
-    - if current_user.present?
+  - if current_user.present?
+    .col
       - user_presentation = @user_presentations.select{|up| up.presentation_id == presentation.id}.first
       - if user_presentation.present?
         - if user_presentation.completed_on.present?
@@ -48,9 +54,9 @@
           = link_to icon('far', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: true } }.to_param }, title: ht_notify
       - else
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
-    - if can? :edit, presentation
-      %br
-      %div{style: 'padding-top: 5px;'}
-        = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
-        = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), class: "btn btn-sm btn-primary"
-        = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+      - if can? :edit, presentation
+        %br
+        %div.text-right{style: 'padding-top: 5px;'}
+          = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
+          = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), class: "btn btn-sm btn-primary"
+          = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

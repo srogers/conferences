@@ -32,10 +32,7 @@
       - else
         %p The system doesn't contain any events yet
 - else
-  .row
-    .col-md-12
-      %table.table
-        = render :partial => "events/table_head"
-        = render :partial => "events/conference", :collection => @conferences
+  = render :partial => "events/header"
+  = render :partial => "events/conference", :collection => @conferences
 
   = render :partial => 'shared/pagination', locals: { collection: @conferences }

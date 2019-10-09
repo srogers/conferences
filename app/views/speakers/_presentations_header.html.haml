@@ -1,10 +1,10 @@
 -# show uses this when listing presentations for a speaker. The heading links are different, so sortability works correctly.
-%tr
-  %th
+.row.mb-2
+  .col-md-5
     = sorting_header 'Name', :speaker_path, 'presentations.sortable_name'
-  %th
+  .col
     = sorting_header 'Presented', :speaker_path, 'presentations.date'
     = '/'
     = sorting_header 'Added', :speaker_path, 'presentations.created_at'
-  %th Media
-  %th
+  .col.text-right Media
+  .col.d-none.d-md-block

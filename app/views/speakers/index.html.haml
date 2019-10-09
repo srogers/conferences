@@ -10,10 +10,7 @@
       - else
         %p You haven't created any speakers yet.
 - else
-  .row
-    .col-md-12
-      %table.table
-        = render :partial => "table_head"
-        = render :partial => "speaker", :collection => @speakers
+  = render :partial => "header"
+  = render :partial => "speaker", :collection => @speakers
 
   = render :partial => 'shared/pagination', locals: { collection: @speakers }
