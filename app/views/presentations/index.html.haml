@@ -10,10 +10,7 @@
       - else
         %p You haven't created any presentations yet.
 - else
-  .row
-    .col-md-12
-      %table.table
-        = render :partial => "table_head"
-        = render :partial => "presentation", :collection => @presentations
+  = render :partial => "header"
+  = render :partial => "presentation", :collection => @presentations
 
   = render :partial => 'shared/pagination', locals: { collection: @presentations }

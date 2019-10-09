@@ -1,13 +1,17 @@
-%tr
-  %th= sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
-  %th
+.row.mb-2
+  .col-md-5
+    = sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
+  .col.d-sm-block.d-md-inline
     = sorting_header 'Presented', :presentations_path, 'presentations.date', 'sort-numeric'
     = '/'
     = sorting_header 'Added', :presentations_path, 'presentations.created_at', 'sort-numeric'
+
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
-    %th
+    .col
       = [@conference.virtual? || @conference.multi_venue? ? 'Date' : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ')
+
   - if params[:heart].present?
-    %th Needs
-  %th Media
-  %th
+    .col Needs
+
+  .col.col-md-2.text-right Media
+  .col.d-none.d-md-block

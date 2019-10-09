@@ -10,10 +10,7 @@
       - else
         %p You haven't created any publications yet.
 - else
-  .row
-    .col-md-12
-      %table.table
-        = render :partial => "table_head"
-        = render :partial => "publication", :collection => @publications
+  = render :partial => "header"
+  = render :partial => "publication", :collection => @publications
 
   = render :partial => 'shared/pagination', locals: { collection: @publications }

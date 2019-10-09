@@ -1,12 +1,12 @@
-%tr{ :class => cycle(:even, :odd) }
-  %td= link_to(truncate(speaker.name, length: 40), speaker_path(speaker, nav_params))
+.row.mb-2
+  .col= link_to(truncate(speaker.name, length: 40), speaker_path(speaker, nav_params))
 
   - if params[:heart].present?
-    %td
+    .col
       = icon('fas', 'align-left', class: 'fa-fw') if speaker.description.blank?
       = icon('fas', 'id-badge', class: 'fa-fw') if speaker.photo.blank?
 
-  %td{width: 130}
+  .col
     - if can? :edit, speaker
       = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker, nav_params), :class => "btn btn-sm btn-primary"
     -if can?(:destroy, speaker) && speaker.presentations.empty?
