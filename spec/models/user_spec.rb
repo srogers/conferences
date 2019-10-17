@@ -15,6 +15,10 @@ RSpec.describe User, :type => :model do
       }
     }
 
+    def errors_on_blank(attribute, blankish = nil)
+      User.create(valid_attributes.merge(attribute => blankish)).errors_on(attribute)
+    end
+
     it "is valid with valid attributes" do
       expect(User.new(valid_attributes)).to be_valid
     end
@@ -23,12 +27,12 @@ RSpec.describe User, :type => :model do
       expect(create :user).to be_valid
     end
 
-    it "requires a name" do
-      expect { User.create! valid_attributes.merge(name: '') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Name can't be blank")
-    end
-
-    it "requires an email" do
-      expect { User.create! valid_attributes.merge(email: '') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Email should look like an email address.")
+    context "validation" do
+      [:name, :email, :role].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
     it "cleans the email" do
@@ -37,16 +41,12 @@ RSpec.describe User, :type => :model do
       expect(user.email).to eq('bob@example.com')
     end
 
-    it "requirea a plausible email" do
+    it "requires a plausible email" do
       expect { User.create! valid_attributes.merge(email: 'bipity.bop') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Email should look like an email address.")
     end
 
-    it "requirea matching password and confirmation" do
+    it "requires matching password and confirmation" do
       expect { User.create! valid_attributes.merge(password: 'robosity', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password confirmation doesn't match Password")    end
-
-    it "requires a role" do
-      expect(User.new(role_id: nil)).not_to be_valid
-    end
 
     it "sets the sortable name" do
       speaker = Speaker.new name: "Distinctively Named Speakerperson"

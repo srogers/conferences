@@ -5,6 +5,10 @@ RSpec.describe Publication, type: :model do
 
     let(:valid_attributes) { { :format => Publication::CD, name: 'Valid Publication', speaker_names: "Somebody" } }
 
+    def errors_on_blank(attribute)
+      Publication.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
+    end
+
     it "has a working factory" do
       expect(create :publication).to be_valid
     end
@@ -13,12 +17,16 @@ RSpec.describe Publication, type: :model do
       expect(Publication.new(valid_attributes)).to be_valid
     end
 
-    it "requires a valid format" do
-      expect(Publication.new(valid_attributes.merge(format: "bogosity"))).not_to be_valid
+    context "validation" do
+      [:format, :name, :speaker_names].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
-    it "requires a name" do
-      expect(Publication.new(valid_attributes.merge(name: ""))).not_to be_valid
+    it "requires a valid format" do
+      expect(Publication.new(valid_attributes.merge(format: "bogosity"))).not_to be_valid
     end
 
     describe "name" do
@@ -60,10 +68,6 @@ RSpec.describe Publication, type: :model do
           expect(publication.sortable_name).to eq("Creatively Named Publication")
         end
       end
-    end
-
-    it "requires a speaker name" do
-      expect(Publication.new(valid_attributes.merge(speaker_names: ""))).not_to be_valid
     end
 
     context "with duration" do

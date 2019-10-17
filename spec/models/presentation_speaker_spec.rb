@@ -11,6 +11,10 @@ RSpec.describe PresentationSpeaker, type: :model do
       }
     }
 
+    def errors_on_blank(attribute)
+      PresentationSpeaker.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
+    end
+
     it "should have a working factory" do
       expect(create :presentation_speaker).to be_valid
     end
@@ -19,12 +23,13 @@ RSpec.describe PresentationSpeaker, type: :model do
       expect(PresentationSpeaker.new(valid_attributes)).to be_valid
     end
 
-    it "should be invalid without presentation_id" do
-      expect(PresentationSpeaker.new(valid_attributes.merge(presentation_id: nil))).not_to be_valid
+    context "validation" do
+      [:presentation_id, :speaker_id].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
-    it "should be invalid without speaker_id" do
-      expect(PresentationSpeaker.new(valid_attributes.merge(speaker_id: nil))).not_to be_valid
-    end
   end
 end

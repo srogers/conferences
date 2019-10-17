@@ -9,29 +9,37 @@ RSpec.describe Role, :type => :model do
       { :name => Role::ADMIN }
     }
 
-    it "should have a working factory" do
+    def errors_on_blank(attribute, blankish = nil)
+      Role.create(valid_attributes.merge(attribute => blankish)).errors_on(attribute)
+    end
+
+    it "has a working factory" do
       expect(create :role).to be_valid
     end
 
-    it "should be valid with valid attributes" do
+    it "is valid with valid attributes" do
       expect(Role.new(valid_attributes)).to be_valid
     end
 
-    it "should be invalid with bogus attributes" do
-      expect(Role.new(name: 'bogus')).not_to be_valid
+    context "validation" do
+      [:name].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
   end
 
   describe "when finding roles for assignment" do
-    it "should find admin" do
+    it "finds admin" do
       expect(Role.admin).to be_present
     end
 
-    it "should find editor" do
+    it "finds editor" do
       expect(Role.editor).to be_present
     end
 
-    it "should find reader" do
+    it "finds reader" do
       expect(Role.reader).to be_present
     end
   end

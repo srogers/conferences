@@ -7,6 +7,10 @@ RSpec.describe Organizer, type: :model do
       { name: "Valid Organizer", series_name: "Conference Series", abbreviation: "ConSer" }
     }
 
+    def errors_on_blank(attribute)
+      Organizer.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
+    end
+
     it "should have a working factory" do
       expect(create :organizer).to be_valid
     end
@@ -15,16 +19,13 @@ RSpec.describe Organizer, type: :model do
       expect(Organizer.new(valid_attributes)).to be_valid
     end
 
-    it "requires a name" do
-      expect(Organizer.new(valid_attributes.merge(name: ''))).not_to be_valid
+    context "validation" do
+      [:name, :series_name, :abbreviation].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
-    it "requires a series name" do
-      expect(Organizer.new(valid_attributes.merge(series_name: ''))).not_to be_valid
-    end
-
-    it "requires an abbreviation" do
-      expect(Organizer.new(valid_attributes.merge(abbreviation: ''))).not_to be_valid
-    end
   end
 end
