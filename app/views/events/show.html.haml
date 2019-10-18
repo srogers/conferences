@@ -4,10 +4,6 @@
 
 .row
   .col-md-12
-    %h5= @conference.event_type
-    %h4
-      = @conference.name + ','
-      = @conference.date_span
     - if current_user
       .float-right
         - if current_user.attended? @conference
@@ -18,12 +14,17 @@
           = simple_form_for @conference_user, url: event_users_path do |f|
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
             = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
-            = f.submit attendance_status_message(@conference)
+            = f.submit attendance_status_message(@conference), class: 'button'
+    %h5= @conference.event_type
+.row.mt-1
+  .col-md-12
+    %div{style: 'line-height: 1.2rem; margin-bottom: 15px'}
+      %div{style: 'font-size: 18pt; margin-bottom: 5px'}= @conference.name
+      %div{style: 'font-size: 1rem'}= @conference.date_span
+      %div{style: 'font-size: 1rem'}
+        by
+        = @conference.organizer&.name
     %p
-      %b Organizer:
-      = @conference.organizer&.name
-    %p
-      %b Venue:
       = location(@conference, :full)
     %p
       %b Program:
@@ -33,7 +34,10 @@
         %i none
     %p
       %b Description:
-      = @conference.description.try(:html_safe)
+      - if @conference.description.blank?
+        %i unavailable
+      -else
+        = @conference.description.try(:html_safe)
 
     - if can? :edit, Conference
       %p

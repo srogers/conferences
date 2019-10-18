@@ -13,6 +13,10 @@ RSpec.describe PresentationPublication, type: :model do
       }
     }
 
+    def errors_on_blank(attribute)
+      PresentationPublication.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
+    end
+
     it "should have a working factory" do
       expect(create :presentation_publication).to be_valid
     end
@@ -21,12 +25,12 @@ RSpec.describe PresentationPublication, type: :model do
       expect(PresentationPublication.new(valid_attributes)).to be_valid
     end
 
-    it "should be invalid without presentation_id" do
-      expect(PresentationPublication.new(valid_attributes.merge(presentation_id: nil))).not_to be_valid
-    end
-
-    it "should be invalid without publication_id" do
-      expect(PresentationPublication.new(valid_attributes.merge(publication_id: nil))).not_to be_valid
+    context "validation" do
+      [:presentation_id, :publication_id].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
     context "with associated user_presentations", :notifications do

@@ -13,6 +13,10 @@ RSpec.describe Conference, type: :model do
     }
   }
 
+  def errors_on_blank(attribute)
+    Conference.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
+  end
+
   describe "when creating a conference" do
 
     it "has a working factory" do
@@ -23,16 +27,12 @@ RSpec.describe Conference, type: :model do
       expect(Conference.new(valid_attributes)).to be_valid
     end
 
-    it "is invalid without organizer_id" do
-      expect(Conference.new(valid_attributes.merge(organizer_id: nil))).not_to be_valid
-    end
-
-    it "is invalid without start_date" do
-      expect(Conference.new(valid_attributes.merge(start_date: nil))).not_to be_valid
-    end
-
-    it "is invalid without end_date" do
-      expect(Conference.new(valid_attributes.merge(end_date: nil))).not_to be_valid
+    context "validation" do
+      [:organizer_id, :start_date, :end_date].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
     it "is invalid if start_date comes after end_date" do

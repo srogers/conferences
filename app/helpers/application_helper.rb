@@ -271,13 +271,18 @@ module ApplicationHelper
 
   # Shows a complete location for an Event or Presentation - country_format can be false, :short, or :full
   def location(thing, country_format=:short)
-    return 'N/A' unless thing.present? && thing.respond_to?(:venue) && thing.venue.present?
+    return 'unspecified' unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
     return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
 
-    if thing.venue_url.present?
-      elements =  [link_to(thing.venue, thing.venue_url, target: '_blank')]
+    elements = []
+    if thing.venue.blank?
+      elements << ['unspecified venue']
     else
-      elements = [thing.venue]
+      if thing.venue_url.present?
+        elements <<  [link_to(thing.venue, thing.venue_url, target: '_blank')]
+      else
+        elements << [thing.venue]
+      end
     end
     if thing.location.present?
       elements << ['––', location_with_non_us_country(thing, country_format)]
@@ -341,10 +346,11 @@ module ApplicationHelper
 
     case style
     when :pretty      then "%b %d, %Y"          # output date like  Oct 28, 2008
+    when :pretty_full then "%B %d, %Y"          # output date like  October 28, 2008
     when :short       then "%m#{sep}%d#{sep}%y" # output date like  10/28/08
     when :long        then "%m#{sep}%d#{sep}%Y" # output date like  10/28/2008
     when :db          then "%Y#{sep}%m#{sep}%d" # output date like  2008-10-28
-    when :yearless    then "%b %d"              # output date like  Oct 28
+    when :yearless    then "%B %d"              # output date like  October 28
     when :url         then "%m#{sep}%d#{sep}%Y" # output date like  10_28_2008
     when :year_only   then "%Y"                 # output year like  2008
     when :month_only  then "%b %Y"              # output date like  Oct 2008

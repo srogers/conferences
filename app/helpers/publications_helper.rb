@@ -78,6 +78,8 @@ module PublicationsHelper
       icon('fas', 'store')
     when Publication::PRINT then
       icon('fas', 'book')
+    when Publication::MOKUJI then
+      icon('fas', 'tv')
     else
       icon('fas', 'question-circle')  # This means something was added to Publication FORMATS but not included here
     end

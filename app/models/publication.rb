@@ -24,7 +24,8 @@ class Publication < ApplicationRecord
   ONLINE  = 'Online'       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'      # This is going away . . .
   PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
+  MOKUJI  = 'Mokuji'
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
@@ -32,7 +33,7 @@ class Publication < ApplicationRecord
 
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
-  HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
+  HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
 
