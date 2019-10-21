@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       end
     end
 
-    @users = @users.limit(params[:per]).page(params[:page]).per(per_page_count)
+    @users = @users.limit(params[:per]).page(param_context(:page)).per(param_context(:per))
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
@@ -33,7 +33,7 @@ class UsersController < ApplicationController
       # search for first name or last name beginning with the typed characters
       @users = User.select(:id, :name).order('name').where("name ILIKE ? OR name ILIKE ?", term+'%', "% #{ term }%")
       users_count = @users.length
-      @users = @users.page(params[:page]).per(per_page_count)
+      @users = @users.page(params[:page]).per(params[:per])
       logger.debug "user count = #{ @users.length }"
     else
       @users =[]
