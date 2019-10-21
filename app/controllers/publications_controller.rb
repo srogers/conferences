@@ -1,11 +1,13 @@
 class PublicationsController < ApplicationController
 
+  include PublicationsChart         # defines uniform ways for applying search terms
+  include Sortability
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_publication, except: [:index, :create, :new, :chart, :latest]
 
   authorize_resource
-
-  include PublicationsChart         # defines uniform ways for applying search terms
-  include Sortability
 
   def index
     @publications = Publication.references(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
@@ -36,7 +38,7 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.order(params_to_sql '-conferences.start_date')
 
-    @publications = @publications.page(params[:page]).per(per_page_count)
+    @publications = @publications.page(param_context(:page)).per(param_context(:per))
 
     respond_to do |format|
       format.html

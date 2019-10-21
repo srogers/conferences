@@ -1,14 +1,16 @@
 class EventsController < ApplicationController
 
+  include ConferencesChart
+  include ConferencesHelper
+  include Sortability
+  include SpeakersChart
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_conference, except: [:create, :new, :index, :chart, :upcoming, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
   authorize_resource :conference  # friendly_find is incompatible with load_resource
-
-  include ConferencesChart
-  include SpeakersChart
-  include ConferencesHelper
-  include Sortability
 
   def index
     # This handles "My Events" and the ability to list events attended by other users
@@ -53,7 +55,7 @@ class EventsController < ApplicationController
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
       @conferences = @conferences.limit(7)
     end
-    @conferences = @conferences.page(params[:page]).per(per_page_count)
+    @conferences = @conferences.page(param_context(:page)).per(param_context(:per))
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|

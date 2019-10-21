@@ -1,11 +1,13 @@
 class SpeakersController < ApplicationController
 
+  include Sortability
+  include SpeakersChart
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
   authorize_resource  # friendly_find is incompatible with load_resource
-
-  include SpeakersChart
-  include Sortability
 
   def index
     @speakers = Speaker.select('speakers.*').references(:presentations).order(:sortable_name)
@@ -27,7 +29,7 @@ class SpeakersController < ApplicationController
       end
     end
 
-    @speakers = @speakers.page(params[:page]).per(per_page_count(15))
+    @speakers = @speakers.page(param_context(:page)).per(param_context(:per))
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

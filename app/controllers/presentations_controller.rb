@@ -1,12 +1,14 @@
 class PresentationsController < ApplicationController
 
+  include PresentationsChart    # gets chart data
+  include SharedQueries         # defines uniform ways for applying search terms
+  include Sortability
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_presentation, except: [:create, :new, :index, :chart, :tags]
 
   authorize_resource            # friendly_find is incompatible with load_resource
-
-  include SharedQueries         # defines uniform ways for applying search terms
-  include PresentationsChart    # gets chart data
-  include Sortability
 
   def index
     @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
@@ -37,7 +39,7 @@ class PresentationsController < ApplicationController
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-    @presentations = @presentations.page(params[:page]).per(per_page_count)
+    @presentations = @presentations.page(param_context(:page)).per(param_context(:per))
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

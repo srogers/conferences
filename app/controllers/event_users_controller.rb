@@ -9,7 +9,7 @@ class EventUsersController < ApplicationController
     # This controller only handles the user side--listing users for a conference.
     redirect_to events_path and return unless params[:conference_id]
     @conference = Conference.find(params[:conference_id])
-    @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(10)
+    @attendees = @conference.users.where("users.show_attendance").page(param_context(:page)).per(param_context(:per))
   end
 
   def create
