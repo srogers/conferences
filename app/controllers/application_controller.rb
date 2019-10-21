@@ -100,13 +100,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Main index actions do this to clear the sticky nav-related params from session
-  def check_nav_params
-    if params[:nav] == 'reset'
-      session[:page] = nil
-    end
-  end
-
   def store_location
     session[:return_to] = request.url
   end

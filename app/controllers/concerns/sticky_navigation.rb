@@ -19,4 +19,15 @@ module StickyNavigation
     end
   end
 
+  # Main index actions do this to clear the sticky nav-related params from session
+  def check_nav_params
+    # A diamond and :per are forever
+    if params[:nav] == 'reset'
+      session[:page] = nil
+      session[:event_type] = nil
+
+      params[:nav] = nil
+    end
+  end
+
 end
