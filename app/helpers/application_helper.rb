@@ -53,7 +53,7 @@ module ApplicationHelper
 
   # A UI helper that provides a user-facing name for the current event type
   def current_event_type
-    params[:event_type].present? ? params[:event_type] : 'Event'
+    param_context(:event_type).present? ? param_context(:event_type) : 'Event'
   end
 
   def my_events?
@@ -71,7 +71,7 @@ module ApplicationHelper
 
   # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
+    { search_term: params[:search_term], tag: params[:tag], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through

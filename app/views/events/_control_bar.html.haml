@@ -24,7 +24,7 @@
             = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(nav_params.merge(type: 'years')), class: "dropdown-item"
 
         %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{params[:event_type].present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+          = link_to('#', class: "nav-link dropdown-toggle #{param_context(:event_type).present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Event Type',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
             = link_to 'Any', events_path(nav_params.merge(event_type: nil)), class: activated_event_class(nil, "dropdown-item")

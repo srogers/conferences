@@ -27,7 +27,7 @@
             as attended.
       - elsif params[:search_term].present?
         %p No events match the search terms
-      - elsif params[:event_type].present?
+      - elsif param_context(:event_type).present?
         %p No events match the event type
       - else
         %p The system doesn't contain any events yet

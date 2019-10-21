@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   ]
 
   def event_type_or_wildcard
-    params[:event_type].present? ? params[:event_type] : '%'
+    param_context(:event_type).present? ? param_context(:event_type) : '%'
   end
 
   # Converts a two character code like "US" to full name "United States"

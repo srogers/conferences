@@ -28,9 +28,9 @@ class EventsController < ApplicationController
 
     @conferences = @conferences.select('conferences.*').references(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
     # This structure separates out the :q from everything else. It's one or the other, but not both.
-    if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
-      if params[:event_type].present?
-        @conferences = @conferences.where(event_type: params[:event_type])
+    if params[:search_term].present? || params[:heart].present? || param_context(:event_type).present?
+      if param_context(:event_type).present?
+        @conferences = @conferences.where(event_type: param_context(:event_type))
       end
 
       if params[:heart].present?

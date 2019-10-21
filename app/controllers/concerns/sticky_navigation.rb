@@ -9,9 +9,10 @@ module StickyNavigation
       default = case param
       when :per   then 10
       when :page  then nil  # omit page entirely instead of making 1 the default
+      when :event_type then nil
       end
     end
-    # return params[param] || default if feature disabled
+    # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
     if params[param].present?
       session[param] = params[param]
     else
