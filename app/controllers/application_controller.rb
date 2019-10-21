@@ -1,6 +1,4 @@
 class ApplicationController < ActionController::Base
-  include ApplicationHelper
-
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -102,6 +100,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Main index actions do this to clear the sticky nav-related params from session
+  def check_nav_params
+    if params[:nav] == 'reset'
+      session[:page] = nil
+    end
+  end
+
   def store_location
     session[:return_to] = request.url
   end
@@ -109,15 +114,6 @@ class ApplicationController < ActionController::Base
   def redirect_back_or_default(default)
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
-  end
-
-  # Returns the current per-page value for pagination. Stashes per in session to make it sticky everywhere
-  def per_page_count(default=10)
-    if params[:per].present?
-      session[:per] = params[:per]
-    else
-      session[:per] || default
-    end
   end
 
   rescue_from CanCan::AccessDenied do |exception|

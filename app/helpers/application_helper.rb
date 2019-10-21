@@ -70,16 +70,7 @@ module ApplicationHelper
 
   # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
-  end
-
-  # Returns the current per-page value for pagination. Stashes per in session to make it sticky everywhere
-  def per_page_count(default=10)
-    if params[:per].present?
-      session[:per] = params[:per]
-    else
-      session[:per] || default
-    end
+    { search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -201,12 +192,12 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  # The default per page is set in per_page_count
+  # Provides a per-page selector that retains the current params context. The default per page is set in param_context.
   def per_page_selector
     selector = form_tag url_for(action: :index), method: :get do
       content = label_tag 'per page', nil, for: 'per', class: 'small'
       content << "&nbsp;".html_safe
-      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: per_page_count), onchange: 'this.form.submit()')
+      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: param_context(:per)), onchange: 'this.form.submit()')
       nav_params.each_pair do |param, value|
         if param == :per
           next
