@@ -6,7 +6,7 @@ class OrganizersController < ApplicationController
   authorize_resource
 
   def index
-    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(params[:page]).per(params[:per] || 10)
+    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(params[:page]).per(per_page_count)
   end
 
   def show

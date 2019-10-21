@@ -9,7 +9,6 @@ class PresentationsController < ApplicationController
   include Sortability
 
   def index
-    per_page = params[:per] || 10 # autocomplete specifies :per
     @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
     # The most efficient query depends on whether the user is logged in, because we show slightly different info
     if @current_user
@@ -38,7 +37,7 @@ class PresentationsController < ApplicationController
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-    @presentations = @presentations.page(params[:page]).per(per_page)
+    @presentations = @presentations.page(params[:page]).per(per_page_count)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

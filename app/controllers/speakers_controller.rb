@@ -9,7 +9,6 @@ class SpeakersController < ApplicationController
 
   def index
     @speakers = Speaker.select('speakers.*').references(:presentations).order(:sortable_name)
-    per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
@@ -28,7 +27,7 @@ class SpeakersController < ApplicationController
       end
     end
 
-    @speakers = @speakers.page(params[:page]).per(per_page)
+    @speakers = @speakers.page(params[:page]).per(per_page_count(15))
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

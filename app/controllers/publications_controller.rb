@@ -8,7 +8,6 @@ class PublicationsController < ApplicationController
   include Sortability
 
   def index
-    per_page = params[:per] || 10 # autocomplete specifies :per
     @publications = Publication.references(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
     @publications = Publication.includes(:presentation_publications, :presentations => :conference )
 
@@ -37,7 +36,7 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.order(params_to_sql '-conferences.start_date')
 
-    @publications = @publications.page(params[:page]).per(per_page)
+    @publications = @publications.page(params[:page]).per(per_page_count)
 
     respond_to do |format|
       format.html

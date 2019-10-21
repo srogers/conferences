@@ -70,7 +70,16 @@ module ApplicationHelper
 
   # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
+    { page: params[:page], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
+  end
+
+  # Returns the current per-page value for pagination. Stashes per in session to make it sticky everywhere
+  def per_page_count(default=10)
+    if params[:per].present?
+      session[:per] = params[:per]
+    else
+      session[:per] || default
+    end
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -80,20 +89,21 @@ module ApplicationHelper
       if params[:sort].from(1) == expression
         # Reverse the direction of the existing sort, or remove it
         if ['+'].include? params[:sort][0]
-          nav_params.merge(sort: '-' + expression, page: 1)
+          sort_string =  '-' + expression
         elsif ['<', '>'].include? params[:sort][0]
-          nav_params.merge(sort: '#' + expression, page: 1) # this will be sent in the header click and neutralize the default
+          sort_string =  '#' + expression  # this will be sent in the header click and neutralize the default
         else # '-'
-          nav_params.merge(sort: nil, page: 1)
+          sort_string =  nil
         end
       else
         # We're changing to the default sort on a new column
-        nav_params.merge(sort: '+' + expression, page: 1)
+        sort_string =  '+' + expression
       end
     else
       # Go from no sort to the default sort on the column
-      nav_params.merge(sort: '+' + expression, page: 1)
+      sort_string =  '+' + expression
     end
+    nav_params.merge(sort: sort_string, page: 1)
   end
 
   # Use this in the column header to build a clickable sorter that shows the current sort direction
@@ -191,11 +201,12 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  def per_page_selector(initial_per_page=10)
+  # The default per page is set in per_page_count
+  def per_page_selector
     selector = form_tag url_for(action: :index), method: :get do
       content = label_tag 'per page', nil, for: 'per', class: 'small'
       content << "&nbsp;".html_safe
-      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
+      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: per_page_count), onchange: 'this.form.submit()')
       nav_params.each_pair do |param, value|
         if param == :per
           next

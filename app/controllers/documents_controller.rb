@@ -9,7 +9,7 @@ class DocumentsController < ApplicationController
   def index
     @documents = Document.order("created_at DESC")
     @documents = @documents.where("status = ?", Document::COMPLETE) unless current_user.admin?
-    @documents = @documents.page(params[:page]).per(params[:per] || 10)
+    @documents = @documents.page(params[:page]).per(per_page_count)
   end
 
   # Saves the document with options for generation and queues it for processing

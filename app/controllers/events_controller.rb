@@ -53,7 +53,7 @@ class EventsController < ApplicationController
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
       @conferences = @conferences.limit(7)
     end
-    @conferences = @conferences.page(params[:page]).per(params[:per] || 10)
+    @conferences = @conferences.page(params[:page]).per(per_page_count)
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|
