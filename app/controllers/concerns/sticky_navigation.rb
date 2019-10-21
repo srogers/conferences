@@ -26,6 +26,7 @@ module StickyNavigation
       session[:page] = nil
       session[:event_type] = nil
 
+      # If reset was passed in, delete it so it won't get stuck in the paginator, which repeats all params
       params[:nav] = nil
     end
   end

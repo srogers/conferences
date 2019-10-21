@@ -20,10 +20,6 @@ describe ApplicationHelper do
         params[:per]  = 6
       end
 
-      it "retains params with values" do
-        expect(helper.nav_params[:page]).to eq(3)
-      end
-
       it "ignores params that aren't present" do
         expect(helper.nav_params.has_key?(:search_term)).to be_falsey
       end
