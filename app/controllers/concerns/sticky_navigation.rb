@@ -7,14 +7,17 @@ module StickyNavigation
     # assign defaults based on the param
     if default=='unassigned'
       default = case param
-      when :per   then 10
-      when :page  then nil  # omit page entirely instead of making 1 the default
+      when :per        then 10
+      when :page       then nil  # omit page entirely instead of making 1 the default
       when :event_type then nil
       end
     end
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
     if params[param].present?
       session[param] = params[param]
+      # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
+      params[param] = nil unless param == :page
+      session[param]
     else
       session[param] || default
     end

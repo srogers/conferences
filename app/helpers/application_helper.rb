@@ -202,12 +202,11 @@ module ApplicationHelper
       nav_params.each_pair do |param, value|
         if param == :per
           next
-        elsif param == :page
-          hidden_field_tag(:page, 1)
         else
           content << hidden_field_tag(param, value)
         end
       end
+      content << hidden_field_tag(:page, 1)
       content
     end
     selector.html_safe
