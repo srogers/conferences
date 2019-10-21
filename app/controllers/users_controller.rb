@@ -1,7 +1,9 @@
 class UsersController < ApplicationController
 
   include Sortability
+  include StickyNavigation
 
+  before_action :check_nav_params, only: [:index]
   before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
   before_action :require_user,  only: [:summary, :events]
 

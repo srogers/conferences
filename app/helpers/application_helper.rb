@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include StickyNavigation
 
   # Defined in http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html
   DEFAULT_TIME_ZONE = "America/Chicago"

@@ -1,5 +1,8 @@
 class EventUsersController < ApplicationController
 
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :require_user
 
   # authorize_resource - authorization is handled manually via before_filter, and checking show_attendance pref
