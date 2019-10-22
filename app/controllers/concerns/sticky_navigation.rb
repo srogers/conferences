@@ -31,12 +31,12 @@ module StickyNavigation
   def check_nav_params
     # A diamond and :per are forever
     if params[:nav] == 'reset'
-      session[:page] = nil
-      session[:event_type] = nil
-      session[:search_term] = nil
-      session[:tag] = nil
-      session[:user_id] = nil
-      session[:needs_approval] = nil
+      session(:page)
+      session(:event_type)
+      session(:search_term)
+      session(:tag)
+      session(:user_id)
+      session(:needs_approval)
 
       # If reset was passed in, delete it so it won't get stuck in the paginator, which repeats all params
       params[:nav] = nil
