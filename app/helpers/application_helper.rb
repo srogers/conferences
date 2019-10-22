@@ -71,7 +71,7 @@ module ApplicationHelper
 
   # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
+    { needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through

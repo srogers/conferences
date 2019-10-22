@@ -48,7 +48,7 @@
       = @conference.users.length
       - if @conference.users.length > 0 && current_user
         %span.ml-3
-          = link_to icon('fas', 'users', class: 'fa-fw'), event_users_path(conference_id: @conference.id)
+          = link_to icon('fas', 'users', class: 'fa-fw'), event_users_path(conference_id: @conference.id, page: 1)
 
 - if can?(:edit, @conference) && @conference.editors_notes.present?
   .row

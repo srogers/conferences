@@ -19,8 +19,8 @@
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
             = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(nav_params.merge(type: 'format')), class: "dropdown-item"
-            =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(type: 'year', search_term: param_context(:search_term), user_id: params[:user_id]), class: "dropdown-item"
-            =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: param_context(:search_term), user_id: params[:user_id]), class: "dropdown-item"
+            =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(type: 'year', search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
+            =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
 
       = index_search_form unless ['show', 'edit', 'new'].include?(action_name)
 

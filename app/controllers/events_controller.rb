@@ -14,9 +14,9 @@ class EventsController < ApplicationController
 
   def index
     # This handles "My Events" and the ability to list events attended by other users
-    if params[:user_id].present?
-      @user = User.find(params[:user_id])
-      if current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
+    if param_context(:user_id).present?
+      @user = User.find(param_context(:user_id))
+      if current_user.id.to_s == param_context(:user_id) || @user.show_attendance || current_user.admin?
         @conferences = @user.conferences
       else
         @user = nil

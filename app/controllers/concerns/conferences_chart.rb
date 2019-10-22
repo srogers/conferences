@@ -7,7 +7,7 @@ module ConferencesChart
   def city_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:user_id].present?
+    if param_context(:user_id).present?
       # Handles the My Conferences case - doesn't work with search term
       results = Conference.group(:city).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(city) DESC").count(:city)
 
@@ -38,7 +38,7 @@ module ConferencesChart
   def country_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:user_id].present?
+    if param_context(:user_id).present?
       # Handles the My Conferences case - doesn't play well with search terms
       results = Conference.group(:country).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(country) DESC").count
 
@@ -68,7 +68,7 @@ module ConferencesChart
   def year_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:user_id].present?
+    if param_context(:user_id).present?
       # Handles the My Conferences case - doesn't play well with search term
       results = Conference.group_by_year("conferences.start_date").where(by_user_query, current_user.id, event_type_or_wildcard).count
 

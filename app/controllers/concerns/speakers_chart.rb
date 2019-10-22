@@ -27,7 +27,7 @@ module SpeakersChart
       end
 
     # Handles the My Conferences case
-    elsif params[:user_id].present?
+    elsif param_context(:user_id).present?
       data = PresentationSpeaker.includes(:speaker, :presentation => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("speakers.name").order("count(presentation_id) DESC").count(:presentation_id)
 
     else
@@ -59,7 +59,7 @@ module SpeakersChart
       end
 
       # Handles the My Conferences case
-    elsif params[:user_id].present?
+    elsif param_context(:user_id).present?
       data = Conference.includes(:presentations => :speakers).where("conferences.id in (SELECT conferences.id FROM conference_users WHERE user_id = ?)", current_user.id).group("speakers.name").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
 
     else

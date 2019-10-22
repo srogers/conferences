@@ -12,7 +12,7 @@
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, events_path(nav_params.merge(heart: 't')), class: "nav-link", title: 'Needs some work'
 
         - if current_user.present?
-          %li.nav-item{ class: params[:user_id].present? && params[:user_id] == current_user.id.to_s ? 'active' : ''}
+          %li.nav-item{ class: param_context(:user_id).present? && param_context(:user_id) == current_user.id.to_s ? 'active' : ''}
             = link_to "My Events", events_path(user_id: current_user.id), class: "nav-link"
 
         %li.nav-item.dropdown

@@ -24,7 +24,7 @@ module PublicationsChart
       end
 
       # Handles the My Conferences case
-    elsif params[:user_id].present?
+    elsif param_context(:user_id).present?
       data = Publication.includes(:presentations => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("format").order("count(publications.id) DESC").count('publications.id')
 
     else

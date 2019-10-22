@@ -25,7 +25,7 @@ module ConferencesHelper
   end
 
   def conference_chart_title(pivot)
-    if params[:user_id].present?
+    if param_context(:user_id).present?
        title("Your #{ current_event_type.pluralize } by #{pivot}")
     elsif param_context(:search_term).present?
       title("#{ current_event_type.pluralize } by #{pivot} For #{ param_context(:search_term)}")
