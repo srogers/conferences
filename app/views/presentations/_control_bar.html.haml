@@ -25,7 +25,7 @@
             = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(nav_params.merge(type: 'topic')), class: "dropdown-item"
             = link_to icon('fas', 'chart-bar', 'by Speaker', class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'presentations')), class: "dropdown-item"
 
-      = index_search_form 'presentations' unless ['show', 'edit', 'new', 'manage_publications', 'manage_speakers'].include?(action_name)
+      = index_search_form unless ['show', 'edit', 'new', 'manage_publications', 'manage_speakers'].include?(action_name)
 
       -# action-specific buttons
       - if action_name == 'show'

@@ -18,7 +18,7 @@
             = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'presentations')), class: "dropdown-item"
             = link_to icon('fas', 'chart-bar', 'Events'  , class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'conferences')), class: "dropdown-item"
 
-      = index_search_form 'speakers' unless ['show', 'edit', 'new'].include?(action_name)
+      = index_search_form unless ['show', 'edit', 'new'].include?(action_name)
 
       -# action-specific buttons
       - if action_name == 'show'

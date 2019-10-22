@@ -31,7 +31,7 @@
             - Conference::EVENT_TYPES.each do |event_type|
               = link_to event_type, events_path(nav_params.merge(event_type: event_type, page: 1)), class: activated_event_class(event_type, "dropdown-item")
 
-      = index_search_form 'events' unless controller_name == 'conference_users' || ['show', 'edit', 'new'].include?(action_name)
+      = index_search_form unless controller_name == 'conference_users' || ['show', 'edit', 'new'].include?(action_name)
 
       -# action-specific buttons
       - if action_name == 'show'

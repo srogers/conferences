@@ -3,7 +3,7 @@
     - unless user.active
       = icon 'fas', 'ban', :class => 'fa-lg text-danger'
   %td
-    = link_to(user.name, user_path(user)
+    = link_to(user.name, user_path(user))
   %td
     %span.has_tip{'data-toggle' => 'tooltip', :title => user.email}
       = truncate(user.email, :length => 20, :omission => '...')

@@ -213,8 +213,9 @@ module ApplicationHelper
   end
 
   # Pass in the controller name for the index path to be searched - it can't always be deduced from the view.
-  def index_search_form(index_name, initial_per_page=10)
-    index_path = send("#{index_name}_path")
+  def index_search_form
+    # figure out where to send the search based on the page we're looking at right now
+    index_path = send("#{controller_name}_path")
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
       content = text_field_tag :search_term, param_context(:search_term) || param_context(:tag), placeholder: "Search"
       content << content_tag(:span, '', style: 'margin-right: 5px;')
@@ -224,7 +225,7 @@ module ApplicationHelper
       # Build the "All" button which clears the search and goes to page 1
       if param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
         # For continuity, keep existing params and just eliminate :search_term, :tag, :heart, and :page
-        index_path_with_params = controller.send("#{index_name}_path", search_term: '', page: 1)
+        index_path_with_params = send("#{controller_name}_path", search_term: '', page: 1)
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
       content << buttons
