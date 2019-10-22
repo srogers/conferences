@@ -9,4 +9,4 @@
     = simple_form_for @user do |f|
       .form_fields
         = render :partial => "form_fields", :locals => {:f => f}
-      = save_or_cancel f, user_path(@user, per: params[:per], page: params[:page])
+      = save_or_cancel f, user_path(@user)

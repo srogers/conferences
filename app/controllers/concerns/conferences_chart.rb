@@ -11,8 +11,8 @@ module ConferencesChart
       # Handles the My Conferences case - doesn't work with search term
       results = Conference.group(:city).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(city) DESC").count(:city)
 
-    elsif params[:search_term].present? || param_context(:event_type).present?
-      term = params[:search_term] || ''
+    elsif param_context(:search_term).present? || param_context(:event_type).present?
+      term = param_context(:search_term) || ''
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -42,8 +42,8 @@ module ConferencesChart
       # Handles the My Conferences case - doesn't play well with search terms
       results = Conference.group(:country).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(country) DESC").count
 
-    elsif params[:search_term].present? || param_context(:event_type).present?
-      term = params[:search_term] || ''
+    elsif param_context(:search_term).present? || param_context(:event_type).present?
+      term = param_context(:search_term) || ''
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -72,8 +72,8 @@ module ConferencesChart
       # Handles the My Conferences case - doesn't play well with search term
       results = Conference.group_by_year("conferences.start_date").where(by_user_query, current_user.id, event_type_or_wildcard).count
 
-    elsif params[:search_term].present? || param_context(:event_type).present?
-      term = params[:search_term] || ''
+    elsif param_context(:search_term).present? || param_context(:event_type).present?
+      term = param_context(:search_term) || ''
       # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
       # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)

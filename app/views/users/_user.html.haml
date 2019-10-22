@@ -3,7 +3,7 @@
     - unless user.active
       = icon 'fas', 'ban', :class => 'fa-lg text-danger'
   %td
-    = link_to(user.name, user_path(user, per: params[:per], page: params[:page]))
+    = link_to(user.name, user_path(user)
   %td
     %span.has_tip{'data-toggle' => 'tooltip', :title => user.email}
       = truncate(user.email, :length => 20, :omission => '...')
@@ -16,7 +16,7 @@
       = pretty_date(user.last_login_at, :style => :short, :undefined_text => '---')
   %td.actions
     -# Don't allow editing an inactive user, because it will change the perishable_token and break the user's validation link
-    = link_to icon('far', 'edit', :class => 'fa-fw'), edit_user_path(user, per: params[:per], page: params[:page]), class: 'btn btn-sm btn-primary'  + (user.active ? '' : ' disabled')
-    = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), user_path(user, per: params[:per], page: params[:page]), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+    = link_to icon('far', 'edit', :class => 'fa-fw'), edit_user_path(user), class: 'btn btn-sm btn-primary'  + (user.active ? '' : ' disabled')
+    = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), user_path(user), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
     -if @require_account_approval && !user.approved
       = link_to icon('fas', 'check', "Approve"), approve_user_path(user), class: "btn btn-sm btn-primary btn-success #{(user.name == 'Self Deleted' ? 'disabled' : '')}", method: :patch

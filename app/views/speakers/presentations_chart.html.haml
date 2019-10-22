@@ -4,17 +4,17 @@
   .col-md-12
     = render partial: 'shared/return_from_chart_with_params'
 
-    - if params[:search_term].present?
-      - title "Speaker Presentations for #{ params[:search_term] }"
+    - if param_context(:search_term).present?
+      - title "Speaker Presentations for #{ param_context(:search_term) }"
       %h3
         Speaker Presentations for
-        = params[:search_term]
+        = param_context(:search_term)
 
     - elsif params[:user_id].present?
       - title "Your Event Speakers"
       %h3
         Your Event Speakers
-        = params[:search_term]
+        = param_context(:search_term)
 
     - else
       - title "Frequent Event Speakers"

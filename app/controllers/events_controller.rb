@@ -28,7 +28,7 @@ class EventsController < ApplicationController
 
     @conferences = @conferences.select('conferences.*').references(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
     # This structure separates out the :q from everything else. It's one or the other, but not both.
-    if params[:search_term].present? || params[:heart].present? || param_context(:event_type).present?
+    if param_context(:search_term).present? || params[:heart].present? || param_context(:event_type).present?
       if param_context(:event_type).present?
         @conferences = @conferences.where(event_type: param_context(:event_type))
       end
@@ -37,8 +37,8 @@ class EventsController < ApplicationController
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
       end
 
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
         # This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)

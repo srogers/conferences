@@ -71,7 +71,7 @@ module ApplicationHelper
 
   # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
   def nav_params
-    { search_term: params[:search_term], tag: params[:tag], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
+    { user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
@@ -216,16 +216,15 @@ module ApplicationHelper
   def index_search_form(index_name, initial_per_page=10)
     index_path = send("#{index_name}_path")
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
-      content = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
-      content << hidden_field_tag(:per, params[:per] || initial_per_page)
-      content << hidden_field_tag(:user_id, params[:user_id]) if params[:user_id].present?
+      content = text_field_tag :search_term, param_context(:search_term) || param_context(:tag), placeholder: "Search"
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         icon('fas', 'search', class: 'fa-sm')
       end
-      if params[:search_term].present? || params[:tag].present? || params[:heart].present?
+      # Build the "All" button which clears the search and goes to page 1
+      if param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
         # For continuity, keep existing params and just eliminate :search_term, :tag, :heart, and :page
-        index_path_with_params = controller.send("#{index_name}_path", nav_params.merge(search_term: nil, tag: nil, heart: nil, page: 1))
+        index_path_with_params = controller.send("#{index_name}_path", search_term: '', page: 1)
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
       content << buttons

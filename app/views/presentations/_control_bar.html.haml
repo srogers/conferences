@@ -9,12 +9,12 @@
 
         - if current_user&.editor? || current_user&.admin?
           %li.nav-item{class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: params[:search_term], heart: 't'), class: "nav-link", title: 'Needs some work'
+            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
         %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
           = link_to 'Topics', tags_presentations_path, class: "nav-link"
 
-        %li.nav-item{class: params[:sort] == '-presentations.created_at' ? 'active' : ''}
+        %li.nav-item{class: param_context(:sort) == '-presentations.created_at' ? 'active' : ''}
           = link_to 'Latest', presentations_path(sort: '-presentations.created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown

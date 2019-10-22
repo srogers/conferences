@@ -13,13 +13,13 @@ class UsersController < ApplicationController
     if params[:needs_approval].present?
       @users = @users.needing_approval.order(:created_at)
     else
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         @users = @users.where('users.name ILIKE ? OR users.sortable_name ILIKE ? OR users.email ILIKE ?', "#{term}%", "#{term}%", "%#{term}%")
       end
     end
 
-    @users = @users.limit(params[:per]).page(param_context(:page)).per(param_context(:per))
+    @users = @users.limit(param_context(:per)).page(param_context(:page)).per(param_context(:per))
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.

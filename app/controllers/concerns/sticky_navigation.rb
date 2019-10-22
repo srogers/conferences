@@ -10,6 +10,8 @@ module StickyNavigation
       when :per        then 10
       when :page       then nil  # omit page entirely instead of making 1 the default
       when :event_type then nil
+      when :search_term then nil
+      when :tag         then nil
       end
     end
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
@@ -29,6 +31,8 @@ module StickyNavigation
     if params[:nav] == 'reset'
       session[:page] = nil
       session[:event_type] = nil
+      session[:search_term] = nil
+      session[:tag] = nil
 
       # If reset was passed in, delete it so it won't get stuck in the paginator, which repeats all params
       params[:nav] = nil

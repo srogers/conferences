@@ -18,8 +18,8 @@ module PresentationsChart
   def presentation_count_data
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
-    if params[:search_term].present? || params[:tag].present?
-      term = params[:search_term] || params[:tag]
+    if param_context(:search_term).present? || param_context(:tag).present?
+      term = param_context(:search_term) || param_context(:tag)
 
       @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
       @presentations = filter_presentations_by_term(@presentations, term)
@@ -50,8 +50,8 @@ module PresentationsChart
     @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference => :organizer).references(:taggings, :tags).load
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
-    if params[:search_term].present? || params[:tag].present?
-      term = params[:search_term] || params[:tag]
+    if param_context(:search_term).present? || param_context(:tag).present?
+      term = param_context(:search_term) || param_context(:tag)
 
       @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
       @presentations = filter_presentations_by_term(@presentations, term)

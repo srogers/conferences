@@ -23,10 +23,10 @@ class PresentationsController < ApplicationController
     @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
-      @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif params[:search_term].present? || params[:tag].present? || params[:heart].present?
+    elsif param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
         @presentations = @presentations.includes(:taggings, :conference).where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
@@ -35,7 +35,7 @@ class PresentationsController < ApplicationController
       end
 
       # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
-      term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
+      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_') || param_context(:tag)
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 

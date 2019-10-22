@@ -15,15 +15,15 @@ class SpeakersController < ApplicationController
     if params[:q].present?
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
-      @speakers.limit(params[:per]) # :q, :exclude, and :per always go together
+      @speakers.limit(param_context(:per)) # :q, :exclude, and :per always go together
 
-    elsif params[:search_term].present? || params[:heart].present?
+    elsif param_context(:search_term).present? || params[:heart].present?
       if params[:heart].present?
         @speakers = @speakers.where("coalesce(speakers.description, '') = '' OR coalesce(speakers.photo, '') = '' ")
       end
 
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         @speakers = @speakers.references(:presentations => { :conference => :organizer }).includes(:presentations => :conference)
         @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
       end
