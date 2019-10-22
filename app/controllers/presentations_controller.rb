@@ -35,7 +35,8 @@ class PresentationsController < ApplicationController
       end
 
       # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
-      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_') || param_context(:tag)
+      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_')
+      term = param_context(:tag) if term.blank?
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
