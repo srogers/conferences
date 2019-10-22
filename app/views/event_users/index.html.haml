@@ -14,7 +14,3 @@
         = render :partial => "attendee", :collection => @attendees
 
 = render :partial => 'shared/pagination', locals: { collection: @attendees }
-
-.row
-  .col-md-12
-    %p= link_to "Done", event_path(params[:conference_id]), :class => "btn btn-secondary"

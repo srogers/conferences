@@ -31,7 +31,7 @@
             - Conference::EVENT_TYPES.each do |event_type|
               = link_to event_type, events_path(nav_params.merge(event_type: event_type, page: 1)), class: activated_event_class(event_type, "dropdown-item")
 
-      = index_search_form unless controller_name == 'conference_users' || ['show', 'edit', 'new'].include?(action_name)
+      = index_search_form unless ['conference_users', 'event_users'].include?(controller_name) || ['show', 'edit', 'new'].include?(action_name)
 
       -# action-specific buttons
       - if action_name == 'show'
@@ -44,6 +44,9 @@
         - if can? :edit, @conference
           = link_to "Edit", edit_event_path(@conference, nav_params), :class => "btn btn-primary ml-3"
         = link_to "Done", events_path(nav_params), :class => "btn btn-secondary ml-3"
+
+      - if action_name == 'index' && controller_name == 'event_users'
+        = link_to "Done", event_path(@conference), :class => "btn btn-secondary ml-3"
 
       - if action_name == 'edit'
         = link_to "Cancel", event_path(@conference), :class => "btn btn-secondary ml-3"
