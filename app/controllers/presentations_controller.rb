@@ -80,15 +80,6 @@ class PresentationsController < ApplicationController
   end
 
   def show
-  # Pick a path for the Done button that goes back to the context we came from
-    if params[:page].present?
-      @return_path = presentations_path                              # clicked show from conferences listing
-    elsif @presentation.conference_id.present?
-      @return_path = event_path(@presentation.conference.to_param)   # clicked show from some other context
-    else
-      @return_path = presentations_path
-    end
-
     if current_user
       @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
     end

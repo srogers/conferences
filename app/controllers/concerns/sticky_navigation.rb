@@ -4,7 +4,9 @@ module StickyNavigation
   # Gets the current value of navigation-related params or assigns a default. Stashes current value in session to make
   # it sticky everywhere - with the overall goal of getting consistent nav behavior without littering URLs with params.
   def param_context(param, default='unassigned')
-    # assign defaults based on the param
+    # logger.debug "params:  #{params.inspect}"
+    # logger.debug "session:  #{session.keys}"
+
     if default=='unassigned'
       default = case param
       when :per         then 10
@@ -30,17 +32,37 @@ module StickyNavigation
   # Main index actions do this to clear the sticky nav-related params from session
   def check_nav_params
     # A diamond and :per are forever
-    if params[:nav] == 'reset'
-      session(:page)
-      session(:event_type)
-      session(:search_term)
-      session(:tag)
-      session(:user_id)
-      session(:needs_approval)
+    reset_and_remember if params[:nav] == 'reset'
+  end
 
-      # If reset was passed in, delete it so it won't get stuck in the paginator, which repeats all params
-      params[:nav] = nil
+  # At certain critical junctures when navigating "up", the proper direction can be ambiguous without knowing how we got
+  # into the current context. E.g., clicking Done on event/show could go up to /events, but if we navigated to the event
+  # via a presentation, then it makes sense to go back to that context.
+  def deduce_done_path
+    if session[:via].present?
+      # the "Done" path is the path to the original controller/index with sticky params in tact.
+      send("#{session[:via]}_path")
+    else
+      # We don't know how we got here, so go to some safe context.
+      # This is annoying, but safe, because it will force the user to pick a top-level item and reset the context:
+      # root_path
+      # This is annoying, but in a different way:
+      send("#{controller_name}_path", nav: 'reset')
     end
   end
 
+  private
+
+  def reset_and_remember
+    session.delete(:page)
+    session.delete(:event_type)
+    session.delete(:search_term)
+    session.delete(:tag)
+    session.delete(:user_id)
+    session.delete(:needs_approval)
+
+    session[:via] = controller_name  # remember how we got here
+
+    params[:nav] = nil               # clear this out so it won't get stuck in pagination
+  end
 end

@@ -37,7 +37,7 @@
             = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-primary ml-3"
           = link_to "Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-primary ml-3"
           = link_to "Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary ml-3"
-        = link_to "Done", @return_path, :class => "btn btn-secondary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-secondary ml-3"
 
       - if ['manage_publications', 'manage_speakers'].include?(action_name)
         = link_to "Done", presentation_path(@presentation), class: 'btn btn-secondary btn-sm'
