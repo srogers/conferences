@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   def index
     @require_account_approval = Setting.require_account_approval?
     @users = User.includes(:role).order(params_to_sql('>users.sortable_name'))
-    if params[:needs_approval].present?
+    if param_context(:needs_approval).present?
       @users = @users.needing_approval.order(:created_at)
     else
       if param_context(:search_term).present?

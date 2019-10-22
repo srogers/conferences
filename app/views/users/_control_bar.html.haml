@@ -8,7 +8,7 @@
             =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_user_path, class: 'nav-link'
 
         - if @require_account_approval
-          %li.nav-item{class: params[:needs_approval].present? ? 'active' : ''}
+          %li.nav-item{class: param_context(:needs_approval).present? ? 'active' : ''}
             =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
 
       = index_search_form unless ['show', 'edit', 'new', 'summary', 'events'].include?(action_name)

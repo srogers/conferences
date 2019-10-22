@@ -13,6 +13,7 @@ module StickyNavigation
       when :search_term then nil
       when :tag         then nil
       when :user_id     then nil
+      when :needs_approval then nil
       end
     end
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
@@ -35,6 +36,7 @@ module StickyNavigation
       session[:search_term] = nil
       session[:tag] = nil
       session[:user_id] = nil
+      session[:needs_approval] = nil
 
       # If reset was passed in, delete it so it won't get stuck in the paginator, which repeats all params
       params[:nav] = nil
