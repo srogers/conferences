@@ -207,6 +207,7 @@ module ApplicationHelper
     term = param_context(:search_term).blank? ? param_context(:tag) : param_context(:search_term)
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
       content = text_field_tag :search_term, term, placeholder: "Search"
+      content << hidden_field_tag(:page, 1)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         icon('fas', 'search', class: 'fa-sm')
