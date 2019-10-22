@@ -13,10 +13,10 @@ module StickyNavigation
       end
     end
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
-    if params[param].present?
+    if params.has_key?(param)
       session[param] = params[param]
       # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
-      params[param] = nil unless param == :page
+      params.delete(param) unless param == :page
       session[param]
     else
       session[param] || default
