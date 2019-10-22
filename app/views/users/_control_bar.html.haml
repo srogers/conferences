@@ -20,7 +20,7 @@
         = link_to "Summary", summary_users_path(id: @user.id), :class => "btn btn-primary ml-3"
 
       - if ['show'].include?(action_name)
-        = link_to "Done", users_path(nav_params), :class => "btn btn-secondary ml-3"
+        = link_to "Done", users_path, :class => "btn btn-secondary ml-3"
 
       - if ['summary', 'events'].include?(action_name)
         = link_to "Done", root_path, :class => "btn btn-secondary ml-3"

@@ -2,7 +2,7 @@
 
 .row.chart-controls
   .col-md-12
-    = link_to "Done", presentations_path(nav_params), :class => "btn btn-secondary float-right"
+    = link_to "Done", presentations_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present? || param_context(:tag).present?
       - title "Presentations for #{ param_context(:search_term) }"

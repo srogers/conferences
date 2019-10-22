@@ -15,19 +15,7 @@ describe ApplicationHelper do
     end
 
     context "retaining params for navigation" do
-      before do
-        params[:page] = 3
-        params[:per]  = 6
-      end
-
-      it "ignores params that aren't present" do
-        expect(helper.nav_params.has_key?(:search_term)).to be_falsey
-      end
-
-      it "ignores params that are blank" do
-        params[:tag] = ''
-        expect(helper.nav_params.has_key?(:tag)).to be_falsey
-      end
+      it "saves nav-related params in session"
     end
 
     context "with current_user" do

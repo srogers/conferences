@@ -69,11 +69,6 @@ module ApplicationHelper
     controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
   end
 
-  # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
-  def nav_params
-    { needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
-  end
-
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
   # ASC, DESC, and no sort. Set defaults in the controller, not here.
   def params_with_sort(expression)
@@ -95,7 +90,7 @@ module ApplicationHelper
       # Go from no sort to the default sort on the column
       sort_string =  '+' + expression
     end
-    nav_params.merge(sort: sort_string, page: 1)
+    { sort: sort_string, page: 1 }
   end
 
   # Use this in the column header to build a clickable sorter that shows the current sort direction
@@ -199,13 +194,6 @@ module ApplicationHelper
       content = label_tag 'per page', nil, for: 'per', class: 'small'
       content << "&nbsp;".html_safe
       content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: param_context(:per)), onchange: 'this.form.submit()')
-      nav_params.each_pair do |param, value|
-        if param == :per
-          next
-        else
-          content << hidden_field_tag(param, value)
-        end
-      end
       content << hidden_field_tag(:page, 1)
       content
     end

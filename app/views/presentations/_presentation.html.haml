@@ -7,7 +7,7 @@
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
       = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
-      = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation, nav_params))
+      = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
 
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
     -# For medium up
@@ -58,5 +58,5 @@
         %br
         %div.text-right{style: 'padding-top: 5px;'}
           = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
-          = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation, nav_params), class: "btn btn-sm btn-primary"
+          = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation), class: "btn btn-sm btn-primary"
           = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
