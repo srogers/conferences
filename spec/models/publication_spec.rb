@@ -110,6 +110,16 @@ RSpec.describe Publication, type: :model do
           end
         end
       end
+
+      context "from UI as N/A" do
+        let(:valid_user_attributes) { valid_attributes.merge(ui_duration: 'N/A')}
+
+        it "is valid" do
+          publication = Publication.new(valid_user_attributes)
+          expect(publication).to be_valid
+        end
+      end
+
     end
   end
 

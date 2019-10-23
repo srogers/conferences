@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   ]
 
   def event_type_or_wildcard
-    params[:event_type].present? ? params[:event_type] : '%'
+    param_context(:event_type).present? ? param_context(:event_type) : '%'
   end
 
   # Converts a two character code like "US" to full name "United States"
@@ -108,7 +108,6 @@ class ApplicationController < ActionController::Base
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
   end
-
 
   rescue_from CanCan::AccessDenied do |exception|
     logger.warn "ApplicationController handled AccessDenied for user #{ current_user.try(:id) } - #{ current_user.try(:name) } - #{ current_user.try(:role_name)}"

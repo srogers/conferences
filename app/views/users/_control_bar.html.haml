@@ -5,22 +5,22 @@
       %ul.navbar-nav.mr-auto
         - if can?(:create, User) && !['summary', 'events'].include?(action_name)
           %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
-            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_user_path(per: params[:per], page: params[:page]), class: 'nav-link'
+            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_user_path, class: 'nav-link'
 
         - if @require_account_approval
-          %li.nav-item{class: params[:needs_approval].present? ? 'active' : ''}
+          %li.nav-item{class: param_context(:needs_approval).present? ? 'active' : ''}
             =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
 
-      = index_search_form 'users' unless ['show', 'edit', 'new', 'summary', 'events'].include?(action_name)
+      = index_search_form unless ['show', 'edit', 'new', 'summary', 'events'].include?(action_name)
 
       - if action_name == 'show'
         = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
         -# Don't allow editing an inactive user, because it will change the perishable_token and break the user's validation link
-        = link_to "Edit", edit_user_path(@user, per: params[:per], page: params[:page]), :class => "btn btn-primary ml-3" + (@user.active ? '' : ' disabled')
+        = link_to "Edit", edit_user_path, :class => "btn btn-primary ml-3" + (@user.active ? '' : ' disabled')
         = link_to "Summary", summary_users_path(id: @user.id), :class => "btn btn-primary ml-3"
 
       - if ['show'].include?(action_name)
-        = link_to "Done", users_path(nav_params), :class => "btn btn-secondary ml-3"
+        = link_to "Done", users_path, :class => "btn btn-secondary ml-3"
 
       - if ['summary', 'events'].include?(action_name)
         = link_to "Done", root_path, :class => "btn btn-secondary ml-3"

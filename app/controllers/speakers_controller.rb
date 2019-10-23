@@ -1,34 +1,35 @@
 class SpeakersController < ApplicationController
 
+  include Sortability
+  include SpeakersChart
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_speaker, except: [:create, :new, :index, :chart, :presentations_count_by]
 
   authorize_resource  # friendly_find is incompatible with load_resource
 
-  include SpeakersChart
-  include Sortability
-
   def index
     @speakers = Speaker.select('speakers.*').references(:presentations).order(:sortable_name)
-    per_page = params[:per] || 15 # autocomplete specifies :per
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
-      @speakers.limit(params[:per]) # :q, :exclude, and :per always go together
+      @speakers.limit(param_context(:per)) # :q, :exclude, and :per always go together
 
-    elsif params[:search_term].present? || params[:heart].present?
+    elsif param_context(:search_term).present? || params[:heart].present?
       if params[:heart].present?
         @speakers = @speakers.where("coalesce(speakers.description, '') = '' OR coalesce(speakers.photo, '') = '' ")
       end
 
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         @speakers = @speakers.references(:presentations => { :conference => :organizer }).includes(:presentations => :conference)
         @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
       end
     end
 
-    @speakers = @speakers.page(params[:page]).per(per_page)
+    @speakers = @speakers.page(param_context(:page)).per(param_context(:per))
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|

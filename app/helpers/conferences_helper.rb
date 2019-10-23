@@ -21,14 +21,14 @@ module ConferencesHelper
   end
 
   def activated_event_class(event_type, default_class)
-    params[:event_type] == event_type ? default_class + ' active' : default_class
+    param_context(:event_type) == event_type ? default_class + ' active' : default_class
   end
 
   def conference_chart_title(pivot)
-    if params[:user_id].present?
+    if param_context(:user_id).present?
        title("Your #{ current_event_type.pluralize } by #{pivot}")
-    elsif params[:search_term].present?
-      title("#{ current_event_type.pluralize } by #{pivot} For #{ params[:search_term]}")
+    elsif param_context(:search_term).present?
+      title("#{ current_event_type.pluralize } by #{pivot} For #{ param_context(:search_term)}")
     else
       title("#{ current_event_type.pluralize} by #{pivot}")
     end

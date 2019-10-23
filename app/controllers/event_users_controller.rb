@@ -1,5 +1,8 @@
 class EventUsersController < ApplicationController
 
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :require_user
 
   # authorize_resource - authorization is handled manually via before_filter, and checking show_attendance pref
@@ -9,7 +12,7 @@ class EventUsersController < ApplicationController
     # This controller only handles the user side--listing users for a conference.
     redirect_to events_path and return unless params[:conference_id]
     @conference = Conference.find(params[:conference_id])
-    @attendees = @conference.users.where("users.show_attendance").page(params[:page]).per(10)
+    @attendees = @conference.users.where("users.show_attendance").page(param_context(:page)).per(param_context(:per))
   end
 
   def create

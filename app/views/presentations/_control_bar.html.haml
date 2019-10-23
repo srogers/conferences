@@ -9,35 +9,35 @@
 
         - if current_user&.editor? || current_user&.admin?
           %li.nav-item{class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: params[:search_term], heart: 't'), class: "nav-link", title: 'Needs some work'
+            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
         %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
           = link_to 'Topics', tags_presentations_path, class: "nav-link"
 
-        %li.nav-item{class: params[:sort] == '-presentations.created_at' ? 'active' : ''}
+        %li.nav-item{class: param_context(:sort) == '-presentations.created_at' ? 'active' : ''}
           = link_to 'Latest', presentations_path(sort: '-presentations.created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(nav_params.merge(type: 'years')), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(nav_params.merge(type: 'topic')), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'by Speaker', class: 'fa-sm'), chart_speakers_path(nav_params.merge(type: 'presentations')), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(type: 'years'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(type: 'topic'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Speaker', class: 'fa-sm'), chart_speakers_path(type: 'presentations'), class: "dropdown-item"
 
-      = index_search_form 'presentations' unless ['show', 'edit', 'new', 'manage_publications', 'manage_speakers'].include?(action_name)
+      = index_search_form unless ['show', 'edit', 'new', 'manage_publications', 'manage_speakers'].include?(action_name)
 
       -# action-specific buttons
       - if action_name == 'show'
         - if can? :destroy, @presentation
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @presentation
-          = link_to "Edit", edit_presentation_path(@presentation, nav_params), :class => "btn btn-primary ml-3"
+          = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-primary ml-3"
           - if request&.referrer&.split('?')&.first == new_presentation_url # ignore any trailing params
             = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-primary ml-3"
           = link_to "Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-primary ml-3"
           = link_to "Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-primary ml-3"
-        = link_to "Done", @return_path, :class => "btn btn-secondary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-secondary ml-3"
 
       - if ['manage_publications', 'manage_speakers'].include?(action_name)
         = link_to "Done", presentation_path(@presentation), class: 'btn btn-secondary btn-sm'

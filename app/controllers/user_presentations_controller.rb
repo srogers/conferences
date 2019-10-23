@@ -1,11 +1,13 @@
 class UserPresentationsController < ApplicationController
 
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :require_user, except: [:most_watched, :most_anticipated]  # guests shouldn't ever see any buttons that go here
 
   def index
-    per_page = 10
     @user_presentations = current_user.user_presentations.includes(:presentation => :conference).order('conferences.start_date DESC', 'presentations.name')
-    @user_presentations = @user_presentations.page(params[:page]).per(per_page)
+    @user_presentations = @user_presentations.page(param_context(:page)).per(param_context(:per))
   end
 
   def most_watched

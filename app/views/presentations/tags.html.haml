@@ -1,3 +1,6 @@
+- content_for :head do
+  = tag :meta, name: "robots", content: "nofollow"
+
 = render partial: 'control_bar'
 
 .row
@@ -6,5 +9,5 @@
     %ul
       - @tags.each do |tag|
         %li
-          = link_to tag.name, presentations_path(tag: tag.name)
+          = link_to tag.name, presentations_path(tag: tag.name, page: 1)
           = "(#{ tag.taggings_count })"

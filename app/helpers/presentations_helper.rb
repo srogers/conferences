@@ -1,7 +1,7 @@
 module PresentationsHelper
 
   def linked_tag_names(presentation)
-    presentation.tag_list.map{|t| link_to t, presentations_path(tag: t)}.join(', ').html_safe
+    presentation.tag_list.map{|t| link_to t, presentations_path(tag: t, page: 1)}.join(', ').html_safe
   end
 
   # Get a list of icons corresponding to items in the publication list. The ones that correspond to online media are

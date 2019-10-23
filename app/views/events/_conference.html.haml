@@ -1,6 +1,6 @@
 .row.mb-2
   .col-md-5
-    = link_to(truncate(conference.name, length: 40, separator: ' '), event_path(conference, nav_params))
+    = link_to(truncate(conference.name, length: 40, separator: ' '), event_path(conference))
     %br
     = conference.date_span
   .col-md-2
@@ -14,6 +14,6 @@
 
   - if can? :edit, conference
     .col-md-2.text-right
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_event_path(conference, nav_params), :class => "btn btn-sm btn-primary"
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_event_path(conference), :class => "btn btn-sm btn-primary"
       - if can?(:destroy, conference) && conference.presentations.empty?
         = link_to icon('far', 'trash-alt', class: 'fa-fw'), event_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true

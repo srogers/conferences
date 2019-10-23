@@ -1,15 +1,16 @@
 class PresentationsController < ApplicationController
 
+  include PresentationsChart    # gets chart data
+  include SharedQueries         # defines uniform ways for applying search terms
+  include Sortability
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_presentation, except: [:create, :new, :index, :chart, :tags]
 
   authorize_resource            # friendly_find is incompatible with load_resource
 
-  include SharedQueries         # defines uniform ways for applying search terms
-  include PresentationsChart    # gets chart data
-  include Sortability
-
   def index
-    per_page = params[:per] || 10 # autocomplete specifies :per
     @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
     # The most efficient query depends on whether the user is logged in, because we show slightly different info
     if @current_user
@@ -22,10 +23,10 @@ class PresentationsController < ApplicationController
     @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
-      @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif params[:search_term].present? || params[:tag].present? || params[:heart].present?
+    elsif param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
         @presentations = @presentations.includes(:taggings, :conference).where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
@@ -34,11 +35,12 @@ class PresentationsController < ApplicationController
       end
 
       # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
-      term = params[:search_term]&.gsub("'",'_')&.gsub('"','_') || params[:tag]
+      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_')
+      term = param_context(:tag) if term.blank?
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-    @presentations = @presentations.page(params[:page]).per(per_page)
+    @presentations = @presentations.page(param_context(:page)).per(param_context(:per))
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
@@ -78,15 +80,6 @@ class PresentationsController < ApplicationController
   end
 
   def show
-  # Pick a path for the Done button that goes back to the context we came from
-    if params[:page].present?
-      @return_path = presentations_path(helpers.nav_params)                                   # clicked show from conferences listing
-    elsif @presentation.conference_id.present?
-      @return_path = event_path(@presentation.conference.to_param, helpers.nav_params)   # clicked show from some other context
-    else
-      @return_path = presentations_path(helpers.nav_params)
-    end
-
     if current_user
       @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
     end

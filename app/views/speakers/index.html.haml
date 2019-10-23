@@ -5,7 +5,7 @@
 - if @speakers.blank?
   .row
     .col-md-12
-      - if params[:search_term].present?
+      - if param_context(:search_term).present?
         %p No speakers match that search term
       - else
         %p You haven't created any speakers yet.

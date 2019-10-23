@@ -1,20 +1,22 @@
 class EventsController < ApplicationController
 
+  include ConferencesChart
+  include ConferencesHelper
+  include Sortability
+  include SpeakersChart
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_conference, except: [:create, :new, :index, :chart, :upcoming, :cities_count_by]
   before_action :get_organizer_selections, only: [:create, :new, :edit]
 
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
-  include ConferencesChart
-  include SpeakersChart
-  include ConferencesHelper
-  include Sortability
-
   def index
     # This handles "My Events" and the ability to list events attended by other users
-    if params[:user_id].present?
-      @user = User.find(params[:user_id])
-      if current_user.id.to_s == params[:user_id] || @user.show_attendance || current_user.admin?
+    if param_context(:user_id).present?
+      @user = User.find(param_context(:user_id))
+      if current_user.id.to_s == param_context(:user_id) || @user.show_attendance || current_user.admin?
         @conferences = @user.conferences
       else
         @user = nil
@@ -26,17 +28,17 @@ class EventsController < ApplicationController
 
     @conferences = @conferences.select('conferences.*').references(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
     # This structure separates out the :q from everything else. It's one or the other, but not both.
-    if params[:search_term].present? || params[:heart].present? || params[:event_type].present?
-      if params[:event_type].present?
-        @conferences = @conferences.where(event_type: params[:event_type])
+    if param_context(:search_term).present? || params[:heart].present? || param_context(:event_type).present?
+      if param_context(:event_type).present?
+        @conferences = @conferences.where(event_type: param_context(:event_type))
       end
 
       if params[:heart].present?
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
       end
 
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
         # This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -53,7 +55,7 @@ class EventsController < ApplicationController
       @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
       @conferences = @conferences.limit(7)
     end
-    @conferences = @conferences.page(params[:page]).per(params[:per] || 10)
+    @conferences = @conferences.page(param_context(:page)).per(param_context(:per))
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|

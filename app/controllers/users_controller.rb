@@ -1,23 +1,25 @@
 class UsersController < ApplicationController
 
   include Sortability
+  include StickyNavigation
 
+  before_action :check_nav_params, only: [:index]
   before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
   before_action :require_user,  only: [:summary, :events]
 
   def index
     @require_account_approval = Setting.require_account_approval?
     @users = User.includes(:role).order(params_to_sql('>users.sortable_name'))
-    if params[:needs_approval].present?
+    if param_context(:needs_approval).present?
       @users = @users.needing_approval.order(:created_at)
     else
-      if params[:search_term].present?
-        term = params[:search_term]
+      if param_context(:search_term).present?
+        term = param_context(:search_term)
         @users = @users.where('users.name ILIKE ? OR users.sortable_name ILIKE ? OR users.email ILIKE ?', "#{term}%", "#{term}%", "%#{term}%")
       end
     end
 
-    @users = @users.limit(params[:per]).page(params[:page]).per(params[:per] || 10)
+    @users = @users.limit(param_context(:per)).page(param_context(:page)).per(param_context(:per))
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.

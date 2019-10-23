@@ -9,4 +9,4 @@
   .col-md-12
     = simple_form_for @conference, url: event_path(@conference) do |f|
       = render :partial => "form_fields", :locals => {:f => f}
-      = save_or_cancel f, event_path(@conference, nav_params), 'Save'
+      = save_or_cancel f, event_path(@conference), 'Save'

@@ -8,8 +8,8 @@ module PublicationsChart
   def format_count_data
     # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
-    if params[:search_term].present?
-      term = params[:search_term]
+    if param_context(:search_term).present?
+      term = param_context(:search_term)
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
       if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
@@ -24,7 +24,7 @@ module PublicationsChart
       end
 
       # Handles the My Conferences case
-    elsif params[:user_id].present?
+    elsif param_context(:user_id).present?
       data = Publication.includes(:presentations => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("format").order("count(publications.id) DESC").count('publications.id')
 
     else

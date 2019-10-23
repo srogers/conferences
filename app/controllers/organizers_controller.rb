@@ -1,12 +1,15 @@
 class OrganizersController < ApplicationController
 
   include Sortability
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
 
   load_resource except: [:create, :new, :index]
   authorize_resource
 
   def index
-    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(params[:page]).per(params[:per] || 10)
+    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(param_context(:page)).per(param_context(:per))
   end
 
   def show

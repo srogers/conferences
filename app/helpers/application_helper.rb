@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include StickyNavigation
 
   # Defined in http://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html
   DEFAULT_TIME_ZONE = "America/Chicago"
@@ -52,7 +53,7 @@ module ApplicationHelper
 
   # A UI helper that provides a user-facing name for the current event type
   def current_event_type
-    params[:event_type].present? ? params[:event_type] : 'Event'
+    param_context(:event_type).present? ? param_context(:event_type) : 'Event'
   end
 
   def my_events?
@@ -68,11 +69,6 @@ module ApplicationHelper
     controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
   end
 
-  # For throwing the filter/navigation-related params into paths, so header sort and Done buttons can return to the original context.
-  def nav_params
-    { page: params[:page], per: params[:per], search_term: params[:search_term], tag: params[:tag], event_type: params[:event_type], user_id: params[:user_id], needs_approval: params[:needs_approval] }.reject {|_,v| v.blank?}
-  end
-
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
   # ASC, DESC, and no sort. Set defaults in the controller, not here.
   def params_with_sort(expression)
@@ -80,20 +76,21 @@ module ApplicationHelper
       if params[:sort].from(1) == expression
         # Reverse the direction of the existing sort, or remove it
         if ['+'].include? params[:sort][0]
-          nav_params.merge(sort: '-' + expression, page: 1)
+          sort_string =  '-' + expression
         elsif ['<', '>'].include? params[:sort][0]
-          nav_params.merge(sort: '#' + expression, page: 1) # this will be sent in the header click and neutralize the default
+          sort_string =  '#' + expression  # this will be sent in the header click and neutralize the default
         else # '-'
-          nav_params.merge(sort: nil, page: 1)
+          sort_string =  nil
         end
       else
         # We're changing to the default sort on a new column
-        nav_params.merge(sort: '+' + expression, page: 1)
+        sort_string =  '+' + expression
       end
     else
       # Go from no sort to the default sort on the column
-      nav_params.merge(sort: '+' + expression, page: 1)
+      sort_string =  '+' + expression
     end
+    { sort: sort_string, page: 1 }
   end
 
   # Use this in the column header to build a clickable sorter that shows the current sort direction
@@ -191,39 +188,34 @@ module ApplicationHelper
     link_to button_text, path, :class => 'btn btn-secondary btn-sm'
   end
 
-  def per_page_selector(initial_per_page=10)
+  # Provides a per-page selector that retains the current params context. The default per page is set in param_context.
+  def per_page_selector
     selector = form_tag url_for(action: :index), method: :get do
       content = label_tag 'per page', nil, for: 'per', class: 'small'
       content << "&nbsp;".html_safe
-      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: params[:per] || initial_per_page), onchange: 'this.form.submit()')
-      nav_params.each_pair do |param, value|
-        if param == :per
-          next
-        elsif param == :page
-          hidden_field_tag(:page, 1)
-        else
-          content << hidden_field_tag(param, value)
-        end
-      end
+      content << select_tag(:per, options_for_select( [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,50], selected: param_context(:per)), onchange: 'this.form.submit()')
+      content << hidden_field_tag(:page, 1)
       content
     end
     selector.html_safe
   end
 
   # Pass in the controller name for the index path to be searched - it can't always be deduced from the view.
-  def index_search_form(index_name, initial_per_page=10)
-    index_path = send("#{index_name}_path")
+  def index_search_form
+    # figure out where to send the search based on the page we're looking at right now
+    index_path = send("#{controller_name}_path")
+    term = param_context(:search_term).blank? ? param_context(:tag) : param_context(:search_term)
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
-      content = text_field_tag :search_term, params[:search_term] || params[:tag], placeholder: "Search"
-      content << hidden_field_tag(:per, params[:per] || initial_per_page)
-      content << hidden_field_tag(:user_id, params[:user_id]) if params[:user_id].present?
+      content = text_field_tag :search_term, term, placeholder: "Search"
+      content << hidden_field_tag(:page, 1)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
         icon('fas', 'search', class: 'fa-sm')
       end
-      if params[:search_term].present? || params[:tag].present? || params[:heart].present?
+      # Build the "All" button which clears the search and goes to page 1
+      if param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
         # For continuity, keep existing params and just eliminate :search_term, :tag, :heart, and :page
-        index_path_with_params = controller.send("#{index_name}_path", nav_params.merge(search_term: nil, tag: nil, heart: nil, page: 1))
+        index_path_with_params = send("#{controller_name}_path", search_term: '', tag: '', page: 1)
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
       content << buttons

@@ -4,17 +4,17 @@
   .col-md-12
     = render partial: 'shared/return_from_chart_with_params'
 
-    - if params[:search_term].present?
-      - title "Publication formats for #{ params[:search_term] }"
+    - if param_context(:search_term).present?
+      - title "Publication formats for #{ param_context(:search_term) }"
       %h3
         Publication formats for
-        = params[:search_term]
+        = param_context(:search_term)
 
-    - elsif params[:user_id].present?
+    - elsif param_context(:user_id).present?
       - title "Your Event Cities"
       %h3
         Your Publication formats
-        = params[:search_term]
+        = param_context(:search_term)
 
     - else
       - title "Publication formats"

@@ -1,19 +1,20 @@
 class PublicationsController < ApplicationController
 
+  include PublicationsChart         # defines uniform ways for applying search terms
+  include Sortability
+  include StickyNavigation
+
+  before_action :check_nav_params, only: [:index]
   before_action :get_publication, except: [:index, :create, :new, :chart, :latest]
 
   authorize_resource
 
-  include PublicationsChart         # defines uniform ways for applying search terms
-  include Sortability
-
   def index
-    per_page = params[:per] || 10 # autocomplete specifies :per
     @publications = Publication.references(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
     @publications = Publication.includes(:presentation_publications, :presentations => :conference )
 
     if params[:q].present?
-      @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(params[:per])
+      @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     elsif params[:heart].present?
@@ -23,8 +24,8 @@ class PublicationsController < ApplicationController
       ", Publication::HAS_DURATION)
     end
 
-    if params[:search_term].present?
-      term = params[:search_term].gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
+    if param_context(:search_term).present?
+      term = param_context(:search_term).gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
       @publications = @publications.includes(:presentations => :speakers)
       # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
       # This doesn't work for international states - might be fixed by going to country_state_select at some point.
@@ -37,7 +38,7 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.order(params_to_sql '-conferences.start_date')
 
-    @publications = @publications.page(params[:page]).per(per_page)
+    @publications = @publications.page(param_context(:page)).per(param_context(:per))
 
     respond_to do |format|
       format.html
