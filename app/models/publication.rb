@@ -39,8 +39,8 @@ class Publication < ApplicationRecord
 
   validates :name, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
-  validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
   validates :ui_duration, duration_format: true
+  validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
 
   before_validation :format_duration
 
@@ -49,7 +49,10 @@ class Publication < ApplicationRecord
   # Move the contents of #ui_duration into #duration as raw seconds
   def format_duration
     if ui_duration.present? && ui_duration&.respond_to?(:include?)
-      if ui_duration&.include?(':')
+      if ui_duration == 'N/A'
+        self.duration = nil
+        self.ui_duration = ''
+      elsif ui_duration&.include?(':')
         self.duration =  unformatted_time(ui_duration)  # expect hh:mm or hh:mm:ss format
       else
         self.duration = ui_duration.to_i                # expect raw minutes format
