@@ -1,3 +1,6 @@
+- content_for :head do
+  = tag :link, rel: 'canonical', href: publication_url(@publication)
+
 = render partial: 'control_bar'
 
 .row

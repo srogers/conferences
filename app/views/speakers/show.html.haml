@@ -1,3 +1,6 @@
+- content_for :head do
+  = tag :link, rel: 'canonical', href: speaker_url(@speaker)
+
 = render partial: 'control_bar'
 
 .row

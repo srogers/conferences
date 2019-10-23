@@ -1,3 +1,6 @@
+- content_for :head do
+  = tag :link, rel: 'canonical', href: organizer_url(@organizer)
+
 = render partial: 'control_bar'
 
 .row
