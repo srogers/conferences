@@ -11,5 +11,5 @@ Given /^I am logged in as (.*) with password (.*)$/ do |email, password|
   click_button "Log in"
   page.body.should_not =~ /Email is not valid/m
   page.body.should_not =~ /Password is not valid/m
-  page.body.should =~ /Welcome /m     # This is in the header
+  page.body.should =~ /Objectivist Conferences/m     # This is in the landing page
 end

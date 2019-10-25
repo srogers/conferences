@@ -1,0 +1,54 @@
+admin:
+  role: admin
+  email: admin@example.com
+  name: Admin Testerperson
+  city: 'Anytown'
+  state: 'TX'
+  country:
+  time_zone: Central Time (US & Canada)
+  password_salt: cPYNxDMFlu2r5PdVyq4K
+  crypted_password: 400$8$4a$b4f09eb7479b4bbe$6e37262db6f9dc45d06867569c23550ce1d80075613a6131a425d0b331e8d12a
+  persistence_token: not_null
+  perishable_token: not_null
+  login_count: 34
+  failed_login_count: 0
+  active: true
+  approved: true
+  time_format: hh:mm
+  created_at: <%= 5.days.ago.to_s :db %>
+editor:
+  role: editor
+  email: editor@example.com
+  name: Editor Testerperson
+  city: 'Anytown'
+  state: 'TX'
+  country:
+  time_zone: Central Time (US & Canada)
+  password_salt: cPYNxDMFlu2r5PdVyq4K
+  crypted_password: 400$8$4a$b4f09eb7479b4bbe$6e37262db6f9dc45d06867569c23550ce1d80075613a6131a425d0b331e8d12a
+  persistence_token: not_null
+  perishable_token: not_null
+  login_count: 14
+  failed_login_count: 0
+  active: true
+  approved: true
+  time_format: hh:mm
+  created_at: <%= 5.days.ago.to_s :db %>
+reader:
+  role: reader
+  email: reader@example.com
+  name: reader Testerperson
+  city: 'Anytown'
+  state: 'TX'
+  country:
+  time_zone: Central Time (US & Canada)
+  password_salt: cPYNxDMFlu2r5PdVyq4K
+  crypted_password: 400$8$4a$b4f09eb7479b4bbe$6e37262db6f9dc45d06867569c23550ce1d80075613a6131a425d0b331e8d12a
+  persistence_token: not_null
+  perishable_token: not_null
+  login_count: 4
+  failed_login_count: 0
+  active: true
+  approved: true
+  time_format: hh:mm
+  created_at: <%= 5.days.ago.to_s :db %>
