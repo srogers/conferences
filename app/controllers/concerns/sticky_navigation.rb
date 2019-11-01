@@ -39,9 +39,19 @@ module StickyNavigation
   # into the current context. E.g., clicking Done on event/show could go up to /events, but if we navigated to the event
   # via a presentation, then it makes sense to go back to that context.
   def deduce_done_path
+    logger.debug "Deduce Done path from:  session[:via] = #{ session[:via]} params[:nav] = #{ params[:nav]}"
     if session[:via].present?
-      # the "Done" path is the path to the original controller/index with sticky params in tact.
-      send("#{session[:via]}_path")
+      # The "Done" path is the path to the original controller/index with sticky params intact.
+      # When the current context is a presentation, there are multiple ways we could have gotten there.
+      # So try to deduce it from the current instance variables and session[:via]
+      if @presentation&.conference && session[:via] == 'events'
+        event_path(@presentation.conference)
+      elsif @presentation&.speakers&.length == 1 && session[:via] == 'speakers'
+        # with multiple speakers, we don't know which one to return to, so just punt that
+        speaker_path(@presentation.speakers.first)
+      else
+        send("#{session[:via]}_path")
+      end
     else
       # We don't know how we got here, so go to some safe context.
       # This is annoying, but safe, because it will force the user to pick a top-level item and reset the context:
