@@ -58,6 +58,7 @@ class PresentationsController < ApplicationController
         end
       end
     end
+    repaginate_if_needed(@presentations)
   end
 
   # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be

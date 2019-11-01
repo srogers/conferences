@@ -67,6 +67,7 @@ class EventsController < ApplicationController
       format.html
       format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
+    repaginate_if_needed(@conferences)
   end
 
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.

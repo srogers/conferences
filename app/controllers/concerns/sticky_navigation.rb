@@ -61,6 +61,14 @@ module StickyNavigation
     end
   end
 
+  # Only index actions should call this. Place as the last line in the action, even after format block.
+  # Checks whether the current page context is beyond the last page. This is a stopgap, in case there's a bug in the
+  # flow where page isn't reset when it should be. When it is, we redo the index action with a nav reset.
+  def repaginate_if_needed(listing)
+    page = param_context(:page)
+    redirect_to send("#{controller_name}_path", nav: 'reset') if page && page.to_i > listing.total_pages
+  end
+
   private
 
   def reset_and_remember

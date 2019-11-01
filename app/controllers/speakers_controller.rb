@@ -37,6 +37,7 @@ class SpeakersController < ApplicationController
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }
     end
+    repaginate_if_needed(@speakers)
   end
 
   def chart

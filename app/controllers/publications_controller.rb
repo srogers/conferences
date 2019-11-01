@@ -55,6 +55,7 @@ class PublicationsController < ApplicationController
         end
       end
     end
+    repaginate_if_needed(@publications)
   end
 
   def latest
