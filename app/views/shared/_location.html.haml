@@ -3,7 +3,7 @@
 -# disabled, the changed value will still be submitted.
 -# The initial state is set by JS in conferences.coffee
 .location-conditional-fields
-  = f.input :venue
+  = f.input :venue, as: :string  # simple_form weirdly wants to make this a file input by default
   = f.input :venue_url
   = f.input :city
   = f.input :state

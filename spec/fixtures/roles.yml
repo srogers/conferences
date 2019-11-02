@@ -2,5 +2,5 @@ admin:
   name: <%= Role::ADMIN %>
 editor:
   name: <%= Role::EDITOR %>
-user:
+reader:
   name: <%= Role::READER %>

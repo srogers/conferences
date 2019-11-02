@@ -15,7 +15,6 @@ class SpeakersController < ApplicationController
     if params[:q].present?
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
-      @speakers.limit(param_context(:per)) # :q, :exclude, and :per always go together
 
     elsif param_context(:search_term).present? || params[:heart].present?
       if params[:heart].present?
@@ -29,13 +28,16 @@ class SpeakersController < ApplicationController
       end
     end
 
-    @speakers = @speakers.page(param_context(:page)).per(param_context(:per))
+    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 5
+    per  = params[:q].present? ? 5 : param_context(:per)
+    @speakers = @speakers.page(page).per(per)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }
     end
+    repaginate_if_needed(@speakers)
   end
 
   def chart

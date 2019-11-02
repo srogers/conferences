@@ -55,8 +55,9 @@ $ ->
   $('#conference_start_date_3i').change ->
     $('#conference_end_date_3i').val( $('#conference_start_date_3i').val() )
 
-  # This performs autocomplete for selecting a speaker by name. It pulls the autocomplete URL from the clicked
-  # object, so that paths can be used to describe it on the Rails side.
+  # This performs autocomplete for selecting a speaker by name for presentations, and selecting a preseentation by name
+  # for association in publications/show. It pulls the autocomplete URL from the clicked object, so that paths can be
+  # used to set up the URLs on the Rails side.
   $('.select2-autocomplete').each (i, e) ->
     select = $(e)
     options = {
@@ -69,17 +70,18 @@ $ ->
       delay: 250,
       data: (params) ->
         q: params.term
-        page: params.page
-        per: 5
+        # page: 1  # params.page
+        # per: 5 - don't change this - let the controller handle it
         exclude: select.data('exclude') # this gets the IDs of the current speakers from data on the selector and passes it so the controller can ignore it
       ,
       processResults: (data, params) ->
         # The controller has to put the data into the format select2 expects with a total and n: {:id , :text}
-        params.page = params.page || 1
+        # page = params.page || 1
+        # per  = params.per  || 5
         return {
           results: data.users,
           pagination: {
-            more: (params.page * 5) < data.total
+            more: false  #  (params.page * per) < data.total
           }
         }
 

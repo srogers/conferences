@@ -29,7 +29,9 @@ describe UsersController do
 
     it "should assign the results as @users" do
       get :index
-      expect(assigns[:users].length).to eq(2)
+
+      expect(assigns[:users]).to include(@user)
+      expect(assigns[:users]).to include(@user2)
     end
 
     context "with unapproved user search" do

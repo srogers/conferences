@@ -38,7 +38,10 @@ class PublicationsController < ApplicationController
 
     @publications = @publications.order(params_to_sql '-conferences.start_date')
 
-    @publications = @publications.page(param_context(:page)).per(param_context(:per))
+    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
+    per  = params[:q].present? ? 8 : param_context(:per)
+
+    @publications = @publications.page(page).per(per)
 
     respond_to do |format|
       format.html
@@ -52,6 +55,7 @@ class PublicationsController < ApplicationController
         end
       end
     end
+    repaginate_if_needed(@publications)
   end
 
   def latest

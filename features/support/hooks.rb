@@ -4,14 +4,14 @@ require "authlogic/test_case"
 Before('~@not_logged_in') do |scenario|
   # Handle login before every scenario except those with the tag above - for the few pre-login scenarios
   # Mention the role in the scenario title to be logged in as that role/user.
-  email = case scenario.title
+  email = case scenario.name
     # Role options
     when /admin/i           then 'admin@example.com'
     when /editor/i          then 'editor@example.com'
     when /reader/i          then 'reader@example.com'
   end
 
-  Rails.logger.debug "\n\nStarting scenario: #{scenario.title} with login as #{email}"
+  Rails.logger.debug "\n\nStarting scenario: #{scenario.name} with login as #{email}"
 
   # for Scenarios tagged with @javascript truncation is required for DB Cleaner because the browser and
   # Cucumber are not in the same thread and don't share the same transaction - Cucumber can't roll it back.
@@ -35,15 +35,15 @@ Before('~@not_logged_in') do |scenario|
   click_button("Log in")
 
   # Check right here whether login worked - if not, check out fixtures
-  page.body.should_not =~ /Email is not valid/m
-  page.body.should_not =~ /Password is not valid/m
-  page.body.should     =~ /Welcome /m     # This is in the header
+  page.body.should_not =~ /Unable to log in/m
+  page.body.should_not =~ /User name or password are incorrect/m
+  page.body.should     =~ /Objectivist Conferences/m     # This is in the landing page
 end
 
 Before('@not_logged_in') do |scenario|
   # when running everything at once, the @javascript tagged scenarios will leave the DB wiped for the next feature
 
-  Rails.logger.debug "\n\nStarting scenario: #{scenario.title} without login"
+  Rails.logger.debug "\n\nStarting scenario: #{scenario.name} without login"
 
   unless User.where(:email => 'aaron@example.com').first
     # Seed the DB with everything from the fixtures directory - just like at startup in support/env.rb

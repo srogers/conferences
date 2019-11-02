@@ -48,20 +48,26 @@ class EventsController < ApplicationController
         end
       end
     elsif params[:q].present?
-      # Presentations uses this for picking conference in case where a presentation is created without a conference, then associated later.
-      # Returns most recent conferences until the 4 digit year is complete. Year is the only good attribute for ensuring
-      # the target conference will show up within a set of 5. Over time, may need to bump the 5 to 6 or 8 - use conferences_by_year
-      # chart - value needs to be =< maximum conferences in any one year.
-      @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q]) if params[:q].present? && params[:q].length == 4
-      @conferences = @conferences.limit(7)
+      # Presentations uses this for picking event in case where a presentation is created without an event, then associated later.
+      # Allows search by year or name segment. This is tricky because so many events have nearly the same name.
+      if params[:q].length == 4
+        @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q])
+      else
+        @conferences = @conferences.where("conferences.name LIKE ?", '%' + params[:q] + '%')
+      end
     end
-    @conferences = @conferences.page(param_context(:page)).per(param_context(:per))
+
+    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
+    per  = params[:q].present? ? 8 : param_context(:per)
+
+    @conferences = @conferences.page(page).per(per)
 
     # The JSON result for select2 has to be built with the expected keys
     respond_to do |format|
       format.html
       format.json { render json: { total: @conferences.length, users: @conferences.map{|c| {id: c.id, text: c.name } } } }
     end
+    repaginate_if_needed(@conferences)
   end
 
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.

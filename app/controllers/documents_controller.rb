@@ -13,6 +13,7 @@ class DocumentsController < ApplicationController
     @documents = Document.order("created_at DESC")
     @documents = @documents.where("status = ?", Document::COMPLETE) unless current_user.admin?
     @documents = @documents.page(param_context(:page)).per(param_context(:per))
+    repaginate_if_needed(@documents)
   end
 
   # Saves the document with options for generation and queues it for processing

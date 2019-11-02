@@ -5,7 +5,6 @@ ruby '2.5.6'
 gem 'rails', '5.2.3'
 gem 'pg'
 gem 'puma'
-gem 'sass-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 gem "haml-rails"                    # enables HAML in the asset pipeline

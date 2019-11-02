@@ -40,7 +40,9 @@ class PresentationsController < ApplicationController
       @presentations = filter_presentations_by_term(@presentations, term) if term.present?
     end
 
-    @presentations = @presentations.page(param_context(:page)).per(param_context(:per))
+    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
+    per  = params[:q].present? ? 8 : param_context(:per)
+    @presentations = @presentations.page(page).per(per)
 
     # The json result has to be built with the keys in the data expected by select2
     respond_to do |format|
@@ -56,6 +58,7 @@ class PresentationsController < ApplicationController
         end
       end
     end
+    repaginate_if_needed(@presentations)
   end
 
   # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be

@@ -80,7 +80,7 @@
         %h5 Link to a Conference
         = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-          = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
+          = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter an event name or year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
           = f.submit 'Associate', class: 'btn btn-primary btn-sm'
 
 .row

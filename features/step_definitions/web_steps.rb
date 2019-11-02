@@ -7,8 +7,6 @@
 # This is a handy reference: https://github.com/normalocity/cucumber-web-steps/blob/master/web_steps.rb
 # Also: Capybara cheat sheet https://gist.github.com/zhengjia/428105
 
-include ApplicationHelper  # to get the dom_id_for() helper
-
 # Put this into a scenario (before the error step) to get a print of the response body
 Then /^I dumped the response$/ do
   puts body

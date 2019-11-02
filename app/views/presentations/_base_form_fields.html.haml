@@ -1,7 +1,7 @@
 = f.input :name, label: 'Presentation Name'
 .row
   .col-md-8
-    = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: "Conference Name", input_html: { data: { delimiter: ',', placeholder: "enter a conference year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
+    = f.input :conference_id, collection: [[@presentation.conference_name,@presentation.conference_id]], label: "Conference Name", input_html: { data: { delimiter: ',', placeholder: "enter an event name or year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
   .col-md-4
     - if @presentation.persisted?
       %br
