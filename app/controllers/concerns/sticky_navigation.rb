@@ -66,7 +66,7 @@ module StickyNavigation
   # flow where page isn't reset when it should be. When it is, we redo the index action with a nav reset.
   def repaginate_if_needed(listing)
     page = param_context(:page)
-    redirect_to send("#{controller_name}_path", nav: 'reset') if page && page.to_i > listing.total_pages
+    redirect_to send("#{controller_name}_path", nav: 'reset') if page && page.to_i > listing.total_pages && !listing.empty?
   end
 
   private
