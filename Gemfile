@@ -36,6 +36,7 @@ gem 'prawn-table'                   # supports table layout for formatted detail
 gem 'rails-assets-tether'           # enables tooltips properly in the pipeline with bootstrap-sass
 gem 'rmagick'
 gem 'rubyzip'                       # Used for zipping PDF for download
+gem 'scout_apm'                     # replacement for New Relic
 gem 'select2-rails'                 # used for autocomplete select boxes
 gem 'sidekiq'
 gem 'sidekiq-status'

@@ -292,6 +292,8 @@ GEM
     oga (2.15)
       ast
       ruby-ll (~> 2.1)
+    parser (2.6.5.0)
+      ast (~> 2.4.0)
     pdf-core (0.7.0)
     pg (1.1.4)
     popper_js (1.14.5)
@@ -396,6 +398,8 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    scout_apm (2.6.3)
+      parser
     scrypt (3.0.6)
       ffi-compiler (>= 1.0, < 2.0)
     select2-rails (4.0.3)
@@ -506,6 +510,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rubyzip
+  scout_apm
   select2-rails
   selenium-webdriver
   sidekiq
