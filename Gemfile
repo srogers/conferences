@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.6'
+ruby '2.5.7'
 
 gem 'rails', '5.2.3'
 gem 'pg'
@@ -36,7 +36,9 @@ gem 'prawn-table'                   # supports table layout for formatted detail
 gem 'rails-assets-tether'           # enables tooltips properly in the pipeline with bootstrap-sass
 gem 'rmagick'
 gem 'rubyzip'                       # Used for zipping PDF for download
+gem 'scout_apm'                     # replacement for New Relic
 gem 'select2-rails'                 # used for autocomplete select boxes
+gem 'sentry-raven'
 gem 'sidekiq'
 gem 'sidekiq-status'
 gem 'simple_form'
