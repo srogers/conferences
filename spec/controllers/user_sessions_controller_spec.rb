@@ -17,11 +17,13 @@ describe UserSessionsController do
 
   describe "when logging in" do
     before do
-      @mock_valid_session = double(UserSession, save: true)
-      @mock_invalid_session = double(UserSession, save: false, errors: double(StandardError, full_messages: ['it failed']))
+      # Raven introduces the need for persisting? and priority_record= because of ApplicationController#set_raven_context
+      @mock_valid_session   = double(UserSession, save: true, persisting?: true,   'priority_record=' => true,  user: @current_user)
+      @mock_invalid_session = double(UserSession, save: false, persisting?: false, 'priority_record=' => false, user: nil, errors: double(StandardError, full_messages: ['it failed']))
     end
 
     it "strips off leading spaces from user name and password" do
+      expect(UserSession).to receive(:new).with({'priority_record': nil}, nil).and_return @mock_valid_session # Raven causes this
       expect(UserSession).to receive(:new).with('email' => 'spacey@example.com', 'password' => 'typo-city').and_return @mock_valid_session
       get :create, params: { user_session: { email: ' spacey@example.com ', password: ' typo-city '} }
     end
