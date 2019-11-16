@@ -6,8 +6,12 @@
 .row
   .col-md-12
     = title 'Topics'
-    %ul
-      - @tags.each do |tag|
-        %li
+- rows = @tags.length / 3
+- (0..rows).each do |row|
+  .row
+    - [row, row + rows + 1, row + rows*2 + 2].each do |column_offset|
+      .col-md-4
+        - tag = @tags[column_offset]
+        - if tag
           = link_to tag.name, presentations_path(tag: tag.name, page: 1)
           = "(#{ tag.taggings_count })"
