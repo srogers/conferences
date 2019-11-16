@@ -15,7 +15,7 @@
       %p
         Speaker's
         = link_to "Bio", @speaker.bio_url
-    %p= @speaker.description.try(:html_safe)
+    %p= safe_list_sanitizer.sanitize(@speaker.description).try(:html_safe)
 
 .row
   .col-md-12

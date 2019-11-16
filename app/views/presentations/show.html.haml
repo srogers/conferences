@@ -33,7 +33,7 @@
         %b Date:
         = pretty_date @presentation.date, style: :pretty
 
-    %p= @presentation.description.try(:html_safe)
+    %p= safe_list_sanitizer.sanitize(@presentation.description).try(:html_safe)
 
     %p
       %b Topic:
@@ -72,7 +72,7 @@
         %b Editor's Notes
         .card
           .card-body
-            = @presentation.editors_notes.try(:html_safe)
+            = safe_list_sanitizer.sanitize(@presentation.editors_notes).try(:html_safe)
 
   .row
     .col-md-12

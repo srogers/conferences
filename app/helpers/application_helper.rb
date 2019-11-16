@@ -313,6 +313,13 @@ module ApplicationHelper
     [false, nil, ""].include?(boolean_value) ? "No" : "Yes"
   end
 
+  # Sanitizes rich text based on an extensive whitelist of attributes built into Loofah:
+  # https://github.com/flavorjones/loofah/blob/master/lib/loofah/html5/safelist.rb
+  # Tiny hints of documentation at:  https://github.com/rails/rails-html-sanitizer
+  def safe_list_sanitizer
+    Rails::Html::SafeListSanitizer.new
+  end
+
   private
 
   # This is basically hardcoded info about the one logo image used for FB sharing

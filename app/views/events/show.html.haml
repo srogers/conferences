@@ -40,7 +40,7 @@
       - if @conference.description.blank?
         %i unavailable
       -else
-        = @conference.description.try(:html_safe)
+        = safe_list_sanitizer.sanitize(@conference.description).try(:html_safe)
 
     - if can? :edit, Conference
       %p
@@ -58,7 +58,7 @@
     .col-md-12
       %p
         %b Editor's Notes
-        = @conference.editors_notes.try(:html_safe)
+        = safe_list_sanitizer.sanitize(@conference.editors_notes).try(:html_safe)
 
 .row
   .col-md-12
