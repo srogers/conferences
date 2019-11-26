@@ -85,5 +85,5 @@ Rails.application.routes.draw do
       get :notifications
     end
   end
-  resources :user_sessions, only: [:create, :destroy]
+  resources :user_sessions, only: [:new, :create, :destroy]
 end
