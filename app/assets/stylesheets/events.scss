@@ -1,2 +1,4 @@
 /* This prevents the heading line from breaking between the column name and sort indicator icon, which happens frequently on mobile */
-.sort-indicator-wrapper { white-space: nowrap }
+.sort-indicator-wrapper {
+  white-space: nowrap
+}

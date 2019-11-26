@@ -1,27 +1,14 @@
-// Sets up some experimental styles/colors that may or may not migrate out to the rest of the site.
-// Pass 1 colors
-// #09C7D9 Main blue
-// #F2441D Main orange
-// #C9E2F2 off white
-// #C9E2F2 brick red
-// #C9E2F2 salmon
 
-// Pass 2 colors
-// #02547D Deep blue
-// #0284A8 main blue
-// #02BEC4 turquoise
-// #A9E8DC sea
-// #E1F7E7 sea white
+// Uses some experimental styles/colors setup in local_base that may or may not migrate out to the rest of the site.
 
-// Navbar color:  #02547D
-// Blockquote color:  #037dba  a matching lighter version of navbar color that seems the same
-
+/* Remember the news class is automatically assigned to the whole page as the controller name.
+ # Don't let it slide into hacking styles on a per-page basis.
+ */
 body.news {
-  /* Add a space for the footer, plus any extra spacing  */
-  background: #E1F7E7 !important;
+  background: $background-light !important;
 }
 
-.news-item {           /* remember the news class is automatically assigned to the whole page as the controller name */
+.news-item {
   padding: 15px;
   //border-style: solid;
   //border-color: #0284A8;
@@ -29,7 +16,7 @@ body.news {
   //margin-bottom: 15px;
 }
 .primary-block {
-  background: #02BEC4;
+  background: $background-strong;
   color: #FFFFFF;
 
   a:link    { color: blue; }
@@ -38,7 +25,7 @@ body.news {
   a:active  { color: white; }
 }
 .secondary-block {
-  background: #A9E8DC;
+  background: $background-med;
 
   a:link    { color: blue; }
   a:visited { color: blue; }
@@ -58,7 +45,7 @@ body.news {
   transform: translate(-50%, -10%);
 }
 .carousel-container {
-  background: #0284A8;
+  background: $background-dark;
   //padding: 15px 15px;
   padding: 0;
 }

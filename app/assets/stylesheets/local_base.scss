@@ -1,0 +1,228 @@
+// Kuler experiments:
+// https://color.adobe.com/OC-Pass-1-based-on-Triad-color-theme-11599356
+//
+// Pass 1 colors
+// #09C7D9 Main blue
+// #F2441D Main orange
+// #C9E2F2 off white
+// #C9E2F2 brick red
+// #C9E2F2 salmon
+
+// Pass 2 colors
+// #02547D Deep blue
+// #0284A8 main blue
+// #02BEC4 turquoise
+// #A9E8DC sea
+// #E1F7E7 sea white
+
+
+$control_bar: #02547D;
+$blockquote-sidebar: #037dba;  // matching lighter version of navbar color that seems the same
+$neutral-background: #ededed;  // blockquote gets this
+$neutral-text: #555555;        // works with neutral background - only blockquote gets it
+
+// $button:  it's getting the default white
+$button-text: #007bff;
+$button-hover: #0069d9;
+
+$button-secondary: #d0d5e0;
+$button-secondary-text: #222;
+$button-secondary-hover: #b0c3f4;
+
+$background-light: #e1f7e7;
+$background-med: #a9e8dc;
+$background-strong: #02bec4;
+$background-dark: #0284A8;
+
+/*
+ * Set up styles related to the overall layout - primarily the sticky footer
+ */
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 80px !important;   /* Add a space for the footer, plus any extra spacing  */
+}
+
+.body-container {
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* the top navbar and the footer use the Bootstrap bg-dark class - currently unmodified */
+footer.footer {
+  position: absolute;
+  bottom: 0;
+  height: 80px;
+  width: 100%;
+  color: white;
+  font-size: smaller;
+  padding-top: 30px;   /* put the text sort of in the vertical center */
+}
+
+/*
+ *   Table-related styles - try to eliminate any of these used for page layout
+ */
+
+
+// designed for showing model values in readable name/value columns
+table.clean-values {
+  margin-bottom: 15px;
+
+  th {
+    font-weight: bold;
+    padding-right: 10px;
+    text-align: right;
+    min-width: 150px;         // This makes separate stacked tables line up
+  }
+  td:nth-child(1) {
+    text-align: left;
+  }
+}
+
+/*
+ *   Text-related styles
+ */
+
+span.confirm  { color: green }
+span.deny     { color: red }
+
+// Bootstrap wants special classes attached to the blockquote tag and tags within it, which doesn't fit well with the
+// way Trix works - so we style directly on the blockquote tag here, to target text created by Trix in form fields.
+// https://getbootstrap.com/docs/4.1/content/typography/#blockquotes
+// style from here:  https://codepen.io/cliftwalker/pen/XJaEXY
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
+
+blockquote{
+  font-size: 1.2em;
+  width: 90%;
+  margin: 1em auto;
+  font-family: 'Open Sans', sans-serif;
+  font-style:italic;
+  color: $neutral-text;
+  padding: 1.2em 2em 1.2em 3em;
+  border-left: 8px solid $blockquote-sidebar;
+  line-height: 1.6;
+  position: relative;
+  background: $neutral-background;
+}
+
+blockquote::before{
+  font-family: Arial, sans-serif;
+  content: "\201C";
+  color: $blockquote-sidebar;
+  font-size: 4em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
+}
+
+blockquote::after{
+  content: '';
+}
+
+// This allows for a citation at the end - but isn't useful with Trix, because there is no way to inject a span
+blockquote span{
+  display: block;
+  color: #333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+/* This restores the old btn-xs style from Bootstrap 3 that was removed in Bootstrap 4 */
+.btn-group-xs > .btn, .btn-xs {
+  padding  : .25rem .4rem;
+  font-size  : .875rem;
+  line-height  : .5;
+  border-radius : .2rem;
+}
+
+/*
+ *  Form-related styles
+ */
+
+
+.form-actions {
+  margin-top: 20px;
+}
+
+/* part of local form layout */
+.help-block {
+  font-size: small;
+}
+
+input[type='checkbox'] {
+  margin-right: 5px;
+}
+
+/* Because by default the checkboxes in Boostrap are jammed against the label */
+input[type='radio'] {
+  margin-right: 5px;
+}
+
+/* Because by default the radio buttons in Boostrap are jammed against the label */
+select.form-control {
+  margin-left: 5px;
+}
+
+/* Because by default the selects in Boostrap are jammed against the label */
+abbr[title='required'] {
+  color: red;
+}
+
+/* To make the little asterisk by required items red */
+
+input.file {
+  @extend .btn-sm !optional
+}
+
+/* adds a little space around the file input Choose File button, and makes it a little more normal */
+
+.btn-group.save-or-cancel {
+  display: inline;
+}
+
+/* Bootstrap puts inline-flex here, which breaks things floating to the right of save-or-cancel buttons */
+.save-or-cancel-wrapper {
+  margin-top: 15px
+}
+
+/* Gets some space after the last form element */
+
+/* SimpleForm works in a weird way so that buttons always get 'btn btn-default', so when form helper calls set the primary class,
+   this results in a button with btn-default and btn-primary together - so these two classes have to play nice.
+   Maybe it will change someday: https://github.com/plataformatec/simple_form/issues/1307
+ */
+.btn-primary {
+  color: #fff !important;
+}
+
+/* makes btn-default btn-primary look OK when combined */
+
+/* Override the color for Bootstrap secondary and default buttons so they don't look like non-buttons */
+.btn-secondary, .btn-secondary:active, .btn-secondary:visited {
+  background-color: $button-secondary;
+  color: $button-secondary-text;
+}
+
+.btn-secondary:hover {
+  background-color: $button-secondary-hover;
+}
+
+/* Currently, almost nothing uses this */
+.btn-default, .btn-default:active, .btn-default:visited {
+  border: 2px solid $button-text;
+  color: $button-text;
+  margin: 1px;
+}
+
+.btn-default:hover {
+  color: $button-hover;
+  border: 3px solid $button-hover;
+  margin: 0;
+}

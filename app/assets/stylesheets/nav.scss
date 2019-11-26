@@ -8,7 +8,9 @@ li.wrapping_list {
   padding-left: 1em;
 }
 
-div.listing-controls { margin-bottom: 15px; }
+div.listing-controls {
+  margin-bottom: 15px;
+}
 
 .listing-controls {
   padding: 15px 0;
@@ -19,4 +21,8 @@ div.listing-controls { margin-bottom: 15px; }
   padding-top: 15px;
 }
 
-.navbar-dark { background: #02547D }
+.navbar-dark {
+  background: $control-bar;
+}
+
+/* the top navbar and the footer use the Bootstrap bg-dark class - currently unmodified */
