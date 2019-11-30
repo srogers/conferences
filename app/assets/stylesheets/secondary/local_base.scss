@@ -15,7 +15,6 @@
 // #A9E8DC sea
 // #E1F7E7 sea white
 
-
 $control-bar: #02547D;
 $blockquote-sidebar: #037dba;  // matching lighter version of navbar color that seems the same
 $neutral-background: #ededed;  // blockquote gets this
@@ -24,6 +23,8 @@ $neutral-text: #555555;        // works with neutral background - only blockquot
 // $button:  it's getting the default white
 $button-text: #007bff;
 $button-hover: #0069d9;
+
+$button-primary-text: #fff;
 
 $button-secondary: #d0d5e0;
 $button-secondary-text: #222;
@@ -97,55 +98,9 @@ span.deny     { color: red }
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
 
-blockquote{
-  font-size: 1.2em;
-  width: 90%;
-  margin: 1em auto;
-  font-family: 'Open Sans', sans-serif;
-  font-style:italic;
-  color: $neutral-text;
-  padding: 1.2em 2em 1.2em 3em;
-  border-left: 8px solid $blockquote-sidebar;
-  line-height: 1.6;
-  position: relative;
-  background: $neutral-background;
-}
-
-blockquote::before{
-  font-family: Arial, sans-serif;
-  content: "\201C";
-  color: $blockquote-sidebar;
-  font-size: 4em;
-  position: absolute;
-  left: 10px;
-  top: -10px;
-}
-
-blockquote::after{
-  content: '';
-}
-
-// This allows for a citation at the end - but isn't useful with Trix, because there is no way to inject a span
-blockquote span{
-  display: block;
-  color: #333333;
-  font-style: normal;
-  font-weight: bold;
-  margin-top: 1em;
-}
-
-/* This restores the old btn-xs style from Bootstrap 3 that was removed in Bootstrap 4 */
-.btn-group-xs > .btn, .btn-xs {
-  padding  : .25rem .4rem;
-  font-size  : .875rem;
-  line-height  : .5;
-  border-radius : .2rem;
-}
-
 /*
  *  Form-related styles
  */
-
 
 .form-actions {
   margin-top: 20px;
@@ -192,37 +147,3 @@ input.file {
   margin-top: 15px
 }
 
-/* Gets some space after the last form element */
-
-/* SimpleForm works in a weird way so that buttons always get 'btn btn-default', so when form helper calls set the primary class,
-   this results in a button with btn-default and btn-primary together - so these two classes have to play nice.
-   Maybe it will change someday: https://github.com/plataformatec/simple_form/issues/1307
- */
-.btn-primary {
-  color: #fff !important;
-}
-
-/* makes btn-default btn-primary look OK when combined */
-
-/* Override the color for Bootstrap secondary and default buttons so they don't look like non-buttons */
-.btn-secondary, .btn-secondary:active, .btn-secondary:visited {
-  background-color: $button-secondary;
-  color: $button-secondary-text;
-}
-
-.btn-secondary:hover {
-  background-color: $button-secondary-hover;
-}
-
-/* Currently, almost nothing uses this */
-.btn-default, .btn-default:active, .btn-default:visited {
-  border: 2px solid $button-text;
-  color: $button-text;
-  margin: 1px;
-}
-
-.btn-default:hover {
-  color: $button-hover;
-  border: 3px solid $button-hover;
-  margin: 0;
-}
