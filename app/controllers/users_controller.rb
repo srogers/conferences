@@ -20,7 +20,7 @@ class UsersController < ApplicationController
     end
 
     @users = @users.page(param_context(:page)).per(param_context(:per))
-    repaginate_if_needed(@organizers)
+    repaginate_if_needed(@users)
   end
 
   # Drives the Supporters page in the top-level menu - which is mostly run by the pages controller, but this item is not static.
