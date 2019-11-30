@@ -66,7 +66,7 @@ group :development do
   gem "brakeman"
   gem 'bullet'                      # looks for N+1 queries and unnecessary eager loading
   gem 'letter_opener_web'
-  gem 'listen', '~> 3.0.5'
+  gem 'listen'
 end
 
 group :test do
