@@ -526,7 +526,6 @@ DEPENDENCIES
   sidekiq-status
   simple_form
   social-share-button
-  sprockets-rails (>= 2.3.2)
   trix!
   tzinfo-data
   uglifier
