@@ -65,6 +65,7 @@ module StickyNavigation
   # Checks whether the current page context is beyond the last page. This is a stopgap, in case there's a bug in the
   # flow where page isn't reset when it should be. When it is, we redo the index action with a nav reset.
   def repaginate_if_needed(listing)
+    return if request.format.json? # doesn't make sense for autocomplete requests
     page = param_context(:page)
     redirect_to send("#{controller_name}_path", nav: 'reset') if page && page.to_i > listing.total_pages && !listing.empty?
   end

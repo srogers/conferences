@@ -1,0 +1,51 @@
+
+// Uses some experimental styles/colors setup in local_base that may or may not migrate out to the rest of the site.
+
+/* Remember the news class is automatically assigned to the whole page as the controller name.
+ # Don't let it slide into hacking styles on a per-page basis.
+ */
+body.news {
+  background: $background-light !important;
+}
+
+.news-item {
+  padding: 15px;
+  //border-style: solid;
+  //border-color: #0284A8;
+  //border-width: 5px;
+  //margin-bottom: 15px;
+}
+.primary-block {
+  background: $background-strong;
+  color: #FFFFFF;
+
+  a:link    { color: blue; }
+  a:visited { color: blue; }
+  a:hover   { color: gold; }
+  a:active  { color: white; }
+}
+.secondary-block {
+  background: $background-med;
+
+  a:link    { color: blue; }
+  a:visited { color: blue; }
+  a:hover   { color: gold; }
+  a:active  { color: black; }
+}
+
+.carousel img { width: 100% }
+
+.carousel-title {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 100;
+  color: #FFF;
+  text-align: center;
+  transform: translate(-50%, -10%);
+}
+.carousel-container {
+  background: $background-dark;
+  //padding: 15px 15px;
+  padding: 0;
+}

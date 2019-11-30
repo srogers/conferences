@@ -28,14 +28,12 @@
 
 /* now import everything else that would have been imported by =require_tree .
    TODO - don't forget to update when a new file is added */
-@import 'events';
-@import 'forms';
-@import 'layout';
-@import 'nav';
-@import 'news';
-@import 'organizers';
-@import 'presentations';
-@import 'rails_errors';
-@import 'speakers';
-@import 'tables';
-@import 'text';
+@import 'secondary/local_base';
+@import "secondary/bootstrap_adjustments";
+@import 'secondary/events';
+@import 'secondary/nav';
+@import 'secondary/news';
+@import 'secondary/organizers';
+@import 'secondary/presentations';
+@import 'secondary/rails_errors';
+@import 'secondary/speakers';

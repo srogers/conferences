@@ -79,7 +79,7 @@ class PresentationsController < ApplicationController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.order(:name)
+    @tags = ActsAsTaggableOn::Tag.order('LOWER(name)')
   end
 
   def show

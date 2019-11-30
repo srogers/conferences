@@ -39,7 +39,7 @@
         %br
         .card
           .card-body
-            = @publication.editors_notes.try(:html_safe)
+            = safe_list_sanitizer.sanitize(@publication.editors_notes).try(:html_safe)
 
 .row
   .col-md-12
