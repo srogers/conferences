@@ -294,7 +294,7 @@ GEM
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     numerizer (0.1.1)
-    oga (2.16)
+    oga (2.15)
       ast
       ruby-ll (~> 2.1)
     parser (2.6.5.0)
