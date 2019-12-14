@@ -14,6 +14,8 @@
 //
 //= require jquery3
 //= require jquery_ujs
+//= require jquery-ui/widgets/autocomplete
+//= require jquery-ui/widgets/tooltip
 //= require popper
 //= require bootstrap-sprockets
 //= require select2

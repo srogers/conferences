@@ -79,7 +79,18 @@ class PresentationsController < ApplicationController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.order('LOWER(name)')
+    @tags = ActsAsTaggableOn::Tag.order(Arel.sql('LOWER(name)'))
+
+    if params[:term].present?
+      @tags = @tags.where("name LIKE ?", '%' + params[:term] + '%')
+    end
+
+    # The returned JSON needs to be in the format: [{"id":"Platalea leucorodia","label":"Spoonbill","value":"Spoonbill"}]
+    # with no top level key (which is not documented anywhere).  If it's not right, you'll get "no data returned"
+    respond_to do |format|
+      format.html                                                                               # show the user the tag list
+      format.json { render json:  @tags.map{|t| { id: t.id, label: t.name, value: t.name } } }  # Autocomplete input
+    end
   end
 
   def show

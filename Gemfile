@@ -9,6 +9,7 @@ gem 'uglifier'
 gem 'coffee-rails'
 gem "haml-rails"                    # enables HAML in the asset pipeline
 gem 'jquery-rails'                  # Bootstrap also requires this
+gem 'jquery-ui-rails'               # Used for tag input fields
 
 gem 'acts-as-taggable-on'
 gem 'authlogic'                     # Bumped to version 5 which removes user-validation shortcuts
