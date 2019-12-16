@@ -1,16 +1,16 @@
 module PresentationsChart
 
-  # The controller index action and the chart-building action share this WHERE clause for consistency. It includes conference
-  # and speakers, which makes searches slightly less efficient, but necessary.
-  def filter_presentations_by_term(presentations, term)
-    # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
-    # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
-    presentations.includes(:taggings => :tag).references(:taggings => :tag).includes(:conference, :speakers).
-      where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?",
-            # base query bind vars
-            event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
-            # bind vars for the 4 literals introduced above
-            "%#{term}%", "#{term}%", "#{term}%", term)
+  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
+  def filter_presentations(presentations)
+    query = init_query
+    if query.tag.present?
+      presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
+    end
+    query = base_query(query)
+    query = presentation_query(query)
+
+    presentations.where(query.where_clause, *query.bindings)
   end
 
   # Builds a hash of presentation counts by year that looks like: {Fri, 01 Jan 1982=>1, Sat, 01 Jan 1983=>2, Sun, 01 Jan 1984=>1, Tue, 01 Jan 1985=>3}
@@ -19,10 +19,9 @@ module PresentationsChart
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
-      term = param_context(:search_term) || param_context(:tag)
 
       @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
-      @presentations = filter_presentations_by_term(@presentations, term)
+      @presentations = filter_presentations @presentations
 
       # Build year keys and counts - use one method or the other
       # keys = @presentations.map{|p| p.conference.start_date.year}.uniq.sort                 # based on just the years that are present
@@ -54,7 +53,7 @@ module PresentationsChart
       term = param_context(:search_term) || param_context(:tag)
 
       @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
-      @presentations = filter_presentations_by_term(@presentations, term)
+      @presentations = filter_presentations @presentations
     end
 
     # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB

@@ -19,6 +19,11 @@ module PresentationsHelper
     tag_list.split(',').map{|tag| text_to_tag tag, tag_options}.join.html_safe
   end
 
+  # This shows up only in the annotations control bar, and allows the user to and/or tag and free text search terms.
+  def logical_selector
+    select_tag("operator", options_for_select([["AND", "AND"],["OR", "OR"]],param_context(:operator)), {:name => "operator"} )
+  end
+
   # Get a list of icons corresponding to items in the publication list. The ones that correspond to online media are
   # linked to the relevant URL.
   def linked_format_icons(presentation)

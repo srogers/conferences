@@ -204,9 +204,15 @@ module ApplicationHelper
   def index_search_form
     # figure out where to send the search based on the page we're looking at right now
     index_path = send("#{controller_name}_path")
-    term = param_context(:search_term).blank? ? param_context(:tag) : param_context(:search_term)
     search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
-      content = text_field_tag :search_term, term, placeholder: "Search"
+      content = "".html_safe
+      if param_context(:tag).present?
+        content << tagify(param_context(:tag), class: 'slim')
+        content << logical_selector
+      else
+        param_context(:operator) # look at the value, so it gets saved, to persist changes introduced by the "All" button
+      end
+      content << text_field_tag(:search_term, param_context(:search_term), placeholder: "Search")
       content << hidden_field_tag(:page, 1, id: :reset_page)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do

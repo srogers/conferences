@@ -11,33 +11,28 @@ class PresentationsController < ApplicationController
   authorize_resource            # friendly_find is incompatible with load_resource
 
   def index
-    @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
-    # The most efficient query depends on whether the user is logged in, because we show slightly different info
-    if @current_user
-      @presentations = @presentations.references(:speakers, :publications)
-    else
-      @presentations = @presentations.includes(:publications).references(:speakers)
-    end
+    # Construct the simplest query base for guest user (and robots) - build elaborate WHERE, but only fetch presentations.
+    @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
+
     @presentations = @presentations.order(params_to_sql '<presentations.date')
     # This is necessary for getting the presentation status
     @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
+      # Then it's an autocomplete query
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     elsif param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
       # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
-        @presentations = @presentations.includes(:taggings, :conference).where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
+        # TODO - should this include presentations without tags?  Seems like not - probably not a goal to tag *every* one.
+        @presentations = @presentations.where("coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
         # Skip conferences in the future - we know they're not done
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
-      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_')
-      term = param_context(:tag) if term.blank?
-      @presentations = filter_presentations_by_term(@presentations, term) if term.present?
+      @presentations = filter_presentations @presentations
     end
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
@@ -189,6 +184,12 @@ class PresentationsController < ApplicationController
   end
 
   private
+
+  # Modify the Presentation query based on the presence of a search term and/or tag.
+  # If only a term is provided, include tags if it matches an existing tag.
+  # If only a tag is provided, free-text search it as well, to cover any cases where the literal text hasn't been tagged.
+  def build_search_context
+  end
 
   def get_presentation
     @presentation = Presentation.friendly.find params[:id]
