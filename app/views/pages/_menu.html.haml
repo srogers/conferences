@@ -3,4 +3,5 @@
   - if current_user&.editor? || current_user&.admin?  # visitors and readers don't need to see this
     %li.nav-item= link_to 'How?', guidelines_path, class: 'nav-link' + tab_active?('guidelines')
   %li.nav-item= link_to 'Who?', supporters_users_path, class: 'nav-link'  + tab_active?('supporters')
+  %li.nav-item= link_to 'Tips', tips_path, class: 'nav-link' + tab_active?('tips')
   %li.nav-item= link_to 'Contact', contact_path, class: 'nav-link' + tab_active?('contact')
