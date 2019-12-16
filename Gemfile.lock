@@ -155,7 +155,7 @@ GEM
     erubis (2.7.0)
     ethon (0.12.0)
       ffi (>= 1.3.0)
-    excon (0.69.1)
+    excon (0.71.0)
     execjs (2.7.0)
     factory_bot (5.1.1)
       activesupport (>= 4.2.0)
@@ -294,7 +294,7 @@ GEM
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     numerizer (0.1.1)
-    oga (2.16)
+    oga (2.15)
       ast
       ruby-ll (~> 2.1)
     parser (2.6.5.0)
