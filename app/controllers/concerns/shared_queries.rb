@@ -64,7 +64,7 @@ module SharedQueries
       # set the search term to the tag
       term =  escape_wildcards(param_context(:tag))
       set_param_context :search_term, term
-    elsif tag.blank?
+    elsif tag.blank? && collection.klass.name == 'Presentation' # only presentations have tags
       # if the search term exists as a tag and something public is tagged with it, then set it
       if Presentation.tagged_with(term).count > 0
         tag = param_context(:search_term)
