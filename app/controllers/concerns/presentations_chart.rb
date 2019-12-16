@@ -1,10 +1,13 @@
 module PresentationsChart
 
+  include SharedQueries         # defines uniform ways for applying search terms - the controller should not include this
+
   # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_presentations(presentations)
-    query = init_query
+    query = init_query(presentations)
     if query.tag.present?
+      # currently, the caller has to manage includes() and references() and apply them before the where()
       presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
     end
     query = base_query(query)
@@ -20,7 +23,7 @@ module PresentationsChart
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
 
-      @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
+      @presentations = Presentation.includes(:publications, :speakers, :conference).order('conferences.start_date DESC, presentations.sortable_name')
       @presentations = filter_presentations @presentations
 
       # Build year keys and counts - use one method or the other
@@ -46,7 +49,7 @@ module PresentationsChart
     # data = ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
 
     # adding taggings and tags with #load seems to speed things up a little
-    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference => :organizer).references(:taggings, :tags).load
+    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference).references(:taggings, :tags).load
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?

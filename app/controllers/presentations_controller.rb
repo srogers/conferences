@@ -1,7 +1,6 @@
 class PresentationsController < ApplicationController
 
   include PresentationsChart    # gets chart data
-  include SharedQueries         # defines uniform ways for applying search terms
   include Sortability
   include StickyNavigation
 
@@ -23,8 +22,8 @@ class PresentationsController < ApplicationController
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
-      # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
+    else
+      # "heart" adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
         # TODO - should this include presentations without tags?  Seems like not - probably not a goal to tag *every* one.
         @presentations = @presentations.where("coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
@@ -32,7 +31,9 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      @presentations = filter_presentations @presentations
+      if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+        @presentations = filter_presentations @presentations
+      end
     end
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
@@ -184,12 +185,6 @@ class PresentationsController < ApplicationController
   end
 
   private
-
-  # Modify the Presentation query based on the presence of a search term and/or tag.
-  # If only a term is provided, include tags if it matches an existing tag.
-  # If only a tag is provided, free-text search it as well, to cover any cases where the literal text hasn't been tagged.
-  def build_search_context
-  end
 
   def get_presentation
     @presentation = Presentation.friendly.find params[:id]

@@ -3,6 +3,16 @@ module SpeakersChart
 
   include SharedQueries
 
+  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
+  def filter_speakers(speakers)
+    query = init_query(speakers)
+    query = base_query(query)
+    query = speaker_query(query)
+
+    speakers.where(query.where_clause, *query.bindings)
+  end
+
   # Builds a hash of speaker counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
   # which the endpoint can return as JSON or the action can use directly as an array.
   def presentation_count_data
@@ -20,12 +30,12 @@ module SpeakersChart
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats as much of the WHERE clause from the presentations controller (filter_presentations) as
         # possible, so the the chart results will match the search results.
-        data = PresentationSpeaker.includes(:speaker, :presentation => {:conference => :organizer }).includes(:presentation => { :taggings => :tag }).group("speakers.name")
-        query = init_query
+        data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag })
+        query = init_query(data)
         query = base_query(query)
         query = presentation_query(query)
 
-        data = data.where(query.where_clause, query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
+        data = data.group("speakers.name").where(query.where_clause, *query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
       end
 
     # Handles the My Conferences case
@@ -57,7 +67,7 @@ module SpeakersChart
         # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
         # Just have to let the results fly, and hope it's not too huge.
         # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = Conference.includes(:organizer, :presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
+        data = Conference.includes(:presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
       end
 
       # Handles the My Conferences case

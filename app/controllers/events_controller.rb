@@ -13,7 +13,7 @@ class EventsController < ApplicationController
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   def index
-    # This handles "My Events" and the ability to list events attended by other users
+    # The query base is determined by the context - handles "My Events" and the ability to list events attended by other users
     if param_context(:user_id).present?
       @user = User.find(param_context(:user_id))
       if current_user.id.to_s == param_context(:user_id) || @user.show_attendance || current_user.admin?
@@ -26,28 +26,9 @@ class EventsController < ApplicationController
       @conferences = Conference
     end
 
-    @conferences = @conferences.select('conferences.*').references(:organizer, :presentations => :publications ).order(params_to_sql('<conferences.start_date'))
-    # This structure separates out the :q from everything else. It's one or the other, but not both.
-    if param_context(:search_term).present? || params[:heart].present? || param_context(:event_type).present?
-      if param_context(:event_type).present?
-        @conferences = @conferences.where(event_type: param_context(:event_type))
-      end
 
-      if params[:heart].present?
-        @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
-      end
-
-      if param_context(:search_term).present?
-        term = param_context(:search_term)
-        # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-        # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-        if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-          @conferences = @conferences.where('conferences.state = ?', term.upcase)
-        else
-          @conferences = @conferences.where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%" )
-        end
-      end
-    elsif params[:q].present?
+    # This structure separates out the :q from everything else. TODO maybe put autocomplete in a separate action
+    if params[:q].present?
       # Presentations uses this for picking event in case where a presentation is created without an event, then associated later.
       # Allows search by year or name segment. This is tricky because so many events have nearly the same name.
       if params[:q].length == 4
@@ -55,10 +36,23 @@ class EventsController < ApplicationController
       else
         @conferences = @conferences.where("conferences.name LIKE ?", '%' + params[:q] + '%')
       end
-    end
 
-    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
-    per  = params[:q].present? ? 8 : param_context(:per)
+      page = 1       # autocomplete should always get page 1 limit 8
+      per  = 8
+    else
+      # Set up a complex WHERE but select only conferences
+      @conferences = @conferences.select('conferences.*').references(:presentations => :publications ).order(params_to_sql('<conferences.start_date'))
+
+      if params[:heart].present?
+        @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)
+      end
+      if param_context(:search_term).present? || param_context(:event_type).present?
+        @conferences = filter_events @conferences
+      end
+
+      page = param_context(:page)
+      per  = param_context(:per)
+    end
 
     @conferences = @conferences.page(page).per(per)
 
@@ -73,7 +67,7 @@ class EventsController < ApplicationController
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.
   # Gets called from jQuery in /news and rendered by jQuery append(html).
   def upcoming
-    @conferences = Conference.references(:organizer).where("conferences.start_date > ?", Date.today).order('start_date ASC')
+    @conferences = Conference.where("conferences.start_date > ?", Date.today).order('start_date ASC')
     render layout: false
   end
 

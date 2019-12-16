@@ -204,7 +204,7 @@ module ApplicationHelper
   def index_search_form
     # figure out where to send the search based on the page we're looking at right now
     index_path = send("#{controller_name}_path")
-    search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
+    search_form = form_for :search, html: { class: 'form-inline', :autocomplete => "off" }, url: index_path, method: :get do |f|
       content = "".html_safe
       if param_context(:tag).present?
         content << tagify(param_context(:tag), class: 'slim')

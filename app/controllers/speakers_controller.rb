@@ -10,29 +10,33 @@ class SpeakersController < ApplicationController
   authorize_resource  # friendly_find is incompatible with load_resource
 
   def index
-    @speakers = Speaker.select('speakers.*').references(:presentations).order(:sortable_name)
+    @speakers = Speaker.select('speakers.*').order(:sortable_name)
+
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?
       @speakers = @speakers.where("name ILIKE ? OR name ILIKE ? ", params[:q] + '%', '% ' + params[:q] + '%')
       @speakers = @speakers.where("speakers.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif param_context(:search_term).present? || params[:heart].present?
+      page = 1       # autocomplete should always get page 1 limit 5
+      per  = 5
+    else
+      @speakers = @speakers.includes(:presentations).references(:presentations) # TODO - why does plain index hit this?
       if params[:heart].present?
         @speakers = @speakers.where("coalesce(speakers.description, '') = '' OR coalesce(speakers.photo, '') = '' ")
       end
 
       if param_context(:search_term).present?
-        term = param_context(:search_term)
-        @speakers = @speakers.references(:presentations => { :conference => :organizer }).includes(:presentations => :conference)
-        @speakers = @speakers.where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%")
+        @speakers = @speakers.references(:presentations => :conference).includes(:presentations => :conference)
+        @speakers = filter_speakers @speakers
       end
+
+      page = param_context(:page)
+      per  = param_context(:per)
     end
 
-    page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 5
-    per  = params[:q].present? ? 5 : param_context(:per)
     @speakers = @speakers.page(page).per(per)
 
-    # The json result has to be built with the keys in the data expected by select2
+    # The JSON result has to be built with the keys in the data expected by select2
     respond_to do |format|
       format.html
       format.json { render json: { total: @speakers.length, users: @speakers.map{|s| {id: s.id, text: s.name } } } }

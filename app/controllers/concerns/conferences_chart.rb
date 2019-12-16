@@ -2,26 +2,31 @@ module ConferencesChart
 
   include SharedQueries
 
+  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
+  def filter_events(events)
+    query = init_query(events)
+    query = base_query(query)
+
+    events.where(query.where_clause, *query.bindings)
+  end
+
   # Builds a hash of speaker counts that looks like: {"Austin"=>7, "Houston"=>6, "Dallas"=>5}
   # which the endpoint can return as JSON or the action can use directly as an array.
   def city_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
-    # Everything has to be applied at once - having, where, and count can't be applied in steps.
+    # Everything has to be applied at once - HAVING, WHERE, and COUNT can't be applied in steps.
     if param_context(:user_id).present?
       # Handles the My Conferences case - doesn't work with search term
       results = Conference.group(:city).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(city) DESC").count(:city)
 
-    elsif param_context(:search_term).present? || param_context(:event_type).present?
-      term = param_context(:search_term) || ''
-      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        results = Conference.group(:city).where('state ILIKE ?', term).order("count(city) DESC").count(:city)
-      else
-        # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:city).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(city) DESC").count(:city)
-      end
+    elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
+      # Just have to let the results fly, and hope it's not too huge.
+      query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
+      query = base_query(query)
+
+      results = Conference.group(:city).where(query.where_clause, *query.bindings).order("count(city) DESC").count(:city)
 
     else
       # Show the top cities - otherwise it's too big - limit is not great here, because even though results are sorted
@@ -43,16 +48,11 @@ module ConferencesChart
       results = Conference.group(:country).where(by_user_query, current_user.id, event_type_or_wildcard).order("count(country) DESC").count
 
     elsif param_context(:search_term).present? || param_context(:event_type).present?
-      term = param_context(:search_term) || ''
-      # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
-      # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        results = Conference.group(:country).where('state ILIKE ?', term).order("count(country) DESC").count
-      else
-        # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group(:country).where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").order("count(country) DESC").count
-      end
+      # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
+      # Just have to let the results fly, and hope it's not too huge.
+      query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
+      query = base_query(query)
+      results = Conference.group(:country).where(query.where_clause, *query.bindings).order("count(country) DESC").count
 
     else
       # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted
@@ -64,7 +64,6 @@ module ConferencesChart
     return results.transform_keys{|k| country_name(k) }
   end
 
-
   def year_count_data
     # The search term restrictions have the same effect as index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
@@ -72,17 +71,12 @@ module ConferencesChart
       # Handles the My Conferences case - doesn't play well with search term
       results = Conference.group_by_year("conferences.start_date").where(by_user_query, current_user.id, event_type_or_wildcard).count
 
-    elsif param_context(:search_term).present? || param_context(:event_type).present?
-      term = param_context(:search_term) || ''
-      # State-based search doesn't make a lot of sense in this context, but it's here so the results will be consistent
-      # when drilling into the data via chart or table. States only match US states - so the country will always be USA.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        results = Conference.group_by_year("conferences.start_date").where('state ILIKE ?', term).count
-      else
-        # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge.
-        results = Conference.group_by_year("conferences.start_date").where(base_query, event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%").count
-      end
+    elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
+      # Just have to let the results fly, and hope it's not too huge.
+      query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
+      query = base_query(query)
+      results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 
     else
       # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted

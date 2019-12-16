@@ -110,7 +110,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Links</strong>']]
-    Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name').each do |presentation|
+    Presentation.includes(:publications, :speakers, :conference).order('conferences.start_date DESC, presentations.sortable_name').each do |presentation|
       table_data << [
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
         linked_speaker_names(presentation),
