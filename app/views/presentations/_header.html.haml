@@ -1,5 +1,5 @@
 .row.mb-2
-  .col-md-5
+  %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     = sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
   .col.d-sm-block.d-md-inline
     = sorting_header 'Presented', :presentations_path, 'presentations.date', 'sort-numeric'

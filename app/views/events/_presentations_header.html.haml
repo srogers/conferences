@@ -1,6 +1,6 @@
 -# show uses this when listing presentations for an event. The heading links are different, so sortability works correctly.
 .row.mb-2
-  .col-md-5
+  %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     =# link_to 'Name', event_path(@conference, nav_params.merge(sort: 'presentations.sortable_name', page: 1))
     = sorting_header 'Name', :event_path, 'presentations.sortable_name'
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
