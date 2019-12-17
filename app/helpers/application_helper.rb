@@ -98,13 +98,15 @@ module ApplicationHelper
   def sorting_header(text, path_helper, expression, icon='sort-alpha')
     new_sort = params_with_sort(expression)
     if params[:sort].present? && params[:sort].from(1) == expression  # Then the current sort is about this column
-      logger.debug "params[:sort] = #{ params[:sort]}"
+      # logger.debug "params[:sort] = #{ params[:sort]}"
       sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw') : icon('fas', icon + '-down', :class => 'fa-fw')
     else
       sort_indicator = ''
     end
     content_tag :span, class: 'sort-indicator-wrapper' do
-      (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+      content_tag :strong do
+        (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+      end
     end
   end
 

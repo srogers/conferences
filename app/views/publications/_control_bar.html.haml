@@ -11,7 +11,7 @@
           %li.nav-item{class: params[:heart].present? ? 'active' : ''}
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
-        %li.nav-item{class: param_context(:sort) == '-created_at' ? 'active' : ''}
+        %li.nav-item{class: params[:sort] == '-created_at' ? 'active' : ''}
           = link_to 'Latest', publications_path(sort: '-created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
