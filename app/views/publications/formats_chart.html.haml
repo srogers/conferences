@@ -2,14 +2,14 @@
 
 .row.chart-controls
   .col-md-12
-    = render partial: 'shared/return_from_chart_with_params'
+    = link_to "Done", deduce_done_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present?
       = title chart_title_with_context('Publication formats for')
 
     - elsif param_context(:user_id).present?
       = title "Your Publication formats"
-        = param_context(:search_term)
+      = param_context(:search_term)
 
     - else
       = title "Publication formats"
