@@ -23,7 +23,8 @@ module PublicationsChart
       # Just have to let the results fly, and hope it's not too huge.
       # This repeats the WHERE clause from the presentations controller so the the chart results will match the search results
       data = Publication.includes(:presentations => :conference).includes(:presentations => :speakers)
-      data = data.filter_publications(data).group("format").order("count(publications.id) DESC").count('publications.id')
+      data = filter_publications(data)
+      data = data.group("format").order("count(publications.id) DESC").count('publications.id')
 
     # Handles the My Conferences case - TODO does this make sense for Publications?
     elsif param_context(:user_id).present?
