@@ -25,7 +25,7 @@
           }
           console.log(element.innerHTML);
           element.addEventListener("click", function(e) {
-              var url = '/presentations?search_term='+this.innerHTML;  //  <=  This is the only thing that is different from presentations topic chart
+              var url = '/presentations?search_term='+this.innerHTML+'&tag=blank';  //  <=  This is the only thing that is different from presentations topic chart
               // window.open(url, '_blank');
               window.location.href = url
           }, false);
