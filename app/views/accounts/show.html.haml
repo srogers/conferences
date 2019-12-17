@@ -2,98 +2,108 @@
 
 =title 'Your Account'
 
-.row
-  .col-md-12
-    .well.well-lg
-      =image_tag current_user.photo.url, class: 'float-right', style: 'max-height: 100px'
-
-      %table.clean-values
-        %tr
-          %th Name
-          %td= current_user.name
-
-        %tr
-          %th Location
-          %td
-            = location_with_non_us_country current_user, :short
-
-        %tr
-          %th Email
-          %td= current_user.email
-
-        - if @user.speaker.present?
-          %tr
-            %th Associated Speaker
-            %td= link_to @user.speaker.name, speaker_path(@user.speaker)
-
-        %tr
-          %th Time Zone
-          %td= current_user.time_zone
-
-        -# Don't encumber readers with the notion that there are other roles they don't have
-        - if @user.editor? || @user.admin?
-          %tr
-            %th Role
-            %td= t current_user.role_name
+.well.well-lg.float-right
+  =image_tag current_user.photo.url, style: 'max-height: 100px'
 
 .row
-  .col-md-12
-    %h5 Preferences
-    %table.clean-values
-      %tr
-        %th
-          - if current_user.show_attendance
-            %span.confirm= icon('fas', 'check')
-          - else
-            %span.deny= icon('fas', 'times')
-        %td Allow other users to see my event attendance
-      -# This doesn't apply to readers
-      - if @user.editor? || @user.admin?
-        %tr
-          %th
-            - if current_user.show_contributor
-              %span.confirm= icon('fas', 'check')
-            - else
-              %span.deny= icon('fas', 'times')
-          %td List me on the Supporters page as a contributing editor
-      %tr
-        %th
-          = @user.time_format
-        %td Display format for times in publications
+  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Name
+  .col-sm-4.d-md-none.font-weight-bold Name
+  .col-md-8= current_user.name
 
 .row
-  .col-md-6
-  .col-md-6
-    - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
-    Remove your account
-    -#.float-right
-    = link_to icon('far', 'trash-alt', 'Delete'), account_path, :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => confirm_msg }, :post => true
+  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Location
+  .col-sm-4.d-md-none.mt-1.font-weight-bold Location
+  .col-md-8
+    = location_with_non_us_country current_user, :short
+
+.row
+  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Email
+  .col-sm-4.d-md-none.mt-1.font-weight-bold Email
+  .col-md-8= current_user.email
+
+- if @user.speaker.present?
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Associated Speaker
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Associated Speaker
+    .col-md-8= link_to @user.speaker.name, speaker_path(@user.speaker)
+
+.row
+  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Time Zone
+  .col-sm-4.d-md-none.mt-1.font-weight-bold Time Zone
+  .col-md-8= current_user.time_zone
+
+-# Don't encumber readers with the notion that there are other roles they don't have
+- if @user.editor? || @user.admin?
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Role
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Role
+    .col-md-8= t current_user.role_name
 
 .row.mt-5
   .col-md-12
-    -# Don't show users this stuff about themselves
-    - if current_user.admin?
+    %h5 Preferences
+
+.row
+  .col-sm-2.text-right
+    - if current_user.show_attendance
+      %span.confirm= icon('fas', 'check')
+    - else
+      %span.deny= icon('fas', 'times')
+
+  .col-sm-10 Allow other users to see my event attendance
+
+-# This doesn't apply to readers
+- if @user.editor? || @user.admin?
+
+  .row
+    .col-sm-2.text-right.font-weight-bold
+      - if current_user.show_contributor
+        %span.confirm= icon('fas', 'check')
+      - else
+        %span.deny= icon('fas', 'times')
+    .col-sm-10 List me on the Supporters page as a contributing editor
+
+  .row
+    .col-sm-2.text-right= @user.time_format
+    .col-sm-10 Display format for times in publications
+
+  .row.mt-3
+    .col-md-6
+    .col-md-6
+      - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
+      Remove your account
+      = link_to icon('far', 'trash-alt', 'Delete'), account_path, :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => confirm_msg }, :post => true
+
+-# Don't show users this stuff about themselves
+- if current_user.admin?
+  .row.mt-5
+    .col-md-12
       %h4 System Activity
-      .well.well-lg
-        %table.clean-values
-          %tr
-            %th Login count:
-            %td= current_user.login_count
-          %tr
-            %th Failed login count:
-            %td= current_user.failed_login_count
-          %tr
-            %th Last request:
-            %td= pretty_date current_user.last_request_at, style: :full
-          %tr
-            %th Current login at:
-            %td= pretty_date current_user.current_login_at, style: :full
-          %tr
-            %th Last login at:
-            %td= pretty_date current_user.last_login_at, style: :full
-          %tr
-            %th Current login IP:
-            %td= current_user.current_login_ip
-          %tr
-            %th Last login IP:
-            %td= current_user.last_login_ip
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Login count:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Login count:
+    .col-md-8= current_user.login_count
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Failed login count:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Failed login count:
+    .col-md-8= current_user.failed_login_count
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Last request:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Last request:
+    .col-md-8= pretty_date current_user.last_request_at, style: :full
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Current login at:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Current login at:
+    .col-md-8= pretty_date current_user.current_login_at, style: :full
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Last login at:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Last login at:
+    .col-md-8= pretty_date current_user.last_login_at, style: :full
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Current login IP:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Current login IP:
+    .col-md-8= current_user.current_login_ip
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Last login IP:
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Last login IP:
+    .col-md-8= current_user.last_login_ip

@@ -1,7 +1,6 @@
 class PresentationsController < ApplicationController
 
   include PresentationsChart    # gets chart data
-  include SharedQueries         # defines uniform ways for applying search terms
   include Sortability
   include StickyNavigation
 
@@ -11,33 +10,30 @@ class PresentationsController < ApplicationController
   authorize_resource            # friendly_find is incompatible with load_resource
 
   def index
-    @presentations = Presentation.select('presentations.*').references(:conference)  # the simplest query base for guest user (and robots)
-    # The most efficient query depends on whether the user is logged in, because we show slightly different info
-    if @current_user
-      @presentations = @presentations.references(:speakers, :publications)
-    else
-      @presentations = @presentations.includes(:publications).references(:speakers)
-    end
+    # Construct the simplest query base for guest user (and robots) - build elaborate WHERE, but only fetch presentations.
+    @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
+
     @presentations = @presentations.order(params_to_sql '<presentations.date')
     # This is necessary for getting the presentation status
     @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?
+      # Then it's an autocomplete query
       @presentations = @presentations.where("presentations.name ILIKE ? OR presentations.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
-      # This adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
+    else
+      # "heart" adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
       if params[:heart].present?
-        @presentations = @presentations.includes(:taggings, :conference).where("taggings.id is null OR coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
+        # TODO - should this include presentations without tags?  Seems like not - probably not a goal to tag *every* one.
+        @presentations = @presentations.where("coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
         # Skip conferences in the future - we know they're not done
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      # Use wildcards for single and double quote because imported data sometimes has weird characters that don't match regular quote TODO clean up data instead
-      term = param_context(:search_term)&.gsub("'",'_')&.gsub('"','_')
-      term = param_context(:tag) if term.blank?
-      @presentations = filter_presentations_by_term(@presentations, term) if term.present?
+      if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+        @presentations = filter_presentations @presentations
+      end
     end
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
@@ -79,7 +75,18 @@ class PresentationsController < ApplicationController
   end
 
   def tags
-    @tags = ActsAsTaggableOn::Tag.order('LOWER(name)')
+    @tags = ActsAsTaggableOn::Tag.order(Arel.sql('LOWER(name)'))
+
+    if params[:term].present?
+      @tags = @tags.where("name LIKE ?", '%' + params[:term] + '%')
+    end
+
+    # The returned JSON needs to be in the format: [{"id":"Platalea leucorodia","label":"Spoonbill","value":"Spoonbill"}]
+    # with no top level key (which is not documented anywhere).  If it's not right, you'll get "no data returned"
+    respond_to do |format|
+      format.html                                                                               # show the user the tag list
+      format.json { render json:  @tags.map{|t| { id: t.id, label: t.name, value: t.name } } }  # Autocomplete input
+    end
   end
 
   def show

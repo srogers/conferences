@@ -1,8 +1,13 @@
 # Used to get certain nav-related params into session, and clear them when switch subject areas
 module StickyNavigation
 
+  def set_param_context(key, value)
+    session[key] = value
+  end
+
   # Gets the current value of navigation-related params or assigns a default. Stashes current value in session to make
   # it sticky everywhere - with the overall goal of getting consistent nav behavior without littering URLs with params.
+  # In some cases, we want links to clear part of the current context. To do that, pass URL params ?param=blank
   def param_context(param, default='unassigned')
     # logger.debug "params:  #{params.inspect}"
     # logger.debug "session:  #{session.keys}"
@@ -16,15 +21,31 @@ module StickyNavigation
       when :tag         then nil
       when :user_id     then nil
       when :needs_approval then nil
+      when :operator    then 'OR'  # this may be unnecessary
       end
+    else
+      # use the provided value as the default, and save it if nothing is saved
+      set_param_context(param, default) if session[param].nil?
     end
+
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
     if params.has_key?(param)
-      session[param] = params[param]
+      # send URL params ?param=blank to reset the param context to the default value (usually nil)
+      if [:tag, :search_term].include?(param) && params[param] == 'blank'
+        if default.nil?
+          session.delete(param)
+        else
+          session[param] = default
+        end
+      else
+        # Save the value from params and return it as the current value
+        session[param] = params[param]
+      end
       # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
       params.delete(param) unless param == :page
       session[param]
     else
+      # return the session value - fall back to default on nil (but not on blank)
       session[param] || default
     end
   end
@@ -79,6 +100,7 @@ module StickyNavigation
     session.delete(:tag)
     session.delete(:user_id)
     session.delete(:needs_approval)
+    session.delete(:operator)
 
     session[:via] = controller_name  # remember how we got here
 

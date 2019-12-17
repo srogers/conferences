@@ -5,7 +5,8 @@ module ApplicationHelper
   DEFAULT_TIME_ZONE = "America/Chicago"
 
   def title(text)
-    content_for(:title) { text.present? ? text + ' -- ' : '' }
+    # Strip out tags, so titles can use :strong, :i, etc. without garfing up the header title
+    content_for(:title) { text.present? ? strip_tags(text) + ' -- ' : '' }
     content_tag(:h3, text)
   end
 
@@ -97,13 +98,15 @@ module ApplicationHelper
   def sorting_header(text, path_helper, expression, icon='sort-alpha')
     new_sort = params_with_sort(expression)
     if params[:sort].present? && params[:sort].from(1) == expression  # Then the current sort is about this column
-      logger.debug "params[:sort] = #{ params[:sort]}"
+      # logger.debug "params[:sort] = #{ params[:sort]}"
       sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw') : icon('fas', icon + '-down', :class => 'fa-fw')
     else
       sort_indicator = ''
     end
     content_tag :span, class: 'sort-indicator-wrapper' do
-      (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+      content_tag :strong do
+        (link_to(text, method(path_helper).call(new_sort)) + sort_indicator).html_safe
+      end
     end
   end
 
@@ -204,9 +207,15 @@ module ApplicationHelper
   def index_search_form
     # figure out where to send the search based on the page we're looking at right now
     index_path = send("#{controller_name}_path")
-    term = param_context(:search_term).blank? ? param_context(:tag) : param_context(:search_term)
-    search_form = form_for :search, html: { class: 'form-inline' }, url: index_path, method: :get do |f|
-      content = text_field_tag :search_term, term, placeholder: "Search"
+    search_form = form_for :search, html: { class: 'form-inline', :autocomplete => "off" }, url: index_path, method: :get do |f|
+      content = "".html_safe
+      if param_context(:tag).present?
+        content << tagify(param_context(:tag), class: 'slim')
+        content << logical_selector
+      else
+        param_context(:operator) # look at the value, so it gets saved, to persist changes introduced by the "All" button
+      end
+      content << text_field_tag(:search_term, param_context(:search_term), placeholder: "Search")
       content << hidden_field_tag(:page, 1, id: :reset_page)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do

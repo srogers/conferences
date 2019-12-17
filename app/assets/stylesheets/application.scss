@@ -14,6 +14,8 @@
  * break things in the sass environment, including other gems ability to access Bootstrap - doesn't seem to, but did it anyway.
  */
 
+/* Import things that are made available through gems */
+
 @import "trix";
 @import "social-share-button";
 
@@ -26,8 +28,15 @@
 @import 'bootstrap';
 @import "cookies_eu";
 
+@import 'jquery-ui/theme';
+@import "jquery-ui/autocomplete";
+@import "jquery-ui/tooltip";
+
 /* now import everything else that would have been imported by =require_tree .
-   TODO - don't forget to update when a new file is added */
+ * These have to live in a subdirectory now because of the new way the pipeline is processed.
+ * If they're at the top level, they'll be swept up too early.
+ *  TODO - don't forget to update when a new file is added
+ */
 @import 'secondary/local_base';
 @import "secondary/bootstrap_adjustments";
 @import 'secondary/events';
@@ -35,5 +44,6 @@
 @import 'secondary/news';
 @import 'secondary/organizers';
 @import 'secondary/presentations';
+@import 'secondary/presentations_tags';
 @import 'secondary/rails_errors';
 @import 'secondary/speakers';

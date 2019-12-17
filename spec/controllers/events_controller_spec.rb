@@ -46,10 +46,11 @@ RSpec.describe EventsController, type: :controller do
     end
 
     context "with a search term" do
-      it "finds events with organizer abbreviation partial matching" do
-        get :index, params:{ search_term: 'WOM' }
-        expect(assigns(:conferences)).to eq([conference])
-      end
+      # Skip this - too expensive, and not that helpful - but keep the idea around for future reference
+      #it "finds events with organizer abbreviation partial matching" do
+      #  get :index, params:{ search_term: 'WOM' }
+      #  expect(assigns(:conferences)).to eq([conference])
+      #end
 
       it "finds events with conference name matching" do
         get :index, params:{ search_term: 'Test Conference' }

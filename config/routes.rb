@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/news',    to: 'pages#news',            as: :news
   get '/supporters',   to: 'pages#supporters', as: :supporters
   get '/guidelines',   to: 'pages#guidelines', as: :guidelines
+  get '/tips',    to: 'pages#tips',            as: :tips
   get '/contact', to: 'pages#contact',         as: :contact
   get '/robots',  to: 'pages#robots',          as: :robots
 

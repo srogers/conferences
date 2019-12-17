@@ -3,86 +3,82 @@
 .row
   .col-md-6
     = title "#{ @user.name }"
-
-  .col-md-6
-    =image_tag @user.photo.url, class: 'float-right', style: 'max-height: 100px'
+  .col-md-6.text-right
+    =image_tag @user.photo.url, style: 'max-height: 100px'
 
 .row
-  .col-md-10
-    %table.clean-values
-      %tr
-        %th Name
-        %td= @user.name
+  .col-md-4.text-right.font-weight-bold Name
+  .col-md-8= @user.name
 
-      %tr
-        %th Email
-        %td= mail_to(@user.email)
+.row
+  .col-md-4.text-right.font-weight-bold Email
+  .col-md-8= mail_to(@user.email)
 
-      %tr
-        %th Role
-        %td= t @user.role_name
+.row
+  .col-md-4.text-right.font-weight-bold Role
+  .col-md-8= t @user.role_name
 
-      %tr
-        %th Associated Speaker
-        %td
-          - if @user.speaker.present?
-            = link_to @user.speaker.name, speaker_path(@user.speaker)
-          - else
-            %i not linked
+.row
+  .col-md-4.text-right.font-weight-bold Associated Speaker
+  .col-md-8
+    - if @user.speaker.present?
+      = link_to @user.speaker.name, speaker_path(@user.speaker)
+    - else
+      %i not linked
 
-      %tr
-        %th Active
-        %td
-          - if @user.active?
-            = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
-          - else
-            = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
-            Disabled
+.row
+  .col-md-4.text-right.font-weight-bold Active
+  .col-md-8
+    - if @user.active?
+      = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
+    - else
+      = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
+      Disabled
 
-      %tr
-        %th Approved
-        %td
-          - if @user.approved?
-            = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
-          - else
-            = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
-            Needs Approval
-      %tr
-        %th City
-        %td= @user.city
+.row
+  .col-md-4.text-right.font-weight-bold Approved
+  .col-md-8
+    - if @user.approved?
+      = icon 'fas', 'check', :class => 'fa-lg fa-fw text-success'
+    - else
+      = icon 'fas', 'ban', :class => 'fa-lg fa-fw text-danger'
+      Needs Approval
+.row
+  .col-md-4.text-right.font-weight-bold City
+  .col-md-8= @user.city
 
-      %tr
-        %th State
-        %td= @user.state
+.row
+  .col-md-4.text-right.font-weight-bold State
+  .col-md-8= @user.state
 
-      %tr
-        %th Country
-        %td= @user.country_name
+.row
+  .col-md-4.text-right.font-weight-bold Country
+  .col-md-8= @user.country_name
 
-      %tr
-        %th Created at
-        %td= pretty_date(@user.created_at, :style => :full, :undefined_text => '---')
+.row
+  .col-md-4.text-right.font-weight-bold Created at
+  .col-md-8= pretty_date(@user.created_at, :style => :full, :undefined_text => '---')
 
-      %tr
-        %th Last Login At
-        %td= pretty_date(@user.last_login_at, :style => :full, :undefined_text => '---')
+.row
+  .col-md-4.text-right.font-weight-bold Last Login At
+  .col-md-8= pretty_date(@user.last_login_at, :style => :full, :undefined_text => '---')
 
-      %tr
-        %th Number of Times Logged in
-        %td= @user.login_count
+.row
+  .col-md-4.text-right.font-weight-bold Number of Times Logged in
+  .col-md-8= @user.login_count
 
-      %tr
-        %th Number of Failed Login Attempts
-        %td= @user.failed_login_count
+.row
+  .col-md-4.text-right.font-weight-bold Number of Failed Login Attempts
+  .col-md-8= @user.failed_login_count
 
-      %tr
-        %th Last request:
-        %td= pretty_date current_user.last_request_at, style: :full
+.row
+  .col-md-4.text-right.font-weight-bold Last request:
+  .col-md-8= pretty_date @user.last_request_at, style: :full
 
-      %tr
-        %th Current login IP:
-        %td= current_user.current_login_ip
+.row
+  .col-md-4.text-right.font-weight-bold Current login IP:
+  .col-md-8= @user.current_login_ip
 
-      %tr
-        %th Last login IP:
-        %td= current_user.last_login_ip
+.row
+  .col-md-4.text-right.font-weight-bold Last login IP:
+  .col-md-8= @user.last_login_ip

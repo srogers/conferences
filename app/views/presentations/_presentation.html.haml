@@ -2,12 +2,21 @@
 -# if @conference exists, then it's conference/show
 
 .row.mb-2{ id: "presentation_#{presentation.id}" }
-  .col-md-5
+  %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     .detail-selector
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
       = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
       = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
+    -#%br
+    -#by
+    -#= clickable_speaker_list(presentation)
+    -#- unless controller_name == 'conferences' && params[:id].present?
+    -#  - if presentation.conference.present? && params[:skip_event] == 'false'
+    -#    at
+    -#    = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
+    -#%br
+    -#= linked_tag_names(presentation, class: 'slim')
 
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
     -# For medium up

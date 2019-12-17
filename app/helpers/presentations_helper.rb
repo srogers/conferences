@@ -1,7 +1,27 @@
 module PresentationsHelper
 
-  def linked_tag_names(presentation)
-    presentation.tag_list.map{|t| link_to t, presentations_path(tag: t, page: 1)}.join(', ').html_safe
+  def linked_tag_names(presentation, options={})
+    if options[:class].present?
+      tag_options = { class: "linked #{ options[:class] }" }
+    else
+      tag_options = { class: 'linked' }
+    end
+    presentation.tags.map{|tag| link_to(text_to_tag(tag, tag_options), presentations_path(tag: tag.name, page: 1)) }.join.html_safe
+  end
+
+  # convert the comma-separated tag list into markup that will style them as individual tags.
+  def tagify(tag_list, options={})
+    if options[:class].present?
+      tag_options = { class: options[:class] }
+    else
+      tag_options = {}
+    end
+    tag_list.split(',').map{|tag| text_to_tag tag, tag_options}.join.html_safe
+  end
+
+  # This shows up only in the annotations control bar, and allows the user to and/or tag and free text search terms.
+  def logical_selector
+    select_tag("operator", options_for_select([["AND", "AND"],["OR", "OR"]],param_context(:operator)), {:name => "operator"} )
   end
 
   # Get a list of icons corresponding to items in the publication list. The ones that correspond to online media are
@@ -64,5 +84,18 @@ module PresentationsHelper
 
   def ht_hide_details
     'Hide details'
+  end
+
+  private
+
+  # Handles whatever markup is required to turn plain text into a tag
+  #
+  def text_to_tag(text, options={})
+    if options[:class].present?
+      classes = "tags_display #{ options[:class] }"
+    else
+      classes = 'tags_display'
+    end
+    content_tag :span, text, class: classes
   end
 end

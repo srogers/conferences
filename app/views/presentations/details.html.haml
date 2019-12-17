@@ -6,4 +6,4 @@
       at
       = link_to truncate(@presentation.conference_name, length: 45, separator: ' '), event_path(@presentation.conference)
   %br
-  %i= linked_tag_names(@presentation)
+  = linked_tag_names(@presentation, class: 'slim')

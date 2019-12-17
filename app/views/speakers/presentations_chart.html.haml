@@ -2,19 +2,14 @@
 
 .row.chart-controls
   .col-md-12
-    = render partial: 'shared/return_from_chart_with_params'
+    = link_to "Done", deduce_done_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present?
-      - title "Speaker Presentations for #{ param_context(:search_term) }"
-      %h3
-        Speaker Presentations for
-        = param_context(:search_term)
+      = title chart_title_with_context('Speaker Presentations for')
 
     - elsif param_context(:user_id).present?
-      - title "Your Event Speakers"
-      %h3
-        Your Event Speakers
-        = param_context(:search_term)
+      = title "Your Event Speakers"
+      = param_context(:search_term)
 
     - else
       - title "Frequent Event Speakers"

@@ -2,23 +2,17 @@
 
 .row.chart-controls
   .col-md-12
-    = render partial: 'shared/return_from_chart_with_params'
+    = link_to "Done", deduce_done_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present?
-      - title "Publication formats for #{ param_context(:search_term) }"
-      %h3
-        Publication formats for
-        = param_context(:search_term)
+      = title chart_title_with_context('Publication formats for')
 
     - elsif param_context(:user_id).present?
-      - title "Your Event Cities"
-      %h3
-        Your Publication formats
-        = param_context(:search_term)
+      = title "Your Publication formats"
+      = param_context(:search_term)
 
     - else
-      - title "Publication formats"
-      %h3 Publication formats
+      = title "Publication formats"
 
     %p Click a format to see its publications
     #formats_chart

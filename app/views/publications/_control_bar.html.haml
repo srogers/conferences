@@ -11,14 +11,14 @@
           %li.nav-item{class: params[:heart].present? ? 'active' : ''}
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
-        %li.nav-item{class: param_context(:sort) == '-created_at' ? 'active' : ''}
+        %li.nav-item{class: params[:sort] == '-created_at' ? 'active' : ''}
           = link_to 'Latest', publications_path(sort: '-created_at'), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(ype: 'format'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(type: 'format'), class: "dropdown-item"
             =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(type: 'year', search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
             =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(type: '',search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
 

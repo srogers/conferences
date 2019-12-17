@@ -5,18 +5,14 @@
     = link_to "Done", presentations_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present? || param_context(:tag).present?
-      - title "Presentations for #{ param_context(:search_term) }"
-      %h3
-        Presentations for
-        = param_context(:search_term) || param_context(:tag)
+      = title chart_title_with_context('Presentations for')
 
     - else
-      - title "Presentations by Topic"
-      %h3 Presentations by Topic
+      = title "Presentations by Topic"
 
     %p
       Click a topic to see its presentations.
-      - if current_user&.editor? || @current_user&.admin?
+      - if (current_user&.editor? || @current_user&.admin?) && param_context(:search_term).blank?
         %br
         Consider eliminating topics with only one associated presentation.
     #presentations_chart

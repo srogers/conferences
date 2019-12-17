@@ -1,16 +1,19 @@
 module PresentationsChart
 
-  # The controller index action and the chart-building action share this WHERE clause for consistency. It includes conference
-  # and speakers, which makes searches slightly less efficient, but necessary.
-  def filter_presentations_by_term(presentations, term)
-    # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
-    # Combining these two results ensures that we get both things tagged with the term, as well as things with the term in the name
-    presentations.includes(:taggings => :tag).references(:taggings => :tag).includes(:conference, :speakers).
-      where(base_query + " OR presentations.name ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ? OR tags.name = ?",
-            # base query bind vars
-            event_type_or_wildcard, "%#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%",
-            # bind vars for the 4 literals introduced above
-            "%#{term}%", "#{term}%", "#{term}%", term)
+  include SharedQueries         # defines uniform ways for applying search terms - the controller should not include this
+
+  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
+  def filter_presentations(presentations)
+    query = init_query(presentations)
+    if query.tag.present?
+      # currently, the caller has to manage includes() and references() and apply them before the where()
+      presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
+    end
+    query = base_query(query)
+    query = presentation_query(query)
+
+    presentations.where(query.where_clause, *query.bindings)
   end
 
   # Builds a hash of presentation counts by year that looks like: {Fri, 01 Jan 1982=>1, Sat, 01 Jan 1983=>2, Sun, 01 Jan 1984=>1, Tue, 01 Jan 1985=>3}
@@ -19,10 +22,9 @@ module PresentationsChart
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
-      term = param_context(:search_term) || param_context(:tag)
 
-      @presentations = Presentation.includes(:publications, :speakers, :conference => :organizer).order('conferences.start_date DESC, presentations.sortable_name')
-      @presentations = filter_presentations_by_term(@presentations, term)
+      @presentations = Presentation.includes(:publications, :speakers, :conference).order('conferences.start_date DESC, presentations.sortable_name')
+      @presentations = filter_presentations @presentations
 
       # Build year keys and counts - use one method or the other
       # keys = @presentations.map{|p| p.conference.start_date.year}.uniq.sort                 # based on just the years that are present
@@ -47,19 +49,27 @@ module PresentationsChart
     # data = ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
 
     # adding taggings and tags with #load seems to speed things up a little
-    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference => :organizer).references(:taggings, :tags).load
+    # 12/17/19 remove load to perhaps save memory
+    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference).references(:taggings, :tags)
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
-      term = param_context(:search_term) || param_context(:tag)
+      # This is super-efficient, but it just doesn't get it the right answer
+      #query = init_query(@presentations)
+      #query = base_query(query)
+      #query = presentation_query(query)
+      #logger.debug query.where_clause
+      #logger.debug query.bindings.inspect
+      #data = @presentations.group('tags.name').where(query.where_clause, *query.bindings).count('taggings.taggable_id')
 
-      @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
-      @presentations = filter_presentations_by_term(@presentations, term)
+      # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB
+      @presentations = filter_presentations @presentations
+      keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
+      data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }.reject{|k,v| v == 0 }
+    else
+      # This works for the simple case with no search term or tags - saves memory
+      data = @presentations.group('tags.name').count(:all)
     end
-
-    # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB
-    keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
-    data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }
 
     return data
   end

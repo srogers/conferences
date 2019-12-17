@@ -10,29 +10,26 @@ class PublicationsController < ApplicationController
   authorize_resource
 
   def index
-    @publications = Publication.references(:presentations => { :conference => :organizer }, :presentation_publications => :publication)
-    @publications = Publication.includes(:presentation_publications, :presentations => :conference )
 
-    if params[:q].present?
+    if params[:q].present? # then it's autocomplete
+      @publications = Publication
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
-    elsif params[:heart].present?
-      @publications = @publications.where("
-        publications.published_on IS NULL OR (publications.duration IS NULL AND publications.format IN (?)) OR
-        (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1
-      ", Publication::HAS_DURATION)
-    end
+    else
+      @publications = Publication.references(:presentation_publications => { :presentation => :conference })
+      @publications = Publication.includes(:presentation_publications => { :presentation => :conference })
 
-    if param_context(:search_term).present?
-      term = param_context(:search_term).gsub("'",'_').gsub('"','_')  # Change quote characters to wildcards because imported DB data can have weird characters there.
-      @publications = @publications.includes(:presentations => :speakers)
-      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        @publications = @publications.where('conferences.state = ?', term.upcase)
-      else
-        @publications = @publications.where(base_query + ' OR publications.name ILIKE ? OR publications.format ILIKE ? OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "%#{term}%", country_code(term), "#{term}", "#{term}%", "%#{term}%", "#{term}%", "#{term}%", "#{term}%")
+      if params[:heart].present?
+        @publications = @publications.where("
+          publications.published_on IS NULL OR (publications.duration IS NULL AND publications.format IN (?)) OR
+          (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1
+        ", Publication::HAS_DURATION)
+      end
+
+      if param_context(:search_term).present?
+        @publications = @publications.includes(:presentations => :speakers)
+        @publications = filter_publications @publications
       end
     end
 

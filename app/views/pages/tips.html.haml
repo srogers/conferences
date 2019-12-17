@@ -1,0 +1,60 @@
+= render partial: 'menu'
+
+.row
+  .col-md-12
+    =title 'Tips'
+
+    %p A few tips to help you make better use of the site.
+
+    %h4 How We Organize the Info
+    %p
+      The heart of the site is
+      %i Presentations.
+      Presentations happen at
+      %i Events.
+      An event might be a conference, a debate, or an interview.
+      When the presentation becomes available in a format you can watch or hear, that is a
+      %i Publication.
+    -#%p Maybe this is a little too verbose and distracting
+    -#  Event types are:
+    -#  %ul
+    -#    - Conference::EVENT_TYPES.sort.each do |event_type|
+    -#      %li= event_type
+    %p
+      The site provides tools aimed at helping you answer certain kinds of questions:
+      %ul
+        %li What presentations have been given over the years, and what is upcoming?
+        %li Where did a specific presentation come from? How does it fit into timeline?
+        %li Where can I watch, hear, or read a specific presentation?
+
+    %h4 Searching
+    %p
+      Currently, search works with a single word or phrase, not a collection of keywords.
+    %p
+      Search recognizes certain words as "special"
+      %ul
+        %li A four-digit number will be treated as a year and match events and presentations from that year
+        %li A country name will find events and presentations in that country (e.g. Norway)
+        %li A two-character state abbreviation will find events and presentations in that state (e.g. GA)
+        %li A city name will find events and presentations in that city
+        %li presentations can also be found by a word from the presentation name or the speaker first or last name
+    %p
+      Clicking on a tag or entering a search term that is a tag (e.g.
+      %span.tags_display.linked.slim economics
+      ) will start a tag-based search.
+
+    %h4 Media
+    %p
+      Presentations have
+      %i publications
+      that indicate where you can find the talk. These are represented by icons:
+    %ul
+      - publication = Publication.new
+      - Publication::FORMATS.sort.each do |format|
+        - publication.format = format
+        %li
+          = link_to icon_for_format(publication).html_safe, '#', title: "Hovering over the icon will reveal supplemental info"
+          = format
+    %p
+      Sometimes a talk will have multiple copies of the same icon. This usually happens when the talk is split into
+      multiple parts. Hovering on the icon will reval the specific part.
