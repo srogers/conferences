@@ -49,19 +49,27 @@ module PresentationsChart
     # data = ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
 
     # adding taggings and tags with #load seems to speed things up a little
-    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference).references(:taggings, :tags).load
+    # 12/17/19 remove load to perhaps save memory
+    @presentations = Presentation.includes(:publications, :speakers, :taggings, :tags, :conference).references(:taggings, :tags)
 
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
-      term = param_context(:search_term) || param_context(:tag)
+      # This is super-efficient, but it just doesn't get it the right answer
+      #query = init_query(@presentations)
+      #query = base_query(query)
+      #query = presentation_query(query)
+      #logger.debug query.where_clause
+      #logger.debug query.bindings.inspect
+      #data = @presentations.group('tags.name').where(query.where_clause, *query.bindings).count('taggings.taggable_id')
 
-      @presentations = @presentations.order('conferences.start_date DESC, presentations.sortable_name')
+      # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB
       @presentations = filter_presentations @presentations
+      keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
+      data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }.reject{|k,v| v == 0 }
+    else
+      # This works for the simple case with no search term or tags - saves memory
+      data = @presentations.group('tags.name').count(:all)
     end
-
-    # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB
-    keys = *( ActsAsTaggableOn::Tag.order(:name).map{|t| t.name} )   # a list of all the tag names
-    data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }
 
     return data
   end
