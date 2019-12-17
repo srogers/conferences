@@ -32,6 +32,10 @@ module SpeakersChart
         # possible, so the the chart results will match the search results.
         data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag })
         query = init_query(data)
+        if query.tag.present?
+          # currently, the caller has to manage includes() and references() and apply them before the where()
+          data = data.includes(:presentation => { :taggings => :tag }).references(:taggings => :tag)
+        end
         query = base_query(query)
         query = presentation_query(query)
 
@@ -57,21 +61,20 @@ module SpeakersChart
     # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if param_context(:search_term).present?
-      term = param_context(:search_term)
-      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        data = Conference.includes(:presentations => :speakers).where("conferences.state ILIKE ?", term).group("speakers.name").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
-
-      else
-        # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge.
-        # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-        data = Conference.includes(:presentations => :speakers).group("speakers.name").where(base_query + ' OR speakers.name ILIKE ? OR speakers.sortable_name ILIKE ?', event_type_or_wildcard, "#{term}%", "#{term}%", country_code(term), "#{term}", "#{term}%", "#{term}%", "#{term}%").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
+      # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
+      data = Conference.includes(:presentations => :speakers)
+      query = init_query(data)
+      if query.tag.present?
+        # currently, the caller has to manage includes() and references() and apply them before the where()
+        data = data.includes(:presentations => { :taggings => :tag }).references(:taggings => :tag)
       end
+      query = base_query(query)
+      query = presentation_query(query)
 
-      # Handles the My Conferences case
+      data = data.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id').sort_by { |name, count| count }.reverse.to_h
+
     elsif param_context(:user_id).present?
+      # Handles the My Conferences case
       data = Conference.includes(:presentations => :speakers).where("conferences.id in (SELECT conferences.id FROM conference_users WHERE user_id = ?)", current_user.id).group("speakers.name").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
 
     else
