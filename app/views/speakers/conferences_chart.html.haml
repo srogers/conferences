@@ -5,13 +5,10 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if param_context(:search_term).present?
-      - title "Speaker Events for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3= chart_title_with_context('Speaker Events for')
+      = title chart_title_with_context('Speaker Events for')
 
     - elsif param_context(:user_id).present?
-      - title "Your Event Speakers"
-      %h3
-        Your Event Speakers
+      = title "Your Event Speakers"
         = param_context(:search_term)
 
     - else

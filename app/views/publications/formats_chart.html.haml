@@ -5,18 +5,14 @@
     = render partial: 'shared/return_from_chart_with_params'
 
     - if param_context(:search_term).present?
-      - title "Publication formats for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3= chart_title_with_context('Publication formats for')
+      = title chart_title_with_context('Publication formats for')
 
     - elsif param_context(:user_id).present?
-      - title "Your Event Cities"
-      %h3
-        Your Publication formats
+      = title "Your Publication formats"
         = param_context(:search_term)
 
     - else
-      - title "Publication formats"
-      %h3 Publication formats
+      = title "Publication formats"
 
     %p Click a format to see its publications
     #formats_chart

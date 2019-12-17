@@ -5,7 +5,8 @@ module ApplicationHelper
   DEFAULT_TIME_ZONE = "America/Chicago"
 
   def title(text)
-    content_for(:title) { text.present? ? text + ' -- ' : '' }
+    # Strip out tags, so titles can use :strong, :i, etc. without garfing up the header title
+    content_for(:title) { text.present? ? strip_tags(text) + ' -- ' : '' }
     content_tag(:h3, text)
   end
 

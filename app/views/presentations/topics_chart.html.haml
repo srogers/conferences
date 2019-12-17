@@ -5,12 +5,10 @@
     = link_to "Done", presentations_path, :class => "btn btn-secondary float-right"
 
     - if param_context(:search_term).present? || param_context(:tag).present?
-      - title "Presentations for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3= chart_title_with_context('Presentations for')
+      = title chart_title_with_context('Presentations for')
 
     - else
-      - title "Presentations by Topic"
-      %h3 Presentations by Topic
+      = title "Presentations by Topic"
 
     %p
       Click a topic to see its presentations.
