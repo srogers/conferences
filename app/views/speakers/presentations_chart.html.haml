@@ -6,12 +6,7 @@
 
     - if param_context(:search_term).present?
       - title "Speaker Presentations for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3
-        Speaker Presentations for
-        %i= param_context(:search_term)
-        - if param_context(:tag).present?
-          and
-          %i= param_context(:tag)
+      %h3= chart_title_with_context('Speaker Presentations for')
 
     - elsif param_context(:user_id).present?
       - title "Your Event Speakers"

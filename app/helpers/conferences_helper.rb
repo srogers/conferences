@@ -20,6 +20,12 @@ module ConferencesHelper
     end
   end
 
+  def chart_title_with_context(intro_text)
+    tag  = param_context(:tag).blank? ? nil : content_tag(:i, param_context(:tag))
+    term = param_context(:search_term).blank? ? nil : content_tag(:i, param_context(:search_term))
+    (intro_text + ' ' + [tag, term].compact.join(" #{ param_context(:operator)} ")).html_safe
+  end
+
   def activated_event_class(event_type, default_class)
     param_context(:event_type) == event_type ? default_class + ' active' : default_class
   end

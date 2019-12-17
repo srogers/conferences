@@ -6,12 +6,7 @@
 
     - if param_context(:search_term).present?
       - title "Publication formats for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3
-        Publication formats for
-        %i= param_context(:search_term)
-        - if param_context(:tag).present?
-          and
-          %i= param_context(:tag)
+      %h3= chart_title_with_context('Publication formats for')
 
     - elsif param_context(:user_id).present?
       - title "Your Event Cities"

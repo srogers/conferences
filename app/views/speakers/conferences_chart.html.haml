@@ -6,12 +6,7 @@
 
     - if param_context(:search_term).present?
       - title "Speaker Events for #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }"
-      %h3
-        Speaker Events for
-        %i= param_context(:search_term)
-        - if param_context(:tag).present?
-          and
-          %i= param_context(:tag)
+      %h3= chart_title_with_context('Speaker Events for')
 
     - elsif param_context(:user_id).present?
       - title "Your Event Speakers"
@@ -23,7 +18,7 @@
       - title "Frequent Event Speakers"
       %h3 Most Frequent Speakers by Events
 
-    %p Click a name to see the speaker's conferences
+    %p Click a name to see the speaker's presentations
     -# This div ID has to match up with the one in shared/presentations_chart
     #conferences_chart
       = render partial: 'shared/conferences_chart'
