@@ -7,6 +7,7 @@ module StickyNavigation
 
   # Gets the current value of navigation-related params or assigns a default. Stashes current value in session to make
   # it sticky everywhere - with the overall goal of getting consistent nav behavior without littering URLs with params.
+  # In some cases, we want links to clear part of the current context. To do that, pass URL params ?param=blank
   def param_context(param, default='unassigned')
     # logger.debug "params:  #{params.inspect}"
     # logger.debug "session:  #{session.keys}"
@@ -29,8 +30,17 @@ module StickyNavigation
 
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
     if params.has_key?(param)
-      # Save the value from params and return it as the current value
-      session[param] = params[param]
+      # send URL params ?param=blank to reset the param context to the default value (usually nil)
+      if [:tag, :search_term].include?(param) && params[param] == 'blank'
+        if default.nil?
+          session.delete(param)
+        else
+          session[param] = default
+        end
+      else
+        # Save the value from params and return it as the current value
+        session[param] = params[param]
+      end
       # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
       params.delete(param) unless param == :page
       session[param]
