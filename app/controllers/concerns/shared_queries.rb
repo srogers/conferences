@@ -51,7 +51,8 @@ module SharedQueries
 
     def bindings
       atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
-      atoms.reject{|a| a.kind == :optional && skip_optionals?}.map{|a| a.value}
+      # Skip optional clauses when one of the special required queries triggers it - but not tags
+      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}
     end
 
     private
