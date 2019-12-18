@@ -61,6 +61,8 @@ module StickyNavigation
   # via a presentation, then it makes sense to go back to that context.
   def deduce_done_path
     logger.debug "Deduce Done path from:  session[:via] = #{ session[:via]} params[:nav] = #{ params[:nav]}"
+    # a few special cases
+    return send("root_path") if action_name == 'summary' && !current_user.admin?
     if session[:via].present?
       # The "Done" path is the path to the original controller/index with sticky params intact.
       # When the current context is a presentation, there are multiple ways we could have gotten there.
