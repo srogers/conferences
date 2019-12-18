@@ -11,22 +11,21 @@
           %li.nav-item{class: param_context(:needs_approval).present? ? 'active' : ''}
             =link_to "Needs Approval", users_path(:needs_approval => true), class: 'nav-link'
 
-        -# unless ['show', 'edit', 'new', 'summary', 'events'].include?(action_name)
-
       - if action_name == 'show'
-        = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
+        = link_to icon('far', 'trash-alt', 'Delete'), user_path(@user), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure? This will assign user content to you.' }, :post => true
         -# Don't allow editing an inactive user, because it will change the perishable_token and break the user's validation link
-        = link_to "Edit", edit_user_path, :class => "btn btn-primary ml-3" + (@user.active ? '' : ' disabled')
-        = link_to "Summary", summary_users_path(id: @user.id), :class => "btn btn-primary ml-3"
-        = link_to "Done", users_path, :class => "btn btn-secondary ml-3"
+        = link_to "Edit", edit_user_path, :class => "btn btn-sm btn-primary ml-3" + (@user.active ? '' : ' disabled')
+        = link_to "Summary", summary_users_path(id: @user.id), :class => "btn btn-sm btn-primary ml-3"
+        = link_to "Done", users_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - if ['summary', 'events'].include?(action_name)
-        = link_to "Done", deduce_done_path, :class => "btn btn-secondary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - if action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-primary mr-3', onclick: "$('form.edit_user').submit()"
-        = link_to "Cancel", user_path(@user), :class => "btn btn-secondary ml-3"
-      - elsif action_name == 'new'
-        = link_to "Cancel", can?(:index, User) ? users_path : root_path, :class => "btn btn-secondary ml-3"
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_user').submit()"
+        = link_to "Cancel", user_path(@user), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_user').submit()"
+        = link_to "Cancel", can?(:index, User) ? users_path : root_path, :class => "btn btn-sm btn-secondary ml-3"
       - else
         = index_search_form unless ['show', 'summary', 'events'].include?(action_name)

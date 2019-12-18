@@ -25,15 +25,16 @@
       -# action-specific buttons or search form
       - if action_name == 'show'
         - if can? :destroy, @publication
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @publication
-          = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-primary ml-3"
-        = link_to "Done", deduce_done_path, :class => "btn btn-secondary ml-3"
+          = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-sm btn-primary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
-        = link_to "Cancel", publication_path(@publication), :class => "btn btn-secondary ml-3"
-      - elsif action_name == 'new'
-        = link_to "Done", publications_path, :class => "btn btn-secondary ml-3"
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
+        = link_to "Cancel", publication_path(@publication), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_publication').submit()"
+        = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary ml-3"
       - else
         = index_search_form

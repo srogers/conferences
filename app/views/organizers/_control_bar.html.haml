@@ -10,13 +10,14 @@
       -# action-specific buttons
       - if action_name == 'show'
         - if can?(:destroy, @organizer) && @organizer.conferences.empty?
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), organizer_path(@organizer), :method => :delete, :class => "btn btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), organizer_path(@organizer), :method => :delete, :class => "btn btn-sm btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @organizer
-          = link_to "Edit", edit_organizer_path(@organizer), :class => "btn btn-primary"
-        = link_to "Done", organizers_path, :class => "btn btn-secondary ml-3"
+          = link_to "Edit", edit_organizer_path(@organizer), :class => "btn btn-sm btn-primary"
+        = link_to "Done", organizers_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-primary mr-3', onclick: "$('form.edit_organizer').submit()"
-        = link_to "Cancel", organizer_path(@organizer), :class => "btn btn-secondary ml-3"
-      - elsif action_name == 'new'
-        = link_to "Cancel",  organizers_path, :class => "btn btn-secondary ml-3"
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_organizer').submit()"
+        = link_to "Cancel", organizer_path(@organizer), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_organizer').submit()"
+        = link_to "Cancel",  organizers_path, :class => "btn btn-sm btn-secondary ml-3"

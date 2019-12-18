@@ -34,22 +34,23 @@
       -# action-specific buttons or search form
       - if action_name == 'show'
         - if can?(:destroy, @conference) && @presentations.empty?
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
         - if @conference.future? && @conference.registration_url.present?
-          = link_to "Register", @conference.registration_url, :class => "btn btn-primary ml-3", target: '_blank'
+          = link_to "Register", @conference.registration_url, :class => "btn btn-sm btn-primary ml-3", target: '_blank'
         - if !@conference.completed && can?(:create, Presentation)
-          = link_to "+ Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-primary ml-3"
+          = link_to "+ Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-sm btn-primary ml-3"
         - if can? :edit, @conference
-          = link_to "Edit", edit_event_path(@conference), :class => "btn btn-primary ml-3"
-        = link_to "Done", deduce_done_path, :class => "btn btn-secondary ml-3"
+          = link_to "Edit", edit_event_path(@conference), :class => "btn btn-sm btn-primary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'index' && controller_name == 'event_users'
-        = link_to "Done", event_path(@conference), :class => "btn btn-secondary ml-3"
+        = link_to "Done", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-primary mr-3', onclick: "$('form.edit_conference').submit()"
-        = link_to "Cancel", event_path(@conference), :class => "btn btn-secondary ml-3"
-      - elsif action_name == 'new'
-        = link_to "Cancel", events_path, :class => "btn btn-secondary ml-3"
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_conference').submit()"
+        = link_to "Cancel", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_conference').submit()"
+        = link_to "Cancel", events_path, :class => "btn btn-sm btn-secondary ml-3"
       - else
         = index_search_form unless ['conference_users', 'event_users'].include?(controller_name)
