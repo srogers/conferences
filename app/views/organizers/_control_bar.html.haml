@@ -15,7 +15,8 @@
           = link_to "Edit", edit_organizer_path(@organizer), :class => "btn btn-primary"
         = link_to "Done", organizers_path, :class => "btn btn-secondary ml-3"
 
-      - if action_name == 'edit'
+      - elsif action_name == 'edit' || action_name == 'update'
+        = link_to "Save", "#", class: 'btn btn-primary mr-3', onclick: "$('form.edit_organizer').submit()"
         = link_to "Cancel", organizer_path(@organizer), :class => "btn btn-secondary ml-3"
       - elsif action_name == 'new'
         = link_to "Cancel",  organizers_path, :class => "btn btn-secondary ml-3"
