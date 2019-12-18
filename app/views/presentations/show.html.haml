@@ -13,7 +13,7 @@
         - else
           = simple_form_for @user_presentation do |f|
             = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
-            = f.submit 'Add to my Watchlist', class: 'btn btn-secondary'
+            = f.submit 'Add to my Watchlist', class: 'btn btn-sm btn-secondary'
 
     = title @presentation.name
     %h4= @presentation.speakers.empty? ? "no speaker identified" : clickable_speaker_list(@presentation)
@@ -80,7 +80,7 @@
         = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
           = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter an event name or year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
-          = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+          = f.submit 'Associate', class: 'btn btn-sm btn-primary'
 
 .row
   .col-md-12

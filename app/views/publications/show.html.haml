@@ -68,7 +68,7 @@
       = simple_form_for :presentation_publication, url: presentation_publications_path do |f|
         = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
         = f.input :presentation_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a presentation name...", source: presentations_path(format: :json), exclude: @current_presentation_ids }, class: "select2-autocomplete", id: "presentation_picker" }
-        = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+        = f.submit 'Associate', class: 'btn btn-sm btn-primary'
 
   %br
   .row
