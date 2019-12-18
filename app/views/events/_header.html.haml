@@ -13,11 +13,11 @@
   .col-md-2.d-none.d-md-block
     = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
 
-  .col-md-1.d-none.d-md-block
+  .col.d-none.d-md-block.text-center
     Program
 
   - if can? :edit, Conference
-    .col-md-2.d-none.d-md-block
+    .col.d-none.d-md-block
       Done
-  .col-md-2.d-none.d-md-block
+  .col-md-1.d-none.d-md-block
     &nbsp;
