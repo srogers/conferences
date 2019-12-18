@@ -6,7 +6,7 @@
     - if @presentation.persisted?
       %br
       %p
-        = link_to icon('fas', 'unlink', :class => 'fa-fw') + " Disassociate", presentation_path(@presentation, presentation: { conference_id: nil } ), method: :patch, class: "btn btn-primary btn-sm #{ @presentation.conference_id.present? ? '' : 'disabled' }"
+        = link_to icon('fas', 'unlink', :class => 'fa-fw') + " Disassociate", presentation_path(@presentation, presentation: { conference_id: nil } ), method: :patch, class: "btn btn-xs btn-primary mt-2 #{ @presentation.conference_id.present? ? '' : 'disabled' }"
 = f.label :description
 = f.trix_editor :description
 = f.input :tag_list, input_html: { value: @tags, class: 'tagsinput',  autocomplete: "off" }, label: 'Topics', hint: "economics, politics, psychology, etc."

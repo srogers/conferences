@@ -57,7 +57,7 @@ body {
 footer.footer {
   position: absolute;
   bottom: 0;
-  height: 80px;
+  height: 84px;        /* 80 works in most cases but 84 is needed on mobile when the footer text wraps */
   width: 100%;
   color: white;
   font-size: smaller;

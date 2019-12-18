@@ -1,7 +1,8 @@
 .row.mb-2
   .col-md-6
     = sorting_header 'Name', :publications_path, 'publications.sortable_name'
-    = ' / Published / Format'
+    = ' / Format / '
+    = sorting_header 'Published', :publications_path, 'publications.published_on'
   .col Events
   - if params[:heart].present?
     .col Needs

@@ -5,15 +5,15 @@
     = conference.date_span
   .col-md-2
     = location_with_non_us_country conference, :short
-  .col-md-1.d-none.d-md-block
+  .col.d-none.d-md-block.text-center
     - if conference.program_url.present?
       = link_to icon('far', 'file'), conference.program_url, target: '_blank'
   - if can? :edit, Conference
-    .col-md-2.d-none.d-md-block
+    .col.d-none.d-md-block.text-center
       = icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
 
   - if can? :edit, conference
-    .col-md-2.text-right
-      = link_to icon('far', 'edit', class: 'fa-fw'), edit_event_path(conference), :class => "btn btn-sm btn-primary"
+    .col.text-right
+      = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_path(conference), :class => "btn btn-xs btn-primary"
       - if can?(:destroy, conference) && conference.presentations.empty?
-        = link_to icon('far', 'trash-alt', class: 'fa-fw'), event_path(conference), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+        = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_path(conference), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true

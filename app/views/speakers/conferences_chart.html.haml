@@ -2,7 +2,7 @@
 
 .row.chart-controls
   .col-md-12
-    = link_to "Done", deduce_done_path, :class => "btn btn-secondary float-right"
+    = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary float-right"
 
     - if param_context(:search_term).present?
       = title chart_title_with_context('Speaker Events for')

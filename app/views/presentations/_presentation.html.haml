@@ -66,6 +66,6 @@
       - if can? :edit, presentation
         %br
         %div.text-right{style: 'padding-top: 5px;'}
-          = link_to icon('fas', 'search', class: 'fa-fw'), google_search_url(presentation), class: "btn btn-sm btn-primary", target: "_blank"
-          = link_to icon('far', 'edit', class: 'fa-fw'), edit_presentation_path(presentation), class: "btn btn-sm btn-primary"
-          = link_to icon('far', 'trash-alt', class: 'fa-fw'), presentation_path(presentation), :method => :delete, class: "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+          = link_to icon('fas', 'search', class: 'fa-fw fa-sm'), google_search_url(presentation), class: "btn btn-xs btn-primary", target: "_blank"
+          = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_presentation_path(presentation), class: "btn btn-xs btn-primary"
+          = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), presentation_path(presentation), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

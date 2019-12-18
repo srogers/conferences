@@ -106,7 +106,7 @@ class PublicationsController < ApplicationController
     else
       flash[:error] = "The publication could not be saved: #{ @publication.errors.full_messages.join(', ') }"
       logger.error "Publication save failed: #{ @publication.errors.full_messages }"
-      redirect_to presentations_path
+      render 'new'
     end
   end
 

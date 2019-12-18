@@ -49,7 +49,9 @@
     = simple_form_for :presentation_publication, url: presentation_publications_path do |f|
       = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
       = f.input :publication_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a publication name...", source: publications_path(format: :json), exclude: @current_publication_ids }, class: "select2-autocomplete", id: "publication_picker" }
-      = f.submit 'Associate', class: 'btn btn-primary btn-sm'
+      .text-right
+        -# Keep this seldom-used button away from the Add Publication button
+        = f.submit 'Associate', class: 'btn btn-sm btn-primary'
 
 -# If the controller identified possible related publications, list them for association
 %br

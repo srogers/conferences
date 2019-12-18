@@ -4,7 +4,11 @@
 = f.input :event_type, as: :select, collection: Conference::EVENT_TYPES, include_blank: false
 = f.input :start_date, as: :date, start_year: 1959, end_year: Date.today.year + 1, order: [:month, :day, :year]
 = f.input :end_date, as: :date, start_year: 1959, end_year: Date.today.year + 1, order: [:month, :day, :year]
-= f.input :name, hint: "Don't change this unless absolutely necessary for clarity (e.g. special events) #{ name_blank_or_default?(@conference) ? ' -  AUTO-UPDATING' : '' }"
+- if name_blank_or_default?(@conference)
+  - hint = "Don't change this unless absolutely necessary for clarity (e.g. special events) -  AUTO-UPDATING"
+- else
+  - hint = "This is a custom name - delete it to return to the default: #{@conference.organizer&.abbreviation} #{@conference.start_date&.year}"
+= f.input :name, hint: hint
 = f.label :description
 = f.trix_editor :description
 .small.mb-3 Historic or organizational details specific to this event (e.g., attendance)
