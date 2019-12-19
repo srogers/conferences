@@ -13,8 +13,8 @@
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, events_path(heart: 't'), class: "nav-link", title: "Which Events aren't done yet"
 
         - if current_user.present?
-          %li.nav-item{ class: param_context(:user_id).present? && param_context(:user_id) == current_user.id.to_s ? 'active' : ''}
-            = link_to "My Events", events_path(user_id: current_user.id, page: 1), class: "nav-link", title: "Events you've marked as attended"
+          %li.nav-item{ class: my_events? ? 'active' : ''}
+            = link_to "My Events", events_users_path(page: 1), class: "nav-link", title: "Events you've marked as attended"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
@@ -44,8 +44,8 @@
           = link_to "Edit", edit_event_path(@conference), :class => "btn btn-sm btn-primary ml-3"
         = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
-      - elsif action_name == 'index' && controller_name == 'event_users'
-        = link_to "Done", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif controller_name == 'event_users' || (controller_name == 'users' && action_name == 'events')
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
         = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_conference').submit()"

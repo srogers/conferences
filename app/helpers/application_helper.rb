@@ -14,7 +14,7 @@ module ApplicationHelper
   def current_tab?(name)
     current = case name
     when 'events'
-      controller_name == 'events' || controller_name == 'conference_users'
+      controller_name == 'events' || controller_name == 'event_users' || my_events?
     when 'speakers'
       controller_name == 'speakers'
     when 'presentations'
@@ -24,14 +24,14 @@ module ApplicationHelper
     when 'organizers'
       controller_name == 'organizers'
     when 'users'
-      controller_name == 'users' && !['supporters', 'conferences'].include?(action_name) && !my_summary?
+      controller_name == 'users' && !['supporters', 'conferences', 'events'].include?(action_name) && !my_summary?
     when 'settings'
       controller_name == 'settings'
     when 'documents'
       controller_name == 'documents'
     # Account overlaps with other states, because "You" is highlighted when items in the drop-down are also highlighted
     when 'account'
-      controller_name == 'accounts' || my_summary? || my_events? || my_watchlist?
+      controller_name == 'accounts' || my_summary? ||  my_watchlist?
     when 'profile'
       controller_name == 'accounts'
     when 'summary'
@@ -58,7 +58,7 @@ module ApplicationHelper
   end
 
   def my_events?
-    controller_name == 'users' && action_name == 'events'
+    controller_name == 'users' && action_name == 'events' && (current_user&.id == params[:user_id].to_i || params[:user_id].blank?)
   end
 
   def my_watchlist?
