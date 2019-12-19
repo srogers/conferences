@@ -2,11 +2,22 @@
 
 .row
   .col-md-12
-    %h3 Events You've Attended
+    - if @user.id == current_user&.id
+      %h3 Events You've Attended
+    - else
+      %h3
+        Events attended by
+        = @user.name
     - if @conferences.length == 0
       %p
-        You haven't marked any events as attended yet.
-        You can do that on the conference details page. Look for a button that says, "I was there!"
+        - if @user.id == current_user.id
+          -# This shouldn't come up, because the only way to get here is when the user has marked the conference as
+          -# attended. But handle it anyway.
+          = @user.name
+          hasn't marked any events as attended.
+        - else
+          You haven't marked any events as attended yet.
+          You can do that on the conference details page. Look for a button that says, "I was there!"
     - else
       %ul
       - @conferences.each do |conference|

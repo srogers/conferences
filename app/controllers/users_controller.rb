@@ -4,8 +4,8 @@ class UsersController < ApplicationController
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]
-  before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, and supporters are open
-  before_action :require_user,  only: [:summary, :events]
+  before_action :require_admin, except: [:new, :create, :supporters, :summary, :events]   # new, create, events, and supporters are open
+  before_action :require_user,  only: [:summary]
 
   def index
     @require_account_approval = Setting.require_account_approval?
@@ -73,8 +73,24 @@ class UsersController < ApplicationController
     @notifications = @user.notifications          # notifications sent
   end
 
+  # This action is open, because even non-authenticated users can look at attendance of other users.
+  # This might be a little sketchy, because it allows for fishing of user IDs - maybe it should hash the ID?
   def events
-    @conferences = current_user.conferences.order('start_date DESC')
+    if params[:user_id].present?           # asking about somebody else
+      @user = User.find params[:user_id]   # one-time use - don't use param_context
+      unless @user.present? && (current_user&.id == @user.id || @user.show_attendance || current_user&.admin?)
+        # You can't see it because:  it doesn't exist or it's not you or the user says no, or you're not admin
+        flash[:notice] = "No information available."
+        redirect_to root_path and return
+      end
+    elsif !current_user.present?           # asking about self but not logged in
+      flash[:notice] = "Log in to see a list of the events you've attended."
+      redirect_to root_path and return # non-authenticated user can't ask to see their own events
+    else                                   # asking about self when logged in
+      @user = current_user
+    end
+
+    @conferences = @user.conferences.order('start_date DESC')
   end
 
   def edit

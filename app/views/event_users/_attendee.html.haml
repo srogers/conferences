@@ -1,3 +1,3 @@
 %tr{ :class => cycle(:even, :odd) }
-  %td= link_to truncate(attendee.name, length: 40), events_path(user_id: attendee.id, page: 1)
+  %td= link_to truncate(attendee.name, length: 40), events_users_path(user_id: attendee.id)
   %td= image_tag attendee.photo.url, style: 'max-height: 30px'

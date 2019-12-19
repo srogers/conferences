@@ -77,7 +77,84 @@ describe UsersController do
     end
   end
 
+  describe "GET events" do
+    let(:user)             { create :reader_user }
+    let(:conference)       { create :conference }
+    let!(:conference_user) { create :conference_user, user_id: user.id, conference_id: conference.id }
+
+    context "for the current user" do
+      before { log_in user }
+
+      context "implicitly by omission" do
+        it "finds the current user's events" do
+          get :events
+
+          expect(assigns[:conferences]).to eq(user.conferences)
+        end
+      end
+
+      context "explicitly via a user_id that is the current user" do
+        # The UI doesn't create this case but it should work
+        it "finds the user's own events" do
+          get :events, params: { user_id: @current_user.to_param }
+
+          expect(assigns[:conferences]).to eq([conference])
+        end
+      end
+
+      context "with attendance privacy enabled" do
+        before { user.update!(show_attendance: false) }
+
+        it "still finds the specified user's own events" do
+          get :events
+
+          expect(assigns[:conferences]).to eq([conference])
+        end
+      end
+
     end
+
+    context "with no current user" do
+      before do
+        log_out                      # you are not authenticated
+        pretend_to_be_logged_out     # block any current_user or session that might be hanging around
+      end
+
+      context "for a specified user" do
+        context "with attendance privacy enabled" do
+          before { user.update!(show_attendance: false) }
+
+          it "does not find the specified user's events" do
+            get :events, params: { user_id: user.to_param }
+
+            expect(assigns[:conferences]).to be_nil
+            expect(response).to redirect_to root_path
+          end
+        end
+
+        context "with attendance privacy disabled" do
+          before { user.update!(show_attendance: true) }
+
+          it "finds the specified user's events" do
+            get :events, params: { user_id: user.to_param }
+
+            expect(assigns[:conferences]).to eq([conference])
+          end
+        end
+
+        context "that doesn't exist" do
+          before { user.update!(show_attendance: false) }
+
+          it "finds nothing and redirects" do
+            get :events, params: { user_id: '9999' }
+
+            expect(assigns[:conferences]).to be_nil
+            expect(response).to redirect_to root_path
+          end
+        end
+      end
+    end
+
   end
 
   describe "when getting the account creation form" do
@@ -159,7 +236,7 @@ describe UsersController do
     describe "during registration" do
       before do
         log_out                      # you are not authenticated
-        pretend_to_be_logged_out     # block anything that might be hanging around
+        pretend_to_be_logged_out     # block any current_user or session that might be hanging around
       end
 
       describe "with valid params" do
