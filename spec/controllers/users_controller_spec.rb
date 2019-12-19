@@ -94,7 +94,7 @@ describe UsersController do
       end
 
       context "explicitly via a user_id that is the current user" do
-        # The UI doesn't create this case but it should work
+        # A user can get here in the UI by clicking on themselves in the attendee list
         it "finds the user's own events" do
           get :events, params: { user_id: @current_user.to_param }
 

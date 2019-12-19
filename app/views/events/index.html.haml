@@ -2,30 +2,10 @@
 
 = render partial: 'events/control_bar'
 
-- if @user.present?
-  .row
-    .col-md-12
-      %h4
-        Events Attended by
-        = @user.name
-
 - if @conferences.blank?
   .row
     .col-md-12
-      - if @user.present?
-        - if @user == current_user
-          %p
-            You haven't marked any
-            = current_event_type.pluralize
-            as attended by you.
-            - if @user.conferences.empty?
-              You can do that on the conference details page. Look for a button that says, "I was there!"
-        - else
-          %p
-            This user hasn't marked any
-            = current_event_type.pluralize
-            as attended.
-      - elsif param_context(:search_term).present?
+      - if param_context(:search_term).present? || param_context(:tag).present?
         %p No events match the search terms
       - elsif param_context(:event_type).present?
         %p No events match the event type

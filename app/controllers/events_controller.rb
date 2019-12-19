@@ -13,19 +13,7 @@ class EventsController < ApplicationController
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   def index
-    # The query base is determined by the context - handles "My Events" and the ability to list events attended by other users
-    if param_context(:user_id).present?
-      @user = User.find(param_context(:user_id))
-      if current_user.id.to_s == param_context(:user_id) || @user.show_attendance || current_user.admin?
-        @conferences = @user.conferences
-      else
-        @user = nil
-        @conferences = Conference
-      end
-    else
-      @conferences = Conference
-    end
-
+    @conferences = Conference
 
     # This structure separates out the :q from everything else. TODO maybe put autocomplete in a separate action
     if params[:q].present?
