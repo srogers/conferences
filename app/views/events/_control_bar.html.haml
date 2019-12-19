@@ -26,7 +26,7 @@
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{param_context(:event_type).present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'chart-bar', 'Event Type',   class: 'fa-sm')
+            = icon('fas', 'filter', 'Event Type',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
             = link_to 'Any', events_path(event_type: ''), class: activated_event_class(nil, "dropdown-item")
             - Conference::EVENT_TYPES.each do |event_type|
