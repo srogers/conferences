@@ -21,33 +21,33 @@ describe UsersController do
   } }
 
   describe "GET index", index: true do
-    before do
-      @user = create :user, role: Role.admin
-      log_in @user
-      @user2 = create :user
-    end
+    # Make sure these already exist, because we're going to find or not find them
+    let!(:user)  { create :admin_user }
+    let!(:user2) { create :user }
+    let!(:user3) { create :user, approved: false }
 
-    it "should assign the results as @users" do
-      get :index
+    context "as admin" do
+      before { log_in user }
 
-      expect(assigns[:users]).to include(@user)
-      expect(assigns[:users]).to include(@user2)
-    end
+      it "should assign the results as @users" do
+        get :index
 
-    context "with unapproved user search" do
-      before do
-        @user3 = create :user, approved: false
+        expect(assigns[:users]).to include(user)   # I can see myself!
+        expect(assigns[:users]).to include(user2)  # I see other users
       end
 
-      it "should find unapproved users" do
-        get :index, params: { :needs_approval => true }
-        expect(assigns[:users]).to eq([@user3])
+      context "with unapproved user search" do
+
+        it "should find unapproved users" do
+          get :index, params: { :needs_approval => true }
+
+          expect(assigns[:users]).to eq([user3])  # I see just this one
+        end
       end
     end
   end
 
   describe "when listing supporters" do
-
     let(:editor_user)        { create :editor_user }
     let(:hidden_editor_user) { create :editor_user, show_contributor: false }
 
@@ -63,15 +63,20 @@ describe UsersController do
   end
 
   describe "GET show" do
-    before do
-      @user = create :user, role: Role.admin
-      log_in @user
-      @user2 = create :user
-    end
+    let!(:user)  { create :admin_user }
+    let!(:user2) { create :user }
 
-    it "should assign the results as @user" do
-      get :show, params: { id: @user2.to_param }
-      expect(assigns[:user]).to eq(@user2)
+    context "as admin" do
+      before { log_in user }
+
+      it "should assign the results as @user" do
+        get :show, params: { id: user2.to_param }
+
+        expect(assigns[:user]).to eq(user2)
+      end
+    end
+  end
+
     end
   end
 
@@ -79,6 +84,7 @@ describe UsersController do
     context "not logged in" do
       it "sets up the user form" do
         get :new
+
         expect(assigns(:user)).to be_present
         expect(assigns(:roles)).to be_present
         expect(response).to render_template 'new'
@@ -86,26 +92,28 @@ describe UsersController do
     end
 
     context "logged in" do
-      before do
-        @user = create :user, role: Role.reader
-        log_in @user
+      let!(:reader_user)  { create :reader_user }
+
+      context "as reader" do
+        before { log_in reader_user }
+
+        it "requires admin user" do
+          get :new
+
+          expect(response).to redirect_to root_path
+        end
       end
 
-      it "requires a logged in user to be admin" do
-        get :new
-        expect(response).to redirect_to root_path
-      end
     end
   end
 
   describe "when creating a user" do
-    describe "as admin" do
-      describe "with valid params" do
-        before do
-          @user = create :user, role: Role.admin
-          log_in @user
-        end
+    let!(:user)  { create :admin_user }
 
+    context "as admin" do
+      before { log_in user }
+
+      describe "with valid params" do
         it "creates a new User" do
           expect { post :create, params: { :user => valid_attributes } }.to change(User, :count).by(1)
         end
@@ -150,7 +158,8 @@ describe UsersController do
 
     describe "during registration" do
       before do
-        log_out  # you are not authenticated
+        log_out                      # you are not authenticated
+        pretend_to_be_logged_out     # block anything that might be hanging around
       end
 
       describe "with valid params" do
@@ -223,27 +232,27 @@ describe UsersController do
 
   # This gets spec'd at both the model and controller level, because it's super-annoying if it's broken
   describe "when approving a user" do
-    before do
-      @admin = create :user, role: Role.admin
-      log_in @admin
+    let(:admin) { create :admin_user }
+    let!(:user) { create :user, approved: false }
 
-      @user = create :user, approved: false
-    end
+    context "as admin" do
+      before { log_in admin }
 
-    it "approves the specified user" do
-      put :approve, params: {id: @user.to_param}
-      expect(@user.reload).to be_approved
-    end
+      it "approves the specified user" do
+        put :approve, params: {id: user.to_param}
+        expect(user.reload).to be_approved
+      end
 
-    it "does not change the perishable token value" do
-      initial_token = @user.perishable_token
-      put :approve, params: {id: @user.to_param}
-      expect(@user.reload.perishable_token).to eq(initial_token)
-    end
+      it "does not change the perishable token value" do
+        initial_token = user.perishable_token
+        put :approve, params: {id: user.to_param}
+        expect(user.reload.perishable_token).to eq(initial_token)
+      end
 
-    it "redirects to the list of users needing approval" do
-      put :approve, params: {id: @user.to_param}
-      expect(response).to redirect_to users_path(needs_approval: true)
+      it "redirects to the list of users needing approval" do
+        put :approve, params: {id: user.to_param}
+        expect(response).to redirect_to users_path(needs_approval: true)
+      end
     end
   end
 

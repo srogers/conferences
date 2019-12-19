@@ -105,7 +105,7 @@ class UsersController < ApplicationController
     @user.role = Role.reader unless @user.role_id.present? && current_user&.admin?
     if @user.save
       @user.deliver_verify_email!(current_user)
-      if current_user && current_user.admin?
+      if current_user&.admin?
         flash[:success] = "Account created"
         redirect_to users_path
       else
