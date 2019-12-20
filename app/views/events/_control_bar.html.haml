@@ -17,20 +17,20 @@
             = link_to "My Events", events_users_path(page: 1), class: "nav-link", title: "Events you've marked as attended"
 
         %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+          = link_to('#', class: "nav-link dropdown-toggle #{event_chart? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(type: 'cities'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(type: 'countries'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(type: 'years'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(chart_type: 'cities'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(chart_type: 'countries'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(chart_type: 'years'), class: "dropdown-item"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{param_context(:event_type).present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'filter', 'Event Type',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to 'Any', events_path(event_type: ''), class: activated_event_class(nil, "dropdown-item")
+            = link_to 'Any', current_path_with(event_type: ''), class: activated_event_class(nil, "dropdown-item")
             - Conference::EVENT_TYPES.each do |event_type|
-              = link_to event_type, events_path(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
+              = link_to event_type, current_path_with(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
 
       -# action-specific buttons or search form
       - if action_name == 'show'

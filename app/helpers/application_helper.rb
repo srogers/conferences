@@ -57,8 +57,14 @@ module ApplicationHelper
     param_context(:event_type).present? ? param_context(:event_type) : 'Event'
   end
 
+  def event_chart?
+    param_context(:my_events) && action_name == 'chart'
+  end
+
   def my_events?
-    controller_name == 'users' && action_name == 'events' && (current_user&.id == params[:user_id].to_i || params[:user_id].blank?)
+    user_events = controller_name == 'users' && action_name == 'events'
+    me = current_user&.id == params[:user_id].to_i
+    me && (event_chart? || user_events)
   end
 
   def my_watchlist?
@@ -68,6 +74,17 @@ module ApplicationHelper
   # a helper for current_tab? - this requires a param qualifier because admin can look at the same info under the users tab
   def my_summary?
     controller_name == 'users' && action_name == 'summary' && params[:id] == @current_user.id.to_s
+  end
+
+  # This is used to re-run the current URL with a different event set for the Event Type dropdown.
+  def current_path_with(params={})
+    # In order to retain the current context, preserve the chart_type and user_id params
+    [:chart_type, :user_id].each do |preserve_param|
+      params = params.merge(preserve_param => param_context(preserve_param)) if param_context(preserve_param).present?
+    end
+    escaped_params = CGI.unescape(params.to_query)
+    param_string = escaped_params.blank? ? nil : escaped_params
+    [request.path, param_string].compact.join('?')
   end
 
   # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through

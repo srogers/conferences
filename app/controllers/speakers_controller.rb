@@ -48,7 +48,7 @@ class SpeakersController < ApplicationController
     # The charts can snag their data from dedicated endpoints, or pass it directly as data - but the height can't be
     # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
     # a vertical bar chart).
-    case params[:type]
+    case param_context(:chart_type)
     when 'presentations' then
       @presentations = presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
       render 'presentations_chart'

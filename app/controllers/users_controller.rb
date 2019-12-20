@@ -76,8 +76,9 @@ class UsersController < ApplicationController
   # This action is open, because even non-authenticated users can look at attendance of other users.
   # This might be a little sketchy, because it allows for fishing of user IDs - maybe it should hash the ID?
   def events
-    if params[:user_id].present?           # asking about somebody else
-      @user = User.find params[:user_id]   # one-time use - don't use param_context
+    if param_context(:user_id).present?    # asking about somebody else
+      param_context(:my_events, false)     # unset this
+      @user = User.find param_context(:user_id)
       unless @user.present? && (current_user&.id == @user.id || @user.show_attendance || current_user&.admin?)
         # You can't see it because:  it doesn't exist or it's not you or the user says no, or you're not admin
         flash[:notice] = "No information available."
@@ -87,10 +88,14 @@ class UsersController < ApplicationController
       flash[:notice] = "Log in to see a list of the events you've attended."
       redirect_to root_path and return # non-authenticated user can't ask to see their own events
     else                                   # asking about self when logged in
+      param_context(:my_events, true)      # set this for any future chart requests
+      logger.debug "BEFORE unset user id param context"
+      param_context(:user_id,   'blank')   # unset this
+      logger.debug "AFTER unset user id param context"
       @user = current_user
     end
 
-    @conferences = @user.conferences.order('start_date DESC')
+    @conferences = @user.conferences.where("conferences.event_type ILIKE ?", event_type_or_wildcard).order('start_date DESC')
   end
 
   def edit
