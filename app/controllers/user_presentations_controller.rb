@@ -45,7 +45,8 @@ LIMIT 3
   def create
     @user_presentation = UserPresentation.new user_presentation_params.merge(user_id: current_user.id)
     @success = @user_presentation.save
-    get_user_presentation_list
+    get_user_presentation_list  # this is needed to re-render the _presentation partial
+
     respond_to do |format|
       format.html do
         if @success
@@ -69,7 +70,7 @@ LIMIT 3
   def update
     get_user_presentation
     @user_presentation.update user_presentation_params
-    get_user_presentation_list
+    get_user_presentation_list   # this is needed to re-render the _presentation partial
 
     respond_to do |format|
       format.html do          # currently, only presentation/show uses this
