@@ -61,7 +61,7 @@ class PresentationsController < ApplicationController
   # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
   # a vertical bar chart).
   def chart
-    case params[:type]
+    case param_context(:chart_type)
     when 'years' then
       @presentations = presentation_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
       render 'years_chart'

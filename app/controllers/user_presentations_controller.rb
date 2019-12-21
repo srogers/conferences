@@ -1,12 +1,13 @@
 class UserPresentationsController < ApplicationController
 
+  include Sortability
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]
   before_action :require_user, except: [:most_watched, :most_anticipated]  # guests shouldn't ever see any buttons that go here
 
   def index
-    @user_presentations = current_user.user_presentations.includes(:presentation => :conference).order('conferences.start_date DESC', 'presentations.name')
+    @user_presentations = current_user.user_presentations.includes(:presentation => :conference).order(params_to_sql('<conferences.start_date'))
     @user_presentations = @user_presentations.page(param_context(:page)).per(param_context(:per))
   end
 
@@ -44,7 +45,8 @@ LIMIT 3
   def create
     @user_presentation = UserPresentation.new user_presentation_params.merge(user_id: current_user.id)
     @success = @user_presentation.save
-    get_user_presentation_list
+    get_user_presentation_list  # this is needed to re-render the _presentation partial
+
     respond_to do |format|
       format.html do
         if @success
@@ -68,7 +70,7 @@ LIMIT 3
   def update
     get_user_presentation
     @user_presentation.update user_presentation_params
-    get_user_presentation_list
+    get_user_presentation_list   # this is needed to re-render the _presentation partial
 
     respond_to do |format|
       format.html do          # currently, only presentation/show uses this

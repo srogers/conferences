@@ -1,4 +1,4 @@
 // This one handles updates on the presentations and conference listing page
-$('tr#presentation_<%= @user_presentation.presentation_id %>').replaceWith('<%= j render @user_presentation.presentation %>');
+$('div#presentation_<%= @user_presentation.presentation_id %>').replaceWith('<%= j render @user_presentation.presentation %>');
 // This one handles updates on the watchlist page
 $('div#user_presentation_<%= @user_presentation.id %>').replaceWith('<%= j render @user_presentation %>');

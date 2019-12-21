@@ -15,18 +15,21 @@ module StickyNavigation
     if default=='unassigned'
       default = case param
       when :per         then 10
-      when :page        then nil  # omit page entirely instead of making 1 the default
-      when :event_type  then nil
-      when :search_term then nil
-      when :tag         then nil
-      when :user_id     then nil
-      when :needs_approval then nil
       when :operator    then 'OR'  # this may be unnecessary
+      else
+        nil
       end
     else
-      # use the provided value as the default, and save it if nothing is saved
-      set_param_context(param, default) if session[param].nil?
+      # allow param_context() to be called directly with 'blank' to kill a current value
+      if default == 'blank' && [:user_id].include?(param)
+        session.delete(param)
+        return nil
+      else
+        # use the provided value as the default, and save it if nothing is saved
+        set_param_context(param, default) if session[param].nil?
+      end
     end
+
 
     # return params[param] || default if feature disabled # if there are weird side-effects, might want the ability to turn it off
     if params.has_key?(param)
@@ -97,12 +100,14 @@ module StickyNavigation
 
   def reset_and_remember
     session.delete(:page)
+    session.delete(:chart_type)
     session.delete(:event_type)
     session.delete(:search_term)
     session.delete(:tag)
     session.delete(:user_id)
     session.delete(:needs_approval)
     session.delete(:operator)
+    session.delete(:my_events)
 
     session[:via] = controller_name  # remember how we got here
 

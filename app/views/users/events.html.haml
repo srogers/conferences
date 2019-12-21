@@ -1,12 +1,31 @@
-= render partial: 'control_bar'
+= render partial: 'events/control_bar'
 
 .row
   .col-md-12
-    %h3 Events You've Attended
+    - if @user.id == current_user&.id
+      %h3
+        = current_event_type.pluralize
+        You've Attended
+    - else
+      %h3
+        = current_event_type.pluralize
+        attended by
+        = @user.name
     - if @conferences.length == 0
       %p
-        You haven't marked any events as attended yet.
-        You can do that on the conference details page. Look for a button that says, "I was there!"
+        - if @user.id == current_user.id
+          You haven't marked any
+          = current_event_type.pluralize
+          as attended yet.
+          - if current_event_type == 'Events' # only say this when the user hasn't marked any events at all
+            You can do that on the conference details page. Look for a button that says, "I was there!"
+        - else
+          -# This shouldn't come up, because the only way to get here is when the user has marked the conference as
+          -# attended. But handle it anyway.
+          = @user.name
+          hasn't marked any
+          = current_event_type.pluralize
+          as attended.
     - else
       %ul
       - @conferences.each do |conference|

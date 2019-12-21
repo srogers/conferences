@@ -61,7 +61,7 @@ class PublicationsController < ApplicationController
   end
 
   def chart
-    case params[:type]
+    case param_context(:chart_type)
     when 'format' then
       @formats = format_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
       render 'formats_chart'

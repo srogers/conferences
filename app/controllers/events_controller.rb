@@ -13,19 +13,7 @@ class EventsController < ApplicationController
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   def index
-    # The query base is determined by the context - handles "My Events" and the ability to list events attended by other users
-    if param_context(:user_id).present?
-      @user = User.find(param_context(:user_id))
-      if current_user.id.to_s == param_context(:user_id) || @user.show_attendance || current_user.admin?
-        @conferences = @user.conferences
-      else
-        @user = nil
-        @conferences = Conference
-      end
-    else
-      @conferences = Conference
-    end
-
+    @conferences = Conference
 
     # This structure separates out the :q from everything else. TODO maybe put autocomplete in a separate action
     if params[:q].present?
@@ -75,9 +63,9 @@ class EventsController < ApplicationController
   # set when using endpoints, so that method is less suitable for charts that vary by the size of the data set (like
   # a vertical bar chart).
   def chart
-    case params[:type]
+    case param_context(:chart_type)
     when 'cities' then
-      @cities = city_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
+      @cities = city_count_data.to_a            # build the data here, or pull it from an endpoint in the JS, but not both
       render 'cities_chart'
     when 'countries' then
       @countries = country_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both

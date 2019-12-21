@@ -1,0 +1,13 @@
+.row.mb-2
+  .col.col-md-10.col-sm-8
+    = sorting_header 'Title', :user_presentations_path, 'presentations.name'
+    = ' / '
+    Speaker(s)
+    = ' / '
+    = sorting_header 'Event', :user_presentations_path, 'conferences.start_date'
+    = ' / '
+    = sorting_header 'Done', :user_presentations_path, 'user_presentations.completed_on'
+
+  .col-md-2.col-sm-4.text-right
+    Status
+

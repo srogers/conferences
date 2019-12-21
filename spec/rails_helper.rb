@@ -208,6 +208,7 @@ end
 def log_out
   @session.destroy if @session
   @session = nil
+  @current_user = nil
 end
 
 # use this to switch roles in before blocks when mocking the role response won't work

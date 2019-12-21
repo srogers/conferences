@@ -25,5 +25,15 @@ RSpec.describe UserPresentation, type: :model do
       end
     end
 
+    context "creating" do
+      context "with existing user/presentation entry" do
+        before { create :user_presentation }
+
+        it "rejects duplicates" do
+          expect{ create :user_presentation }.to raise_error ActiveRecord::RecordNotUnique
+        end
+      end
+    end
+
   end
 end

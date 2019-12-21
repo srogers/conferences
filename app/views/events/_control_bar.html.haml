@@ -13,24 +13,24 @@
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, events_path(heart: 't'), class: "nav-link", title: "Which Events aren't done yet"
 
         - if current_user.present?
-          %li.nav-item{ class: param_context(:user_id).present? && param_context(:user_id) == current_user.id.to_s ? 'active' : ''}
-            = link_to "My Events", events_path(user_id: current_user.id, page: 1), class: "nav-link", title: "Events you've marked as attended"
+          %li.nav-item{ class: my_events? ? 'active' : ''}
+            = link_to "My Events", events_users_path(page: 1), class: "nav-link", title: "Events you've marked as attended"
 
         %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+          = link_to('#', class: "nav-link dropdown-toggle #{event_chart? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
             = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(type: 'cities'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(type: 'countries'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(type: 'years'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(chart_type: 'cities'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(chart_type: 'countries'), class: "dropdown-item"
+            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(chart_type: 'years'), class: "dropdown-item"
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{param_context(:event_type).present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'chart-bar', 'Event Type',   class: 'fa-sm')
+            = icon('fas', 'filter', 'Event Type',   class: 'fa-sm')
           .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to 'Any', events_path(event_type: ''), class: activated_event_class(nil, "dropdown-item")
+            = link_to 'Any', current_path_with(event_type: ''), class: activated_event_class(nil, "dropdown-item")
             - Conference::EVENT_TYPES.each do |event_type|
-              = link_to event_type, events_path(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
+              = link_to event_type, current_path_with(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
 
       -# action-specific buttons or search form
       - if action_name == 'show'
@@ -44,8 +44,8 @@
           = link_to "Edit", edit_event_path(@conference), :class => "btn btn-sm btn-primary ml-3"
         = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
-      - elsif action_name == 'index' && controller_name == 'event_users'
-        = link_to "Done", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif controller_name == 'event_users' || (controller_name == 'users' && action_name == 'events')
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
         = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_conference').submit()"
