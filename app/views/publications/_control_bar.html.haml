@@ -11,8 +11,8 @@
           %li.nav-item{class: params[:heart].present? ? 'active' : ''}
             = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
-        %li.nav-item{class: params[:sort] == '-created_at' ? 'active' : ''}
-          = link_to 'Latest', publications_path(sort: '-created_at'), class: "nav-link", title: 'Show most recently added first'
+        %li.nav-item{class: params[:sort]&.include?('publications.created_at') ? 'active' : ''}
+          = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
 
         %li.nav-item.dropdown
           = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do

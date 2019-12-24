@@ -20,11 +20,13 @@ module Sortability
       if params[:sort].first == '#'  # this is the case where a default DESC sort overrides the default to cycle to no sort
         params[:sort] = ''
         return nil
+      elsif ! '+-'.include?(params[:sort][0])
+        sqlize_sort_param(default)   # this is the "neutral" sort, where we revert to the default, but leave the sort param in play
       else
         sqlize_sort_param(params[:sort])
       end
     else
-      params[:sort] = default  # awkward direct tweaking of params - but needed to make this stick and flow up
+      params[:sort] = default        # awkward direct tweaking of params - but needed to make this stick and flow up
       sqlize_sort_param(default)
     end
   end

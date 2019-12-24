@@ -4,7 +4,10 @@
     %br
     = linked_icon(publication)
     = publication.format
-    = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
+    - if params[:sort].include? 'publications.created_at'
+      = pretty_date(publication.created_at, style: :year_only, undefined_text: '')
+    - else
+      = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
     - if publication.notes.present?
       = ' - '
       = truncate publication.notes, length: 35

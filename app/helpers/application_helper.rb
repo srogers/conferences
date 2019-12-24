@@ -91,14 +91,16 @@ module ApplicationHelper
   # ASC, DESC, and no sort. Set defaults in the controller, not here.
   def params_with_sort(expression)
     if params[:sort].present?
-      if params[:sort].from(1) == expression
+      if params[:sort].include? expression
         # Reverse the direction of the existing sort, or remove it
         if ['+'].include? params[:sort][0]
           sort_string =  '-' + expression
         elsif ['<', '>'].include? params[:sort][0]
           sort_string =  '#' + expression  # this will be sent in the header click and neutralize the default
-        else # '-'
-          sort_string =  nil
+        elsif ['-'].include? params[:sort][0]
+          sort_string = expression  # This makes the 3rd click be 'neutral' - no sort, but keeps the sort param in play
+        else
+          sort_string =  '+' + expression
         end
       else
         # We're changing to the default sort on a new column
