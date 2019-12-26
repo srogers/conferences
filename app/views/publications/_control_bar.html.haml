@@ -2,39 +2,44 @@
 - content_for :body do
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
-      %ul.navbar-nav.mr-auto
-        - if can? :create, Publication
-          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
-            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_publication_path, class: 'nav-link', title: 'Add a Publication'
+      = link_to 'Controls', '#', class: "navbar-brand d-block d-lg-none"
+      %button.navbar-toggler{ type: "button", 'data-toggle' => "collapse", 'data-target'=>"#control_bar", 'aria-controls'=>"control_bar", 'aria-expanded'=>"false", 'aria-label'=>"Toggle navigation" }
+        %span.navbar-toggler-icon
 
-        - if current_user&.editor? || current_user&.admin?
-          %li.nav-item{class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
+      .collapse.navbar-collapse#control_bar
+        %ul.navbar-nav.mr-auto.d-inline.d-lg-flex
+          - if can? :create, Publication
+            %li.nav-item{ class: active_if(action_name == 'new', 'mr-1 d-inline-block d-lg-list-item') }
+              =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_publication_path, class: 'nav-link', title: 'Add a Publication'
 
-        %li.nav-item{class: params[:sort]&.include?('publications.created_at') ? 'active' : ''}
-          = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
+          - if current_user&.editor? || current_user&.admin?
+            %li.nav-item{class: active_if(params[:heart].present?, 'mr-1 d-inline-block d-lg-list-item') }
+              = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
-        %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
-          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(chart_type: 'format'), class: "dropdown-item"
-            =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(chart_type: 'year', search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
-            =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(chart_type: '',search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
+          %li.nav-item{class: active_if(params[:sort]&.include?('publications.created_at'), 'mr-1 d-inline-block d-lg-list-item') }
+            = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
 
-      -# action-specific buttons or search form
-      - if action_name == 'show'
-        - if can? :destroy, @publication
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
-        - if can? :edit, @publication
-          = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-sm btn-primary ml-3"
-        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+          %li.nav-item.dropdown
+            = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+              = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
+            .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+              = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(chart_type: 'format'), class: "dropdown-item"
+              =# link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(chart_type: 'year', search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
+              =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(chart_type: '',search_term: param_context(:search_term), user_id: param_context(:user_id)), class: "dropdown-item"
 
-      - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
-        = link_to "Cancel", publication_path(@publication), :class => "btn btn-sm btn-secondary ml-3"
-      - elsif action_name == 'new' || action_name == 'create'
-        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_publication').submit()"
-        = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary ml-3"
-      - else
-        = index_search_form
+        -# action-specific buttons or search form
+        - if action_name == 'show'
+          - if can? :destroy, @publication
+            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+          - if can? :edit, @publication
+            = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-sm btn-primary ml-3"
+          = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+
+        - elsif action_name == 'edit' || action_name == 'update'
+          = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
+          = link_to "Cancel", publication_path(@publication), :class => "btn btn-sm btn-secondary ml-3"
+        - elsif action_name == 'new' || action_name == 'create'
+          = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_publication').submit()"
+          = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary ml-3"
+        - else
+          = index_search_form

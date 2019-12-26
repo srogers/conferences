@@ -10,7 +10,7 @@ module ApplicationHelper
     content_tag(:h3, text)
   end
 
-  # Returns true when the selected tab name is active, which we wheedle out of the controller and action names.
+  # Returns 'active' when the selected tab name is active, which we wheedle out of the controller and action names.
   def current_tab?(name)
     current = case name
     when 'events'
@@ -50,6 +50,11 @@ module ApplicationHelper
       false
     end
     return current ? ' active' : ''
+  end
+
+  # add 'active' to a class list if the condition is true. Class list can be omitted.
+  def active_if(condition, classes='')
+    condition ? classes + ' active' : classes
   end
 
   # A UI helper that provides a user-facing name for the current event type
