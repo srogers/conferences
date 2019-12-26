@@ -2,6 +2,7 @@
 - content_for :body do
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
+      -# To lock the menu open, comment out the button and add .show class to .collapse.navbar-collapse below
       = link_to 'Controls', '#', class: "navbar-brand d-block d-lg-none"
       %button.navbar-toggler{ type: "button", 'data-toggle' => "collapse", 'data-target'=>"#control_bar", 'aria-controls'=>"control_bar", 'aria-expanded'=>"false", 'aria-label'=>"Toggle navigation" }
         %span.navbar-toggler-icon
