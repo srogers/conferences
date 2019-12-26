@@ -68,8 +68,9 @@ module ApplicationHelper
 
   def my_events?
     user_events = controller_name == 'users' && action_name == 'events'
-    me = current_user&.id == params[:user_id].to_i
-    me && (event_chart? || user_events)
+    #me = current_user&.id == param_context(:user_id).to_i
+    #logger.debug "#{me} && ( #{event_chart?} || #{user_events})"
+    (event_chart? || user_events)
   end
 
   def my_watchlist?
