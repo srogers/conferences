@@ -34,7 +34,7 @@
               = link_to "Watch List", user_presentations_path(nav: 'reset'), class: "dropdown-item" + current_tab?('watchlist')
               .dropdown-divider
               = link_to 'Logout',   logout_path,        class: "dropdown-item"
-          %li.nav-item{style: 'background: white; height: 20px; margin-top: 8px;'}
+          %li.nav-item{style: 'margin-top: 8px;'}
             = image_tag current_user.photo.url, class: '', style: 'max-height: 30px; border: 2px solid white;'
         - else
           %li.nav-item= link_to 'Sign Up', new_user_path, class: 'nav-link' + current_tab?('signup')
