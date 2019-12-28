@@ -18,7 +18,10 @@
               = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), publications_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
           %li.nav-item{class: active_if(params[:sort]&.include?('publications.created_at'), 'mr-1 d-inline-block d-lg-list-item') }
-            = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
+            - if params[:sort]&.include?('publications.created_at')
+              = link_to 'Latest', publications_path, class: "nav-link active", title: 'Return to default view'
+            - else
+              = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
 
           %li.nav-item.dropdown
             = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
