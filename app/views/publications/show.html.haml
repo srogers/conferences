@@ -57,6 +57,7 @@
             = link_to presentation.conference_name, event_path(presentation.conference)
           = icon('fas', 'crown', :class => 'fa-fw text-warning') if presentation_publication.canonical
           - if can?(:edit, @publication)
+            = link_to icon('far', 'edit', :class => 'fa-fw'), edit_publication_path(@publication, presentation_id: presentation.id)
             = link_to icon('fas', 'unlink', :class => 'fa-fw'), presentation_publication_path(presentation_publication), :method => :delete, :post => true, class: 'text-danger'
 
 -# If the controller identified possible related publications, list them for association
@@ -68,7 +69,8 @@
       = simple_form_for :presentation_publication, url: presentation_publications_path do |f|
         = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
         = f.input :presentation_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a presentation name...", source: presentations_path(format: :json), exclude: @current_presentation_ids }, class: "select2-autocomplete", id: "presentation_picker" }
-        = f.submit 'Associate', class: 'btn btn-sm btn-primary'
+        .text-right
+          = f.submit 'Associate', class: 'btn btn-sm btn-primary'
 
   %br
   .row

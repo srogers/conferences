@@ -1,14 +1,15 @@
 .row.mb-2
   .col-md-6
     = sorting_header 'Name', :publications_path, 'publications.sortable_name'
-    = ' / Format / '
+    = ' / Events'
+  .col
+    = 'Format / '
     - if params[:sort].include? 'publications.created_at'
       = sorting_header 'Added', :publications_path, 'publications.created_at', 'sort-numeric'
     - else
       = sorting_header 'Published', :publications_path, 'publications.published_on', 'sort-numeric'
-  .col Events
-  .col
-    = sorting_header 'Duration', :publications_path, 'publications.duration', 'sort-numeric'
+  .col-md-1.text-right
+    = sorting_header 'Mins', :publications_path, 'publications.duration', 'sort-numeric'
   - if params[:heart].present?
     .col Needs
-  .col.d-none.d-md-block
+  .col-md-2.d-none.d-md-block

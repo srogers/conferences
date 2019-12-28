@@ -5,11 +5,16 @@ module PublicationsHelper
     names = []
     publication.presentation_publications.each do |presentation_publication|
       name = ''
-      name += icon('fas', 'crown', :class => 'fa-fw text-warning') + '&nbsp'.html_safe if presentation_publication.canonical
-      name += truncate(presentation_publication.presentation.conference_name.to_s, length: 40)
-      names << name
+      # Either "crown" it or indent it
+      if presentation_publication.canonical
+        name += icon('fas', 'crown', :class => 'fa-fw text-warning') + '&nbsp'.html_safe
+      else
+        name += content_tag(:span, '', class: 'fa fa-fw') + '&nbsp'.html_safe
+      end
+      name += truncate(presentation_publication.presentation.conference_name.to_s, length: 80)
+      names << name if presentation_publication.presentation.conference_name.present?
     end
-    names.join('<br/>').html_safe
+    ('<br/>' + names.compact.join('<br/>')).html_safe
   end
 
   def format_and_date(publication)
