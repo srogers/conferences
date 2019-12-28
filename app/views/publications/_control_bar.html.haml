@@ -23,12 +23,6 @@
             - else
               = link_to 'Latest', publications_path(sort: '-publications.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
 
-          %li.nav-item{class: active_if(params[:sort]&.include?('publications.duration'),  'mr-1 d-inline-block d-lg-list-item') }
-            - if params[:sort]&.include?('publications.duration')
-              = link_to 'Duration', publications_path, class: "nav-link active", title: 'Return to default view'
-            - else
-              = link_to 'Duration', publications_path(sort: '-publications.duration', page: 1), class: "nav-link", title: 'Show publication duration'
-
           %li.nav-item.dropdown
             = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
               = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
