@@ -1,8 +1,8 @@
 .row.mb-2
-  .col-md-7
+  .col
     = link_to(truncate(publication.name, length: 80, separator: ' '), publication_path(publication))
     = conference_names publication
-  .col
+  .col-md-2
     = linked_icon(publication)
     = publication.format
     - if params[:sort].include? 'publications.created_at'
@@ -14,7 +14,7 @@
     = publication.duration
 
   - if params[:heart].present?
-    .col
+    .col-sm-2
       = icon('far', 'clock', class: 'fa-fw') if publication.duration.blank?
       = icon('far', 'calendar-times', class: 'fa-fw') if publication.published_on.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if publication.presentations.blank?

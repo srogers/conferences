@@ -16,4 +16,5 @@
     .col Needs
 
   .col.col-md-2.text-right Media
-  .col.d-none.d-md-block
+  - if can? :edit, Presentation
+    .col.d-none.d-md-block
