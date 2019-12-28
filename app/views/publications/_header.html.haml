@@ -7,6 +7,8 @@
     - else
       = sorting_header 'Published', :publications_path, 'publications.published_on', 'sort-numeric'
   .col Events
+  .col
+    = sorting_header 'Duration', :publications_path, 'publications.duration', 'sort-numeric'
   - if params[:heart].present?
     .col Needs
   .col.d-none.d-md-block

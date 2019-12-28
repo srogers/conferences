@@ -66,7 +66,6 @@
       - else
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
       - if can? :edit, presentation
-        %br
         %div.text-right{style: 'padding-top: 5px;'}
           = link_to icon('fas', 'search', class: 'fa-fw fa-sm'), google_search_url(presentation), class: "btn btn-xs btn-primary", target: "_blank"
           = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_presentation_path(presentation), class: "btn btn-xs btn-primary"

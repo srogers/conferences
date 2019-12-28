@@ -14,6 +14,9 @@
   .col
     = conference_names publication
 
+  .col
+    = publication.duration
+
   - if params[:heart].present?
     .col
       = icon('far', 'clock', class: 'fa-fw') if publication.duration.blank?
