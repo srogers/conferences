@@ -10,15 +10,15 @@ class PublicationsController < ApplicationController
   authorize_resource
 
   def index
+    @publications = Publication
 
     if params[:q].present? # then it's autocomplete
-      @publications = Publication
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     else
-      @publications = Publication.references(:presentation_publications => { :presentation => :conference })
-      @publications = Publication.includes(:presentation_publications => { :presentation => :conference })
+      @publications = @publications.references(:presentation_publications => { :presentation => :conference })
+      @publications = @publications.includes(:presentation_publications => { :presentation => :conference })
 
       if params[:heart].present?
         @publications = @publications.where("
@@ -33,7 +33,10 @@ class PublicationsController < ApplicationController
       end
     end
 
-    @publications = @publications.order(params_to_sql '-conferences.start_date')
+    # results make more sense with a secondary sort by conference start date
+    sorting = params_to_sql('<publications.published_on')
+    sorting += ', conferences.start_date' if sorting.present?
+    @publications = @publications.order(sorting)
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
     per  = params[:q].present? ? 8 : param_context(:per)
