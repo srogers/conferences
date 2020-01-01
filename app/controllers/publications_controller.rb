@@ -68,6 +68,9 @@ class PublicationsController < ApplicationController
     when 'format' then
       @formats = format_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
       render 'formats_chart'
+    when 'year' then
+      @publications = publication_year_count_data.to_a
+      render 'years_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to publications_path

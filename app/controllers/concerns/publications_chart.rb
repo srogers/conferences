@@ -41,4 +41,24 @@ module PublicationsChart
     return data
   end
 
+  def publication_year_count_data
+    # There is no user-specific publication listing comparable to "My Events" (yet)
+    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
+      # Just have to let the results fly, and hope it's not too huge.
+      query = init_query(Publication) # we can't pre-build the query, but starting with nothing works
+      query = base_query(query)
+      results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
+
+    else
+      # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted
+      # by count, limit might cut off countries with the same count as countries shown, which is misleading. There is a setting
+      # for the speaker chart floor - but not for countries (yet) - 2 works well.
+      results = Publication.group_by_year("publications.published_on").count
+    end
+
+    # group_by_year groups by Jan 1 of each year - we want to see only the year
+    return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v) }
+  end
+
 end

@@ -103,34 +103,50 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
-    if param_context(:event_type).present?
+    publication_query = query.collection.try(:klass).try(:name) == 'Publication' || query.collection.try(:name) == 'Publication'
+
+    logger.debug "Publication query: #{publication_query}   (#{query.collection.try(:klass).try(:name)})"
+    if param_context(:event_type).present? && !publication_query
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
 
     if query.term.present?
-      # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
-      # then we can't also say AND (conference.title ILIKE 'SE')
-      if country_code(query.term.upcase)
-        query.add :required, "conferences.country = ?", country_code(query.term)
-        query.skip_optionals!
+      # None of this stuff applies to publications
+      unless publication_query
+        # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
+        # then we can't also say AND (conference.title ILIKE 'SE')
+        if country_code(query.term.upcase)
+          query.add :required, "conferences.country = ?", country_code(query.term)
+          query.skip_optionals!
+        end
+        # State-based search seems like another optional criterion, but it needs to be :required because the state
+        # abbreviations are short, they match many incidental things.
+        # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
+        if  query.term.length == 2 && States::STATES.map { |name| name[0] }.include?(query.term.upcase)
+          query.add :required, 'conferences.state = ?', query.term.upcase
+          query.skip_optionals!
+        end
       end
-      # State-based search seems like another optional criterion, but it needs to be :required because the state
-      # abbreviations are short, they match many incidental things.
-      # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if query.term.length == 2 && States::STATES.map { |name| name[0] }.include?(query.term.upcase)
-        query.add :required, 'conferences.state = ?', query.term.upcase
-        query.skip_optionals!
-      end
+
+      # This applies to presentations and publications, but the query is different
       if query.term.to_i.to_s == query.term && query.term.length == 4 # then this looks like a year
-        query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", query.term
+        if publication_query
+          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", query.term
+        else
+          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", query.term
+        end
         query.skip_optionals!
       end
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
 
       unless query.skip_optionals?
-        query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
-        query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
+        if publication_query
+          query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
+        else
+          query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
+          query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
+        end
       end
     end
 

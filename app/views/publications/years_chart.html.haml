@@ -1,0 +1,15 @@
+= render partial: 'control_bar'
+
+.row.chart-controls
+  .col-md-12
+    = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary float-right"
+
+    - if param_context(:search_term).present? || param_context(:tag).present?
+      = title chart_title_with_context('Publications for')
+
+    - else
+      = title "Publications by Year"
+
+    %p Click a year to see its publications
+    #publications_chart
+      = render partial: 'shared/publications_chart'

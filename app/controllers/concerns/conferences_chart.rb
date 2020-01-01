@@ -101,6 +101,4 @@ module ConferencesChart
     return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v) }
   end
 
-  private
-
 end
