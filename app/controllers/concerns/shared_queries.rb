@@ -20,6 +20,10 @@ module SharedQueries
       @skip_optionals
     end
 
+    # Add a clause and corresponding value to the list of clauses that will build the query. looks like:
+    #   :required, 'table.attribute = ?', 3
+    # When the query is built, the clauses and bindings will stack out in the right order. Since bindings() does a flatten()
+    # on the list, it's possible to cheat and pass a string with multiple '?' targets and an array of multiple binding values.
     def add(option, clause, value)
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
@@ -51,8 +55,8 @@ module SharedQueries
 
     def bindings
       atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
-      # Skip optional clauses when one of the special required queries triggers it - but not tags
-      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}
+      # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
+      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten
     end
 
     private
@@ -69,13 +73,14 @@ module SharedQueries
   end
 
   # Starts the query construction process by establishing the term and tag (from StickyNavigation)
-  def init_query(collection)
+  def init_query(collection, use_term=true, use_tag=true)
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
-    term = param_context(:search_term)
-    tag  = param_context(:tag)
+    # These can be overridden so aggregate queries can ignore them
+    term = use_term ? param_context(:search_term) : nil
+    tag  = use_tag  ? param_context(:tag) : nil
 
     if term.blank?
       # set the search term to the tag
@@ -170,13 +175,37 @@ module SharedQueries
   end
 
   # This defines the core restriction used to collect counts by user for conferences, cities, years, etc.
-  # Since the structure of this query is very different from the base_query, they don't play well together.
-  # TODO - might be possible to weld these together dynamically based on presence of :user_id param
-  def by_user_query
-    "id in (SELECT conference_id FROM conference_users, conferences
-     WHERE conference_users.conference_id = conferences.id
-       AND conference_users.user_id = ?
-       AND conferences.event_type ILIKE ?)"
+  # Since this query has an aggregate built into it, we can't use the base_query() method
+  def by_user_query(query)
+    # Build this WHERE clause:
+    # WHERE id in (SELECT conference_id FROM conference_users, conferences
+    #               WHERE conference_users.conference_id = conferences.id
+    #                 AND conference_users.user_id = ?
+    #                 AND conferences.event_type ILIKE ?)
+    text = "id in (
+SELECT conference_id FROM conference_users, conferences
+ WHERE conference_users.conference_id = conferences.id
+   AND conference_users.user_id = ?"
+    if param_context(:event_type).present?
+      text += " AND conferences.event_type ILIKE ?)"
+      # We have to "cheat" and pass the entire query with bind vars as an array, because bindings() can't build this nested structure
+      query.add :required, text, [collect_user_id, param_context(:event_type)]
+    else
+      text += ")"
+      query.add :required, text, collect_user_id
+    end
+
+    return query
+  end
+
+  # The chart building methods use this to determine which chart needs to be built
+  def collect_user_id
+    if param_context(:user_id).present? || param_context(:my_events).present?
+      # Handles the My Conferences case - doesn't work with search term
+      param_context(:user_id) || current_user.id
+    else
+      false
+    end
   end
 
   private

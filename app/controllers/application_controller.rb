@@ -43,10 +43,6 @@ class ApplicationController < ActionController::Base
     Raven.extra_context(params: params.to_unsafe_h, url: request.url)
   end
 
-  def event_type_or_wildcard
-    param_context(:event_type).present? ? param_context(:event_type) : '%'
-  end
-
   # Converts a two character code like "US" to full name "United States"
   def country_name(country_code)
     country_object = ISO3166::Country[country_code]

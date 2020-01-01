@@ -18,7 +18,10 @@ module ConferencesChart
     # Everything has to be applied at once - HAVING, WHERE, and COUNT can't be applied in steps.
     user_id = collect_user_id
     if user_id
-      results = Conference.group(:city).where(by_user_query, user_id, event_type_or_wildcard).order(Arel.sql("count(city) DESC")).count(:city)
+      query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
+      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+
+      results = Conference.group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
 
     elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
@@ -46,13 +49,17 @@ module ConferencesChart
     user_id = collect_user_id
     if user_id
       # Handles the My Conferences case - doesn't play well with search terms
-      results = Conference.group(:country).where(by_user_query, user_id, event_type_or_wildcard).order("count(country) DESC").count
+      query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
+      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+
+      results = Conference.group(:country).where(query.where_clause, *query.bindings).order("count(country) DESC").count
 
     elsif param_context(:search_term).present? || param_context(:event_type).present?
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
+
       results = Conference.group(:country).where(query.where_clause, *query.bindings).order("count(country) DESC").count
 
     else
@@ -71,7 +78,10 @@ module ConferencesChart
     user_id = collect_user_id
     if user_id
       # Handles the My Conferences case - doesn't play well with search term
-      results = Conference.group_by_year("conferences.start_date").where(by_user_query, user_id, event_type_or_wildcard).count
+      query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
+      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+
+      results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 
     elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
@@ -93,12 +103,4 @@ module ConferencesChart
 
   private
 
-  def collect_user_id
-    if param_context(:user_id).present? || param_context(:my_events).present?
-      # Handles the My Conferences case - doesn't work with search term
-      param_context(:user_id) || current_user.id
-    else
-      false
-    end
-  end
 end
