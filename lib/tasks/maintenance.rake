@@ -1,6 +1,46 @@
 # A place to hold data maintenance tasks, including tasks that service a one-time data upgrade and should
 # likely be subsequently deleted.
 namespace :db do
+  desc ""
+  task :set_publication_dates => :environment do
+    puts
+    puts "handling presentations . . ."
+    count = 0
+    Publication.find_each do |publication|
+      #count += 1
+      #if count % 100 == 0
+      #  print "." # I'm not hung!
+      #  STDOUT.flush
+      #end
+
+      next if publication.published_on.present?
+
+      # First, flag it for manual fix if it's from YouTube - because we can get that info
+      if publication.format ==  Publication::YOUTUBE
+        puts
+        puts "manually fix publication ID #{ publication.id } '#{ publication.name }' manually - look up publication date on YouTube."
+        next
+      end
+
+      # Next, try to deduce it from the conference
+      if publication.presentations.present?
+        dates = publication.presentations.map{|p| p&.conference&.start_date}.compact.uniq
+        if dates.length == 1
+          #puts "assign publication date of: #{ dates.first + 1.year }"
+          publication.published_on = dates.first + 1.year
+          publication.editors_notes = [publication.editors_notes, 'publication date estimated based on conference'].join("\n")
+          publication.save
+          puts "failed to save publication ID #{ publication.id }  '#{ publication.name }' - #{publication.errors.full_messages}" if publication.errors.presenbt?
+        elsif dates.length > 1
+          # puts "#{ publication.presentations.length }  #{ publication.presentations.map{|p| p&.conference&.start_date}.compact.join(',') } "
+          puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - pick among conference dates: #{dates.join(', ')}"
+        end
+      end
+
+    end
+    puts
+  end
+
   desc 'A data migration task to move to the rule that presentations always have dates/locations when available - blank means unknown.'
   task :set_presentation_defaults => :environment do
     puts
