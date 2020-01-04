@@ -35,7 +35,7 @@ class PublicationsController < ApplicationController
 
     # results make more sense with a secondary sort by conference start date
     sorting = params_to_sql('<publications.published_on')
-    sorting += ', conferences.start_date' if sorting.present?
+    sorting += ', conferences.start_date DESC' if sorting.present?
     @publications = @publications.order(sorting)
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8

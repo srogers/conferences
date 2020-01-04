@@ -42,7 +42,7 @@ module Sortability
     else
       ' DESC'
     end
-    column = ['+','-','<',">"].include?(expression[0]) ? expression.from(1) : expression
+    column = ['+','-','<','>'].include?(expression[0]) ? expression.from(1) : expression
     return sanitize_sql_for_order column + direction
   end
 end
