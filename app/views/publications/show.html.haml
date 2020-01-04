@@ -72,26 +72,7 @@
         .text-right
           = f.submit 'Associate', class: 'btn btn-sm btn-primary'
 
-  %br
-  .row
-    .col-md-12
-      -# TODO: Can this whole idea and use manual the manual method exclusively?
-      %h4= "Automated Presentation Candidates"
-      %ul
-        - if @related_presentations.empty?
-          %p
-            %i Automated searching could not find any candidates
-        - @related_presentations.each do |presentation|
-          %li
-            = link_to presentation.name, presentation_path(presentation), target: '_blank'
-            - if presentation.conference_name.present?
-              =  "(#{presentation.conference_name})"
-
-            = link_to icon('fas', 'link', :class => 'fa-fw'), "#", onclick: "$('#form_for_#{presentation.id}_#{@publication.id}').submit()", class: "btn btn-sm btn-primary"
-
-            = simple_form_for :presentation_publication, html: { id: "form_for_#{presentation.id}_#{@publication.id}", class: 'form-inline' }, url: presentation_publications_path do |f|
-              = f.input :presentation_id, as: :hidden, input_html: { value: presentation.id }
-              = f.input :publication_id, as: :hidden, input_html: { value: @publication.id }
+=# render :partial => 'automated_candidates'
 
 .row
   .col-md-12
