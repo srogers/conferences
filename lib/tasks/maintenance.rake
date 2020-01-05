@@ -28,7 +28,7 @@ namespace :db do
           publication.published_on = dates.first + 1.year
           publication.editors_notes = [publication.editors_notes, 'publication date estimated based on conference'].join("\n")
           publication.save
-          puts "failed to save publication ID #{ publication.id }  '#{ publication.name }' - #{publication.errors.full_messages}" if publication.errors.presenbt?
+          puts "failed to save publication ID #{ publication.id }  '#{ publication.name }' - #{publication.errors.full_messages}" if publication.errors.present?
         elsif dates.length > 1
           # puts "#{ publication.presentations.length }  #{ publication.presentations.map{|p| p&.conference&.start_date}.compact.join(',') } "
           puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - pick among conference dates: #{dates.join(', ')}"
