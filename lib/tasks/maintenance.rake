@@ -6,15 +6,12 @@ namespace :db do
     puts
     puts "handling presentations . . ."
     count = 0
+    changed = 0
     Publication.find_each do |publication|
-      #count += 1
-      #if count % 100 == 0
-      #  print "." # I'm not hung!
-      #  STDOUT.flush
-      #end
 
       next if publication.published_on.present?
 
+      count += 1
       # First, flag it for manual fix if it's from YouTube - because we can get that info
       if publication.format ==  Publication::YOUTUBE
         puts
@@ -26,6 +23,7 @@ namespace :db do
       if publication.presentations.present?
         dates = publication.presentations.map{|p| p&.conference&.start_date}.compact.uniq
         if dates.length == 1
+          changed += 1
           #puts "assign publication date of: #{ dates.first + 1.year }"
           publication.published_on = dates.first + 1.year
           publication.editors_notes = [publication.editors_notes, 'publication date estimated based on conference'].join("\n")
@@ -34,11 +32,14 @@ namespace :db do
         elsif dates.length > 1
           # puts "#{ publication.presentations.length }  #{ publication.presentations.map{|p| p&.conference&.start_date}.compact.join(',') } "
           puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - pick among conference dates: #{dates.join(', ')}"
+        else
+          puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - can't deduce a date for it."
         end
       end
 
     end
     puts
+    puts "looked at #{count} publications, changed #{changed}."
   end
 
   desc 'A data migration task to move to the rule that presentations always have dates/locations when available - blank means unknown.'
