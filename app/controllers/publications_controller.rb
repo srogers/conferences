@@ -10,15 +10,15 @@ class PublicationsController < ApplicationController
   authorize_resource
 
   def index
+    @publications = Publication
 
     if params[:q].present? # then it's autocomplete
-      @publications = Publication
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     else
-      @publications = Publication.references(:presentation_publications => { :presentation => :conference })
-      @publications = Publication.includes(:presentation_publications => { :presentation => :conference })
+      @publications = @publications.references(:presentation_publications => { :presentation => :conference })
+      @publications = @publications.includes(:presentation_publications => { :presentation => :conference })
 
       if params[:heart].present?
         @publications = @publications.where("
@@ -33,7 +33,11 @@ class PublicationsController < ApplicationController
       end
     end
 
-    @publications = @publications.order(params_to_sql '-conferences.start_date')
+    # The listing contains "duplicates" - the same publication name in various formats, so the listing makes more sense
+    # if these alternate formats always appear together. To do that, we add it as a secondary sort when it isn't the primary
+    sorting = params_to_sql('<publications.published_on')
+    sorting = [sorting, 'publications.name ASC'].join(', ') unless sorting.include?('publications.name')
+    @publications = @publications.order(sorting)
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
     per  = params[:q].present? ? 8 : param_context(:per)
@@ -65,6 +69,9 @@ class PublicationsController < ApplicationController
     when 'format' then
       @formats = format_count_data.to_a      # build the data here, or pull it from an endpoint in the JS, but not both
       render 'formats_chart'
+    when 'year' then
+      @publications = publication_year_count_data.to_a
+      render 'years_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to publications_path

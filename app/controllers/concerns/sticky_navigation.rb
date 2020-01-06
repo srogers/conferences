@@ -12,6 +12,10 @@ module StickyNavigation
     # logger.debug "params:  #{params.inspect}"
     # logger.debug "session:  #{session.keys}"
 
+    if [:sort].include? param
+      raise StandardError, "don't call param_context with #{param} - it can't be stashed."
+    end
+
     if default=='unassigned'
       default = case param
       when :per         then 10

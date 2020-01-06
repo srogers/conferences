@@ -29,6 +29,18 @@ class Presentation < ApplicationRecord
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :history]
 
+  # Due to ActiveRecord limitations, doesn't work when used with .includes()
+  scope :with_max_duration, -> {
+    subselect = "SELECT max(pu.duration) as max_duration
+FROM presentations pr, publications pu, presentation_publications pp
+WHERE pr.id = pp.presentation_id
+  AND pu.id = pp.publication_id
+  AND pr.id = presentations.id
+GROUP BY pr.id"
+
+    select("presentations.*, (#{subselect}) as max_duration")
+  }
+
   # This won't work for standalone presentations, but there isn't anything else meaningful.
   def slug_candidates
     [

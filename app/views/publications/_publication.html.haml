@@ -1,23 +1,25 @@
 .row.mb-2
-  .col-md-6
+  .col
     = link_to(truncate(publication.name, length: 80, separator: ' '), publication_path(publication))
-    %br
+    = conference_names publication # don't link because it adds clutter, and user can nav there via the presentation
+  .col-md-2
     = linked_icon(publication)
     = publication.format
-    = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
-    - if publication.notes.present?
-      = ' - '
-      = truncate publication.notes, length: 35
-  .col
-    = conference_names publication
+    - if params[:sort].include? 'publications.created_at'
+      = pretty_date(publication.created_at, style: :year_only, undefined_text: '')
+    - else
+      = pretty_date(publication.published_on, style: :year_only, undefined_text: '')
+
+  .col-md-1.text-right
+    = publication.duration
 
   - if params[:heart].present?
-    .col
+    .col-sm-2
       = icon('far', 'clock', class: 'fa-fw') if publication.duration.blank?
       = icon('far', 'calendar-times', class: 'fa-fw') if publication.published_on.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw') if publication.presentations.blank?
 
   - if can? :edit, publication
-    .col.text-right
+    .col-md-2.text-right
       = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_publication_path(publication), :class => "btn btn-xs btn-primary"
       = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), publication_path(publication), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

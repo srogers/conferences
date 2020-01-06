@@ -2,49 +2,58 @@
 - content_for :body do
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
-      %ul.navbar-nav.mr-auto
-        - if can? :create, Presentation
-          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
-            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_presentation_path, class: 'nav-link', title: 'Add a Presentation'
+      -# To lock the menu open, comment out the button and add .show class to .collapse.navbar-collapse below
+      = link_to 'Controls', '#', class: "navbar-brand d-block d-lg-none"
+      %button.navbar-toggler{ type: "button", 'data-toggle' => "collapse", 'data-target'=>"#control_bar", 'aria-controls'=>"control_bar", 'aria-expanded'=>"false", 'aria-label'=>"Toggle navigation" }
+        %span.navbar-toggler-icon
 
-        - if current_user&.editor? || current_user&.admin?
-          %li.nav-item{class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
+      .collapse.navbar-collapse#control_bar
+        %ul.navbar-nav.mr-auto.d-inline.d-lg-flex
+          - if can? :create, Presentation
+            %li.nav-item{ class: active_if(action_name == 'new', 'mr-1 d-inline-block d-lg-list-item') }
+              =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_presentation_path, class: 'nav-link', title: 'Add a Presentation'
 
-        %li.nav-item{class: action_name == 'tags' ? 'active' : ''}
-          = link_to 'Topics', tags_presentations_path, class: "nav-link"
+          - if current_user&.editor? || current_user&.admin?
+            %li.nav-item{class: active_if(params[:heart].present?, 'mr-1 d-inline-block d-lg-list-item') }
+              = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw'), presentations_path(search_term: param_context(:search_term), heart: 't'), class: "nav-link", title: 'Needs some work'
 
-        %li.nav-item{class: params[:sort] == '-presentations.created_at' ? 'active' : ''}
-          = link_to 'Latest', presentations_path(sort: '-presentations.created_at'), class: "nav-link", title: 'Show most recently added first'
+          %li.nav-item{class: active_if(action_name == 'tags', 'mr-1 d-inline-block d-lg-list-item') }
+            = link_to 'Topics', tags_presentations_path, class: "nav-link"
 
-        %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{action_name == 'chart' ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
-          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(chart_type: 'years'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(chart_type: 'topic'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'by Speaker', class: 'fa-sm'), chart_speakers_path(chart_type: 'presentations'), class: "dropdown-item"
+          %li.nav-item{class: active_if(params[:sort]&.include?('presentations.created_at'),  'mr-1 d-inline-block d-lg-list-item') }
+            - if params[:sort]&.include?('presentations.created_at')
+              = link_to 'Latest', presentations_path, class: "nav-link active", title: 'Return to default view'
+            - else
+              = link_to 'Latest', presentations_path(sort: '-presentations.created_at', page: 1), class: "nav-link", title: 'Show most recently added first'
 
-      -# action-specific buttons or search form
-      - if action_name == 'show'
-        - if can? :destroy, @presentation
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
-        - if can? :edit, @presentation
-          = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
-          - if request&.referrer&.split('?')&.first == new_presentation_url # ignore any trailing params
-            = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-sm btn-primary ml-3"
-          = link_to "Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
-          = link_to "Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
-        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+          %li.nav-item.dropdown
+            = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+              = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
+            .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+              = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_presentations_path(chart_type: 'years'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'by Topic',  class: 'fa-sm'), chart_presentations_path(chart_type: 'topic'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'by Speaker', class: 'fa-sm'), chart_speakers_path(chart_type: 'presentations'), class: "dropdown-item"
 
-      - elsif ['manage_publications', 'manage_speakers'].include?(action_name)
-        = link_to "Done", presentation_path(@presentation), class: 'btn btn-sm btn-secondary btn-sm'
+        -# action-specific buttons or search form
+        - if action_name == 'show'
+          - if can? :destroy, @presentation
+            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), presentation_path(@presentation), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+          - if can? :edit, @presentation
+            = link_to "Edit", edit_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
+            - if request&.referrer&.split('?')&.first == new_presentation_url # ignore any trailing params
+              = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-sm btn-primary ml-3"
+            = link_to "Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
+            = link_to "Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
+          = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
-      - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_presentation').submit()"
-        = link_to "Cancel", presentation_path(@presentation), :class => "btn btn-sm btn-secondary ml-3"
-      - elsif action_name == 'new' || action_name == 'create'
-        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_presentation').submit()"
-        = link_to "Cancel", presentations_path, :class => "btn btn-sm btn-secondary ml-3"
-      - else
-        = index_search_form
+        - elsif ['manage_publications', 'manage_speakers'].include?(action_name)
+          = link_to "Done", presentation_path(@presentation), class: 'btn btn-sm btn-secondary btn-sm'
+
+        - elsif action_name == 'edit' || action_name == 'update'
+          = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_presentation').submit()"
+          = link_to "Cancel", presentation_path(@presentation), :class => "btn btn-sm btn-secondary ml-3"
+        - elsif action_name == 'new' || action_name == 'create'
+          = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_presentation').submit()"
+          = link_to "Cancel", presentations_path, :class => "btn btn-sm btn-secondary ml-3"
+        - else
+          = index_search_form

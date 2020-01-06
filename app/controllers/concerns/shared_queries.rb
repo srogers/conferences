@@ -20,6 +20,10 @@ module SharedQueries
       @skip_optionals
     end
 
+    # Add a clause and corresponding value to the list of clauses that will build the query. looks like:
+    #   :required, 'table.attribute = ?', 3
+    # When the query is built, the clauses and bindings will stack out in the right order. Since bindings() does a flatten()
+    # on the list, it's possible to cheat and pass a string with multiple '?' targets and an array of multiple binding values.
     def add(option, clause, value)
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
@@ -51,8 +55,8 @@ module SharedQueries
 
     def bindings
       atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
-      # Skip optional clauses when one of the special required queries triggers it - but not tags
-      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}
+      # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
+      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten
     end
 
     private
@@ -69,13 +73,14 @@ module SharedQueries
   end
 
   # Starts the query construction process by establishing the term and tag (from StickyNavigation)
-  def init_query(collection)
+  def init_query(collection, use_term=true, use_tag=true)
     # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
     # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
-    term = param_context(:search_term)
-    tag  = param_context(:tag)
+    # These can be overridden so aggregate queries can ignore them
+    term = use_term ? param_context(:search_term) : nil
+    tag  = use_tag  ? param_context(:tag) : nil
 
     if term.blank?
       # set the search term to the tag
@@ -98,34 +103,50 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
-    if param_context(:event_type).present?
+    publication_query = query.collection.try(:klass).try(:name) == 'Publication' || query.collection.try(:name) == 'Publication'
+
+    logger.debug "Publication query: #{publication_query}   (#{query.collection.try(:klass).try(:name)})"
+    if param_context(:event_type).present? && !publication_query
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
 
     if query.term.present?
-      # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
-      # then we can't also say AND (conference.title ILIKE 'SE')
-      if country_code(query.term.upcase)
-        query.add :required, "conferences.country = ?", country_code(query.term)
-        query.skip_optionals!
+      # None of this stuff applies to publications
+      unless publication_query
+        # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
+        # then we can't also say AND (conference.title ILIKE 'SE')
+        if country_code(query.term.upcase)
+          query.add :required, "conferences.country = ?", country_code(query.term)
+          query.skip_optionals!
+        end
+        # State-based search seems like another optional criterion, but it needs to be :required because the state
+        # abbreviations are short, they match many incidental things.
+        # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
+        if  query.term.length == 2 && States::STATES.map { |name| name[0] }.include?(query.term.upcase)
+          query.add :required, 'conferences.state = ?', query.term.upcase
+          query.skip_optionals!
+        end
       end
-      # State-based search seems like another optional criterion, but it needs to be :required because the state
-      # abbreviations are short, they match many incidental things.
-      # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if query.term.length == 2 && States::STATES.map { |name| name[0] }.include?(query.term.upcase)
-        query.add :required, 'conferences.state = ?', query.term.upcase
-        query.skip_optionals!
-      end
+
+      # This applies to presentations and publications, but the query is different
       if query.term.to_i.to_s == query.term && query.term.length == 4 # then this looks like a year
-        query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", query.term
+        if publication_query
+          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", query.term
+        else
+          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", query.term
+        end
         query.skip_optionals!
       end
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
 
       unless query.skip_optionals?
-        query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
-        query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
+        if publication_query
+          query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
+        else
+          query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
+          query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
+        end
       end
     end
 
@@ -170,13 +191,37 @@ module SharedQueries
   end
 
   # This defines the core restriction used to collect counts by user for conferences, cities, years, etc.
-  # Since the structure of this query is very different from the base_query, they don't play well together.
-  # TODO - might be possible to weld these together dynamically based on presence of :user_id param
-  def by_user_query
-    "id in (SELECT conference_id FROM conference_users, conferences
-     WHERE conference_users.conference_id = conferences.id
-       AND conference_users.user_id = ?
-       AND conferences.event_type ILIKE ?)"
+  # Since this query has an aggregate built into it, we can't use the base_query() method
+  def by_user_query(query)
+    # Build this WHERE clause:
+    # WHERE id in (SELECT conference_id FROM conference_users, conferences
+    #               WHERE conference_users.conference_id = conferences.id
+    #                 AND conference_users.user_id = ?
+    #                 AND conferences.event_type ILIKE ?)
+    text = "id in (
+SELECT conference_id FROM conference_users, conferences
+ WHERE conference_users.conference_id = conferences.id
+   AND conference_users.user_id = ?"
+    if param_context(:event_type).present?
+      text += " AND conferences.event_type ILIKE ?)"
+      # We have to "cheat" and pass the entire query with bind vars as an array, because bindings() can't build this nested structure
+      query.add :required, text, [collect_user_id, param_context(:event_type)]
+    else
+      text += ")"
+      query.add :required, text, collect_user_id
+    end
+
+    return query
+  end
+
+  # The chart building methods use this to determine which chart needs to be built
+  def collect_user_id
+    if param_context(:user_id).present? || param_context(:my_events).present?
+      # Handles the My Conferences case - doesn't work with search term
+      param_context(:user_id) || current_user.id
+    else
+      false
+    end
   end
 
   private

@@ -95,7 +95,9 @@ class UsersController < ApplicationController
       @user = current_user
     end
 
-    @conferences = @user.conferences.where("conferences.event_type ILIKE ?", event_type_or_wildcard).order('start_date DESC')
+    @conferences = @user.conferences
+    @conferences = @conferences.where("conferences.event_type ILIKE ?", param_context(:event_type)) if param_context(:event_type).present?
+    @conferences = @conferences.order('start_date DESC')
   end
 
   def edit

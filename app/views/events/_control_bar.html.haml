@@ -2,56 +2,62 @@
 - content_for :body do
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
-      %ul.navbar-nav.mr-auto
-        - if can? :create, Conference
-          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
-            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_event_path, class: 'nav-link', title: 'Add a Conference'
+      -# To lock the menu open, comment out the button and add .show class to .collapse.navbar-collapse below
+      = link_to 'Controls', '#', class: "navbar-brand d-block d-lg-none"
+      %button.navbar-toggler{ type: "button", 'data-toggle' => "collapse", 'data-target'=>"#control_bar", 'aria-controls'=>"control_bar", 'aria-expanded'=>"false", 'aria-label'=>"Toggle navigation" }
+        %span.navbar-toggler-icon
 
-        -# For Events, this just returns things that haven't been explicitly marked as done
-        - if current_user&.editor? || current_user&.admin?
-          %li.nav-item{ class: params[:heart].present? ? 'active' : ''}
-            = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, events_path(heart: 't'), class: "nav-link", title: "Which Events aren't done yet"
+      .collapse.navbar-collapse#control_bar
+        %ul.navbar-nav.mr-auto.d-inline.d-lg-flex
+          - if can? :create, Conference
+            %li.nav-item{ class: active_if(action_name == 'new', 'mr-1 d-inline-block d-lg-list-item') }
+              =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_event_path, class: 'nav-link', title: 'Add a Conference'
 
-        - if current_user.present?
-          %li.nav-item{ class: my_events? ? 'active' : ''}
-            = link_to "My Events", events_users_path(page: 1), class: "nav-link", title: "Events you've marked as attended"
+          -# For Events, this just returns things that haven't been explicitly marked as done
+          - if current_user&.editor? || current_user&.admin?
+            %li.nav-item{ class: active_if(params[:heart].present?, 'mr-1 d-inline-block d-lg-list-item') }
+              = link_to icon('fas', 'medkit', class: 'fa-lg fa-fw').html_safe, events_path(heart: 't'), class: "nav-link", title: "Which Events aren't done yet"
 
-        %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{event_chart? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
-          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(chart_type: 'cities'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(chart_type: 'countries'), class: "dropdown-item"
-            = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(chart_type: 'years'), class: "dropdown-item"
+          - if current_user.present?
+            %li.nav-item{ class: active_if(my_events?, 'mr-1 d-inline-block d-lg-list-item') }
+              = link_to "My Events", events_users_path(page: 1), class: "nav-link", title: "Events you've marked as attended"
 
-        %li.nav-item.dropdown
-          = link_to('#', class: "nav-link dropdown-toggle #{param_context(:event_type).present? ? 'active' : ''}", id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
-            = icon('fas', 'filter', 'Event Type',   class: 'fa-sm')
-          .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-            = link_to 'Any', current_path_with(event_type: ''), class: activated_event_class(nil, "dropdown-item")
-            - Conference::EVENT_TYPES.each do |event_type|
-              = link_to event_type, current_path_with(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
+          %li.nav-item.dropdown
+            = link_to('#', class: active_if(param_context(:event_type).present?, "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+              = icon('fas', 'filter', 'Event Type',   class: 'fa-sm')
+            .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+              = link_to 'Any', current_path_with(event_type: ''), class: activated_event_class(nil, "dropdown-item")
+              - Conference::EVENT_TYPES.each do |event_type|
+                = link_to event_type, current_path_with(event_type: event_type, page: 1), class: activated_event_class(event_type, "dropdown-item")
 
-      -# action-specific buttons or search form
-      - if action_name == 'show'
-        - if can?(:destroy, @conference) && @presentations.empty?
-          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
-        - if @conference.future? && @conference.registration_url.present?
-          = link_to "Register", @conference.registration_url, :class => "btn btn-sm btn-primary ml-3", target: '_blank'
-        - if !@conference.completed && can?(:create, Presentation)
-          = link_to "+ Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-sm btn-primary ml-3"
-        - if can? :edit, @conference
-          = link_to "Edit", edit_event_path(@conference), :class => "btn btn-sm btn-primary ml-3"
-        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+          %li.nav-item.dropdown
+            = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
+              = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
+            .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
+              = link_to icon('fas', 'chart-bar', 'Cities',    class: 'fa-sm'), chart_events_path(chart_type: 'cities'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'Countries', class: 'fa-sm'), chart_events_path(chart_type: 'countries'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'Years',     class: 'fa-sm'), chart_events_path(chart_type: 'years'), class: "dropdown-item"
 
-      - elsif controller_name == 'event_users' || (controller_name == 'users' && action_name == 'events')
-        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+        -# action-specific buttons or search form
+        - if action_name == 'show'
+          - if can?(:destroy, @conference) && @presentations.empty?
+            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+          - if @conference.future? && @conference.registration_url.present?
+            = link_to "Register", @conference.registration_url, :class => "btn btn-sm btn-primary ml-3", target: '_blank'
+          - if !@conference.completed && can?(:create, Presentation)
+            = link_to "+ Presentation", new_presentation_path(conference_id: @conference.id), :class => "btn btn-sm btn-primary ml-3"
+          - if can? :edit, @conference
+            = link_to "Edit", edit_event_path(@conference), :class => "btn btn-sm btn-primary ml-3"
+          = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
-      - elsif action_name == 'edit' || action_name == 'update'
-        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_conference').submit()"
-        = link_to "Cancel", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
-      - elsif action_name == 'new' || action_name == 'create'
-        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_conference').submit()"
-        = link_to "Cancel", events_path, :class => "btn btn-sm btn-secondary ml-3"
-      - else
-        = index_search_form unless ['conference_users', 'event_users'].include?(controller_name)
+        - elsif controller_name == 'event_users' || (controller_name == 'users' && action_name == 'events')
+          = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+
+        - elsif action_name == 'edit' || action_name == 'update'
+          = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_conference').submit()"
+          = link_to "Cancel", event_path(@conference), :class => "btn btn-sm btn-secondary ml-3"
+        - elsif action_name == 'new' || action_name == 'create'
+          = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_conference').submit()"
+          = link_to "Cancel", events_path, :class => "btn btn-sm btn-secondary ml-3"
+        - else
+          = index_search_form unless ['conference_users', 'event_users'].include?(controller_name)

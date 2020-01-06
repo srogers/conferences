@@ -10,7 +10,7 @@ module ApplicationHelper
     content_tag(:h3, text)
   end
 
-  # Returns true when the selected tab name is active, which we wheedle out of the controller and action names.
+  # Returns 'active' when the selected tab name is active, which we wheedle out of the controller and action names.
   def current_tab?(name)
     current = case name
     when 'events'
@@ -52,6 +52,11 @@ module ApplicationHelper
     return current ? ' active' : ''
   end
 
+  # add 'active' to a class list if the condition is true. Class list can be omitted.
+  def active_if(condition, classes='')
+    condition ? classes + ' active' : classes
+  end
+
   # A UI helper that provides a user-facing name for the current event type
   def current_event_type
     param_context(:event_type).present? ? param_context(:event_type) : 'Event'
@@ -63,8 +68,9 @@ module ApplicationHelper
 
   def my_events?
     user_events = controller_name == 'users' && action_name == 'events'
-    me = current_user&.id == params[:user_id].to_i
-    me && (event_chart? || user_events)
+    #me = current_user&.id == param_context(:user_id).to_i
+    #logger.debug "#{me} && ( #{event_chart?} || #{user_events})"
+    (event_chart? || user_events)
   end
 
   def my_watchlist?
@@ -91,14 +97,16 @@ module ApplicationHelper
   # ASC, DESC, and no sort. Set defaults in the controller, not here.
   def params_with_sort(expression)
     if params[:sort].present?
-      if params[:sort].from(1) == expression
+      if params[:sort].include? expression
         # Reverse the direction of the existing sort, or remove it
         if ['+'].include? params[:sort][0]
           sort_string =  '-' + expression
         elsif ['<', '>'].include? params[:sort][0]
           sort_string =  '#' + expression  # this will be sent in the header click and neutralize the default
-        else # '-'
-          sort_string =  nil
+        elsif ['-'].include? params[:sort][0]
+          sort_string = expression  # This makes the 3rd click be 'neutral' - no sort, but keeps the sort param in play
+        else
+          sort_string =  '+' + expression
         end
       else
         # We're changing to the default sort on a new column

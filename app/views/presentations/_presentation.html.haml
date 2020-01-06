@@ -21,14 +21,16 @@
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
     -# For medium up
     .col.d-none.d-md-block
-      = pretty_date presentation.date, style: :pretty
-      %br
-      = pretty_date presentation.created_at, style: :pretty
+      - if params[:sort].include? 'presentations.created_at'
+        = pretty_date presentation.created_at, style: :pretty
+      - else
+        = pretty_date presentation.date, style: :pretty
     -# For small down, use two columns and put these on the same line - make the dates unbreakable so it's one line on mobile
-    .col.d-inline.d-md-none
-      = pretty_date(presentation.date, style: :pretty).gsub(' ','&nbsp;').html_safe
-    .col.d-inline.d-md-none.text-right
-      = pretty_date(presentation.created_at, style: :pretty).gsub(' ','&nbsp;').html_safe
+    .col.d-block.d-md-none
+      - if params[:sort].include? 'presentations.created_at'
+        = pretty_date(presentation.created_at, style: :pretty).gsub(' ','&nbsp;').html_safe
+      - else
+        = pretty_date(presentation.date, style: :pretty).gsub(' ','&nbsp;').html_safe
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     .col.col-sm-8.col-md-2
@@ -64,7 +66,6 @@
       - else
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
       - if can? :edit, presentation
-        %br
         %div.text-right{style: 'padding-top: 5px;'}
           = link_to icon('fas', 'search', class: 'fa-fw fa-sm'), google_search_url(presentation), class: "btn btn-xs btn-primary", target: "_blank"
           = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_presentation_path(presentation), class: "btn btn-xs btn-primary"
