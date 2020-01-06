@@ -1,7 +1,7 @@
 .row.mb-2
   .col
     = link_to(truncate(publication.name, length: 80, separator: ' '), publication_path(publication))
-    = conference_names publication
+    = conference_names publication # don't link because it adds clutter, and user can nav there via the presentation
   .col-md-2
     = linked_icon(publication)
     = publication.format

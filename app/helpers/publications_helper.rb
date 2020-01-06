@@ -1,18 +1,29 @@
 module PublicationsHelper
 
-  # Gets an HTML listing of the publications conference names, with canonical ones marked with an icon
-  def conference_names(publication)
+  # Gets an HTML listing of the publications conference names, with canonical ones marked with an icon.
+  # The conference name can be plain text, or a link - plain text by default.
+  def conference_names(publication, options={})
+    linked = options[:linked]
     names = []
     publication.presentation_publications.each do |presentation_publication|
+      next unless presentation_publication.presentation.conference_name.present?
+
       name = ''
-      # Either "crown" it or indent it
+      # Start with either a "crown" or indent
       if presentation_publication.canonical
         name += icon('fas', 'crown', :class => 'fa-fw text-warning') + '&nbsp'.html_safe
       else
         name += content_tag(:span, '', class: 'fa fa-fw') + '&nbsp'.html_safe
       end
-      name += truncate(presentation_publication.presentation.conference_name.to_s, length: 80)
-      names << name if presentation_publication.presentation.conference_name.present?
+      # Add the name
+      conference = presentation_publication.presentation.conference
+      if linked
+        # TODO - see whether it's possible to add :sort to sticky_navigation - otherwise it's necessary to reset nav context when switching to conference
+        name += link_to truncate(conference.name, length: 80), event_path(conference, nav: 'reset')
+      else
+        name += truncate(conference.name, length: 80)
+      end
+      names << name
     end
     ('<br/>' + names.compact.join('<br/>')).html_safe
   end
