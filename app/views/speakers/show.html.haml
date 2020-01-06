@@ -18,9 +18,10 @@
     %p
       = safe_list_sanitizer.sanitize(@speaker.description).try(:html_safe)
       - if @speaker.bio_on.present?
-        (
-        = @speaker.bio_on&.year
-        )
+        %i
+          (based on info from
+          = @speaker.bio_on&.year
+          )
 .row
   .col-md-12
     %h4 Presentations

@@ -1,7 +1,32 @@
 # A place to hold data maintenance tasks, including tasks that service a one-time data upgrade and should
 # likely be subsequently deleted.
+
 namespace :db do
-  desc ""
+  desc "Initializes speaker bio date to the date of the latest conference (assuming it came from that program). Won't alter existing dates"
+  task :set_speaker_bio_dates => :environment do
+    puts
+    puts "handling speakers . . ."
+    count = 0
+    changed = 0
+    Speaker.find_each do |speaker|
+      next if speaker.description.blank? || speaker.bio_on.present?
+      count += 1
+
+      conference = speaker.conferences.sort_by(&:start_date).last
+      if conference.present? # This should almost always be true, but has to be checked
+        changed += 1
+        speaker.bio_on = conference.start_date
+        speaker.save
+        puts "failed to save speaker ID #{ speaker.id }  '#{ speaker.name }' - #{speaker.errors.full_messages}" if speaker.errors.present?
+      else
+        puts "no conferences for #{speaker.name} - might be an issue"
+      end
+    end
+    puts
+    puts "looked at #{count} speakers, set #{changed} bio dates."
+  end
+
+  desc "Sets publication date when it can be unambiguously inferred from conference. Lists ones that can't be fixed. Can be re-run."
   task :set_publication_dates => :environment do
     puts
     puts "handling presentations . . ."

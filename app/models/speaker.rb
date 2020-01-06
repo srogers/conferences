@@ -52,6 +52,11 @@ class Speaker < ApplicationRecord
     Rails.application.routes.url_helpers.speaker_url(self)
   end
 
+  # Expensive method - don't use this unless absolutely necessary
+  def conferences
+    presentations.map{|p| p.conference}.compact.uniq.sort_by(&:start_date)
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data
   TITLES_AND_METHODS = {
       'Name'        => :name,
