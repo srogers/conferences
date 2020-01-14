@@ -2,77 +2,86 @@
 
 =title 'Your Account'
 
-.well.well-lg.float-right
-  =image_tag current_user.photo.url, style: 'max-height: 100px'
+.well.float-right
+  =image_tag @user.photo.url, style: 'max-height: 100px'
 
-.row
-  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Name
-  .col-sm-4.d-md-none.font-weight-bold Name
-  .col-md-8= current_user.name
-
-.row
-  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Location
-  .col-sm-4.d-md-none.mt-1.font-weight-bold Location
-  .col-md-8
-    = location_with_non_us_country current_user, :short
-
-.row
-  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Email
-  .col-sm-4.d-md-none.mt-1.font-weight-bold Email
-  .col-md-8= current_user.email
-
-- if @user.speaker.present?
+.well.well-large.float-left{style: 'width: 80%'}
   .row
-    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Associated Speaker
-    .col-sm-4.d-md-none.mt-1.font-weight-bold Associated Speaker
-    .col-md-8= link_to @user.speaker.name, speaker_path(@user.speaker)
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Name
+    .col-sm-4.d-md-none.font-weight-bold Name
+    .col-md-8= @user.name
 
-.row
-  .col-md-4.d-none.d-md-block.text-right.font-weight-bold Time Zone
-  .col-sm-4.d-md-none.mt-1.font-weight-bold Time Zone
-  .col-md-8= current_user.time_zone
-
--# Don't encumber readers with the notion that there are other roles they don't have
-- if @user.editor? || @user.admin?
   .row
-    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Role
-    .col-sm-4.d-md-none.mt-1.font-weight-bold Role
-    .col-md-8= t current_user.role_name
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Location
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Location
+    .col-md-8
+      = location_with_non_us_country @user, :short
 
-.row.mt-5
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Email
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Email
+    .col-md-8= @user.email
+
+  - if @user.speaker.present?
+    .row
+      .col-md-4.d-none.d-md-block.text-right.font-weight-bold Associated Speaker
+      .col-sm-4.d-md-none.mt-1.font-weight-bold Associated Speaker
+      .col-md-8= link_to @user.speaker.name, speaker_path(@user.speaker)
+
+  .row
+    .col-md-4.d-none.d-md-block.text-right.font-weight-bold Time Zone
+    .col-sm-4.d-md-none.mt-1.font-weight-bold Time Zone
+    .col-md-8= unbreakable @user.time_zone
+
+  -# Don't encumber readers with the notion that there are other roles they don't have
+  - if @user.editor? || @user.admin?
+    .row
+      .col-md-4.d-none.d-md-block.text-right.font-weight-bold Role
+      .col-sm-4.d-md-none.mt-1.font-weight-bold Role
+      .col-md-8= t @user.role_name
+
+.clearfix
+.row.mt-3
   .col-md-12
     %h5 Preferences
 
 .row
-  .col-sm-2.text-right
-    - if current_user.show_attendance
+  .col-sm-8.text-right Allow other users to see my event attendance
+  .col-sm-4
+    - if @user.show_attendance
       %span.confirm= icon('fas', 'check')
     - else
       %span.deny= icon('fas', 'times')
-
-  .col-sm-10 Allow other users to see my event attendance
 
 -# This doesn't apply to readers
 - if @user.editor? || @user.admin?
 
   .row
-    .col-sm-2.text-right.font-weight-bold
-      - if current_user.show_contributor
+    .col-sm-8.text-right List me on the Supporters page as a contributing editor
+    .col-sm-4.font-weight-bold
+      - if @user.show_contributor
         %span.confirm= icon('fas', 'check')
       - else
         %span.deny= icon('fas', 'times')
-    .col-sm-10 List me on the Supporters page as a contributing editor
+  .row
+    .col-sm-8.text-right Use compact format for presentation listing
+    .col-sm-4.font-weight-bold
+      - if @user.compact_presentations
+        %span.confirm= icon('fas', 'check')
+      - else
+        %span.deny= icon('fas', 'times')
 
   .row
-    .col-sm-2.text-right= @user.time_format
-    .col-sm-10 Display format for times in publications
+    .col-sm-8.text-right Display format for times in publications
+    .col-sm-4= @user.time_format
 
-  .row.mt-3
-    .col-md-6
-    .col-md-6
-      - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
+  .row.mt-4
+    .col-sm-8.text-right
       Remove your account
+    .col-sm-4
+      - confirm_msg = 'This will remove your account information and log you out. There is no Undo.'
       = link_to icon('far', 'trash-alt', 'Delete'), account_path, :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => confirm_msg }, :post => true
+
 
 -# Don't show users this stuff about themselves
 - if current_user.admin?

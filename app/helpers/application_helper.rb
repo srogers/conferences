@@ -10,6 +10,10 @@ module ApplicationHelper
     content_tag(:h3, text)
   end
 
+  def unbreakable(text)
+    text.gsub(' ','&nbsp;').html_safe
+  end
+
   # Returns 'active' when the selected tab name is active, which we wheedle out of the controller and action names.
   def current_tab?(name)
     current = case name

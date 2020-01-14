@@ -3,20 +3,24 @@
 
 .row.mb-2{ id: "presentation_#{presentation.id}" }
   %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
-    .detail-selector
-      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
-      = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
-      = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
+    -# Make the detailed view the default - see what indexing robots do with that
+    -if current_user&.compact_presentations
+      .detail-selector
+        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
+        = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
+        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
+        = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
+    -else
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
-    -#%br
-    -#by
-    -#= clickable_speaker_list(presentation)
-    -#- unless controller_name == 'conferences' && params[:id].present?
-    -#  - if presentation.conference.present? && params[:skip_event] == 'false'
-    -#    at
-    -#    = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
-    -#%br
-    -#= linked_tag_names(presentation, class: 'slim')
+      %br
+      by
+      = clickable_speaker_list(presentation)
+      - unless controller_name == 'conferences' && params[:id].present?
+        - if presentation.conference.present? && params[:skip_event] == 'false'
+          at
+          = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
+      %br
+      = linked_tag_names(presentation, class: 'slim')
 
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
     -# For medium up
@@ -28,9 +32,9 @@
     -# For small down, use two columns and put these on the same line - make the dates unbreakable so it's one line on mobile
     .col.d-block.d-md-none
       - if params[:sort].include? 'presentations.created_at'
-        = pretty_date(presentation.created_at, style: :pretty).gsub(' ','&nbsp;').html_safe
+        = unbreakable pretty_date(presentation.created_at, style: :pretty)
       - else
-        = pretty_date(presentation.date, style: :pretty).gsub(' ','&nbsp;').html_safe
+        = unbreakable pretty_date(presentation.date, style: :pretty)
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     .col.col-sm-8.col-md-2
@@ -51,8 +55,9 @@
 
   .col.col-sm-2.col-md-2.text-right= linked_format_icons(presentation)
 
+  -# Jam the heart and edit buttons into one column - the heart takes up too much space in a column by itself
   - if current_user.present?
-    .col
+    .col-sm-3
       - user_presentation = @user_presentations.select{|up| up.presentation_id == presentation.id}.first
       - if user_presentation.present?
         - if user_presentation.completed_on.present?
@@ -64,9 +69,11 @@
         -else
           = link_to icon('far', 'envelope', class: 'fa-fw'), user_presentation_path(user_presentation), class: "", data: { method: :patch, remote: true, params: { user_presentation: { notify_pubs: true } }.to_param }, title: ht_notify
       - else
+        -# put a dummy spacer after the plain heart, so this always takes up the width of two icons
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
+        %span.fa.fa-fw
       - if can? :edit, presentation
-        %div.text-right{style: 'padding-top: 5px;'}
+        .float-right
           = link_to icon('fas', 'search', class: 'fa-fw fa-sm'), google_search_url(presentation), class: "btn btn-xs btn-primary", target: "_blank"
           = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_presentation_path(presentation), class: "btn btn-xs btn-primary"
           = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), presentation_path(presentation), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

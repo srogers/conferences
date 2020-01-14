@@ -53,6 +53,6 @@ class AccountsController < ApplicationController
 
   def user_params
     params.require(:user).permit(:password, :password_confirmation, :email, :name, :city, :state, :country, :photo, :remove_photo,
-                                 :time_zone, :show_attendance, :show_contributor, :time_format)
+                                 :time_zone, :show_attendance, :show_contributor, :compact_presentations, :time_format)
   end
 end

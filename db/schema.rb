@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_05_175251) do
+ActiveRecord::Schema.define(version: 2020_01_14_202257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -257,6 +257,7 @@ ActiveRecord::Schema.define(version: 2020_01_05_175251) do
     t.integer "speaker_id"
     t.string "sortable_name"
     t.string "time_format", default: "hh:mm"
+    t.boolean "compact_presentations", default: false
     t.index ["sortable_name"], name: "index_users_on_sortable_name"
   end
 
