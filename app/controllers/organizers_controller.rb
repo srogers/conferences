@@ -9,7 +9,7 @@ class OrganizersController < ApplicationController
   authorize_resource
 
   def index
-    @organizers = Organizer.includes(:conferences).order(params_to_sql('>organizers.abbreviation')).page(param_context(:page)).per(param_context(:per))
+    @organizers = Organizer.includes(:conferences).references(:conferences).order(params_to_sql('>organizers.abbreviation')).page(param_context(:page)).per(param_context(:per))
     repaginate_if_needed(@organizers)
   end
 
