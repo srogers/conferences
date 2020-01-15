@@ -3,8 +3,11 @@
 
 .row.mb-2{ id: "presentation_#{presentation.id}" }
   %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
-    -# Make the detailed view the default - see what indexing robots do with that
-    -if current_user&.compact_presentations
+    -# Make the detailed view the default - see what indexing robots do with that - use compact for speakers
+    -if controller_name != 'presentations'
+      -# use just the name for speaker presentation listing
+      = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
+    -elsif current_user&.compact_presentations
       .detail-selector
         = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
         = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
@@ -58,6 +61,7 @@
   -# Jam the heart and edit buttons into one column - the heart takes up too much space in a column by itself
   - if current_user.present?
     .col-sm-3
+      -# TODO - try to eliminate this expensive look-up
       - user_presentation = @user_presentations.select{|up| up.presentation_id == presentation.id}.first
       - if user_presentation.present?
         - if user_presentation.completed_on.present?
@@ -72,6 +76,7 @@
         -# put a dummy spacer after the plain heart, so this always takes up the width of two icons
         = link_to icon('far', 'heart', class: 'fa-fw'), user_presentations_path, class: "", data: { method: :post, remote: true, params: { user_presentation: { presentation_id: presentation.id } }.to_param }, title: ht_watch
         %span.fa.fa-fw
+
       - if can? :edit, presentation
         .float-right
           = link_to icon('fas', 'search', class: 'fa-fw fa-sm'), google_search_url(presentation), class: "btn btn-xs btn-primary", target: "_blank"

@@ -1,6 +1,6 @@
 class PresentationsController < ApplicationController
 
-  include PresentationsChart    # gets chart data
+  include PresentationsChart    # defines the filter methods and gets chart data
   include Sortability
   include StickyNavigation
 
@@ -14,7 +14,7 @@ class PresentationsController < ApplicationController
     @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
 
     @presentations = @presentations.order(params_to_sql '<presentations.date')
-    # This is necessary for getting the presentation status
+    # This is necessary for getting the presentation status - TODO see if it can be fetched via association
     @user_presentations = current_user.user_presentations if current_user.present?
 
     if params[:q].present?

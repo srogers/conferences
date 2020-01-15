@@ -26,6 +26,8 @@
 
         -# action-specific buttons or search field
         - if action_name == 'show'
+          = index_search_form(true) if param_context(:tag).present? || param_context(:term).present?
+
           - if can?(:destroy, @speaker) && @presentations.empty?
             = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), speaker_path(@speaker), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Permanently remove this speaker?' }, :post => true
           - if can? :edit, @speaker
