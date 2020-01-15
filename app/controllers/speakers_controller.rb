@@ -1,5 +1,6 @@
 class SpeakersController < ApplicationController
 
+  include PresentationsChart    # defines the filter methods for presentations
   include Sortability
   include SpeakersChart
   include StickyNavigation
@@ -20,7 +21,7 @@ class SpeakersController < ApplicationController
       page = 1       # autocomplete should always get page 1 limit 5
       per  = 5
     else
-      @speakers = @speakers.includes(:presentations).references(:presentations) # TODO - why does plain index hit this?
+      @speakers = @speakers.includes(:presentations).references(:presentations)
       if params[:heart].present?
         @speakers = @speakers.where("coalesce(speakers.description, '') = '' OR coalesce(speakers.photo, '') = '' ")
       end
@@ -72,9 +73,17 @@ class SpeakersController < ApplicationController
   end
 
   def show
-    @presentations = @speaker.presentations.includes(:conference, :presentation_publications => :publication).order(params_to_sql ">presentations.sortable_name")
+    @presentations = @speaker.presentations.includes(:conference, :publications, :speakers).references(:conference)
+    @presentations = @presentations.order(params_to_sql '<presentations.date')
+
     # TODO - see if there is a way to get this with an additional include
     @user_presentations = current_user.user_presentations if current_user.present?
+
+    # Here we just filter presentations, and skip all the business presentations controller does with :q and :hear params
+    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      @presentations = filter_presentations @presentations
+    end
+
     respond_to do |format|
       format.html
       format.json { render json: @speaker, status: :ok }

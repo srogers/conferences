@@ -7,6 +7,12 @@
  * autocomplete form. It would be nice to place these somewhere useful, but it seems like the only thing
  * to do is hide it.
  */
+
+/* By default, jQuery autocomplete leaves bullets in the drop down - fix that weird choice */
+ul.ui-autocomplete {
+  list-style-type: none;
+}
+
 .ui-helper-hidden-accessible{
   display:none !important;
 }

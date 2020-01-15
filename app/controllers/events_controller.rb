@@ -29,7 +29,7 @@ class EventsController < ApplicationController
       per  = 8
     else
       # Set up a complex WHERE but select only conferences
-      @conferences = @conferences.select('conferences.*').references(:presentations => :publications ).order(params_to_sql('<conferences.start_date'))
+      @conferences = @conferences.select('conferences.*').includes(:presentations => :publications ).references(:presentations => :publications ).order(params_to_sql('<conferences.start_date'))
 
       if params[:heart].present?
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)

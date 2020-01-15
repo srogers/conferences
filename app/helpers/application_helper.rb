@@ -10,6 +10,10 @@ module ApplicationHelper
     content_tag(:h3, text)
   end
 
+  def unbreakable(text)
+    text.gsub(' ','&nbsp;').html_safe
+  end
+
   # Returns 'active' when the selected tab name is active, which we wheedle out of the controller and action names.
   def current_tab?(name)
     current = case name
@@ -229,18 +233,22 @@ module ApplicationHelper
   end
 
   # Pass in the controller name for the index path to be searched - it can't always be deduced from the view.
-  def index_search_form
+  def index_search_form(read_only=false)
     # figure out where to send the search based on the page we're looking at right now
     index_path = send("#{controller_name}_path")
     search_form = form_for :search, html: { class: 'form-inline', :autocomplete => "off" }, url: index_path, method: :get do |f|
       content = "".html_safe
       if param_context(:tag).present?
         content << tagify(param_context(:tag), class: 'slim')
-        content << logical_selector
+        if read_only
+          content << content_tag(:span, param_context(:operator), style: 'color: #fff; margin-left: 10px; margin-right: 10px')
+        else
+          content << logical_selector
+        end
       else
         param_context(:operator) # look at the value, so it gets saved, to persist changes introduced by the "All" button
       end
-      content << text_field_tag(:search_term, param_context(:search_term), placeholder: "Search")
+      content << text_field_tag(:search_term, param_context(:search_term), placeholder: "Search", disabled: read_only)
       content << hidden_field_tag(:page, 1, id: :reset_page)
       content << content_tag(:span, '', style: 'margin-right: 5px;')
       buttons = button_tag type: 'submit', class: 'btn btn-primary btn-sm' do
@@ -252,7 +260,8 @@ module ApplicationHelper
         index_path_with_params = send("#{controller_name}_path", search_term: '', tag: '', page: 1)
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
-      content << buttons
+      content << buttons unless read_only
+      content
     end
     search_form.html_safe
   end

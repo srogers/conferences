@@ -28,5 +28,5 @@
     - if @presentations.empty?
       %p None Yet
     - else
-      = render :partial => "presentations_header"
+      = render :partial => "presentations/header"
       = render :partial => "presentations/presentation", :collection =>  @presentations
