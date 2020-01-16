@@ -5,7 +5,8 @@ class SettingsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @setting = Setting.first
+    # Get all the settings directly in the view from the class methods, as it would be used in the code
+    @setting = Setting.first  # the edit button uses this
   end
 
   def edit
@@ -25,6 +26,6 @@ class SettingsController < ApplicationController
   private
 
   def setting_params
-    params.require(:setting).permit(:require_account_approval, :speaker_chart_floor, :api_open, :facebook_sharing)
+    params.require(:setting).permit(:require_account_approval, :speaker_chart_floor, :api_open, :facebook_sharing, :base_event_year)
   end
 end
