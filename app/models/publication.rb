@@ -52,7 +52,9 @@ class Publication < ApplicationRecord
       if ui_duration == 'N/A'
         self.duration = nil
         self.ui_duration = ''
-      elsif ui_duration&.include?(':')
+      elsif ui_duration.tr('0-9', '').length > 0        # expect there is some delimiter
+        delimiter = ui_duration.tr('0-9', '').first     # the typo for colon has to be consistent, 01;18/05 will fail
+        ui_duration.gsub!(delimiter, ':')               # whatever the non-digit was, make it a colon
         self.duration =  unformatted_time(ui_duration)  # expect hh:mm or hh:mm:ss format
       else
         self.duration = ui_duration.to_i                # expect raw minutes format
