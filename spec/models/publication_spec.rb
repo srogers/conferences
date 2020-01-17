@@ -83,7 +83,7 @@ RSpec.describe Publication, type: :model do
         end
       end
 
-      { '18:20': 1100, '8:20': 500, '90': 90, '1:18:20': 78, '01:18:20': 78, '4700': 4700 }.each do |hms, minutes|
+      { '18:20': 1100, '8:20': 500, '8/20': 500, '90': 90, '1:18:20': 78, '01:18:20': 78, '01;18;20': 78, '4700': 4700 }.each do |hms, minutes|
         context "from UI as #{hms}" do
           let(:valid_user_attributes) { valid_attributes.merge(ui_duration: hms.to_s)}
 

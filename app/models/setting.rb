@@ -20,6 +20,11 @@ class Setting < ApplicationRecord
     return @setting.facebook_sharing
   end
 
+  def self.base_event_year
+    get_settings
+    return @setting.base_event_year || 1959
+  end
+
   private
 
   def self.get_settings

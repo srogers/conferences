@@ -20,4 +20,4 @@
 = f.input :bio_url, label: 'Bio URL', hint: "URL for the speaker's own page, e.g. at ARI Campus or their personal site."
 = f.label 'Brief Bio'
 = f.trix_editor :description
-= f.input :bio_on, as: :date, start_year: Date.today.year, end_year: 1959,  order: [:year], include_blank: true, label: 'Date of bio info'
+= f.input :bio_on, as: :date, start_year: Date.today.year, end_year: Setting.base_event_year,  order: [:year], include_blank: true, label: 'Date of bio info'

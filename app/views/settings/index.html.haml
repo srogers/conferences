@@ -10,16 +10,21 @@
     %table.table
       %tr
         %th{width: '50%'} Require Account Approval
-        %td= humanize_boolean @setting.require_account_approval?
+        %td= humanize_boolean Setting.require_account_approval?
       %tr
         %th{width: '50%'} Top Speakers Floor
-        %td= @setting.speaker_chart_floor
+        %td= Setting.speaker_chart_floor
       %tr
         %th{width: '50%'} API Open
-        %td= @setting.api_open ? 'True' : 'False'
+        %td= Setting.api_open? ? 'True' : 'False'
       %tr
         %th{width: '50%'} Facebook Sharing Button
-        %td= @setting.facebook_sharing ? 'Available' : 'Hidden'
+        %td= Setting.facebook_sharing? ? 'Available' : 'Hidden'
+      %tr
+        %th{width: '50%'} Base Event Year
+        %td
+          = Setting.base_event_year
+          = '(default)' if @setting.base_event_year.blank?
 .row
   .col-md-12
     %p
