@@ -86,14 +86,27 @@ RSpec.describe PresentationsController, type: :controller do
     end
   end
 
-  describe "when listing tags" do
+  context "tags" do
 
     let!(:presentation) { create :presentation, tag_list: 'wombats' }
 
-    it "assigns all tag names as @tags" do
-      skip "works but not in Rspec"
-      get :index, params: {}
-      expect(assigns(:tags)).to eq(['wombats'])
+    describe "when listing tags" do
+      it "assigns all tag names as @tags" do
+        get :tags, params: {}
+        expect(assigns(:tags)).to eq(presentation.tags)
+      end
+    end
+
+    describe "when searching tags" do
+      it "gets the tag based on a segment" do
+        get :tags, params: { term: 'wom'}
+        expect(assigns(:tags)).to eq(presentation.tags)
+      end
+
+      it "gets the tag regardless of case" do
+        get :tags, params: { term: 'WOM'}
+        expect(assigns(:tags)).to eq(presentation.tags)
+      end
     end
   end
 
