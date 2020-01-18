@@ -41,6 +41,7 @@ class Ability
       # Some read abilities are going to be required to allow social media linking
       can :read, Conference
       can [:chart, :upcoming], Conference
+      can :download, Document
       can :read, Presentation
       can [:chart, :tags], Presentation
       can [:read, :latest, :chart], Publication
