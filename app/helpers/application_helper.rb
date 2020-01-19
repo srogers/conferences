@@ -393,6 +393,7 @@ module ApplicationHelper
     when :long        then "%m#{sep}%d#{sep}%Y" # output date like  10/28/2008
     when :db          then "%Y#{sep}%m#{sep}%d" # output date like  2008-10-28
     when :yearless    then "%B %d"              # output date like  October 28
+    when :yearless_s  then "%b %d"              # output date like  Oct 28
     when :url         then "%m#{sep}%d#{sep}%Y" # output date like  10_28_2008
     when :year_only   then "%Y"                 # output year like  2008
     when :month_only  then "%b %Y"              # output date like  Oct 2008

@@ -66,10 +66,17 @@ class Conference < ApplicationRecord
     self.name = default_name(organizer) if use_default
   end
 
-  # This is referenced by itself in conference/index, so it isn't private
-  def date_span
+  # This is referenced directly in conference/index and used in PDF generation, so it isn't private
+  def date_span(options={compact: false})
+    if options[:compact]
+      month_only = :yearless_s
+      full       = :pretty
+    else
+      month_only = :yearless
+      full       = :pretty_full
+    end
     # Using pretty_date here to avoid having to deal with strftime or build a lookup table for month names
-    start_text = "#{ ApplicationController.helpers.pretty_date start_date, style: start_date.year == end_date.year ? :yearless : 'pretty_full'}"
+    start_text = "#{ ApplicationController.helpers.pretty_date start_date, style: start_date.year == end_date.year ? month_only : full}"
     if start_date == end_date
       end_text = ", #{ end_date.year}"
     else

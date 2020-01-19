@@ -95,7 +95,7 @@ class ConferenceDirectoryPdf < Prawn::Document
       Conference.where("event_type = ?", event_type).order('start_date DESC').each do |conference|
         table_data << [
           "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
-          conference.date_span,
+          conference.date_span(compact: true),
           conference.location
         ]
       end
