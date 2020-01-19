@@ -1,3 +1,6 @@
+check_for_results = () ->
+  location.reload()
+
 $ ->
   # Use radio buttons for CSV generation (only one at a time) vs. checkboxes for PDF (one or more).
   $('select#document_format').change ->
@@ -35,3 +38,7 @@ $ ->
     $("#document_events_true").prop('checked', false)
     $("#document_presentations_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
+
+  # Reloads the document list if there are queued or working documents
+  if $("td:contains('queued')").length > 0 || $("td:contains('working')").length > 0
+    setTimeout(check_for_results, 3000)

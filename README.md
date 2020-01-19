@@ -84,6 +84,7 @@ On the free plan, the Redis DB will be destroyed after 30 days of inactivity. To
    * Name:  doesn't matter
    * You can copy the password from the original URL, or use the default - endpoint will be different anyway
    * Use the password and endpoint to update the connection string in app settings REDISCLOUD_URL
+ - Restart the server  
 
 The Redis cloud URL is:  redis://rediscloud:[password]@[endpoint]
 

@@ -11,4 +11,4 @@
     = link_to_if document.complete?, icon('fas', icon_name, class: 'fa-fw fa-lg') + icon('fas', 'download'), download_document_path(document), target: '_blank'
   %td{width: 50}
     - if can? :delete, document
-      = link_to_if (document.complete? || document.failed?), icon('far', 'trash-alt', class: 'fa-fw'), document_path(document), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+      = link_to_if document.deletable?, icon('far', 'trash-alt', class: 'fa-fw'), document_path(document), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
