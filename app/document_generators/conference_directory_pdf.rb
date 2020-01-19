@@ -90,7 +90,7 @@ class ConferenceDirectoryPdf < Prawn::Document
       text event_type.pluralize, size: 14, style: :bold
       font_size 10
 
-      # find_each doesn't allow sorting.
+      # Use plain each, because find_each doesn't allow sorting.
       table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
       Conference.where("event_type = ?", event_type).order('start_date DESC').each do |conference|
         table_data << [
@@ -257,9 +257,8 @@ class ConferenceDirectoryPdf < Prawn::Document
     super :page_size => 'LETTER', info: { Title: 'Conference Directory', Author: 'Various', Creator: 'ObjectivistConferences.info', CreationDate: Time.now }
 
     # Generate the document according to the specified options
-
     cover_page
-    conferences   if options[:conferences]
+    conferences   if options[:events]
     presentations if options[:presentations]
     speakers      if options[:speakers]
     publications  if options[:publications]
