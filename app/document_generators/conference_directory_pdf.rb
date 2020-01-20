@@ -145,7 +145,7 @@ class ConferenceDirectoryPdf < Prawn::Document
     font_size 10
     text "Speakers", size: 14, style: :bold
 
-    Speaker.order(:name).each do |speaker|
+    Speaker.order(:sortable_name).each do |speaker|
 
       # Get the speaker image or default icon - development keeps these in the local filesystem, so the URL is a local file path.
       # In production, the url method for photos returns a URL into S3, but a path for the default icon
