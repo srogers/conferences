@@ -79,7 +79,7 @@ module SharedQueries
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
     # These can be overridden so aggregate queries can ignore them
-    term = use_term ? param_context(:search_term)&.split(' ').map{|s| s.strip}&.compact&.join(' ') : nil
+    term = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact.join(' ') : nil
     tag  = use_tag  ? param_context(:tag)&.strip : nil
 
     if term.blank?
