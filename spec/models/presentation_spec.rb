@@ -6,8 +6,16 @@ RSpec.describe Presentation, type: :model do
       { name: "Valid Presentation" }
     }
 
-    it "should have a working factory" do
-      expect(create :presentation).to be_valid
+    context "the factory" do
+      it "works" do
+        expect(create :presentation).to be_valid
+      end
+
+      it "works with tags" do
+        presentation = create :presentation, tag_list: 'wombats, linoleum'
+        expect(presentation).to be_valid
+        expect(presentation.tag_list.include?('wombats')).to be_truthy
+      end
     end
 
     it "should be valid with valid attributes" do

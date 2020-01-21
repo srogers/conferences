@@ -90,12 +90,12 @@ class ConferenceDirectoryPdf < Prawn::Document
       text event_type.pluralize, size: 14, style: :bold
       font_size 10
 
-      # find_each doesn't allow sorting.
+      # Use plain each, because find_each doesn't allow sorting.
       table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
       Conference.where("event_type = ?", event_type).order('start_date DESC').each do |conference|
         table_data << [
           "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
-          conference.date_span,
+          conference.date_span(compact: true),
           conference.location
         ]
       end
@@ -145,7 +145,7 @@ class ConferenceDirectoryPdf < Prawn::Document
     font_size 10
     text "Speakers", size: 14, style: :bold
 
-    Speaker.order(:name).each do |speaker|
+    Speaker.order(:sortable_name).each do |speaker|
 
       # Get the speaker image or default icon - development keeps these in the local filesystem, so the URL is a local file path.
       # In production, the url method for photos returns a URL into S3, but a path for the default icon
@@ -180,7 +180,9 @@ class ConferenceDirectoryPdf < Prawn::Document
       end
 
       # If the speaker ever gets more info (like notes), add it to this array.
-      details = [ActionView::Base.full_sanitizer.sanitize(speaker.description)]  # TODO - get styled text here
+      bio_text = ActionView::Base.full_sanitizer.sanitize(speaker.description)
+      bio_text += " <i>(#{ speaker.bio_on&.year })</i>" if speaker.bio_on.present?
+      details = [ bio_text ]  # TODO - get styled text here
 
       top = cursor
       speaker_name_text = "<strong><link href='#{ speaker_url(speaker) }'>#{ speaker.name }</link></strong>" # build the string with format here so we measure and output the same text height
@@ -257,9 +259,8 @@ class ConferenceDirectoryPdf < Prawn::Document
     super :page_size => 'LETTER', info: { Title: 'Conference Directory', Author: 'Various', Creator: 'ObjectivistConferences.info', CreationDate: Time.now }
 
     # Generate the document according to the specified options
-
     cover_page
-    conferences   if options[:conferences]
+    conferences   if options[:events]
     presentations if options[:presentations]
     speakers      if options[:speakers]
     publications  if options[:publications]

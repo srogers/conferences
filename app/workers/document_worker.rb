@@ -70,6 +70,8 @@ class DocumentWorker
       return
     end
 
+    document.working!
+
     case document.format
     when Document::PDF then
       handle_pdf(document)

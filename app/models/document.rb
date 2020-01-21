@@ -9,18 +9,18 @@ class Document < ApplicationRecord
   before_save  :initialize_values
   before_destroy :destroy_uploader
 
-  PENDING  = 'pending'
+  QUEUED  = 'queued'
   WORKING  = 'working'
   COMPLETE = 'complete'
   FAILED   = 'failed'
-  STATUS_VALUES = [ PENDING, WORKING, COMPLETE, FAILED ]
+  STATUS_VALUES = [ QUEUED, WORKING, COMPLETE, FAILED ]
 
   PDF = 'PDF'
   CSV = 'CSV'
   FORMATS = [PDF, CSV]
 
   def initialize_values
-    self.status = PENDING
+    self.status = QUEUED
     self.format = PDF if format.blank?
     # set a default option if nothing is set
     self.events = true if options.map{|k,v| k.to_s if v}.compact.empty?
@@ -51,6 +51,10 @@ class Document < ApplicationRecord
 
   def failed!
     update_column :status, FAILED
+  end
+
+  def deletable?
+    complete? || failed?
   end
 
   # options are boolean attributes of the model that are set from the creation form.

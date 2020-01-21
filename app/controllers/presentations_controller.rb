@@ -76,9 +76,8 @@ class PresentationsController < ApplicationController
 
   def tags
     @tags = ActsAsTaggableOn::Tag.order(Arel.sql('LOWER(name)'))
-
     if params[:term].present?
-      @tags = @tags.where("name LIKE ?", '%' + params[:term] + '%')
+      @tags = @tags.where("LOWER(name) LIKE ?", '%' + params[:term].downcase + '%')
     end
 
     # The returned JSON needs to be in the format: [{"id":"Platalea leucorodia","label":"Spoonbill","value":"Spoonbill"}]

@@ -3,8 +3,8 @@ class DocumentsController < ApplicationController
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]
-  before_action :require_user
-  before_action :require_admin,  only: [:generate]
+  before_action :require_user,   except: [:download]
+  before_action :require_admin,  only: [:create]
 
   load_resource only: [:show, :edit, :update, :destroy, :download]
   authorize_resource

@@ -26,6 +26,28 @@ RSpec.describe DocumentsController, type: :controller do
         expect(response).to redirect_to login_path
       end
     end
+
+    describe "GET download" do
+      let(:uploader) { DocumentUploader.new(document, :attachment) }
+
+      before do
+        DocumentUploader.enable_processing = true
+        File.open('spec/fixtures/files/blank.pdf') { |f| uploader.store!(f) }
+        get :download, params: { id: document.id }
+      end
+
+      after do
+        DocumentUploader.enable_processing = false
+        uploader.remove!
+      end
+
+      # Let guests download documents so the URLs can be shared
+      it "sends the document PDF attachment" do
+        expect(response).to be_successful
+        expect(response.headers["Content-Type"]).to eq "attachment/pdf"
+      end
+    end
+
   end
 
   context "with reader user" do

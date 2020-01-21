@@ -57,13 +57,19 @@ class Speaker < ApplicationRecord
     presentations.map{|p| p.conference}.compact.uniq.sort_by(&:start_date)
   end
 
+  def bio_on_year
+    bio_on&.year
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data
   TITLES_AND_METHODS = {
       'Name'        => :name,
       'Sort Name'   => :sortable_name,
+      'Title'       => :title,
       'Photo'       => :has_photo?,
       'URL'         => :url,
-      'Description' => :clean_description
+      'Bio On'      => :bio_on_year,
+      'Description' => :clean_description,
   }
 
   # DocumentWorker uses this to get the header for generated CSV output
