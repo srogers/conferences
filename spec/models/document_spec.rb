@@ -13,7 +13,7 @@ RSpec.describe Document, type: :model do
     end
 
     it "sets the initial status to Pending" do
-      expect(@document.status).to eq(Document::PENDING)
+      expect(@document.status).to eq(Document::QUEUED)
     end
 
     it "sets a default format and option if nothing is set" do
