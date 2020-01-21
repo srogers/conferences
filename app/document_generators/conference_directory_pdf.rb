@@ -180,7 +180,9 @@ class ConferenceDirectoryPdf < Prawn::Document
       end
 
       # If the speaker ever gets more info (like notes), add it to this array.
-      details = [ActionView::Base.full_sanitizer.sanitize(speaker.description)]  # TODO - get styled text here
+      bio_text = ActionView::Base.full_sanitizer.sanitize(speaker.description)
+      bio_text += " <i>(#{ speaker.bio_on&.year })</i>" if speaker.bio_on.present?
+      details = [ bio_text ]  # TODO - get styled text here
 
       top = cursor
       speaker_name_text = "<strong><link href='#{ speaker_url(speaker) }'>#{ speaker.name }</link></strong>" # build the string with format here so we measure and output the same text height
