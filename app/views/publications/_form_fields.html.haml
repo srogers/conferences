@@ -11,6 +11,10 @@
   .row
     .col-md-12
       = f.input :speaker_names, hint: 'Free text names - helpful later to find the matching presentation.'
+.row
+  .col-md-12
+    = f.label :description
+    = f.trix_editor :description
 
 .row
   .col-md-2

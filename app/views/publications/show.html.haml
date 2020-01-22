@@ -7,10 +7,17 @@
   .col-md-12
     = title "#{ @publication.name }"
 
-    %p
-      = format_and_date(@publication)  # this contains the publication year, if present
+.row
+  .col-md-12
+    %p= safe_list_sanitizer.sanitize(@publication.description).try(:html_safe)
+
+.row
+  .col-md-12
+    %p= format_and_date(@publication)  # this contains the publication year, if present
 
     - if @publication.presentations.blank?
+      -# This field is just helpful info for hooking up floating publications to presentations
+      -# The presentation speakers are authoritative, so once presentation is identified, we hide this.
       %p
         %b Speaker Names
         = @publication.speaker_names
@@ -24,6 +31,7 @@
             mins
         -else
           %i unspecified
+
     %p
       %b Notes
       - if @publication.notes.present?
