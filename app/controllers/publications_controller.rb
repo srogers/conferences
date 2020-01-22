@@ -145,7 +145,7 @@ class PublicationsController < ApplicationController
       end
     else
       flash.now[:error] = "Your publication could not be saved: #{ @publication.errors.full_messages.join(', ') }"
-      logger.error "Publication save failed: #{ @publication.errors.full_messages }"
+      logger.error "Publication update failed: #{ @publication.errors.full_messages }"
       render 'edit'
     end
   end
