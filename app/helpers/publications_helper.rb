@@ -48,10 +48,10 @@ module PublicationsHelper
 
   # Converts the duration (integer minutes) into either minutes or hh:mm format, depending on user prefs.
   # For guest users, hh:mm is the default.
-  def formatted_time(duration)
+  def formatted_time(duration, options={hms: false})
     return 'N/A' if duration.nil? || duration == 0
     seconds = (duration * 60).to_f
-    if current_user&.hms_duration?
+    if options[:hms] || defined?(current_user) && current_user&.hms_duration?
       Time.at(seconds).utc.strftime("%H:%M")     # show hh:mm format
     else
       (seconds / 60).round.to_s                  # show raw minutes
