@@ -34,6 +34,11 @@ Rails.application.routes.draw do
       get :chart              # queries the data, renders the chart
       get :upcoming           # for the landing page
     end
+    resources :programs, except: [:index, :show] do
+      member do
+        get :download
+      end
+    end
   end
   resources :event_users, only: [:index, :create, :destroy]
   resources :documents do

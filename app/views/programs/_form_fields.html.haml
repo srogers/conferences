@@ -1,0 +1,15 @@
+= f.input :name, label: 'Name', hint: 'Used as name of downloads, hovertip of URLs'
+= f.label :description
+= f.trix_editor :description
+
+-# Programs are either about a URL to info, or an attached file, but not both at the same time
+- if action_name == 'new'
+  %br
+  %p Enter a URL or attach a PDF - but not both
+- unless @program.attachment.present?
+  = f.input :url
+- unless @program.url.present?
+  = f.input :attachment, label: @program.attachment.present? ? 'Change attachment' : 'Add attachment'
+
+= f.label :editors_notes, "Editor's Notes"
+= f.trix_editor :editors_notes

@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PresentationsController, type: :controller do
+
   fixtures :roles
   fixtures :settings
 
@@ -8,7 +9,7 @@ RSpec.describe PresentationsController, type: :controller do
 
   # The model doesn't care about presentation_speaker => speaker ID, but the controller validates it
   let(:valid_params) {
-    HashWithIndifferentAccess.new( {presentation: { name: "Valid Presentation" }, presentation_speaker: { speaker_id: speaker.id } })
+    HashWithIndifferentAccess.new( { presentation: { name: "Valid Presentation" }, presentation_speaker: { speaker_id: speaker.id } })
   }
 
   let(:presentation) { create :presentation }
