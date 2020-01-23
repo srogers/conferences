@@ -102,7 +102,7 @@ class Publication < ApplicationRecord
 
   # Gives the description with any HTML tags stripped out
   def clean_editors_notes
-    ActionView::Base.full_sanitizer.sanitize(description)
+    ActionView::Base.full_sanitizer.sanitize(editors_notes)
   end
 
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
