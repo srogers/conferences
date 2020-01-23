@@ -3,6 +3,7 @@
 class ConferenceDirectoryPdf < Prawn::Document
 
   include ApplicationHelper   # for date formatters
+  include PublicationsHelper  # for duration formatters
   include Rails.application.routes.url_helpers
   default_url_options[:host] = ENV['MAIL_HOST']
 
@@ -127,17 +128,19 @@ class ConferenceDirectoryPdf < Prawn::Document
     font_size 10
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
-    table_data = [['<strong>Conference/Name/Notes</strong>', '<strong>Format/ Location</strong>', '<strong>Mins</strong>']]
+    table_data = [['<strong>Conference/Name/Notes</strong>', '<strong>Format/ Location</strong>', '<strong>HH:MM</strong>']]
     Publication.includes(:presentations => :conference).order('conferences.start_date DESC, presentations.sortable_name').each do |publication|
       publication.presentations.each do |presentation|
         table_data << [
             [presentation.conference_name, "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>", publication.notes].join('<br/>'),
             "<link href='#{ publication.url }'>#{ publication.format }</link>",
-            publication.duration
+            formatted_time(publication.duration, hms: true)
         ]
       end
     end
-    table table_data, :cell_style => { :inline_format => true, :border_width => 0 }
+    table table_data, :cell_style => { :inline_format => true, :border_width => 0 } do
+      column(2).width = 40 # set the width of the duration column in mystery units - maybe mm, maybe points
+    end
   end
 
   def speakers

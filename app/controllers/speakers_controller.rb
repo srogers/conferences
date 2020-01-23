@@ -115,7 +115,7 @@ class SpeakersController < ApplicationController
       redirect_to speaker_path(@speaker)
     else
       flash.now[:error] = "Your changes could not be saved: #{ @speaker.errors.full_messages.join(', ') }"
-      logger.error "Speaker save failed: #{ @speaker.errors.full_messages.join(', ') }"
+      logger.error "Speaker update failed: #{ @speaker.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

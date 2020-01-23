@@ -43,7 +43,7 @@ class OrganizersController < ApplicationController
       redirect_to organizer_path(@organizer)
     else
       flash.now[:error] = "Your organizer could not be saved: #{ @organizer.errors.full_messages.join(', ') }"
-      logger.error "Organizer save failed: #{ @organizer.errors.full_messages.join(', ') }"
+      logger.error "Organizer update failed: #{ @organizer.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

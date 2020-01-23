@@ -1,0 +1,12 @@
+- title 'Edit Event Program'
+
+= render partial: 'control_bar'
+
+.row
+  .col-md-12
+    %h3
+      Edit supplemental info for
+      = @event.name
+    = simple_form_for [@event, @program], url: event_program_path(@event, @program), :html => {:autocomplete => "off"}  do |f|
+      = render :partial => "form_fields", :locals => {:f => f}
+      = save_or_cancel f, params[:conference_id].present? ? event_path(@event) : event_path(@event), 'Update'

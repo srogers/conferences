@@ -126,7 +126,7 @@ class EventsController < ApplicationController
     else
       flash.now[:error] = "Your event could not be saved: #{ @conference.errors.full_messages.join(', ') }"
       get_organizer_selections
-      logger.error "Event save failed: #{ @conference.errors.full_messages.join(', ') }"
+      logger.error "Event update failed: #{ @conference.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

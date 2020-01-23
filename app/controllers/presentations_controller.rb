@@ -171,7 +171,7 @@ class PresentationsController < ApplicationController
       redirect_to presentation_path(@presentation)
     else
       flash.now[:error] = "Your presentation could not be saved: #{ @presentation.errors.full_messages.join(', ') }"
-      logger.error "Presentation save failed: #{ @presentation.errors.full_messages.join(', ') }"
+      logger.error "Presentation update failed: #{ @presentation.errors.full_messages.join(', ') }"
       render 'edit'
     end
   end

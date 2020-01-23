@@ -20,6 +20,7 @@ class Ability
         can :manage, Presentation
         can [:chart, :tags, :heard, :notify], Presentation
         can :manage, PresentationSpeaker
+        can :manage, Program
         can :manage, Publication
         can :manage, Speaker
         can [:chart], Speaker
@@ -44,6 +45,7 @@ class Ability
       can :download, Document
       can :read, Presentation
       can [:chart, :tags], Presentation
+      can :read, Program
       can [:read, :latest, :chart], Publication
       can :read, Speaker
       can [:chart], Speaker
