@@ -56,9 +56,9 @@
                 %li= safe_list_sanitizer.sanitize(program.description).try(:html_safe)
               .col-md-3.text-right
                 - if program.url.present?
-                  = link_to icon('far', 'link', class: 'fa-fw'), program.url, target: '_blank', title: program.name, class: 'mr-1'
+                  = link_to icon('far', 'external-link-alt', class: 'fa-fw'), program.url, target: '_blank', title: program.name, class: 'mr-2'
                 - else
-                  = link_to icon('fas', 'file-pdf', class: 'fa-fw fa-lg'), download_event_program_path(@conference, program), target: '_blank', title: program.name
+                  = link_to icon('fas', 'file-pdf', class: 'fa-fw fa-lg'), download_event_program_path(@conference, program), target: '_blank', title: program.name, class: 'mr-2'
                 - if can? :edit, Program
                   = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_program_path(@conference, program), class: "btn btn-xs btn-primary mr-1"
                 - if can? :destroy, Program
