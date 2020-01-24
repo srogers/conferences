@@ -6,8 +6,11 @@
   .col-md-2
     = location_with_non_us_country conference, :short
   .col.d-none.d-md-block.text-center
+    -# TODO 343 - show both the old and new program icons to help ensure all the data is ported over correctly
     - if conference.program_url.present?
       = link_to icon('far', 'file'), conference.program_url, target: '_blank'
+    - conference.programs.each do |program|
+      = linked_icon_for_program program
   - if can? :edit, Conference
     .col.d-none.d-md-block.text-center
       = icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed
