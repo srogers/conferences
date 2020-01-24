@@ -5,7 +5,7 @@
 .row
   .col-md-12
     %h3
-      Add a supplemental info to
+      Add supplemental info to
       = @event.name
     = simple_form_for [@event, @program], url: event_programs_path(@event), :html => {:autocomplete => "off"}  do |f|
       = render :partial => "form_fields", :locals => {:f => f}
