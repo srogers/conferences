@@ -1,6 +1,6 @@
 class SpeakersController < ApplicationController
 
-  include PresentationsChart    # defines the filter methods for presentations
+  include PresentationsChart    # defines the filter methods for presentations used when listing speaker presentations
   include Sortability
   include SpeakersChart
   include StickyNavigation
@@ -51,7 +51,7 @@ class SpeakersController < ApplicationController
     # a vertical bar chart).
     case param_context(:chart_type)
     when 'presentations' then
-      @presentations = presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
+      @presentations = speaker_presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
       render 'presentations_chart'
     when 'conferences' then
       @conferences = conference_count_data.to_a

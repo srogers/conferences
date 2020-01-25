@@ -28,6 +28,12 @@ class Setting < ApplicationRecord
   private
 
   def self.get_settings
-    @setting = Setting.first
+    setting = Setting.first
+    if setting.blank?
+      # there isn't one - this can only happen in a brand new instance, or in testing
+      setting = Setting.new(base_event_year: 1959, speaker_chart_floor: 3)
+      setting.save!
+    end
+    @setting = setting
   end
 end

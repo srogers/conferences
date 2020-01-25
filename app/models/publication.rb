@@ -13,27 +13,28 @@ class Publication < ApplicationRecord
   # Publication doesn't use friendly ID because only editors and admin can see these paths, so they aren't indexed by search engines
 
   # These are just short word strings and not icons because there aren't good icons for making things like DVD and CD distinct.
-  TAPE    = 'Tape'
-  CD      = 'CD'
-  VHS     = 'VHS'
-  DISK    = 'DVD/Blu-ray'
-  CAMPUS  = 'Campus'
-  YOUTUBE = 'YouTube'      # Is it helpful to make this distinct?
-  FACEBOOK = 'FaceBook'    # Is it helpful to make this distinct?
-  PODCAST = 'Podcast'
-  ONLINE  = 'Online'       # Meant to be an "other" catch-all
-  ESTORE  = 'e-Store'      # This is going away . . .
-  PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
-  MOKUJI  = 'Mokuji'
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
+  TAPE    = 'Tape'.freeze
+  CD      = 'CD'.freeze
+  VHS     = 'VHS'.freeze
+  DISK    = 'DVD/Blu-ray'.freeze
+  CAMPUS  = 'Campus'.freeze
+  YOUTUBE = 'YouTube'.freeze      # Is it helpful to make this distinct?
+  FACEBOOK = 'FaceBook'.freeze    # Is it helpful to make this distinct?
+  PODCAST = 'Podcast'.freeze
+  ONLINE  = 'Online'.freeze       # Meant to be an "other" catch-all
+  ESTORE  = 'e-Store'.freeze      # This is going away . . .
+  PRINT   = 'Print'.freeze        # Books, pamphlets, Newsletter articles, etc. - physical media
+  MOKUJI  = 'Mokuji'.freeze
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE].freeze  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
-  TIME_FORMATS = [MINUTES, HMS]
+  TIME_FORMATS = [MINUTES, HMS].freeze
 
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
+  PHYSICAL     = [PRINT, TAPE, CD, VHS, DISK].freeze
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
 
@@ -66,13 +67,18 @@ class Publication < ApplicationRecord
     HAS_DURATION.include? format
   end
 
+  # For determining which items can be in inventory at all
+  def physical?
+    PHYSICAL.include? format
+  end
+
   # synthesize a description for FB sharing
   def description
     text = ['A']
     text << [duration, 'minute'] if duration.present?
     text << [format, 'publication']
+    text << [ 'from', pretty_date(published_on) ] if published_on.present?
     text << ['by', presentations.first.speaker_names] if presentations.present?
-    text << [ 'on', pretty_date(published_on) ] if published_on.present?
     text.join(' ')
   end
 
@@ -95,14 +101,17 @@ class Publication < ApplicationRecord
     Rails.application.routes.url_helpers.publication_url(self)
   end
 
-  # Gives the description with any HTML tags stripped out
+  # The "clean" methods give the contents of rich-text fields with any HTML tags stripped out (for CSV export)
   def clean_description
     ActionView::Base.full_sanitizer.sanitize(description)
   end
 
-  # Gives the description with any HTML tags stripped out
   def clean_editors_notes
     ActionView::Base.full_sanitizer.sanitize(editors_notes)
+  end
+
+  def clean_details
+    ActionView::Base.full_sanitizer.sanitize(details)
   end
 
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
@@ -113,10 +122,12 @@ class Publication < ApplicationRecord
       'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,
-      'Notes'             => :notes,
+      'ARI Inventory'     => :ari_inventory,
+      'Notes'             => :notes,               # multi-part info, and details that distinguish one copy from another
       'Media URL'         => :url,
       'Presentation URL'  => :publication_url,
-      'Description'       => :clean_description,   # contains redundant info - not really used
+      'Description'       => :clean_description,   # contains a generated one-liner intended for FB meta data
+      'Details'           => :clean_details,       # contains supplemental
       'Editors Notes'     => :clean_editors_notes,
   }
 

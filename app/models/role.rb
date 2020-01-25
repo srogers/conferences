@@ -3,12 +3,12 @@ class Role < ApplicationRecord
   has_many :users
 
   # These values get defined in the DB by db_seeds. The db:norton task checks for modifications
-  ADMIN     = 'admin'
-  EDITOR    = 'editor'
-  READER    = 'reader'
+  ADMIN     = 'admin'.freeze
+  EDITOR    = 'editor'.freeze
+  READER    = 'reader'.freeze
 
   # Don't change the order of these, because the ability to reload them via rake db:seed relies on consistent ordering.
-  ROLES = [ADMIN, EDITOR, READER]
+  ROLES = [ADMIN, EDITOR, READER].freeze
 
   validates :name, presence: true, inclusion: ROLES
 

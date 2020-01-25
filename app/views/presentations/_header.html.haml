@@ -15,6 +15,11 @@
   - if params[:heart].present?
     .col Needs
 
-  .col.col-md-2.text-right Media
-  - if can? :edit, Presentation
-    .col.d-none.d-md-block
+  .col.col-sm-2.col-md-2.text-right
+    Media
+
+  - if current_user.present?
+    .col-sm-3
+      Me
+      - if can? :edit, Presentation
+        .col.d-none.d-md-block

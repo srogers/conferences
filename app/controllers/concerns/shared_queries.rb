@@ -78,6 +78,8 @@ module SharedQueries
     # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
+    use_tag = false unless collection.try(:klass).try(:name) == 'Presentation' # only presentations have tags
+
     # These can be overridden so aggregate queries can ignore them
     term = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact.join(' ') : nil
     tag  = use_tag  ? param_context(:tag)&.strip : nil
@@ -86,15 +88,14 @@ module SharedQueries
       # set the search term to the tag
       term =  escape_wildcards(param_context(:tag))
       set_param_context :search_term, term
-    elsif tag.blank? && collection.try(:klass).try(:name) == 'Presentation' # only presentations have tags
+    elsif tag.blank? && use_tag
       # if the search term exists as a tag and something public is tagged with it, then set it
       if Presentation.tagged_with(term).count > 0
         tag = param_context(:search_term)
         set_param_context :tag, tag
       end
     end
-    logger.debug "Term: #{ term }    Tag: #{ tag }"
-
+    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }'"
     Query.new collection, term, tag
   end
 
@@ -103,7 +104,8 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
-    publication_query = query.collection.try(:klass).try(:name) == 'Publication' || query.collection.try(:name) == 'Publication'
+    publication_query = collection_has?(query, 'Publication')
+    speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
     logger.debug "Publication query: #{publication_query}   (#{query.collection.try(:klass).try(:name)})"
     if param_context(:event_type).present? && !publication_query
@@ -111,8 +113,8 @@ module SharedQueries
     end
 
     if query.term.present?
-      # None of this stuff applies to publications
-      unless publication_query
+      # None of this stuff applies to publications or speakers
+      unless publication_query || speaker_query
         # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
         # then we can't also say AND (conference.title ILIKE 'SE')
         if country_code(query.term.upcase)
@@ -143,7 +145,7 @@ module SharedQueries
       unless query.skip_optionals?
         if publication_query
           query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
-        else
+        elsif !speaker_query
           query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
           query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
         end
@@ -182,7 +184,7 @@ module SharedQueries
 
   def speaker_query(query)
     if query.term.present? && !query.skip_optionals?
-      query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
+      #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
       query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
       query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
     end
@@ -225,6 +227,11 @@ SELECT conference_id FROM conference_users, conferences
   end
 
   private
+
+  # look for a class in the query base - this is how the query is adjusted based on what's being searched
+  def collection_has?(query, class_name)
+    query.collection.try(:klass).try(:name) == class_name || query.collection.try(:name) == class_name
+  end
 
   # When the tag is used as a wildcard search in the remark space, any wildcard characters needs to be escaped.
   # Wildcards in the search text are allowed, but cause spurious results in tags - e.g. the dot in "this vs. that"

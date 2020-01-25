@@ -47,7 +47,7 @@ class PresentationsController < ApplicationController
         if params[:q].present?
           # generate a specific format for select2
           # TODO set up page-specific options for select2,so it can use the generic JSON
-          render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: s.name } } }
+          render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: "#{s.name} (#{ s.date.year })" } } }
         else
           # generate a generic API-like JSON response
           render json: PresentationSerializer.new(@presentations).serialized_json

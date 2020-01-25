@@ -12,11 +12,11 @@ RSpec.describe Speaker, type: :model do
 
       context "with a setting" do
         before do
-          setting = Setting.first
+          setting = Setting.first || Setting.create(base_event_year: 1958)
           setting.update base_event_year: 1952
         end
 
-        it "gets the setting value" do
+        it "gets the setting value not the default" do
           expect(Setting.base_event_year).to eq(1952)
         end
       end

@@ -9,15 +9,15 @@ class Document < ApplicationRecord
   before_save  :initialize_values
   before_destroy :destroy_uploader
 
-  QUEUED  = 'queued'
-  WORKING  = 'working'
-  COMPLETE = 'complete'
-  FAILED   = 'failed'
-  STATUS_VALUES = [ QUEUED, WORKING, COMPLETE, FAILED ]
+  QUEUED  = 'queued'.freeze
+  WORKING  = 'working'.freeze
+  COMPLETE = 'complete'.freeze
+  FAILED   = 'failed'.freeze
+  STATUS_VALUES = [ QUEUED, WORKING, COMPLETE, FAILED ].freeze
 
-  PDF = 'PDF'
-  CSV = 'CSV'
-  FORMATS = [PDF, CSV]
+  PDF = 'PDF'.freeze
+  CSV = 'CSV'.freeze
+  FORMATS = [PDF, CSV].freeze
 
   def initialize_values
     self.status = QUEUED
