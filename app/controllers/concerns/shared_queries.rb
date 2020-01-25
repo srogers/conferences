@@ -78,7 +78,7 @@ module SharedQueries
     # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
-    use_tag = false if collection.try(:klass).try(:name) == 'Presentation' # only presentations have tags
+    use_tag = false unless collection.try(:klass).try(:name) == 'Presentation' # only presentations have tags
 
     # These can be overridden so aggregate queries can ignore them
     term = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact.join(' ') : nil

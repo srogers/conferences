@@ -1,6 +1,6 @@
 class SpeakersController < ApplicationController
 
-  include PresentationsChart    # defines the filter methods for presentations
+  include PresentationsChart    # defines the filter methods for presentations used when listing speaker presentations
   include Sortability
   include SpeakersChart
   include StickyNavigation
