@@ -34,6 +34,7 @@ class Publication < ApplicationRecord
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
+  PHYSICAL     = [PRINT, TAPE, CD, VHS, DISK].freeze
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
 
@@ -66,6 +67,11 @@ class Publication < ApplicationRecord
     HAS_DURATION.include? format
   end
 
+  # For determining which items can be in inventory at all
+  def physical?
+    PHYSICAL.include? format
+  end
+
   # synthesize a description for FB sharing
   def description
     text = ['A']
@@ -95,12 +101,11 @@ class Publication < ApplicationRecord
     Rails.application.routes.url_helpers.publication_url(self)
   end
 
-  # Gives the description with any HTML tags stripped out
+  # The "clean" methods give the contents of rich-text fields with any HTML tags stripped out (for CSV export)
   def clean_description
     ActionView::Base.full_sanitizer.sanitize(description)
   end
 
-  # Gives the description with any HTML tags stripped out
   def clean_editors_notes
     ActionView::Base.full_sanitizer.sanitize(editors_notes)
   end
@@ -117,6 +122,7 @@ class Publication < ApplicationRecord
       'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,
+      'ARI Inventory'     => :ari_inventory,
       'Notes'             => :notes,               # multi-part info, and details that distinguish one copy from another
       'Media URL'         => :url,
       'Presentation URL'  => :publication_url,

@@ -43,6 +43,12 @@
       - label_text += '</i> presented at '.html_safe
       - label_text += @presentation.conference_name
       = label_tag :canonical, label_text
+
+- if @publication.physical?
+  .row
+    .col-md-12
+      = f.input :ari_inventory, as: :boolean, label: "In ARI inventory"
+
 .row
   .col-md-12
     = f.label "Editor's Notes", for: 'publication_editors_notes'

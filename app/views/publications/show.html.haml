@@ -49,6 +49,16 @@
       - else
         %i none
 
+- if @publication.physical?
+  .row
+    .col-md-12
+      %p
+        %b In ARI Inventory:
+        - if @publication.ari_inventory
+          Yes
+        - else
+          Haven't found it yet
+
 - if can?(:edit, @publication)
   .row
     .col-md-12

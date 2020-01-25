@@ -2,6 +2,7 @@
 # likely be subsequently deleted.
 
 namespace :db do
+  # TODO - probably can remove this one - new speaker bios can't be goofed up in this way
   desc "Initializes speaker bio date to the date of the latest conference (assuming it came from that program). Won't alter existing dates"
   task :set_speaker_bio_dates => :environment do
     puts
@@ -40,7 +41,7 @@ namespace :db do
       # First, flag it for manual fix if it's from YouTube - because we can get that info
       if publication.format ==  Publication::YOUTUBE
         puts
-        puts "manually fix publication ID #{ publication.id } '#{ publication.name }' manually - look up publication date on YouTube."
+        puts "Fix publication ID #{ publication.id } '#{ publication.name }' manually - look up publication date on YouTube."
         next
       end
 
@@ -67,6 +68,38 @@ namespace :db do
     puts "looked at #{count} publications, changed #{changed}."
   end
 
+  desc 'A data migration task to initialize ARI Inventory from comments - delete after running.'
+  task :set_ari_inventory => :environment do
+    puts
+    puts "handling presentations . . ."
+    count = 0
+    Publication.find_each do |publication|
+      # Fix the easy cases
+      if publication.editors_notes == "<div>ARI has a copy</div>" || publication.editors_notes == "<div>ARI has a copy.</div>" || publication.editors_notes == "<div>ARI has a copy&nbsp;</div>"
+        publication.editors_notes = ''
+        publication.ari_inventory = true
+      elsif publication.editors_notes&.include? "ARI has a copy. "
+        publication.editors_notes = publication.editors_notes.gsub("ARI has a copy. ", '')
+        publication.ari_inventory = true
+      end
+
+      publication.save
+
+      if publication.errors.present?
+        puts # get on a new line
+        puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+      end
+      count += 1
+      if count % 100 == 0
+        print "." # I'm not hung!
+        STDOUT.flush
+      end
+    end
+    puts
+    puts
+  end
+
+  # TODO - probably can remove this one - this issue shouldn't come back
   desc 'A data migration task to move to the rule that presentations always have dates/locations when available - blank means unknown.'
   task :set_presentation_defaults => :environment do
     puts
@@ -88,6 +121,7 @@ namespace :db do
     puts
   end
 
+  # This might be a keeper, in case the problem ever comes back due to switching settings
   desc 'A data maintenance task to catch up legacy accounts to the new standard where all are approved.'
   task :approve_all_accounts => :environment do
     raise "Don't run this while approval is required" if Setting.require_account_approval?
