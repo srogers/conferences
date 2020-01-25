@@ -15,32 +15,18 @@ module SpeakersChart
 
   # Builds a hash of speaker counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
   # which the endpoint can return as JSON or the action can use directly as an array.
-  def presentation_count_data
+  def speaker_presentation_count_data
     # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if param_context(:search_term).present?
-      term = param_context(:search_term)
-      # State-based search is singled out, because the state abbreviations are short, they match many incidental things.
-      # This doesn't work for international states - might be fixed by going to country_state_select at some point.
-      if term.length == 2 && States::STATES.map{|term| term[0].downcase}.include?(term.downcase)
-        data = PresentationSpeaker.includes(:speaker, :presentation => :conference).where("conferences.state ILIKE ?", term).group("speakers.name").order("count(presentation_id) DESC").count(:presentation_id)
 
-      else
-        # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-        # Just have to let the results fly, and hope it's not too huge.
-        # This repeats as much of the WHERE clause from the presentations controller (filter_presentations) as
-        # possible, so the the chart results will match the search results.
-        data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag })
-        query = init_query(data)
-        if query.tag.present?
-          # currently, the caller has to manage includes() and references() and apply them before the where()
-          data = data.includes(:presentation => { :taggings => :tag }).references(:taggings => :tag)
-        end
-        query = base_query(query)
-        query = presentation_query(query)
+      # Speaker queries don't use tags and don't use special query terms like matching state and year - it's just about speaker name
+      data = PresentationSpeaker.includes(:speaker, :presentation => :conference)
+      query = init_query(data)
+      query = base_query(query)
+      query = speaker_query(query)
 
-        data = data.group("speakers.name").where(query.where_clause, *query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
-      end
+      data = data.group("speakers.name").where(query.where_clause, *query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
 
     # Handles the My Conferences case
     elsif param_context(:user_id).present?
@@ -61,15 +47,12 @@ module SpeakersChart
     # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if param_context(:search_term).present?
-      # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results
-      data = Conference.includes(:presentations => :speakers)
+      # This repeats the WHERE clause from the conferences controller so the the chart results will match the search results.
+      # Start with the Speaker class so SharedQueries will build a speaker-based query
+      data = Speaker.includes(:presentations => :conference)
       query = init_query(data)
-      if query.tag.present?
-        # currently, the caller has to manage includes() and references() and apply them before the where()
-        data = data.includes(:presentations => { :taggings => :tag }).references(:taggings => :tag)
-      end
       query = base_query(query)
-      query = presentation_query(query)
+      query = speaker_query(query)
 
       data = data.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id').sort_by { |name, count| count }.reverse.to_h
 
