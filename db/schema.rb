@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 2020_01_22_025035) do
     t.string "speaker_names"
     t.text "editors_notes"
     t.string "sortable_name"
+    t.string "details"
     t.index ["creator_id"], name: "index_publications_on_creator_id"
     t.index ["sortable_name"], name: "index_publications_on_sortable_name"
   end

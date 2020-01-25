@@ -13,8 +13,9 @@
       = f.input :speaker_names, hint: 'Free text names - helpful later to find the matching presentation.'
 .row
   .col-md-12
-    = f.label :description
-    = f.trix_editor :description
+    = f.label :details
+    = f.trix_editor :details
+    .small.mb-3 Visible to everyone. Use for sourcing, history info, general background.
 
 .row
   .col-md-2
@@ -29,7 +30,7 @@
   .col-md-2
     = f.input :ui_duration, as: :string, label: 'Duration', input_html: { value: duration_for_display(@publication) }, hint: "duration in minutes or as hh:mm or hh:mm:ss"
   .col-md-10
-    = f.input :notes, hint: 'Users see this - label multi-part items here. Anything clarifying from a reader perspective.'
+    = f.input :notes, hint: 'Users see this in pubs list - label multi-part items here.'
 - if @presentation.present?
   .row
     .col-md-12
@@ -44,6 +45,6 @@
       = label_tag :canonical, label_text
 .row
   .col-md-12
-    = f.label "Editor's Notes"
+    = f.label "Editor's Notes", for: 'publication_editors_notes'
     = f.trix_editor :editors_notes
-    .small Only visible to other editors. Use for source documentation and any notes other editors might find useful.
+    .small.mb-3 Only visible to other editors. Use for source documentation and any notes other editors might find useful.

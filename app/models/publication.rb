@@ -71,8 +71,8 @@ class Publication < ApplicationRecord
     text = ['A']
     text << [duration, 'minute'] if duration.present?
     text << [format, 'publication']
+    text << [ 'from', pretty_date(published_on) ] if published_on.present?
     text << ['by', presentations.first.speaker_names] if presentations.present?
-    text << [ 'on', pretty_date(published_on) ] if published_on.present?
     text.join(' ')
   end
 
@@ -105,6 +105,10 @@ class Publication < ApplicationRecord
     ActionView::Base.full_sanitizer.sanitize(editors_notes)
   end
 
+  def clean_details
+    ActionView::Base.full_sanitizer.sanitize(details)
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data for CSV export
   TITLES_AND_METHODS = {
       'Name'              => :name,
@@ -113,10 +117,11 @@ class Publication < ApplicationRecord
       'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,
-      'Notes'             => :notes,
+      'Notes'             => :notes,               # multi-part info, and details that distinguish one copy from another
       'Media URL'         => :url,
       'Presentation URL'  => :publication_url,
-      'Description'       => :clean_description,   # contains redundant info - not really used
+      'Description'       => :clean_description,   # contains a generated one-liner intended for FB meta data
+      'Details'           => :clean_details,       # contains supplemental
       'Editors Notes'     => :clean_editors_notes,
   }
 

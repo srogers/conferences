@@ -39,6 +39,16 @@
       - else
         %i none
 
+.row
+  .col-md-12
+    %p
+      %b Details
+      %br
+      - if @publication.details.present?
+        = safe_list_sanitizer.sanitize(@publication.details).try(:html_safe)
+      - else
+        %i none
+
 - if can?(:edit, @publication)
   .row
     .col-md-12
