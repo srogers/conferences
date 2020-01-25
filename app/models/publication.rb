@@ -13,23 +13,23 @@ class Publication < ApplicationRecord
   # Publication doesn't use friendly ID because only editors and admin can see these paths, so they aren't indexed by search engines
 
   # These are just short word strings and not icons because there aren't good icons for making things like DVD and CD distinct.
-  TAPE    = 'Tape'
-  CD      = 'CD'
-  VHS     = 'VHS'
-  DISK    = 'DVD/Blu-ray'
-  CAMPUS  = 'Campus'
-  YOUTUBE = 'YouTube'      # Is it helpful to make this distinct?
-  FACEBOOK = 'FaceBook'    # Is it helpful to make this distinct?
-  PODCAST = 'Podcast'
-  ONLINE  = 'Online'       # Meant to be an "other" catch-all
-  ESTORE  = 'e-Store'      # This is going away . . .
-  PRINT   = 'Print'        # Books, pamphlets, Newsletter articles, etc. - physical media
-  MOKUJI  = 'Mokuji'
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE]  # approximately most to least used
+  TAPE    = 'Tape'.freeze
+  CD      = 'CD'.freeze
+  VHS     = 'VHS'.freeze
+  DISK    = 'DVD/Blu-ray'.freeze
+  CAMPUS  = 'Campus'.freeze
+  YOUTUBE = 'YouTube'.freeze      # Is it helpful to make this distinct?
+  FACEBOOK = 'FaceBook'.freeze    # Is it helpful to make this distinct?
+  PODCAST = 'Podcast'.freeze
+  ONLINE  = 'Online'.freeze       # Meant to be an "other" catch-all
+  ESTORE  = 'e-Store'.freeze      # This is going away . . .
+  PRINT   = 'Print'.freeze        # Books, pamphlets, Newsletter articles, etc. - physical media
+  MOKUJI  = 'Mokuji'.freeze
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE].freeze  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
-  TIME_FORMATS = [MINUTES, HMS]
+  TIME_FORMATS = [MINUTES, HMS].freeze
 
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
