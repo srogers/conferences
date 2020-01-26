@@ -80,10 +80,14 @@ module PublicationsHelper
       icon('fas', 'ticket-alt', 'data-toggle' => "tooltip", title: publication.notes)
     when Publication::DISK then
       icon('fas', 'compact-disc', 'data-toggle' => "tooltip", title: publication.notes)
+    when Publication::LP then
+      icon('fas', 'compact-disc', 'data-toggle' => "tooltip", title: publication.notes)
     when Publication::CAMPUS then
       icon('fas', 'university')
     when Publication::YOUTUBE then
       icon('fab', 'youtube')
+    when Publication::VIMEO then
+      icon('fab', 'vimeo')
     when Publication::FACEBOOK then
       icon('fab', 'facebook')
     when Publication::PODCAST then

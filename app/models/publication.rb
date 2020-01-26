@@ -17,15 +17,17 @@ class Publication < ApplicationRecord
   CD      = 'CD'.freeze
   VHS     = 'VHS'.freeze
   DISK    = 'DVD/Blu-ray'.freeze
+  LP      = 'LP Record'.freeze
   CAMPUS  = 'Campus'.freeze
   YOUTUBE = 'YouTube'.freeze      # Is it helpful to make this distinct?
+  VIMEO   = 'Vimeo'.freeze        # Is it helpful to make this distinct?  for now, seems like yes
   FACEBOOK = 'FaceBook'.freeze    # Is it helpful to make this distinct?
   PODCAST = 'Podcast'.freeze
   ONLINE  = 'Online'.freeze       # Meant to be an "other" catch-all
-  ESTORE  = 'e-Store'.freeze      # This is going away . . .
+  ESTORE  = 'e-Store'.freeze      # This is going away . . . (said Tal in 2018, but it's still there)
   PRINT   = 'Print'.freeze        # Books, pamphlets, Newsletter articles, etc. - physical media
   MOKUJI  = 'Mokuji'.freeze
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, PRINT, PODCAST, TAPE, CD, VHS, DISK, ONLINE].freeze  # approximately most to least used
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, VIMEO, PRINT, PODCAST, TAPE, CD, VHS, DISK, LP, ONLINE].freeze  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze

@@ -55,18 +55,24 @@ class ConferenceDirectoryPdf < Prawn::Document
         "VHS"
       when Publication::DISK then
         "DVD"
+      when Publication::LP then
+        "LP"
       when Publication::CAMPUS then
-        "C"
+        "ARC"
       when Publication::YOUTUBE then
         "YT"
+      when Publication::VIMEO then
+        "V"
       when Publication::PODCAST then
         "P"
       when Publication::ONLINE then
-        "D"
+        "D" # digital
       when Publication::ESTORE then
         "E"
       when Publication::PRINT then
-        "B"
+        "B" # book
+      when Publication::MOKUJI then
+        "M"
       else
         "?" # This means something was added to Publication FORMATS but not included here
       end
