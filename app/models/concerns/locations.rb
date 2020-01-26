@@ -22,6 +22,7 @@ module Locations
   def us_state_existence
     return true unless country == 'US'                 # ignore foreign states because we can't validate them
     return true if [VIRTUAL, MULTIPLE].include? venue  # allow blank in this case
+    state.upcase!
     errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
   end
 
