@@ -41,7 +41,7 @@ module Locations
     elements = [city.presence, state.presence]
     elements << [country_name.presence] if show_country.to_s == 'full'
     elements << [country.presence] if show_country.to_s == 'short'
-    elements.compact.join(', ')
+    elements.compact.join(',&nbsp;').html_safe
   end
 
 end

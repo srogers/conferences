@@ -24,3 +24,7 @@
     %p
       %b Description:
       = @organizer.description.try(:html_safe)
+
+%h3 Events
+= render :partial => "events/header"
+= render :partial => "events/conference", :collection => @events
