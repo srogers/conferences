@@ -62,12 +62,6 @@
                   = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_program_path(@conference, program), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
       - else
         %i none
-    %p
-      %b Documents:
-      - if @conference.program_url.present?
-        = link_to icon('far', 'file', class: 'fa-fw'), @conference.program_url, target: '_blank'
-      - else
-        %i none
     - if can? :edit, Conference
       %p
         %b Data entry completed:

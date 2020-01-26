@@ -96,10 +96,6 @@ class Conference < ApplicationRecord
     Rails.application.routes.url_helpers.event_url(self)
   end
 
-  def has_program?
-    program_url.present?
-  end
-
   def future?
     start_date > Date.today
   end
@@ -115,7 +111,6 @@ class Conference < ApplicationRecord
       'State'       => :state,
       'Country'     => :country,
       'Completed'   => :completed,
-      'Program'     => :has_program?,
       'URL'         => :url
   }
 

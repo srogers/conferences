@@ -155,7 +155,7 @@ class EventsController < ApplicationController
 
   def conference_params
     params.require(:conference).permit(
-      :name, :event_type, :description, :organizer_id, :registration_url, :program_url, :start_date, :end_date,
+      :name, :event_type, :description, :organizer_id, :registration_url, :start_date, :end_date,
       :venue, :venue_url, :city, :state, :country, :completed, :editors_notes
     )
   end
