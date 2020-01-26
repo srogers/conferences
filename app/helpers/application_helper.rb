@@ -322,7 +322,7 @@ module ApplicationHelper
     if thing.location.present?
       elements << ['––', location_with_non_us_country(thing, country_format)]
     end
-    elements.join(' ').html_safe
+    elements.join('&nbsp;').html_safe
   end
 
   # shows the location and includes the long or short country name when it's not "US" - takes a User or Conference

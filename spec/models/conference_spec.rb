@@ -61,6 +61,10 @@ RSpec.describe Conference, type: :model do
         expect(Conference.new(valid_attributes.merge(country: 'US', state: 'TX'))).to be_valid
       end
 
+      it "is not case-sensitive on state" do
+        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'tx'))).to be_valid
+      end
+
       it "is invalid with a non-existent state" do
         expect(Conference.new(valid_attributes.merge(country: 'US', state: 'Typo'))).not_to be_valid
       end

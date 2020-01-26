@@ -94,7 +94,6 @@ RSpec.describe ProgramsController, type: :controller do
       before { put :update, params: update_params }
 
       it "updates the requested program" do
-        puts "event_path  #{ event_path(event) }"
         expect(assigns(:program).description).to eq(update_params[:program][:description])
       end
 
@@ -130,7 +129,6 @@ RSpec.describe ProgramsController, type: :controller do
     end
 
     it "redirects to the event" do
-      puts "event_path  #{ event_path(event) }"
       delete :destroy, params: { id: program.to_param, event_id: event.to_param }
       expect(response).to redirect_to event_path(event)
     end

@@ -14,6 +14,7 @@ class OrganizersController < ApplicationController
   end
 
   def show
+    @events = @organizer.conferences.order('start_date DESC')
   end
 
   def edit
