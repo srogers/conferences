@@ -22,7 +22,7 @@ class EventsController < ApplicationController
       if params[:q].length == 4
         @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q])
       else
-        @conferences = @conferences.where("conferences.name LIKE ?", '%' + params[:q] + '%')
+        @conferences = @conferences.where("conferences.name ILIKE ?", '%' + params[:q] + '%')
       end
 
       page = 1       # autocomplete should always get page 1 limit 8
