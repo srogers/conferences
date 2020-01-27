@@ -71,6 +71,7 @@ namespace :db do
     puts "Set #{count} publication publishers, fixed #{changed} notes entries."
   end
 
+  # This shouldn't recur, but it might be a keeper, since it can be re-run non-destructively, and finds existing issues
   desc "Sets publication date when it can be unambiguously inferred from conference. Lists ones that can't be fixed. Can be re-run."
   task :set_publication_dates => :environment do
     puts
@@ -112,6 +113,7 @@ namespace :db do
     puts "looked at #{count} publications, changed #{changed}."
   end
 
+  # TODO - remove this during task cleanup
   desc 'A data migration task to initialize ARI Inventory from comments - delete after running.'
   task :set_ari_inventory => :environment do
     puts
