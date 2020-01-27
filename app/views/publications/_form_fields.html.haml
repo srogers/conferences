@@ -51,6 +51,9 @@
 
 .row
   .col-md-12
+    = f.input :publisher, hint: 'Generally, the entity named in the copyright statement.'
+.row
+  .col-md-12
     = f.label "Editor's Notes", for: 'publication_editors_notes'
     = f.trix_editor :editors_notes
     .small.mb-3 Only visible to other editors. Use for source documentation and any notes other editors might find useful.

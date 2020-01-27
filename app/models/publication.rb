@@ -124,13 +124,14 @@ class Publication < ApplicationRecord
       'Published On'      => :published_on,
       'Format'            => :format,
       'Duration'          => :duration,
+      'Publisher'         => :publisher,
       'ARI Inventory'     => :ari_inventory,
       'Notes'             => :notes,               # multi-part info, and details that distinguish one copy from another
       'Media URL'         => :url,
       'Presentation URL'  => :publication_url,
       'Description'       => :clean_description,   # contains a generated one-liner intended for FB meta data
-      'Details'           => :clean_details,       # contains supplemental
-      'Editors Notes'     => :clean_editors_notes,
+      'Details'           => :clean_details,       # contains supplemental info and references
+      'Editors Notes'     => :clean_editors_notes, # references and addresses potential ambiguities and unknowns
   }
 
   # DocumentWorker uses this to get the header for generated CSV output

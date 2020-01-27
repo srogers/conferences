@@ -21,8 +21,10 @@
     %h5= @conference.event_type
 .row.mt-1
   .col-md-12
+    -# TODO Why is this so intensely styled up?
     %div{style: 'line-height: 1.2rem; margin-bottom: 15px'}
-      %div{style: 'font-size: 18pt; margin-bottom: 5px'}= @conference.name
+      %div{style: 'font-size: 18pt; margin-bottom: 5px'}
+        %strong= @conference.name
       %div{style: 'font-size: 1rem'}= @conference.date_span
       %div{style: 'font-size: 1rem'}
         by

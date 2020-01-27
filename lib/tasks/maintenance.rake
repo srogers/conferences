@@ -27,6 +27,51 @@ namespace :db do
     puts "looked at #{count} speakers, set #{changed} bio dates."
   end
 
+  # TODO - probably can remove this one once it's been run on production
+  desc "Initializes publication publisher with info from notes, where present - clean up notes where possible"
+  task :set_publication_publisher => :environment do
+    puts
+    puts "handling publications . . ."
+    count = 0
+    changed = 0
+    Publication.find_each do |publication|
+      next if publication.notes.blank?
+
+      if publication.notes.include?("Second Renaissance / Ayn Rand Bookstore")
+        count += 1
+        publication.publisher = 'Second Renaissance / Ayn Rand Bookstore'
+        if publication.notes.include?('Second Renaissance / Ayn Rand Bookstore - ')
+          changed += 1
+          publication.notes.gsub!('Second Renaissance / Ayn Rand Bookstore - ','')
+        else
+          changed += 1
+          publication.notes.gsub!('Second Renaissance / Ayn Rand Bookstore','')
+        end
+      end
+
+      if publication.notes.include?("Second Renaissance - ")
+        count += 1
+        changed += 1
+        publication.publisher = 'Second Renaissance'
+        publication.notes.gsub!('Second Renaissance - ','')
+      end
+
+      publication.save
+
+      if publication.errors.present?
+        puts # get on a new line
+        puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+      end
+      if count % 100 == 0
+        print "." # I'm not hung!
+        STDOUT.flush
+      end
+    end
+    puts
+    puts "Set #{count} publication publishers, fixed #{changed} notes entries."
+  end
+
+  # This shouldn't recur, but it might be a keeper, since it can be re-run non-destructively, and finds existing issues
   desc "Sets publication date when it can be unambiguously inferred from conference. Lists ones that can't be fixed. Can be re-run."
   task :set_publication_dates => :environment do
     puts
@@ -68,6 +113,7 @@ namespace :db do
     puts "looked at #{count} publications, changed #{changed}."
   end
 
+  # TODO - remove this during task cleanup
   desc 'A data migration task to initialize ARI Inventory from comments - delete after running.'
   task :set_ari_inventory => :environment do
     puts
