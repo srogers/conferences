@@ -49,6 +49,16 @@
       - else
         %i none
 
+.row
+  .col-md-12
+    %p
+      %b Publisher
+      %br
+      - if @publication.publisher.present?
+        = @publication.publisher
+      - else
+        %i unspecified
+
 - if @publication.physical?
   .row
     .col-md-12
