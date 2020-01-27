@@ -23,6 +23,7 @@ module Locations
     return true unless country == 'US'                 # ignore foreign states because we can't validate them
     return true if [VIRTUAL, MULTIPLE].include? venue  # allow blank in this case
     state.upcase!
+    return true if city.blank?                         # if city is skipped, state can be too - needed for events with sketchy info
     errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
   end
 
