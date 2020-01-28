@@ -34,7 +34,7 @@ Rails.application.routes.draw do
       get :chart              # queries the data, renders the chart
       get :upcoming           # for the landing page
     end
-    resources :programs, except: [:index, :show] do
+    resources :programs, except: [:index] do
       member do
         get :download
       end

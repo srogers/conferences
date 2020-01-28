@@ -24,7 +24,7 @@ module PublicationsChart
       # This repeats the WHERE clause from the presentations controller so the the chart results will match the search results
       data = Publication.includes(:presentations => :conference).includes(:presentations => :speakers)
       data = filter_publications(data)
-      data = data.group("format").order("count(publications.id) DESC").count('publications.id')
+      data = data.group("format").order(Arel.sql("count(publications.id) DESC")).count('publications.id')
 
     # Handles the My Conferences case - TODO does this make sense for Publications?
     elsif param_context(:user_id).present?
@@ -35,7 +35,7 @@ module PublicationsChart
       # by count, limit might cut off publications with the same count as publications shown, which is misleading.
       # The floor value is a setting, because it changes fairly dynamically as more events are entered.
       # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
-      data = Publication.group("format").order("count(publications.id) DESC").count
+      data = Publication.group("format").order(Arel.sql("count(publications.id) DESC")).count
     end
 
     return data

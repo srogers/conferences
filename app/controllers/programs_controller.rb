@@ -3,6 +3,9 @@ class ProgramsController < ApplicationController
   before_action :get_event,   except: [:download]
   before_action :get_program, except: [:new, :create]
 
+  def show
+  end
+
   def edit
   end
 
