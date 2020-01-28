@@ -14,15 +14,20 @@
     %p
       - if @supplement.url.present?
         %b URL
-      - else
-        %b Download
-      %br
-      = linked_icon_for_supplement(@supplement, link_classes: 'mr-2')
-      = @supplement.name
-      - if @supplement.url.present?
+        %br
+        = linked_icon_for_supplement(@supplement, link_classes: 'mr-2')
+        = @supplement.name
         %br
         %span.fa.fa-fw.mr-2
         = @supplement.url
+
+      - else
+        %b Download
+        %br
+        = linked_icon_for_supplement(@supplement, link_classes: 'mr-2')
+        = @supplement.name + '.pdf'
+        - if @supplement.file_size.present?
+          = "(#{number_to_human_size @supplement.file_size})"
 .row
   .col-md-12
     %p

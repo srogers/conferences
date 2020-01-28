@@ -55,7 +55,12 @@
           - @conference.supplements.each do |supplement|
             .row
               .col-md-9
-                %li= safe_list_sanitizer.sanitize(supplement.description).try(:html_safe)
+                %li
+                  -# wrap the div in the description so it won't break the current line
+                  %div{style: 'display: inline-block'}
+                    = safe_list_sanitizer.sanitize(supplement.description).try(:html_safe)
+                  - if supplement.file_size.present?
+                    = "(#{number_to_human_size supplement.file_size})"
               .col-md-3.text-right
                 = linked_icon_for_supplement(supplement, link_classes: 'mr-2')
                 - if can? :edit, Supplement
