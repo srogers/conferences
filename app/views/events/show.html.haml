@@ -44,25 +44,25 @@
     %br
 .row
   .col-md-12
-    - if can? :create, Program
+    - if can? :create, Supplement
       .float-right
-        = link_to "Add", new_event_program_path(@conference), class: 'btn btn-secondary btn-sm'
+        = link_to "Add", new_event_supplement_path(@conference), class: 'btn btn-secondary btn-sm'
     %p
       %b Supplemental Info
       %br
-      - if @conference.programs.present?
+      - if @conference.supplements.present?
         %ul
-          - @conference.programs.each do |program|
+          - @conference.supplements.each do |supplement|
             .row
               .col-md-9
-                %li= safe_list_sanitizer.sanitize(program.description).try(:html_safe)
+                %li= safe_list_sanitizer.sanitize(supplement.description).try(:html_safe)
               .col-md-3.text-right
-                = linked_icon_for_program(program, link_classes: 'mr-2')
-                - if can? :edit, Program
-                  = link_to icon('fas', 'eye', class: 'fa-sm'), event_program_path(@conference, program), class: "btn btn-xs btn-primary mr-1"
-                  = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_program_path(@conference, program), class: "btn btn-xs btn-primary mr-1"
-                - if can? :destroy, Program
-                  = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_program_path(@conference, program), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+                = linked_icon_for_supplement(supplement, link_classes: 'mr-2')
+                - if can? :edit, Supplement
+                  = link_to icon('fas', 'eye', class: 'fa-sm'), event_supplement_path(@conference, supplement), class: "btn btn-xs btn-primary mr-1"
+                  = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_supplement_path(@conference, supplement), class: "btn btn-xs btn-primary mr-1"
+                - if can? :destroy, Supplement
+                  = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_supplement_path(@conference, supplement), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
       - else
         %i none
     - if can? :edit, Conference

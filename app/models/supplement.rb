@@ -1,4 +1,4 @@
-class Program < ApplicationRecord
+class Supplement < ApplicationRecord
 
   mount_uploader :attachment, DocumentUploader
 

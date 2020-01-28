@@ -6,8 +6,8 @@
   .col-md-2
     = location_with_non_us_country conference, :short
   .col.d-none.d-md-block.text-center
-    - conference.programs.each do |program|
-      = linked_icon_for_program program
+    - conference.supplements.each do |supplement|
+      = linked_icon_for_supplement supplement
   - if can? :edit, Conference
     .col.d-none.d-md-block.text-center
       = icon('fas', 'check', :class => 'fa-lg fa-fw text-success') if conference.completed

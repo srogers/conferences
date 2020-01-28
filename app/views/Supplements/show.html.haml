@@ -1,5 +1,5 @@
 - content_for :head do
-  = tag :link, rel: 'canonical', href: event_program_path(@event, @program)
+  = tag :link, rel: 'canonical', href: event_supplement_path(@event, @supplement)
 
 = render partial: 'control_bar'
 
@@ -12,27 +12,27 @@
 .row
   .col-md-12
     %p
-      - if @program.url.present?
+      - if @supplement.url.present?
         %b URL
       - else
         %b Download
       %br
-      = linked_icon_for_program(@program, link_classes: 'mr-2')
-      = @program.name
-      - if @program.url.present?
+      = linked_icon_for_supplement(@supplement, link_classes: 'mr-2')
+      = @supplement.name
+      - if @supplement.url.present?
         %br
         %span.fa.fa-fw.mr-2
-        = @program.url
+        = @supplement.url
 .row
   .col-md-12
     %p
       %b Description
-      - if @program.description.present?
-        = safe_list_sanitizer.sanitize(@program.description).try(:html_safe)
+      - if @supplement.description.present?
+        = safe_list_sanitizer.sanitize(@supplement.description).try(:html_safe)
       - else
         %i none
 
-- if can?(:edit, @program)
+- if can?(:edit, @supplement)
   .row
     .col-md-12
       %p
@@ -40,7 +40,7 @@
         %br
         .card
           .card-body
-            = safe_list_sanitizer.sanitize(@program.editors_notes).try(:html_safe)
+            = safe_list_sanitizer.sanitize(@supplement.editors_notes).try(:html_safe)
 
 -# There's no social bar here, because only editor can see the Show page
 -#.row

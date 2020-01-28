@@ -1,4 +1,4 @@
-- title 'Add an Event Program'
+- title 'Add Supplemental Info'
 
 = render partial: 'control_bar'
 
@@ -7,6 +7,6 @@
     %h3
       Add supplemental info to
       = @event.name
-    = simple_form_for [@event, @program], url: event_programs_path(@event), :html => {:autocomplete => "off"}  do |f|
+    = simple_form_for [@event, @supplement], url: event_supplements_path(@event), :html => {:autocomplete => "off"}  do |f|
       = render :partial => "form_fields", :locals => {:f => f}
       = save_or_cancel f, params[:conference_id].present? ? event_path(@event) : event_path(@event), 'Create'
