@@ -25,6 +25,9 @@
             = content_tag :label, for: 'document_publications_true' do
               = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[publications]", id: "document_publications_true"
               Publications
+            = content_tag :label, for: 'document_supplements_true' do
+              = tag.input class: "radio_buttons required ml-4", type: "radio", value: "true", name: "document[supplements]", id: "document_supplement_true"
+              Supplements
 
           = button_tag  icon('fas', 'cogs', class: 'fa-fw') + ' Generate', type: 'submit', class: 'btn btn-sm btn-primary ml-4'
 

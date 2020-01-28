@@ -59,8 +59,8 @@ class Document < ApplicationRecord
 
   # options are boolean attributes of the model that are set from the creation form.
   def options
-    # Currently publications only affects CSV
-    { events: events, presentations: presentations, speakers: speakers, publications: publications }
+    # Currently supplements only affects CSV
+    { events: events, presentations: presentations, speakers: speakers, publications: publications, supplements: supplements }
   end
 
   def destroy_uploader
