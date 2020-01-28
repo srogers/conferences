@@ -86,7 +86,9 @@
     .col-md-12
       %p
         %b Editor's Notes
-        = safe_list_sanitizer.sanitize(@conference.editors_notes).try(:html_safe)
+        .card
+          .card-body
+            = safe_list_sanitizer.sanitize(@conference.editors_notes).try(:html_safe)
 
 .row
   .col-md-12

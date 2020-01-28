@@ -100,6 +100,15 @@ class Conference < ApplicationRecord
     start_date > Date.today
   end
 
+  # The "clean" methods give the contents of rich-text fields with any HTML tags stripped out (for CSV export)
+  def clean_description
+    ActionView::Base.full_sanitizer.sanitize(description)
+  end
+
+  def clean_editors_notes
+    ActionView::Base.full_sanitizer.sanitize(editors_notes)
+  end
+
   # Hash of human-friendly CSV column names and the methods that get the data
   TITLES_AND_METHODS = {
       'Name'        => :name,
@@ -111,7 +120,9 @@ class Conference < ApplicationRecord
       'State'       => :state,
       'Country'     => :country,
       'Completed'   => :completed,
-      'URL'         => :url
+      'URL'         => :url,
+      'Description'   => :clean_description,
+      'Editors Notes' => :clean_editors_notes
   }
 
   # DocumentWorker uses this to get the header for generated CSV output
