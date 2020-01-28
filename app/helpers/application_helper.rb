@@ -143,10 +143,12 @@ module ApplicationHelper
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.
   def fb_social_bar(options={})
-    @sharable_object = @conference || @presentation || @publication || @speaker || false
+    @sharable_object = @conference || @presentation || @publication || @speaker || @program || false
+
+    return unless @sharable_object
 
     og_url         = options[:url]          || og_url_for(@sharable_object)
-    og_type        = options[:type]         || "article"
+    og_type        = options[:type]         || og_type_for(@sharable_object)
     og_title       = options[:title]        || og_title_for(@sharable_object)
     og_description = options[:description]  || @sharable_object.description
 
@@ -426,10 +428,20 @@ module ApplicationHelper
   def og_url_for(sharable_object)
     if sharable_object.is_a? Conference
       event_url sharable_object
+    elsif sharable_object.is_a? Program
+      event_program_path(sharable_object.conference, sharable_object)
     elsif sharable_object.present?
       polymorphic_url @sharable_object
     else
       request.base_url + request.path
+    end
+  end
+
+  def og_type_for(sharable_object)
+    if sharable_object.is_a? Program
+      sharable_object.url.present? ? 'website' : 'article'
+    else
+      'article'
     end
   end
 
@@ -440,6 +452,8 @@ module ApplicationHelper
       sharable_object.name
     elsif sharable_object.is_a? Publication
       sharable_object.name
+    elsif sharable_object.is_a? Program
+      sharable_object.name + (sharable_object.url.present? ? '' : '.pdf')
     else
       ''
     end

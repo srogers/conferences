@@ -6,11 +6,11 @@
 
       -# action-specific buttons
       - if action_name == 'show'
-        - if can?(:destroy, @program) && @program.conferences.empty?
+        - if can?(:destroy, @program) && @program.conference.blank?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_program_path(@program.conference_id, @program), :method => :delete, :class => "btn btn-sm btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @program
           = link_to "Edit", edit_event_program_path(@program.conference_id, @program), :class => "btn btn-sm btn-primary"
-        = link_to "Done", programs_path, :class => "btn btn-sm btn-secondary ml-3"
+        = link_to "Done", event_path(@event), :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
         = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_program').submit()"

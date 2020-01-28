@@ -59,6 +59,7 @@
               .col-md-3.text-right
                 = linked_icon_for_program(program, link_classes: 'mr-2')
                 - if can? :edit, Program
+                  = link_to icon('fas', 'eye', class: 'fa-sm'), event_program_path(@conference, program), class: "btn btn-xs btn-primary mr-1"
                   = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_program_path(@conference, program), class: "btn btn-xs btn-primary mr-1"
                 - if can? :destroy, Program
                   = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_program_path(@conference, program), :method => :delete, class: "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
