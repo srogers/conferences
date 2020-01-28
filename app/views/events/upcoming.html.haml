@@ -3,5 +3,5 @@
     = conference.name
     %br
     = conference.date_span
-    = location_with_non_us_country conference, :short
+    = location_with_non_us_country conference, country_format: :short
     = link_to icon('fas', 'info-circle', class: 'fa-fw'), event_path(conference)

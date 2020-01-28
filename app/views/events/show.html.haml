@@ -30,7 +30,7 @@
         by
         = @conference.organizer&.name
     %p
-      = location(@conference, :full)
+      = location(@conference, country_format: :full)
 
 .row.mt-1
   .col-md-12

@@ -306,8 +306,11 @@ module ApplicationHelper
     %w(a e i o u).include?(word[0].downcase) ? "an #{word}" : "a #{word}"
   end
 
-  # Shows a complete location for an Event or Presentation - country_format can be false, :short, or :full
-  def location(thing, country_format=:short)
+  # Shows a complete location for an Event or Presentation. options
+  # :country_format - false, :short, or :full  default = :short
+  # :wrapping       - default false, uses &nbsp; as a separator.
+  #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
+  def location(thing, options={})
     return 'unspecified' unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
     return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
 
@@ -322,14 +325,14 @@ module ApplicationHelper
       end
     end
     if thing.location.present?
-      elements << ['––', location_with_non_us_country(thing, country_format)]
+      elements << ['––', location_with_non_us_country(thing, country_format: options[:country_format] || :short)]
     end
-    elements.join('&nbsp;').html_safe
+    elements.join(options[:wrapping] ? ' ' : '&nbsp;').html_safe
   end
 
   # shows the location and includes the long or short country name when it's not "US" - takes a User or Conference
-  def location_with_non_us_country(thing, format=:short)
-    thing.location(thing.country == 'US' ? false : format)
+  def location_with_non_us_country(thing, options={})
+    thing.location(thing.country == 'US' ? { country_format: false } : { country_format: options[:country_format] || :short })
   end
 
   # This is the entry point for getting formatted dates - wraps crashy and ugly strftime with a

@@ -37,13 +37,18 @@ module Locations
     end
   end
 
-  # Returns the whole location, in a format that makes sense with the label  Venue:
-  def location(show_country=false)
+  # Returns the whole location, in a format that makes sense with the label "Venue:"  Options:
+  # :country_format - false, :short, or :full  default = :short
+  # :wrapping       - default false, uses &nbsp; as a separator.
+  #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
+  # :include_us     - by default, country is omitted unless it is non-US
+  def location(options={})
     return venue if [VIRTUAL, MULTIPLE].include? venue
+    include_country = options[:include_us] || country != 'US'
     elements = [city.presence, state.presence]
-    elements << [country_name.presence] if show_country.to_s == 'full'
-    elements << [country.presence] if show_country.to_s == 'short'
-    elements.compact.join(',&nbsp;').html_safe
+    elements << [country_name.presence] if options[:country_format].to_s == 'full' && include_country
+    elements << [country.presence] if options[:country_format].to_s == 'short' && include_country
+    elements.compact.join(options[:wrapping] ? ' ': '&nbsp;').html_safe
   end
 
 end

@@ -103,7 +103,7 @@ class ConferenceDirectoryPdf < Prawn::Document
         table_data << [
           "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
           conference.date_span(compact: true),
-          conference.location
+          conference.location(wrapping: true, country_format: :short)   # because PDFs don't support &nbsp; entity
         ]
       end
       table table_data, :cell_style => { :inline_format => true, :border_width => 0 }

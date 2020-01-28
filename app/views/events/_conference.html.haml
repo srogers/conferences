@@ -4,7 +4,7 @@
     %br
     = conference.date_span
   .col-md-2
-    = location_with_non_us_country conference, :short
+    = location_with_non_us_country conference, country_format: :short
   .col.d-none.d-md-block.text-center
     - conference.supplements.each do |supplement|
       = linked_icon_for_supplement supplement
