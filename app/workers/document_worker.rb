@@ -42,7 +42,7 @@ class DocumentWorker
       class_name = 'conference' if class_name == 'events' # patch events back to existing conferences model
       klass = class_name.classify.safe_constantize
 
-      # To make this work, implement Class method #csv_header and instance method #csv_row on conference, presentation, and speaker.
+      # To make this work, implement Class method #csv_header and instance method #csv_row on the target models.
       CSV.open(temp_file.path, "wb") do |csv|
         csv << klass.csv_header
         # find_each doesn't support sorting, but it's a CSV, so sort it yourself in the spreadsheet.

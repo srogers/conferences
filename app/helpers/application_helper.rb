@@ -143,10 +143,12 @@ module ApplicationHelper
   # The button won't work without the associated meta tags, and the helper brings both of those things together in one shot.
   # The FB analytics initialization is built into the application template and happens on every page - that's a separate system.
   def fb_social_bar(options={})
-    @sharable_object = @conference || @presentation || @publication || @speaker || false
+    @sharable_object = @conference || @presentation || @publication || @speaker || @supplement || false
+
+    return unless @sharable_object
 
     og_url         = options[:url]          || og_url_for(@sharable_object)
-    og_type        = options[:type]         || "article"
+    og_type        = options[:type]         || og_type_for(@sharable_object)
     og_title       = options[:title]        || og_title_for(@sharable_object)
     og_description = options[:description]  || @sharable_object.description
 
@@ -304,8 +306,11 @@ module ApplicationHelper
     %w(a e i o u).include?(word[0].downcase) ? "an #{word}" : "a #{word}"
   end
 
-  # Shows a complete location for an Event or Presentation - country_format can be false, :short, or :full
-  def location(thing, country_format=:short)
+  # Shows a complete location for an Event or Presentation. options
+  # :country_format - false, :short, or :full  default = :short
+  # :wrapping       - default false, uses &nbsp; as a separator.
+  #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
+  def location(thing, options={})
     return 'unspecified' unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
     return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
 
@@ -320,14 +325,14 @@ module ApplicationHelper
       end
     end
     if thing.location.present?
-      elements << ['––', location_with_non_us_country(thing, country_format)]
+      elements << ['––', location_with_non_us_country(thing, country_format: options[:country_format] || :short)]
     end
-    elements.join('&nbsp;').html_safe
+    elements.join(options[:wrapping] ? ' ' : '&nbsp;').html_safe
   end
 
   # shows the location and includes the long or short country name when it's not "US" - takes a User or Conference
-  def location_with_non_us_country(thing, format=:short)
-    thing.location(thing.country == 'US' ? false : format)
+  def location_with_non_us_country(thing, options={})
+    thing.location(thing.country == 'US' ? { country_format: false } : { country_format: options[:country_format] || :short })
   end
 
   # This is the entry point for getting formatted dates - wraps crashy and ugly strftime with a
@@ -426,10 +431,20 @@ module ApplicationHelper
   def og_url_for(sharable_object)
     if sharable_object.is_a? Conference
       event_url sharable_object
+    elsif sharable_object.is_a? Supplement
+      event_supplement_path(sharable_object.conference, sharable_object)
     elsif sharable_object.present?
       polymorphic_url @sharable_object
     else
       request.base_url + request.path
+    end
+  end
+
+  def og_type_for(sharable_object)
+    if sharable_object.is_a? Supplement
+      sharable_object.url.present? ? 'website' : 'article'
+    else
+      'article'
     end
   end
 
@@ -440,6 +455,8 @@ module ApplicationHelper
       sharable_object.name
     elsif sharable_object.is_a? Publication
       sharable_object.name
+    elsif sharable_object.is_a? Supplement
+      sharable_object.name + (sharable_object.url.present? ? '' : '.pdf')
     else
       ''
     end

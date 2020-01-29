@@ -23,21 +23,31 @@ $ ->
     $("#document_presentations_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
     $("#document_publications_true").prop('checked', false)
+    $("#document_supplements_true").prop('checked', false)
 
   $('#document_presentations_true').click ->
     $("#document_events_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
     $("#document_publications_true").prop('checked', false)
+    $("#document_supplements_true").prop('checked', false)
 
   $('#document_speakers_true').click ->
     $("#document_events_true").prop('checked', false)
     $("#document_presentations_true").prop('checked', false)
     $("#document_publications_true").prop('checked', false)
+    $("#document_supplements_true").prop('checked', false)
 
   $('#document_publications_true').click ->
     $("#document_events_true").prop('checked', false)
     $("#document_presentations_true").prop('checked', false)
     $("#document_speakers_true").prop('checked', false)
+    $("#document_supplements_true").prop('checked', false)
+
+  $('#document_supplements_true').click ->
+    $("#document_events_true").prop('checked', false)
+    $("#document_presentations_true").prop('checked', false)
+    $("#document_speakers_true").prop('checked', false)
+    $("#document_publications_true").prop('checked', false)
 
   # Reloads the document list if there are queued or working documents
   if $("td:contains('queued')").length > 0 || $("td:contains('working')").length > 0

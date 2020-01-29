@@ -94,6 +94,18 @@ GROUP BY pr.id"
     ActionView::Base.full_sanitizer.sanitize(description)
   end
 
+  def clean_editors_notes
+    ActionView::Base.full_sanitizer.sanitize(editors_notes)
+  end
+
+  def event_date
+    if conference&.start_date.present?
+      ApplicationController.helpers.pretty_date conference.start_date, style: :long
+    else
+      'n/a'
+    end
+  end
+
   def has_handout?
     handout.present?
   end
@@ -110,6 +122,7 @@ GROUP BY pr.id"
   TITLES_AND_METHODS = {
     'Name'        => :name,
     'Event'       => :conference_name,
+    'Event Date'  => :event_date,               # The event start date, so presentations in a series will sort together
     'Date'        => :date,
     'Venue'       => :venue,
     'City'        => :city,
@@ -119,7 +132,8 @@ GROUP BY pr.id"
     'Tags'        => :tag_names,
     'Handout'     => :has_handout?,
     'URL'         => :url,
-    'Description' => :clean_description
+    'Description' => :clean_description,
+    'Editors Notes' => :clean_editors_notes
   }
 
   # DocumentWorker uses this to get the header for generated CSV output

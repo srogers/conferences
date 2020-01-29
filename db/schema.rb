@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_26_192720) do
+ActiveRecord::Schema.define(version: 2020_01_28_180630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 2020_01_26_192720) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "publications", default: false
+    t.boolean "supplements", default: false
   end
 
   create_table "friendly_id_slugs", id: :serial, force: :cascade do |t|
@@ -144,22 +145,6 @@ ActiveRecord::Schema.define(version: 2020_01_26_192720) do
     t.index ["creator_id"], name: "index_presentations_on_creator_id"
   end
 
-  create_table "programs", force: :cascade do |t|
-    t.bigint "conference_id"
-    t.bigint "creator_id"
-    t.string "name"
-    t.string "description"
-    t.string "attachment"
-    t.string "url"
-    t.string "content_type"
-    t.string "file_size"
-    t.string "editors_notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["conference_id"], name: "index_programs_on_conference_id"
-    t.index ["creator_id"], name: "index_programs_on_creator_id"
-  end
-
   create_table "publications", force: :cascade do |t|
     t.bigint "creator_id"
     t.date "published_on"
@@ -207,6 +192,22 @@ ActiveRecord::Schema.define(version: 2020_01_26_192720) do
     t.string "title"
     t.date "bio_on"
     t.index ["creator_id"], name: "index_speakers_on_creator_id"
+  end
+
+  create_table "supplements", force: :cascade do |t|
+    t.bigint "conference_id"
+    t.bigint "creator_id"
+    t.string "name"
+    t.string "description"
+    t.string "attachment"
+    t.string "url"
+    t.string "content_type"
+    t.string "file_size"
+    t.string "editors_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conference_id"], name: "index_supplements_on_conference_id"
+    t.index ["creator_id"], name: "index_supplements_on_creator_id"
   end
 
   create_table "taggings", id: :serial, force: :cascade do |t|

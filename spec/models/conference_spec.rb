@@ -9,7 +9,8 @@ RSpec.describe Conference, type: :model do
       :event_type  => Conference::CONFERENCE,
       :organizer_id => organizer.id,
       :start_date   => '2005/07/15'.to_date,
-      :end_date     => '2005/07/23'.to_date
+      :end_date     => '2005/07/23'.to_date,
+      :venue        => Conference::PHYSICAL
     }
   }
 
@@ -58,19 +59,19 @@ RSpec.describe Conference, type: :model do
 
     context "when country is US" do
       it "is valid with a valid state" do
-        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'TX', venue: Conference::PHYSICAL))).to be_valid
+        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'TX'))).to be_valid
       end
 
       it "is not case-sensitive on state" do
-        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'tx', venue: Conference::PHYSICAL))).to be_valid
+        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'tx'))).to be_valid
       end
 
       it "is invalid with a non-existent state" do
-        expect(Conference.new(valid_attributes.merge(country: 'US', state: 'Typo', venue: Conference::PHYSICAL))).not_to be_valid
+        expect(Conference.new(valid_attributes.merge(country: 'US', city: 'Sometown', state: 'Typo'))).not_to be_valid
       end
 
       it "allows blank when the city is blank" do
-        expect(Conference.new(valid_attributes.merge(country: 'US', city: '', state: '', venue: Conference::PHYSICAL))).not_to be_valid
+        expect(Conference.new(valid_attributes.merge(country: 'US', city: '', state: ''))).to be_valid
       end
     end
 
