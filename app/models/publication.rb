@@ -69,9 +69,14 @@ class Publication < ApplicationRecord
     HAS_DURATION.include? format
   end
 
-  # For determining which items can be in inventory at all
+  # For determining which items can be in inventory at all. We're not tracking ARI inventory for things like
+  # YouTube, Campus, E-store, etc. which are probably retained at the ARI in some form. Just physical media.
   def physical?
     PHYSICAL.include? format
+  end
+
+  def ari_inventory_text
+    physical? ? ari_inventory : 'n/a'
   end
 
   # synthesize a description for FB sharing
@@ -125,7 +130,7 @@ class Publication < ApplicationRecord
       'Format'            => :format,
       'Duration'          => :duration,
       'Publisher'         => :publisher,
-      'ARI Inventory'     => :ari_inventory,
+      'ARI Inventory'     => :ari_inventory_text,  # Shows N/A for non-physical items, which lines up with the UI
       'Notes'             => :notes,               # multi-part info, and details that distinguish one copy from another
       'Media URL'         => :url,
       'Presentation URL'  => :publication_url,

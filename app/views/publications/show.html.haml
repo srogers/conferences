@@ -59,6 +59,8 @@
       - else
         %i unspecified
 
+-# We're not tracking this for things like YouTube, Campus, E-store, etc. which are probably retained at
+-# the ARI in some form, only physical media. FALSE does not mean proven to not have a copy.
 - if @publication.physical?
   .row
     .col-md-12
