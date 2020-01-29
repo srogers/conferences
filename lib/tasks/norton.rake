@@ -8,22 +8,11 @@ namespace :db do
     # add FLAG=anything to set one of the input flags
     @verbose   = ENV['verbose']   || ENV['VERBOSE']   # generates lots of output that might be of interest
     @debug     = ENV['debug']     || ENV['DEBUG']     # generates lots of output that probably isn't of interest unless you're modifying the script
-    @recommend = ENV['recommend'] || ENV['RECOMMEND'] # triggers examination of some issues that can be fixed and prints SQL to perform repairs
     @repair    = ENV['repair']    || ENV['REPAIR']    # triggers examination of some issues that can be fixed and performs repairs
 
-    raise "Don't use 'recommend' and 'repair' options together" if @recommend && @repair
     @verbose = true if @debug
 
-    # Prints out the success or failure details of an attempt to update an object
-    def report_repair_results(thing)
-      if thing.errors.present?
-        puts "repair failed:  #{ thing.errors.full_messages.join(', ') }"
-      else
-        puts "repaired OK."
-      end
-    end
-
-    puts "Recommending repair SQL where possible" if @recommend
+    # puts "Recommending repair SQL where possible" if @recommend          this is the default
     puts "Automatically executing repair SQL where possible" if @repair
     puts "Find Orphans..."
 
@@ -91,18 +80,29 @@ namespace :db do
 
       #next if referenced_table == 'things' and reference['tablez'] == 'thing_owners'  # this is the general form
 
-      next if referenced_table == 'users' and reference['tablez'] == 'conference_users'          # users may have attended no conferences
-      next if referenced_table == 'conferences' and reference['tablez'] == 'conference_users'    # a conference might have no attendees in users
-      next if referenced_table == 'presentations' and reference['tablez'] == 'publications'      # a conference might have no attendees in users
-      next if referenced_table == 'speakers' and reference['tablez'] == 'presentation_speakers'  # a speaker may have no presentations yet
-      # next if referenced_table == 'organizers' and reference['tablez'] == 'conferences'         # an organizer may have no conferences - but there won't be many, so let's see these
+      next if referenced_table == 'conferences' and reference['tablez'] == 'conference_users'              # a conference might have no attendees in users
+      next if referenced_table == 'conferences' and reference['tablez'] == 'supplements'                   # a conference might have no supplemental info
+      next if referenced_table == 'presentations' and reference['tablez'] == 'presentation_publications'   # presentations often have no publications
+      next if referenced_table == 'presentations' and reference['tablez'] == 'publications'                # presentations often have no publications
+      next if referenced_table == 'presentations' and reference['tablez'] == 'user_presentations'          # this is related to optional notifications, not speakers
+      next if referenced_table == 'users' and reference['tablez'] == 'conference_users'                    # a user may have attended no conferences
+      # next if referenced_table == 'organizers' and reference['tablez'] == 'conferences'                  # an organizer may have no conferences - but there won't be many, so let's see these
+
+      # Notifications are user-created and optional, so most potential relationships pertaining to then will be missing
+      next if referenced_table == 'presentation_publications' and reference['tablez'] == 'notifications'
+      next if referenced_table == 'notifications' and reference['tablez'] == 'user_presentations'
+      next if referenced_table == 'user_presentations' and reference['tablez'] == 'notifications'
 
       # Skip optional relationships with foreign keys - usually this is about creator_id
       next if referenced_table == 'users' and reference['tablez'] == 'conferences' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'documents' and reference['columnz'] == 'creator_id'
       next if referenced_table == 'users' and reference['tablez'] == 'presentation_speakers' and reference['columnz'] == 'creator_id'
       next if referenced_table == 'users' and reference['tablez'] == 'presentations' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'presentation_publications' and reference['columnz'] == 'creator_id'
       next if referenced_table == 'users' and reference['tablez'] == 'publications' and reference['columnz'] == 'creator_id'
       next if referenced_table == 'users' and reference['tablez'] == 'speakers' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'supplements' and reference['columnz'] == 'creator_id'
+      next if referenced_table == 'users' and reference['tablez'] == 'user_presentations' and reference['columnz'] == 'user_id'
 
       puts "Checking #{ referenced_table } children in #{ reference['tablez'] }" if @verbose
       parent_sql = "SELECT * FROM \"#{ referenced_table }\" WHERE \"#{referenced_table}\".id NOT IN (SELECT DISTINCT #{reference['columnz']} FROM \"#{reference['tablez']}\")"
@@ -118,10 +118,49 @@ namespace :db do
         if @verbose
           puts "#{ referenced_table }: #{ parent.inspect } has no records pointing to it in #{ reference['tablez'] }"
         else
-          puts "#{ referenced_table } ID #{ parent['id']} has no records pointing to it in #{ reference['tablez'] }" + "#{ referenced_table == 'users' ? '.'+reference['columnz'] : '' }"
+          puts "#{ referenced_table } ID #{ parent['id']} #{parent['name']} has no records pointing to it in #{ reference['tablez'] }" + "#{ referenced_table == 'users' ? '.'+reference['columnz'] : '' }"
         end
       end
     end
+
+    puts
+    puts "checking publication dates . . ."
+    count = 0
+    changed = 0
+    Publication.find_each do |publication|
+      next if publication.published_on.present?
+
+      count += 1
+      # First, flag it for manual fix if it's from YouTube - because we can get that info
+      if publication.format ==  Publication::YOUTUBE
+        puts
+        puts "Fix publication ID #{ publication.id } '#{ publication.name }' manually - look up publication date on YouTube."
+        next
+      end
+
+      # Next, try to deduce it from the conference
+      if publication.presentations.present?
+        dates = publication.presentations.map{|p| p&.conference&.start_date}.compact.uniq
+        if dates.length == 1
+          changed += 1
+          if @repair
+            publication.published_on = dates.first + 1.year
+            publication.editors_notes = [publication.editors_notes, 'publication date estimated based on conference'].join("\n")
+            publication.save
+            puts "failed to save publication ID #{ publication.id }  '#{ publication.name }' - #{publication.errors.full_messages}" if publication.errors.present?
+          else
+            puts "recommendation: Publication ID #{publication.id } '#{ publication.name }' - assign publication date of: #{ dates.first + 1.year }"
+          end
+        elsif dates.length > 1
+          # puts "#{ publication.presentations.length }  #{ publication.presentations.map{|p| p&.conference&.start_date}.compact.join(',') } "
+          puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - pick among conference dates: #{dates.join(', ')}"
+        else
+          puts "manually fix publication ID #{ publication.id }  '#{ publication.name }' - can't deduce a date for it."
+        end
+      end
+    end
+    puts
+    puts "looked at #{count} publications, #{@repair ? 'recommended' : 'performed'} #{changed} changes."
 
     puts
     puts "Checking Speakers for possible duplicates . . ."
@@ -136,23 +175,6 @@ namespace :db do
           puts "Speaker ID #{ speaker.id } '#{speaker.name}' looks suspiciously like ID #{ candidate.id } #{candidate.name}"
           # don't report this one again
           speakers.delete_at(speakers.index(candidate))
-        end
-      end
-    end
-
-    puts
-    puts "Checking Presentations for possible duplicates . . ."
-    presentations = Presentation.select("id, name").to_ary  # This is maybe OK, if the query is limited to these two items, and we're in a rake task
-    presentations.each do |presentation|
-      presentations.each do |candidate|
-        next if candidate.id == presentation.id  # itself, not a duplicate
-        # See if the names are the same when all punctuation and fluff is stripped away
-        target_name = presentation.name.delete("^a-zA-Z ").downcase
-        candidate_name = candidate.name.delete("^a-zA-Z ").downcase
-        if target_name == candidate_name
-          puts "Presentation ID #{ presentation.id } '#{presentation.name}' looks suspiciously like ID #{ candidate.id } #{candidate.name}"
-          # don't report this one again - it's possible there could be other matches, but reporting reverse matches is very cluttery
-          presentations.delete_at(presentations.index(candidate))
         end
       end
     end
