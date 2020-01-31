@@ -12,6 +12,6 @@
 .row
   .col-md-12
     %h2 Contact Us
-
-    %p= mail_to "webmaster@objectivistconferences.info"
-
+    %p
+      If you have questions or comments,
+      = mail_to WEBMASTER_EMAIL, "drop us a line", subject: 'ObjectivistMedia: General'
