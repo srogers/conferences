@@ -152,6 +152,8 @@ The MAIL_HOST environment variable is expected to contain the canonical domain n
 a different domain, the ApplicationController redirects to the MAIL_HOST domain wth a 301 to keep search robots happy. This
 means that multiple domain names can be associated with the site, and the domain name can be changed by changing MAIL_HOST. 
 
+If the domain name changes, the domain for forced SSL must be updated in `config/environments/production.rb`
+
 #### DNS and Nameserver Setup on Domain.com
 
 Mapping from the Heroku instructions above to Domain.com - to setup a domain add DNS entries with the domain name, 
