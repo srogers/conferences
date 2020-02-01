@@ -16,9 +16,9 @@ class DocumentUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
-  # Provide a default URL as a default if there hasn't been a file uploaded:
+  # Provide a default image if a document hasn't been uploaded - TODO does this actually get shown anywhere?
   def default_url(*args)
-    ActionController::Base.helpers.asset_path("/assets/" + [version_name, "default_user_icon.png"].compact.join('_'))
+    "default_document_icon.png"
   end
 
   # Process files as they are uploaded:

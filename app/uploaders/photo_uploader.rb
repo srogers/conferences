@@ -16,9 +16,11 @@ class PhotoUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
-  # Provide a default URL as a default if there hasn't been a file uploaded:
+  # Provide a default image if a photo hasn't been uploaded - for speakers and users
   def default_url(*args)
-    ActionController::Base.helpers.asset_path("/assets/" + [version_name, "default_user_icon.png"].compact.join('_'))
+    #ActionController::Base.helpers.image_tag 'default_user_icon.png', alt: "No Image Provided"   # adding alt text breaks the URL
+    #ActionController::Base.helpers.asset_path "default_user_icon.png"                            # This works but seems unnecessary
+    "default_user_icon.png"
   end
 
   # Process files as they are uploaded:
