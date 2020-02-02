@@ -11,7 +11,7 @@ class SpeakersController < ApplicationController
   authorize_resource  # friendly_find is incompatible with load_resource
 
   def index
-    @speakers = Speaker.select('speakers.*').order(:sortable_name)
+    @speakers = Speaker.order(:sortable_name)
 
     # This handles the speaker autocomplete from the conference show page. Match first characters of first or last name.
     if params[:q].present?

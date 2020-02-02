@@ -48,6 +48,20 @@ class Speaker < ApplicationRecord
     photo.present?
   end
 
+  def presentation_count
+    presentations.length
+  end
+
+  def active_years
+    max = presentations.maximum(:date).year
+    min = presentations.minimum(:date).year
+    if max == min
+      return max
+    else
+      return "#{ min }-#{ max }"
+    end
+  end
+
   def url
     Rails.application.routes.url_helpers.speaker_url(self)
   end
