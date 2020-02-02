@@ -1,5 +1,5 @@
 .row.mb-2
-  .col= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
+  .col-sm-6= link_to(truncate(speaker.name, length: 40), speaker_path(speaker))
 
   - if params[:heart].present?
     .col
@@ -7,6 +7,12 @@
       = icon('fas', 'id-badge', class: 'fa-fw') if speaker.photo.blank?
 
   .col
+    = speaker.active_years
+
+  .col.text-center
+    = speaker.presentation_count
+
+  .col.text-right
     - if can? :edit, speaker
       = link_to icon('far', 'edit', class: 'fa-fw'), edit_speaker_path(speaker), :class => "btn btn-sm btn-primary"
     -if can?(:destroy, speaker) && speaker.presentations.empty?

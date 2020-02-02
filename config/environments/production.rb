@@ -24,6 +24,10 @@ Rails.application.configure do
   # This must be paired with "config.public_file_server.enabled = true" or no assets will be served at all.
   config.assets.compile = false
 
+  # This comes from https://devcenter.heroku.com/articles/getting-started-with-rails5
+  # Has to be true when assets.compile = false
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
@@ -101,10 +105,6 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  # This comes from https://devcenter.heroku.com/articles/getting-started-with-rails5
-  # Has to be true when assets.compile = false
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)

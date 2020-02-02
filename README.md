@@ -123,7 +123,7 @@ The Heroku config vars need to include values for the following:
     S3_SECRET_KEY             (not in development)
     FB_APP_ID                 (use staging for develop - separate ID for production)
     GA_TRACKING_ID            (the Google Analytics tracking code - using staging for develop - staging: UA-90993426-2   production: UA-90993426-1 )
-    MAIL_HOST                 (sets action_mailer.default_url_options - should NOT include http:// prefix)
+    MAIL_HOST                 (sets action_mailer.default_url_options - should NOT include http:// prefix. Used as the canonical domain name)
 
 The app won't deploy (asset precompile will fail) if these are not defined, because the app won't boot. Set them with
 the Heroku config command, like:
@@ -140,6 +140,31 @@ The site config and DNS hosting is migrated from the old appname.herokuapp.com f
 The details are explained [here](https://devcenter.heroku.com/articles/custom-domains).
 Once paid dynos are turned on, [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management)
 can be enabled, which easily and cheaply gets the site secure.
+
+### Domain Name Managment
+
+- objectivistmedia.com  <= Canonical domain name
+- objectivistmedia.info
+- objectivistmedia.net
+- objectivistconferences.info
+
+The MAIL_HOST environment variable is expected to contain the canonical domain name of the site. If the user arrives from
+a different domain, the ApplicationController redirects to the MAIL_HOST domain wth a 301 to keep search robots happy. This
+means that multiple domain names can be associated with the site, and the domain name can be changed by changing MAIL_HOST. 
+
+If the domain name changes, the domain for forced SSL must be updated in `config/environments/production.rb`
+
+#### DNS and Nameserver Setup on Domain.com
+
+Mapping from the Heroku instructions above to Domain.com - to setup a domain add DNS entries with the domain name, 
+followed by `herokudns.com` - at least one for the root, and optionally for www subdomain. For example:
+
+|Type | Name | Content |
+| --- | --- | --- |
+|CNAME | www | www.objectivistconferences.info.herokudns.com |
+|CNAME | @    |  objectivistconferences.info.herokudns.com |
+
+If the nameservers point to parked name servers, change them to `ns1.domain.com` and `ns2.domain.com`.
 
 ### Heroku Database Configuration
 

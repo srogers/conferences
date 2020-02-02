@@ -1,3 +1,8 @@
+-# jQuery looks at these to see which formats are PHYSICAL
+.formats{style: 'display: none'}
+  - Publication::PHYSICAL.each do |format|
+    %span.physical_format= format
+
 -# Name and Speaker Names matter only for orphan publications in order to later find and attach them to the right presentations.
 -# Name remains editable however, because it is still shown in the publications listing.
 - if @publication.presentations.empty? || controller_name == 'publications'
@@ -38,20 +43,23 @@
       = hidden_field_tag :canonical, "false"
       = check_box_tag :canonical, "true", canonical?(@presentation, @publication)
       - label_text = icon('fas', 'crown', :class => 'fa-fw text-warning')
-      - label_text += " This publication is specifically <i>".html_safe
-      - label_text += @presentation.name
-      - label_text += '</i> presented at '.html_safe
-      - label_text += @presentation.conference_name
+      - label_text += " This publication is specifically".html_safe
+      - label_text += [ ' <i>', @presentation.name, '</i> '].join.html_safe
+      - if @presentation.conference_name.present?
+        - label_text += 'presented at '.html_safe
+        - label_text += @presentation.conference_name
+      - else
+        - label_text += 'from this specific presentation'.html_safe
       = label_tag :canonical, label_text
 
-- if @publication.physical?
+#for_physical_publications
   .row
-    .col-md-12
+    .col-md-12.mt-3
       = f.input :ari_inventory, as: :boolean, label: "In ARI inventory"
 
-.row
-  .col-md-12
-    = f.input :publisher, hint: 'Generally, the entity named in the copyright statement.'
+  .row
+    .col-md-12
+      = f.input :publisher, hint: 'Generally, the entity named in the copyright statement.'
 .row
   .col-md-12
     = f.label "Editor's Notes", for: 'publication_editors_notes'

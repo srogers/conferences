@@ -67,7 +67,7 @@ module StickyNavigation
   # into the current context. E.g., clicking Done on event/show could go up to /events, but if we navigated to the event
   # via a presentation, then it makes sense to go back to that context.
   def deduce_done_path
-    logger.debug "Deduce Done path from:  session[:via] = #{ session[:via]} params[:nav] = #{ params[:nav]}"
+    logger.debug "Deduce Done path from:  session[:via] = '#{ session[:via]}'   params[:nav] = '#{ params[:nav]}'"
     # a few special cases
     return send("root_path") if action_name == 'summary' && !current_user.admin?
     if session[:via].present?
@@ -79,6 +79,9 @@ module StickyNavigation
       elsif @presentation&.speakers&.length == 1 && session[:via] == 'speakers'
         # with multiple speakers, we don't know which one to return to, so just punt that
         speaker_path(@presentation.speakers.first)
+      elsif @publication&.presentations&.length == 1 &&  session[:via] == 'presentations'
+        # it looks like we got to a publication from a presentation, so go back there if there's a distinct one.
+        presentation_path(@publication.presentations.first)
       else
         send("#{session[:via]}_path")
       end
