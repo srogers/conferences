@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get '/tips',    to: 'pages#tips',            as: :tips
   get '/contact', to: 'pages#contact',         as: :contact
   get '/robots',  to: 'pages#robots',          as: :robots
+  get '/privacy_policy', to: 'pages#privacy_policy', as: :privacy_policy
 
   get '/activate/:id',              to: 'activations#create', as: :activation
   get '/register/:activation_code', to: 'activations#new',    as: :registration

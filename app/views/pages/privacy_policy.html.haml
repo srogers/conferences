@@ -1,0 +1,14 @@
+= render partial: 'menu'
+- title 'Privacy Policy'
+
+.row
+  .col-md-12
+    = safe_list_sanitizer.sanitize(@privacy_policy&.content).try(:html_safe)
+
+.row.mt-4
+  .col-md-12
+    %p
+      Version
+      = @privacy_policy&.version
+      Last updated
+      = pretty_date(@privacy_policy.updated_at)

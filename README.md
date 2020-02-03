@@ -280,6 +280,12 @@ Production uses [Automated Certificate Management](https://devcenter.heroku.com/
 and is forced into SSL mode in production config. Staging does not force SSL, because it runs on free dynos, and isn't
 eligible for ACM. Domains have to be [configured](https://devcenter.heroku.com/articles/custom-domains) by pointing DNS to the herokudns URLs and not the old style herokuapp URLs.
 
+## Managed Text
+
+The Passages model holds versioned text to allow for semi-static pages that can be updated without re-deploying.
+This was initially created to support the Privacy Policy (required for Facebook integration) but can be used anywhere.
+Only the admin has access to Passages.
+
 ## Facebook Integration
 
 Facebook likes and shares are handled using the FB SDK. FB defines an App ID and secret for use with the JS SDK, which
