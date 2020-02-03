@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       get :download
     end
   end
+  resources :passages
   resources :presentation_publications, only: [:create, :destroy]
   resources :presentation_speakers, only: [:create, :destroy]
   resources :presentations do
@@ -53,7 +54,7 @@ Rails.application.routes.draw do
       get :manage_speakers, :manage_publications, :download_handout
     end
     collection do
-      get :chart              # queries the data and pushes it to the chart in an array
+      get :chart                     # queries the data and pushes it to the chart in an array
       get :tags
     end
   end

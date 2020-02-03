@@ -6,15 +6,16 @@
 
     .collapse.navbar-collapse#navbarSupportedContent
       %ul.navbar-nav.mr-auto
-        %li.nav-item= link_to 'Events',        events_path(nav: 'reset'), class: 'nav-link' + current_tab?('events')
+        %li.nav-item= link_to 'Events',        events_path(nav: 'reset'),        class: 'nav-link' + current_tab?('events')
         %li.nav-item= link_to 'Presentations', presentations_path(nav: 'reset'), class: 'nav-link' + current_tab?('presentations')
-        %li.nav-item= link_to 'Speakers',      speakers_path(nav: 'reset'), class: 'nav-link' + current_tab?('speakers')
-        %li.nav-item= link_to 'Publications',  publications_path(nav: 'reset'), class: 'nav-link' + current_tab?('publications')
+        %li.nav-item= link_to 'Speakers',      speakers_path(nav: 'reset'),      class: 'nav-link' + current_tab?('speakers')
+        %li.nav-item= link_to 'Publications',  publications_path(nav: 'reset'),  class: 'nav-link' + current_tab?('publications')
         - if current_user&.admin?
           %li.nav-item= link_to 'Orgs',        organizers_path(nav: 'reset'), class: 'nav-link' + current_tab?('organizers')
-          %li.nav-item= link_to 'Docs',        documents_path(nav: 'reset'), class: 'nav-link' + current_tab?('documents')
-          %li.nav-item= link_to 'Users',       users_path(nav: 'reset'), class: 'nav-link' + current_tab?('users')
-          %li.nav-item= link_to 'Settings',    settings_path, class: 'nav-link' + current_tab?('settings')
+          %li.nav-item= link_to 'Docs',        documents_path(nav: 'reset'),  class: 'nav-link' + current_tab?('documents')
+          %li.nav-item= link_to 'Users',       users_path(nav: 'reset'),      class: 'nav-link' + current_tab?('users')
+          %li.nav-item= link_to 'Settings',    settings_path,                 class: 'nav-link' + current_tab?('settings')
+          %li.nav-item= link_to 'Text',        passages_path,                 class: 'nav-link' + current_tab?('text')
         - elsif current_user&.editor?
           %li.nav-item= link_to 'Docs',        documents_path(nav: 'reset'), class: 'nav-link' + current_tab?('documents')
         - elsif current_user&.reader?

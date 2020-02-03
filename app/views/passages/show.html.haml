@@ -1,0 +1,37 @@
+= render partial: 'control_bar'
+
+- title "Passage #{ @passage.name }"
+.row
+  .col-md-12
+    %h3 Passage
+    %p
+      Version
+      = @passage.version
+
+.row
+  .col-md-12
+    %p
+      %strong Name
+      %br
+      = @passage.name
+
+.row
+  .col-md-12
+    %p
+      %strong View
+      %br
+      = @passage.view
+
+.row
+  .col-md-12
+    %p
+      %strong Instance Variable Name
+      %br
+      = @passage.assign_var
+
+.row
+  .col-md-12
+    %p
+      %strong Content
+      %br
+      = safe_list_sanitizer.sanitize(@passage.content).try(:html_safe)
