@@ -6,9 +6,10 @@ describe UserSessionsController do
 
   let(:valid_params)  { { user_session: { email: ' spacey@example.com ', password: ' typo-city '} } }
 
+  before { @current_user = create :user, role: Role.reader }
+
   describe "when getting login form" do
     it "requires user is not currently logged in" do
-      @current_user = create :user, role: Role.reader
       log_in @current_user
       get :new
       expect(response).to redirect_to root_path
@@ -33,9 +34,22 @@ describe UserSessionsController do
         allow(UserSession).to receive(:new).and_return @mock_valid_session
       end
 
-      it "redirects to root path" do
-        post :create, params: valid_params
-        expect(response).to redirect_to root_path
+      context "with user having viewed current privacy policy" do
+        before do
+          expect(@current_user).to receive(:privacy_policy_current?).and_return(true)
+        end
+
+        it "redirects to root path" do
+          post :create, params: valid_params
+          expect(response).to redirect_to root_path
+        end
+      end
+
+      context "without user having viewed current privacy policy" do
+        it "redirects to the privacy policy" do
+          post :create, params: valid_params
+          expect(response).to redirect_to privacy_policy_path
+        end
       end
     end
 
