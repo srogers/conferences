@@ -26,7 +26,7 @@
     - if @presentation.try(:conference).try(:multi_venue?)
       %p
         %b Venue:
-        = location(@presentation, :full)
+        = location(@presentation, country_format: :full)
 
     - if @presentation.try(:conference).try(:multi_venue?) || @presentation.try(:conference).try(:virtual?)
       %p

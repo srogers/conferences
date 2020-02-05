@@ -143,6 +143,19 @@ can be enabled, which easily and cheaply gets the site secure.
 
 ### Domain Name Managment
 
+See the details [here](https://devcenter.heroku.com/articles/custom-domains). In brief steps:
+1. Add the domain on Heroku
+
+    `heroku domains:add www.objectivistmedia.com  --app conference-media`
+
+    This will kick back something like:
+    
+    Configure your app's DNS provider to point to the DNS Target `environmental-macaw-ilnjyapxk1fapcmtn6y7g06x.herokudns.com.`
+
+1. Configure the domain at DNS service provider using info from domain add command
+
+Current domains on the app:
+
 - objectivistmedia.com  <= Canonical domain name
 - objectivistmedia.info
 - objectivistmedia.net
@@ -163,6 +176,9 @@ followed by `herokudns.com` - at least one for the root, and optionally for www 
 | --- | --- | --- |
 |CNAME | www | www.objectivistconferences.info.herokudns.com |
 |CNAME | @    |  objectivistconferences.info.herokudns.com |
+
+Also, the "Domain Pointer" has to be changed in the "POINTER & SUBDOMAINS" section. Generally, it works to "stealth"
+point it to the Heroku DNS name, like "URL Stealth" => "http://conference-media.herokuapp.com"
 
 If the nameservers point to parked name servers, change them to `ns1.domain.com` and `ns2.domain.com`.
 
@@ -279,6 +295,12 @@ Currently there are no vendor assets.
 Production uses [Automated Certificate Management](https://devcenter.heroku.com/articles/automated-certificate-management#known-limitations)
 and is forced into SSL mode in production config. Staging does not force SSL, because it runs on free dynos, and isn't
 eligible for ACM. Domains have to be [configured](https://devcenter.heroku.com/articles/custom-domains) by pointing DNS to the herokudns URLs and not the old style herokuapp URLs.
+
+## Managed Text
+
+The Passages model holds versioned text to allow for semi-static pages that can be updated without re-deploying.
+This was initially created to support the Privacy Policy (required for Facebook integration) but can be used anywhere.
+Only the admin has access to Passages.
 
 ## Facebook Integration
 

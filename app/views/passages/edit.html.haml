@@ -1,0 +1,11 @@
+.row
+  .col-md-12
+    = title "Editing Passage: #{ @passage.name }, version: #{ @passage.version } "
+
+.row
+  .col-md-12
+    = simple_form_for @passage do |f|
+      = render :partial => "form_fields", :locals => {:f => f}
+      -# Go back to the concept if that's how we got here - otherwise go back to the passage
+      - path_for_cancel = request.referrer.present? && request.referrer.include?('concept') ? concept_path(@passage) : passage_path(@passage)
+      = save_or_cancel f, path_for_cancel

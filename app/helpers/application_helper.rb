@@ -50,6 +50,8 @@ module ApplicationHelper
       controller_name == 'users' && ['new'].include?(action_name)
     when 'login'
       controller_name == 'user_sessions'
+    when 'text'
+      controller_name == 'passages'
     else
       false
     end

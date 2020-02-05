@@ -16,8 +16,17 @@ class UserSessionsController < ApplicationController
 
     @user_session = UserSession.new(user_session_params.to_hash)  # TODO - this may get fixed in AuthLogic so the to_h can come off
     if @user_session.save
-      flash[:success] = "Welcome back!"
-      redirect_to root_path
+      if @user_session.user.privacy_policy_current?
+        flash[:success] = "Welcome back!"
+        redirect_to root_path
+      else
+        if @user_session.user.privacy_policy_version == '0.0'
+          flash[:notice] = "Please take a moment to familiarize yourself with our privacy policy"
+        else
+          flash[:notice] = "Our Privacy Policy has changed - please take a moment to review it"
+        end
+        redirect_to privacy_policy_path
+      end
     else
       Rails.logger.debug "Login attempt failed #{ @user_session.errors.full_messages.join(", ") }"
       render :new

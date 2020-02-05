@@ -130,6 +130,18 @@ class User < ApplicationRecord
     AccountCreationMailer.activation_notice(self).deliver_now
   end
 
+  def privacy_policy_current?
+    major, minor = Passage.current_privacy_policy_version&.split('.')
+    user_major, user_minor = privacy_policy_version.split('.')
+    major == user_major && minor == user_minor
+  end
+
+  # The pages controller calls this to mark the user as having seen the current Privacy Policy when it is served
+  def set_privacy_policy_current
+    version = Passage.current_privacy_policy_version
+    update_column(:privacy_policy_version, version) unless privacy_policy_version == version
+  end
+
   # shift all the user's content items to a new owner in preparation for deletion
   def pwnd!(owner)
     # Only allow this to happen if the user passed in as the new owner is an admin and the user account has been deactivated.

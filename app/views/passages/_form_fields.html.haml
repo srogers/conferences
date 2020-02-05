@@ -1,0 +1,17 @@
+.form_fields
+  = f.input :name, readonly: @passage.persisted?
+  = f.input :view, readonly: @passage.persisted?, hint: "The view referencing this content:  controller/view"
+  = f.input :assign_var, readonly: @passage.persisted?, label: 'Instance Variable Name', hint: 'must be a legal Ruby variable name'
+
+  - if @passage.persisted?
+    = f.input :update_type, as: :select, collection: Passage::UPDATE_TYPES, include_blank: false
+
+  -# Description needs an explicit error treatment because trix_editor isn't integrated with simple_form.
+  -# The error CSS is patched in rails_errors_css.scss in order to work with it.
+  .form-group{class: "content required string" + (@passage.errors.messages[:content].present? ? " has-error" : "")}
+    = f.label :content, class: 'control-label'
+    = f.trix_editor :content
+    - if @passage.errors.present?
+      - @passage.errors.messages[:content].each do |message|
+        %span.help-block= message
+

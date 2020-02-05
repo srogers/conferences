@@ -1,0 +1,14 @@
+= title 'Passages'
+
+= render partial: 'control_bar'
+
+- if @passages.blank?
+  .row
+    .col-md-12
+    %p You haven't created any passages yet.
+
+- else
+  = render :partial => "header"
+  = render :partial => "passage", :collection => @passages
+
+  = render :partial => 'shared/pagination', locals: { collection: @passages }

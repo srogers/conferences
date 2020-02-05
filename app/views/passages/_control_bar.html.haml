@@ -1,0 +1,23 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark
+    .container
+      %ul.navbar-nav.mr-auto
+        - if can? :create, Passage
+          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
+            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_passage_path, class: 'nav-link', title: 'Add an Organization'
+
+      -# action-specific buttons
+      - if action_name == 'show'
+        - if can?(:destroy, @passage) && @passage.deletable?
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), passage_path(@passage), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+        - if can? :edit, @passage
+          = link_to "Edit", edit_passage_path(@passage), :class => "btn btn-sm btn-primary"
+        = link_to "Done", passages_path, :class => "btn btn-sm btn-secondary ml-3"
+
+      - elsif action_name == 'edit' || action_name == 'update'
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_passage').submit()"
+        = link_to "Cancel", passage_path(@passage), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_passage').submit()"
+        = link_to "Cancel",  passages_path, :class => "btn btn-sm btn-secondary ml-3"

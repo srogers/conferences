@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get '/tips',    to: 'pages#tips',            as: :tips
   get '/contact', to: 'pages#contact',         as: :contact
   get '/robots',  to: 'pages#robots',          as: :robots
+  get '/privacy_policy', to: 'pages#privacy_policy', as: :privacy_policy
 
   get '/activate/:id',              to: 'activations#create', as: :activation
   get '/register/:activation_code', to: 'activations#new',    as: :registration
@@ -46,6 +47,7 @@ Rails.application.routes.draw do
       get :download
     end
   end
+  resources :passages
   resources :presentation_publications, only: [:create, :destroy]
   resources :presentation_speakers, only: [:create, :destroy]
   resources :presentations do
@@ -53,7 +55,7 @@ Rails.application.routes.draw do
       get :manage_speakers, :manage_publications, :download_handout
     end
     collection do
-      get :chart              # queries the data and pushes it to the chart in an array
+      get :chart                     # queries the data and pushes it to the chart in an array
       get :tags
     end
   end

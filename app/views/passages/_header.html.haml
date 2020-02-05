@@ -1,0 +1,12 @@
+.row.mb-2
+  .col
+    = sorting_header 'Name', :passages_path, 'passages.name'
+  .col
+    = sorting_header 'View', :passages_path, 'passages.view'
+  .col
+    = sorting_header 'Instance Var', :passages_path, 'passages.assign_var'
+
+
+  - if can? :edit, Passage
+    .col
+      &nbsp;

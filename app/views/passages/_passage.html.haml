@@ -1,0 +1,10 @@
+.row.mb-2
+  .col= link_to passage.name, passage_path(passage)
+  .col= passage.view
+  .col= passage.assign_var
+
+  - if can? :edit, passage
+    .col-md-3.text-right
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_passage_path(passage), :class => "btn btn-xs btn-primary"
+      - if can?(:destroy, passage) && passage.deletable?
+        = link_to icon('far', 'trash-alt', class: 'fa-fw'), passage_path(passage), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
