@@ -9,7 +9,7 @@
 
       -# action-specific buttons
       - if action_name == 'show'
-        - if can?(:destroy, @passage)
+        - if can?(:destroy, @passage) && @passage.deletable?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), passage_path(@passage), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @passage
           = link_to "Edit", edit_passage_path(@passage), :class => "btn btn-sm btn-primary"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_03_151342) do
+ActiveRecord::Schema.define(version: 2020_02_04_034243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,8 @@ ActiveRecord::Schema.define(version: 2020_02_03_151342) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_passages_on_creator_id"
+    t.index ["name"], name: "index_passages_on_name", unique: true
+    t.index ["view", "assign_var"], name: "index_passages_on_view_and_assign_var", unique: true
   end
 
   create_table "presentation_publications", force: :cascade do |t|
@@ -292,6 +294,7 @@ ActiveRecord::Schema.define(version: 2020_02_03_151342) do
     t.string "sortable_name"
     t.string "time_format", default: "hh:mm"
     t.boolean "compact_presentations", default: false
+    t.string "privacy_policy_version", default: "0.0"
     t.index ["sortable_name"], name: "index_users_on_sortable_name"
   end
 

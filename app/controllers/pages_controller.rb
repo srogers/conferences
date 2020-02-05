@@ -9,5 +9,6 @@ class PagesController < ApplicationController
 
   def privacy_policy
     get_passages
+    @current_user.set_privacy_policy_current
   end
 end
