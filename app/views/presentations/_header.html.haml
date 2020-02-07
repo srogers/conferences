@@ -3,7 +3,7 @@
     = sorting_header 'Name', :presentations_path, 'presentations.sortable_name'
   .col.d-sm-block.d-md-inline
     -# This column is the presentation date unless we're showing Latest
-    - if params[:sort].include? 'presentations.created_at'
+    - if params[:sort]&.include? 'presentations.created_at'
       = sorting_header 'Added', :presentations_path, 'presentations.created_at', 'sort-numeric'
     - else
       = sorting_header 'Presented', :presentations_path, 'presentations.date', 'sort-numeric'

@@ -28,13 +28,13 @@
   - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
     -# For medium up
     .col.d-none.d-md-block
-      - if params[:sort].include? 'presentations.created_at'
+      - if params[:sort]&.include? 'presentations.created_at'
         = pretty_date presentation.created_at, style: :pretty
       - else
         = pretty_date presentation.date, style: :pretty
     -# For small down, use two columns and put these on the same line - make the dates unbreakable so it's one line on mobile
     .col.d-block.d-md-none
-      - if params[:sort].include? 'presentations.created_at'
+      - if params[:sort]&.include? 'presentations.created_at'
         = unbreakable pretty_date(presentation.created_at, style: :pretty)
       - else
         = unbreakable pretty_date(presentation.date, style: :pretty)
