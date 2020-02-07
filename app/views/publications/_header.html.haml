@@ -4,8 +4,8 @@
     = ' / Events'
   .col-md-2
     = 'Format / '
-    - if params[:sort].include? 'publications.created_at'
-      = sorting_header 'Add', :publications_path, 'publications.created_at', 'sort-numeric'
+    - if params[:sort]&.include? 'publications.created_at'
+      = sorting_header 'Added', :publications_path, 'publications.created_at', 'sort-numeric'
     - else
       = sorting_header 'Pub', :publications_path, 'publications.published_on', 'sort-numeric'
   .col-md-1.text-right
