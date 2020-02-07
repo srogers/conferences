@@ -19,7 +19,7 @@ class EventsController < ApplicationController
     if params[:q].present?
       # Presentations uses this for picking event in case where a presentation is created without an event, then associated later.
       # Allows search by year or name segment. This is tricky because so many events have nearly the same name.
-      if params[:q].length == 4
+      if params[:q].length == 4 && params[:q].to_i.to_s == params[:q] # ensure that it's a number
         @conferences = @conferences.where("Extract(year FROM start_date) = ?", params[:q])
       else
         @conferences = @conferences.where("conferences.name ILIKE ?", '%' + params[:q] + '%')

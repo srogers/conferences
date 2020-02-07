@@ -11,4 +11,9 @@ class PagesController < ApplicationController
     get_passages
     @current_user.set_privacy_policy_current if @current_user.present?
   end
+
+  def terms_of_service
+    get_passages
+    # Currently not tracking user views or redirecting users based on TOS updates
+  end
 end

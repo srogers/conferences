@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get '/contact', to: 'pages#contact',         as: :contact
   get '/robots',  to: 'pages#robots',          as: :robots
   get '/privacy_policy', to: 'pages#privacy_policy', as: :privacy_policy
+  get '/terms_of_service', to: 'pages#terms_of_service', as: :terms_of_service
 
   get '/activate/:id',              to: 'activations#create', as: :activation
   get '/register/:activation_code', to: 'activations#new',    as: :registration

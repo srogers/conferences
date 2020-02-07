@@ -9,6 +9,6 @@
   .col-md-12
     %p
       Version
-      = @privacy_policy&.version
+      = [@privacy_policy&.version, ','].join
       Last updated
       = pretty_date(@privacy_policy.updated_at)
