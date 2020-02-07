@@ -16,7 +16,7 @@
         - else
           = simple_form_for @conference_user, url: event_users_path do |f|
             = f.input :conference_id, as: :hidden, input_html: { value: @conference.id }
-            = f.input :user_id, as: :hidden, input_html: { value:current_user.id }
+            = f.input :user_id, as: :hidden, input_html: { value: current_user.id }
             = f.submit attendance_status_message(@conference), class: 'button'
     %h5= @conference.event_type
 .row.mt-1
