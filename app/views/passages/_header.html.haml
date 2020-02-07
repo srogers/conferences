@@ -1,6 +1,8 @@
 .row.mb-2
-  .col
+  .col-md-2
     = sorting_header 'Name', :passages_path, 'passages.name'
+  .col-md-2.text-right
+    Version
   .col
     = sorting_header 'View', :passages_path, 'passages.view'
   .col
@@ -8,5 +10,5 @@
 
 
   - if can? :edit, Passage
-    .col
+    .col-md-3.text-right
       &nbsp;

@@ -6,10 +6,11 @@ class Passage < ApplicationRecord
 
   MAJOR = 'major'
   MINOR = 'minor'
-  UPDATE_TYPES = [MAJOR, MINOR]
+  UPDATE_TYPES = [MINOR, MAJOR] # make minor the first in the drop-down (thus the default)
 
   # the special entry for the privacy policy - we have to be able to find it
   PRIVACY_POLICY = { name: 'Privacy Policy', assign_var: 'privacy_policy', view: 'pages/privacy_policy' }
+  TERMS_OF_SERVICE = { name: 'Terms of Service', assign_var: 'terms_of_service', view: 'pages/terms_of_service' }
 
   validates :name, :view, :assign_var, :content, :creator_id, presence: true
   validates :update_type,  inclusion: { in: UPDATE_TYPES, message: "%{value} is not a recognized update type", allow_blank: true }     # only present on update
@@ -44,8 +45,9 @@ class Passage < ApplicationRecord
     end
   end
 
+  # Don't allow Privacy Policy or Terms of Service to be deleted
   def deletable?
-    name != PRIVACY_POLICY[:name]
+    ![PRIVACY_POLICY[:name], TERMS_OF_SERVICE[:name]].include? name
   end
 
   # Of all the versioned text entries, the Privacy Policy is a first-class citizen, wired into other models.
@@ -55,6 +57,7 @@ class Passage < ApplicationRecord
 
   # This gets called at boot time to ensure that the Privacy Policy record exists with the right name.
   def self.ensure_privacy_policy
+    return if Rails.env.test?
     begin
       if Passage.where(PRIVACY_POLICY).present?
         logger.debug "Privacy Policy present"
@@ -65,6 +68,22 @@ class Passage < ApplicationRecord
       end
     rescue Exception => e
       logger.error "Error checking for privacy policy: #{ e }"
+    end
+  end
+
+  # This gets called at boot time to ensure that the Privacy Policy record exists with the right name.
+  def self.ensure_terms_of_service
+    return if Rails.env.test?
+    begin
+      if Passage.where(TERMS_OF_SERVICE).present?
+        logger.debug "Terms of Service present"
+      else
+        logger.debug "Creating Terms of Service base entry"
+        passage = create TERMS_OF_SERVICE.merge(creator: User.find_by_role_id(Role.admin.id), content: "Base Terms of Service - complete manually")
+        logger.error "Error creating base Terms of Service: #{ passage.errors.full_messages}" if passage.errors.present?
+      end
+    rescue Exception => e
+      logger.error "Error checking for terms of service: #{ e }"
     end
   end
 end

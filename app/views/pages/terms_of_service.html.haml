@@ -1,0 +1,14 @@
+= render partial: 'menu'
+- title 'Terms of Service'
+
+.row
+  .col-md-12
+    = safe_list_sanitizer.sanitize(@terms_of_service&.content).try(:html_safe)
+
+.row.mt-4
+  .col-md-12
+    %p
+      Version
+      = [@terms_of_service&.version, ','].join
+      Last updated
+      = pretty_date(@terms_of_service&.updated_at)
