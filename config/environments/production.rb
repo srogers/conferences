@@ -46,7 +46,7 @@ Rails.application.configure do
 
 
   # Force SSL only on production - staging doesn't have a cert
-  if ENV['MAIL_HOST'] == 'objectivistconferences.info'
+  if ENV['MAIL_HOST'] == 'objectivistmedia.com'
     # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
     config.force_ssl = true
     config.ssl_options = {  redirect: { status: 307, port: 81 } }

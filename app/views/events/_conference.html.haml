@@ -16,4 +16,4 @@
     .col.text-right
       = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_event_path(conference), :class => "btn btn-xs btn-primary"
       - if can?(:destroy, conference) && conference.presentations.empty?
-        = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_path(conference), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+        = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), event_path(conference), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Permanently remove this event?' }, :post => true

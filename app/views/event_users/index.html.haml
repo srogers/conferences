@@ -7,7 +7,7 @@
     - if @conference.present?
       %h3= "Members Attending #{ @conference.name }"
     - if @attendees.blank?
-      %p No users have marked themselves as attending this conference.
+      %p No users have marked themselves as attending this event.
     - else
       %table.table
         =# render :partial => "table_head"

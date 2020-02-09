@@ -4,7 +4,7 @@
   .col-md-12
     =title 'Guidelines for Editors'
     %p
-      There are many options in terms of how to enter the conference info, and how to tag it. Following these guidelines will
+      There are many options in terms of how to enter the event info, and how to tag it. Following these guidelines will
       help keep the data consistent. Guidelines will evolve over time. Feel free to make suggestions.
 
     %h4 Events
@@ -24,13 +24,13 @@
         When you create an event, a name will be assigned automatically based on the event organizer and year
         you select (e.g., OCON 2012). This name will be used as part of the URL for the event, and this uniform
         naming scheme helps make things searchable. The URL doesn't change, even if the event name is updated,
-        so if you accidentally create the conference with the wrong organizer, delete it and start over-you don't want
+        so if you accidentally create the event with the wrong organizer, delete it and start over-you don't want
         OCON 2020 to have a URL that ends with "irm-1996".
         %b
         For the same reason, it's also important to carefully pick the name of special events, such as:
-        = link_to "Ayn Rand Comes to Harvard 1996", 'https://objectivistconferences.info/events/ayn-rand-comes-to-harvard-1996'
+        = link_to "Ayn Rand Comes to Harvard 1996", '/events/ayn-rand-comes-to-harvard-1996'
         or
-        = link_to "ARI Ford Hall Forum Event", "https://objectivistconferences.info/events/ari-special-event-oct-20-22-2006-boston-ma"
+        = link_to "ARI Ford Hall Forum Event", "/events/ari-special-event-oct-20-22-2006-boston-ma"
         Use the program event name if available. Otherwise, pick something that is meaningful in the context of the event listing.
       %li
         %b Organizer
@@ -75,24 +75,24 @@
       %li
         The OCON schedule puts "Panel:" and "Lunch:" qualifiers on some session names. We're not including that in the title.
         So the listing in the OCON schedule as "Panel: Transforming Burnout with Selfishness" is just "
-        =link_to "Transforming Burnout With Selfishness", "https://objectivistconferences.info/presentations/transforming-burnout-with-selfishness"
+        =link_to "Transforming Burnout With Selfishness", "/presentations/transforming-burnout-with-selfishness"
         " in the presentation listing.
       %li
         Sometimes a presentation is listed as a single event on the schedule, but media is released in multiple parts - typically
         for a multi-speaker panel. In this case, create one presentation as it appears the schedule, and attach multiple publications to it.
         For example, see
-        %i= link_to "Free Will, Free Speech, Free Borders, Freedom in the Middle East", 'http://objectivistconferences.info/presentations/free-will-free-speech-free-borders-freedom-in-the-middle-east'
+        %i= link_to "Free Will, Free Speech, Free Borders, Freedom in the Middle East", '/presentations/free-will-free-speech-free-borders-freedom-in-the-middle-east'
       %li
         Courses spanning multiple days are listed as a single presentation with the parts in the description, as in
-        =link_to "The Foundations of Knowledge.", "https://objectivistconferences.info/presentations/the-foundations-of-knowledge"
+        =link_to "The Foundations of Knowledge.", "/presentations/the-foundations-of-knowledge"
         This is tedious, but from the perspective of the site being an index into the media, it should be helpful for
         people who are shopping for presentations to hear (vs. browsing with curiosity about history).
       %li
         Each delivery of a presentation is considered distinct, even if the name is the same, and the content is substantially
         the same. Each presentation may still have its own recorded media, and a unique Q&A. For example, see:
         %ul
-          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "https://objectivistconferences.info/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail"
-          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "https://objectivistconferences.info/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail-c02a07d6-7062-47e1-8251-73f4fb8f6912"
+          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail"
+          %li= link_to "Democracy vs. Victory – Why the “Forward Strategy of Freedom” Had to Fail", "/presentations/democracy-vs-victory-why-the-forward-strategy-of-freedom-had-to-fail-c02a07d6-7062-47e1-8251-73f4fb8f6912"
       %li
         The ARI schedules from 2014 forward include JavaScript to show/hide descriptions which makes them difficult to copy.
         To get around that, open the schedule in a different browser and turn JavaScript off in the browser preferences.
@@ -127,7 +127,7 @@
         Use topic/category style tags, like history, psychology, etc. Not adjective-style like: historical, psychological.
       %li
         You can see the existing tags on the Presentations page, under the
-        = link_to "Topics", "https://objectivistconferences.info/presentations/tags"
+        = link_to "Topics", "/presentations/tags"
         button.
 
     %h4 Speakers
@@ -152,7 +152,7 @@
       was given in several different places, and we just don't know which one corresponds to the recording. The system
       allows the same publication to be associated with multiple lectures, and the "real" one can be marked if it is known.
       This way, we keep an accurate record of the media that exists (e.g. one taped lecture by Peter Schwartz named
-      %i= link_to "Contextual Knowledge", "https://objectivistconferences.info/presentations?search_term=contextual+knowledge"
+      %i= link_to "Contextual Knowledge", "/presentations?search_term=contextual+knowledge"
       associated with two presentations by the same name.
     %p
       The system will try to find likely publications in the "Manage Publications" section - and also on the flip-side

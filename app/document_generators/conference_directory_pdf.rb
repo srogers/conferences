@@ -265,7 +265,7 @@ class ConferenceDirectoryPdf < Prawn::Document
   def initialize(options)
     # super here is calling https://github.com/prawnpdf/prawn/blob/master/lib/prawn/document.rb initialize
     # Page Sizes: https://github.com/prawnpdf/prawn/blob/master/lib/prawn/document.rb  defined in PDF::Core::PageGeometry
-    super :page_size => 'LETTER', info: { Title: 'Conference Directory', Author: 'Various', Creator: 'ObjectivistConferences.info', CreationDate: Time.now }
+    super :page_size => 'LETTER', info: { Title: 'Conference Directory', Author: 'Various', Creator: 'ObjectivistMedia.com', CreationDate: Time.now }
 
     # Generate the document according to the specified options
     cover_page

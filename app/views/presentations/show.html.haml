@@ -76,7 +76,7 @@
   .row
     .col-md-12
       - if @presentation.conference.blank?
-        %h5 Link to a Conference
+        %h5 Link to an Event
         = simple_form_for @presentation do |f|
           = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
           = f.input :conference_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter an event name or year...", source: events_path(format: :json) }, class: "select2-autocomplete", id: "conference_picker" }
