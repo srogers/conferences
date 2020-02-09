@@ -105,7 +105,7 @@ describe ApplicationHelper do
         end
 
         it "includes site name" do
-          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Conferences')
+          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Media')
         end
 
         context "for image" do
@@ -154,7 +154,7 @@ describe ApplicationHelper do
         end
 
         it "includes site name" do
-          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Conferences')
+          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Media')
         end
 
         context "for image" do
@@ -203,7 +203,7 @@ describe ApplicationHelper do
         end
 
         it "includes site name" do
-          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Conferences')
+          expect(doc.css("meta[property='og:site_name']").first.attributes["content"].value).to eq('Objectivist Media')
         end
 
         context "for image" do

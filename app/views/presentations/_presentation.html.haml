@@ -54,7 +54,7 @@
       = icon('fas', 'tag', class: 'fa-fw', title: 'Needs topic tags') if presentation.tags.empty?
       = icon('fas', 'align-left', class: 'fa-fw', title: 'Needs a description') if presentation.description.blank?
       = icon('fas', 'puzzle-piece', class: 'fa-fw', title: 'Needs number of parts') if presentation.parts.blank?
-      = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with a conference') if presentation.conference.blank?
+      = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with an event') if presentation.conference.blank?
 
   .col.col-sm-2.col-md-2.text-right= linked_format_icons(presentation)
 

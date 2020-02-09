@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Speaker, type: :model do
+RSpec.describe Setting, type: :model do
 
   context "when getting settings for" do
 

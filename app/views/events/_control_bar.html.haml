@@ -11,7 +11,7 @@
         %ul.navbar-nav.mr-auto.d-inline.d-lg-flex
           - if can? :create, Conference
             %li.nav-item{ class: active_if(action_name == 'new', 'mr-1 d-inline-block d-lg-list-item') }
-              =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_event_path, class: 'nav-link', title: 'Add a Conference'
+              =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_event_path, class: 'nav-link', title: 'Add an Event'
 
           -# For Events, this just returns things that haven't been explicitly marked as done
           - if current_user&.editor? || current_user&.admin?
@@ -41,7 +41,7 @@
         -# action-specific buttons or search form
         - if action_name == 'show'
           - if can?(:destroy, @conference) && @presentations.empty?
-            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Permanently remove this conference?' }, :post => true
+            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_path(@conference), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Permanently remove this event?' }, :post => true
           - if @conference.future? && @conference.registration_url.present?
             = link_to "Register", @conference.registration_url, :class => "btn btn-sm btn-primary ml-3", target: '_blank'
           - if !@conference.completed && can?(:create, Presentation)
