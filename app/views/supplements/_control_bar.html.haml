@@ -3,8 +3,14 @@
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
       %ul.navbar-nav.mr-auto
+        -# This should only show up for the index action in the Supplements Dashboard
+        - if action_name == 'index'
+          %li.nav-item{ class: 'mr-1 d-inline-block d-lg-list-item' }
+            = link_to "Documents", documents_path, class: 'nav-link', title: 'Manage System Summary Documents'
+          %li.nav-item{ class: 'active mr-1 d-inline-block d-lg-list-item' }
+            = link_to "Supplements",  "#", class: 'nav-link', title: 'Supplemental Documents and Links'
 
-      -# action-specific buttons
+      -# action-specific buttons - these should never show up in index
       - if action_name == 'show'
         - if can?(:destroy, @supplement) && @supplement.conference.blank?
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_supplement_path(@supplement.conference_id, @supplement), :method => :delete, :class => "btn btn-sm btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true

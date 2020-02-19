@@ -5,8 +5,8 @@ RSpec.describe SupplementsController, type: :controller do
   fixtures :roles
   fixtures :settings
 
-  let(:event)   { create :conference }
-  let(:supplement) { create :supplement }
+  let(:event)      { create :conference }
+  let(:supplement) { create :supplement, conference: event }
 
   let(:valid_params) { HashWithIndifferentAccess.new(
     {supplement: {name: 'Bob', description: "Valid Supplement" , url: 'http://www.archive.org/some_program' }, event_id: event.to_param }
@@ -24,9 +24,19 @@ RSpec.describe SupplementsController, type: :controller do
   # SupplementsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  # There is no index
+  describe "when listing supplements" do
+    it "assigns all supplements as @supplements" do
+      get :index, params: {}
+      expect(assigns(:supplements)).to eq([supplement])
+    end
+  end
 
-  # There is no show
+  describe "GET #show" do
+    it "assigns the requested supplement as @supplement" do
+      get :show, params: { event_id: event.id, id: supplement.to_param }
+      expect(assigns(:supplement)).to eq(supplement)
+    end
+  end
 
   describe "when downloading the attachment" do
     it "sends the attachment as a PDF download" do

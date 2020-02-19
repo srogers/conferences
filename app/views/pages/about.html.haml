@@ -29,6 +29,19 @@
       %tr
         %th Publications
         %td= Publication.count
+      - counts = Supplement.group(:content_type).count
+      %tr
+        %th Supplements
+        %td Links
+        %td= counts[nil]
+      %tr
+        %th
+        %td PDFs
+        %td= counts["application/pdf"]
+      %tr
+        %th
+        %td Images&nbsp;
+        %td= counts["image/jpeg"]
     %p With your help, we can cover everything.
 
     %p This site is not affiliated with the Ayn Rand Institute, nor any of the other event sponsor organizations.

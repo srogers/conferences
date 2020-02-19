@@ -75,6 +75,7 @@ Rails.application.routes.draw do
       get :chart                     # queries the data and pushes it to the chart in an array
     end
   end
+  resources :supplements, only: [:index]    # the supplements dashboard, outside the event context
   resources :users do
     member do
       patch :approve

@@ -1,0 +1,15 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark
+    .container
+      -# To lock the menu open, comment out the button and add .show class to .collapse.navbar-collapse below
+      = link_to 'Controls', '#', class: "navbar-brand d-block d-lg-none"
+      %button.navbar-toggler{ type: "button", 'data-toggle' => "collapse", 'data-target'=>"#control_bar", 'aria-controls'=>"control_bar", 'aria-expanded'=>"false", 'aria-label'=>"Toggle navigation" }
+        %span.navbar-toggler-icon
+
+      .collapse.navbar-collapse#control_bar
+        %ul.navbar-nav.mr-auto.d-inline.d-lg-flex
+          %li.nav-item{ class: 'active mr-1 d-inline-block d-lg-list-item' }
+            = link_to "Documents", "#", class: 'nav-link', title: 'Manage System Summary Documents'
+          %li.nav-item{ class: 'mr-1 d-inline-block d-lg-list-item' }
+            = link_to "Supplements", supplements_path, class: 'nav-link', title: 'Supplemental Documents and Links'

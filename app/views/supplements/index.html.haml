@@ -1,0 +1,8 @@
+- title 'Supplemental Documents and Links'
+
+= render partial: 'control_bar'
+
+= render :partial => "supplements/header"
+= render :partial => "supplements/supplement", :collection => @supplements
+
+= render :partial => 'shared/pagination', locals: { collection: @supplements }
