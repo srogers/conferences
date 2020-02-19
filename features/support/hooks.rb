@@ -28,6 +28,8 @@ Before('~@not_logged_in') do |scenario|
   end
 
   @current_user = User.where(:email => email).first
+  # in the normal login case, we consider the user to be current on policies
+  @current_user.privacy_policy_current!
 
   visit login_path
   fill_in("user_session_email",    :with => email)
