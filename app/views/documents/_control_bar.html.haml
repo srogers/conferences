@@ -12,4 +12,5 @@
           %li.nav-item{ class: 'active mr-1 d-inline-block d-lg-list-item' }
             = link_to "Documents", "#", class: 'nav-link', title: 'Manage System Summary Documents'
           %li.nav-item{ class: 'mr-1 d-inline-block d-lg-list-item' }
-            = link_to "Supplements", supplements_path, class: 'nav-link', title: 'Supplemental Documents and Links'
+            -# This gets a nav reset because Documents and Supplements subtabs are run by different controllers
+            = link_to "Supplements", supplements_path(nav: 'reset'), class: 'nav-link', title: 'Supplemental Documents and Links'

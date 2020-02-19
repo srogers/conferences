@@ -6,7 +6,8 @@
         -# This should only show up for the index action in the Supplements Dashboard
         - if action_name == 'index'
           %li.nav-item{ class: 'mr-1 d-inline-block d-lg-list-item' }
-            = link_to "Documents", documents_path, class: 'nav-link', title: 'Manage System Summary Documents'
+            -# This gets a nav reset because Documents and Supplements subtabs are run by different controllers
+            = link_to "Documents", documents_path(nav: 'reset'), class: 'nav-link', title: 'Manage System Summary Documents'
           %li.nav-item{ class: 'active mr-1 d-inline-block d-lg-list-item' }
             = link_to "Supplements",  "#", class: 'nav-link', title: 'Supplemental Documents and Links'
 
@@ -16,7 +17,7 @@
           = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), event_supplement_path(@supplement.conference_id, @supplement), :method => :delete, :class => "btn btn-sm btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
         - if can? :edit, @supplement
           = link_to "Edit", edit_event_supplement_path(@supplement.conference_id, @supplement), :class => "btn btn-sm btn-primary"
-        = link_to "Done", event_path(@event), :class => "btn btn-sm btn-secondary ml-3"
+        = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
       - elsif action_name == 'edit' || action_name == 'update'
         = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_supplement').submit()"
