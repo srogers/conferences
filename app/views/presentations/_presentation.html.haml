@@ -4,8 +4,8 @@
 .row.mb-2{ id: "presentation_#{presentation.id}" }
   %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     -# Make the detailed view the default - see what indexing robots do with that - use compact for speakers
-    -if controller_name != 'presentations'
-      -# use just the name for speaker presentation listing
+    -if (controller_name != 'presentations' && current_user&.compact_presentations) || controller_name == 'speakers'
+      -# For compact use just the name for event presentation listing. Never include speaker in speaker presentation listing - redundant
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
     -elsif current_user&.compact_presentations
       .detail-selector
@@ -18,14 +18,23 @@
       %br
       by
       = clickable_speaker_list(presentation)
-      - unless controller_name == 'conferences' && params[:id].present?
-        - if presentation.conference.present? && params[:skip_event] == 'false'
+      - unless controller_name == 'events' && params[:id].present? # in that case, we're looking at the event page - reiterating event is redundant
+        - if presentation.conference.present? && params[:skip_event] != 'true'
           at
           = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
-      %br
-      = linked_tag_names(presentation, class: 'slim')
+        %br
+        = linked_tag_names(presentation, class: 'slim')
 
-  - unless @conference.present? # skip this in the event listing unless it's multi-venue or virtual - handled below
+  -if @conference.present?   # then it's the event listing
+    .col.col-sm-8.col-md-2
+      - if @conference.virtual? || @conference.multi_venue? || true
+        = pretty_date presentation.date
+        %br
+      - if @conference.multi_venue?
+        = presentation.venue
+        %br
+        = location_with_non_us_country presentation
+  - else                     # it's speaker presentation listing or presentations/index
     -# For medium up
     .col.d-none.d-md-block
       - if params[:sort]&.include? 'presentations.created_at'
@@ -38,16 +47,6 @@
         = unbreakable pretty_date(presentation.created_at, style: :pretty)
       - else
         = unbreakable pretty_date(presentation.date, style: :pretty)
-
-  -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
-    .col.col-sm-8.col-md-2
-      - if @conference.virtual? || @conference.multi_venue?
-        = pretty_date presentation.date
-        %br
-      - if @conference.multi_venue?
-        = presentation.venue
-        %br
-        = location_with_non_us_country presentation
 
   - if params[:heart].present?
     .col
