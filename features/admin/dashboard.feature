@@ -10,11 +10,11 @@ Feature: Admin Dashbaord
   @not_logged_in
   Scenario: Login and see the landing page
     Given I am logged in as admin@example.com with password tester1
-    Then I should see the text "Objectivist Conferences"
+    Then I should see the text "Objectivist Media"
 
   # Make sure the support steps for getting logged in as admin works
   Scenario: When I mention admin in the scenario name
-    Then I should see the text "Objectivist Conferences"
+    Then I should see the text "Objectivist Media"
 
   # Otherwise before hooks log in as admin when the scenario title mentions admin
   Scenario: I can see my admin dashboard from here

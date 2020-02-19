@@ -175,7 +175,7 @@ module ApplicationHelper
     else
       fb_share = ''.html_safe
     end
-    social_share_buttons = social_share_button_tag("Objectivist Conferences")
+    social_share_buttons = social_share_button_tag("Objectivist Media")
     # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
     if @sharable_object.present?
