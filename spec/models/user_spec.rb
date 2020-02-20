@@ -26,7 +26,7 @@ RSpec.describe User, :type => :model do
     context "validation" do
       [:name, :email, :role].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, User)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

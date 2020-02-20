@@ -18,7 +18,7 @@ RSpec.describe Organizer, type: :model do
     context "validation" do
       [:name, :series_name, :abbreviation].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, Organizer)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

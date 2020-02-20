@@ -27,7 +27,7 @@ RSpec.describe Conference, type: :model do
     context "validation" do
       [:organizer_id, :start_date, :end_date].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, Conference)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

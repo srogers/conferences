@@ -24,7 +24,7 @@ RSpec.describe PresentationPublication, type: :model do
     context "validation" do
       [:presentation_id, :publication_id].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, PresentationPublication)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

@@ -16,7 +16,7 @@ RSpec.describe Publication, type: :model do
     context "validation" do
       [:format, :name, :speaker_names].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, Publication)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

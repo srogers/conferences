@@ -18,7 +18,7 @@ RSpec.describe Notification, type: :model do
     context "validation" do
       [:user_presentation_id, :presentation_publication_id].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute, Notification)).to be_present
+          expect(errors_on_blank(required_attribute)).to be_present
         end
       end
     end

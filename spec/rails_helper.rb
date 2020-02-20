@@ -217,3 +217,11 @@ def assign_role(user, role_name)
   user.role = role
   user.save!
 end
+
+# For model specs only - use this to verify that a required attribute really is required.
+#   expect(errors_on_blank(required_attribute)).to be_present
+def errors_on_blank(attribute, options={})
+  klass = described_class   # uee Rspec meta data to figure out the class we're testing
+  blankish = options[:blankish]  # conveniently, the default is nil - set to empty string, empty array, etc. as needed
+  klass.create(valid_attributes.merge(attribute => blankish)).errors_on(attribute)
+end
