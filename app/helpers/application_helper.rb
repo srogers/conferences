@@ -99,36 +99,40 @@ module ApplicationHelper
     [request.path, param_string].compact.join('?')
   end
 
-  # pass in an expression without a sort direction. The sort param will be built off the current state, cycling through
-  # ASC, DESC, and no sort. Set defaults in the controller, not here.
-  def params_with_sort(expression)
+  # pass in a sql column expression, like name, or users.name - without a sort direction. The sort param will be built
+  # off the current state, cycling through ASC, DESC, and no sort. Set defaults in the controller, not here.
+  def params_with_sort(sql_column)
     if params[:sort].present?
-      if params[:sort].include? expression
+      if params[:sort].include? sql_column
         # Reverse the direction of the existing sort, or remove it
         if ['+'].include? params[:sort][0]
-          sort_string =  '-' + expression
+          sort_string =  '-' + sql_column
         elsif ['<', '>'].include? params[:sort][0]
-          sort_string =  '#' + expression  # this will be sent in the header click and neutralize the default
+          sort_string =  '#' + sql_column  # this will be sent in the header click and neutralize the default
         elsif ['-'].include? params[:sort][0]
-          sort_string = expression  # This makes the 3rd click be 'neutral' - no sort, but keeps the sort param in play
+          sort_string = sql_column  # This makes the 3rd click be 'neutral' - no sort, but keeps the sort param in play
         else
-          sort_string =  '+' + expression
+          sort_string =  '+' + sql_column
         end
       else
         # We're changing to the default sort on a new column
-        sort_string =  '+' + expression
+        sort_string =  '+' + sql_column
       end
     else
       # Go from no sort to the default sort on the column
-      sort_string =  '+' + expression
+      sort_string =  '+' + sql_column
     end
     { sort: sort_string, page: 1 }
   end
 
-  # Use this in the column header to build a clickable sorter that shows the current sort direction
-  def sorting_header(text, path_helper, expression, icon='sort-alpha')
-    new_sort = params_with_sort(expression)
-    if params[:sort].present? && params[:sort].from(1) == expression  # Then the current sort is about this column
+  # Use this in the column header to build a clickable sorter that shows the current sort direction.
+  # path_helper expects a symbol. If the listing is on an index page, pass the index path helper name, on a show page
+  # (e.g. presentations listing on event or speaker page) then pass the singular route, e.g.:  speaker_path
+  # Options:  use icon to change the sort icon as appropriate for the column
+  def sorting_header(text, path_helper, sql_column, options={})
+    icon = options[:icon] || 'sort-alpha'
+    new_sort = params_with_sort(sql_column)
+    if params[:sort].present? && params[:sort].from(1) == sql_column  # Then the current sort is about this column
       # logger.debug "params[:sort] = #{ params[:sort]}"
       sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw') : icon('fas', icon + '-down', :class => 'fa-fw')
     else

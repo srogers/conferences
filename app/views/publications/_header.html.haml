@@ -5,11 +5,11 @@
   .col-md-2
     = 'Format / '
     - if params[:sort]&.include? 'publications.created_at'
-      = sorting_header 'Added', :publications_path, 'publications.created_at', 'sort-numeric'
+      = sorting_header 'Added', :publications_path, 'publications.created_at', icon: 'sort-numeric'
     - else
-      = sorting_header 'Pub', :publications_path, 'publications.published_on', 'sort-numeric'
+      = sorting_header 'Pub', :publications_path, 'publications.published_on', icon: 'sort-numeric'
   .col-md-1.text-right
-    = sorting_header 'Mins', :publications_path, 'publications.duration', 'sort-numeric'
+    = sorting_header 'Mins', :publications_path, 'publications.duration', icon: 'sort-numeric'
   - if params[:heart].present?
     .col-md-2 Needs
   - if can? :edit, Publication

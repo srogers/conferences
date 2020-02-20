@@ -2,11 +2,11 @@
   .col-md-5.d-none.d-md-block
     = sorting_header current_event_type, :events_path, 'conferences.name'
     = ' / '
-    = sorting_header 'Date', :events_path, 'conferences.start_date', 'sort-numeric'
+    = sorting_header 'Date', :events_path, 'conferences.start_date', icon: 'sort-numeric'
   .col.col-sm-4.d-md-none
     = sorting_header current_event_type, :events_path, 'conferences.name'
     = ' / '
-    = sorting_header 'Date', :events_path, 'conferences.start_date', 'sort-numeric'
+    = sorting_header 'Date', :events_path, 'conferences.start_date', icon: 'sort-numeric'
     = ' / '
     = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
 
