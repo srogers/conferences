@@ -168,6 +168,7 @@ class PublicationsController < ApplicationController
   end
 
   def get_publication
+    @publishers  = Publisher.all.map{|p| [p.name]}
     @publication = Publication.find params[:id]
     get_presentation
   end

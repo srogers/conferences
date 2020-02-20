@@ -59,7 +59,11 @@
 
   .row
     .col-md-12
-      = f.input :publisher, hint: 'Generally, the entity named in the copyright statement.'
+      = f.input :publisher, hint: 'Generally, the entity named in the copyright statement. Select from below if possible.'
+  .row.mb-3
+    .col-md-12
+      = select_tag :publisher_name, options_for_select(@publishers), include_blank: 'select a Publisher',  class: 'form-control select optional'
+
 .row
   .col-md-12
     = f.label "Editor's Notes", for: 'publication_editors_notes'

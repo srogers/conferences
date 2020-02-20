@@ -1,7 +1,8 @@
 get_physical_formats = () ->
   $.map( $(".physical_format").toArray(), ( n, i ) ->  return $(n).text() );
 
-# Set the visibility of the fields for physical media based on the value of the format selector
+# For forms: set the visibility of the fields for physical media based on the value of the format selector.
+# This works for input because of the selector - show manages this field statically
 handle_physical_fields = (physical_formats, speed) ->
   if physical_formats.indexOf( $('#publication_format').val() ) > -1
     if speed == 'fast'
@@ -25,3 +26,6 @@ $ ->
   # This sets the correct visibility of ari_inventory and publisher when the format selector is changed
   $('select#publication_format').change ->
     handle_physical_fields(physical_formats)
+
+  $('#publisher_name').on 'change', ->
+    $('#publication_publisher').val(this.value)
