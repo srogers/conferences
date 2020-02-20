@@ -7,10 +7,6 @@ RSpec.describe Speaker, type: :model do
       { name: "Testing Userperson" }
     }
 
-    def errors_on_blank(attribute)
-      Speaker.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :speaker).to be_valid
     end
@@ -22,7 +18,7 @@ RSpec.describe Speaker, type: :model do
     context "validation" do
       [:name].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute)).to be_present
+          expect(errors_on_blank(required_attribute, Speaker)).to be_present
         end
       end
     end

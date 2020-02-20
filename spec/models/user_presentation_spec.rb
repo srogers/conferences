@@ -5,10 +5,6 @@ RSpec.describe UserPresentation, type: :model do
 
     let(:valid_attributes) { { user_id: 1, presentation_id: 1 } }
 
-    def errors_on_blank(attribute)
-      UserPresentation.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :user_presentation).to be_valid
     end
@@ -20,7 +16,7 @@ RSpec.describe UserPresentation, type: :model do
     context "validation" do
       [:user_id, :presentation_id].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute)).to be_present
+          expect(errors_on_blank(required_attribute, UserPresentation)).to be_present
         end
       end
     end

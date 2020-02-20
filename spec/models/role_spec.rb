@@ -9,10 +9,6 @@ RSpec.describe Role, :type => :model do
       { :name => Role::ADMIN }
     }
 
-    def errors_on_blank(attribute, blankish = nil)
-      Role.create(valid_attributes.merge(attribute => blankish)).errors_on(attribute)
-    end
-
     it "has a working factory" do
       expect(create :role).to be_valid
     end
@@ -24,7 +20,7 @@ RSpec.describe Role, :type => :model do
     context "validation" do
       [:name].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute)).to be_present
+          expect(errors_on_blank(required_attribute, Role)).to be_present
         end
       end
     end

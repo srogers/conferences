@@ -13,10 +13,6 @@ RSpec.describe PresentationPublication, type: :model do
       }
     }
 
-    def errors_on_blank(attribute)
-      PresentationPublication.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :presentation_publication).to be_valid
     end
@@ -28,7 +24,7 @@ RSpec.describe PresentationPublication, type: :model do
     context "validation" do
       [:presentation_id, :publication_id].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute)).to be_present
+          expect(errors_on_blank(required_attribute, PresentationPublication)).to be_present
         end
       end
     end

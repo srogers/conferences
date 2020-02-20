@@ -5,10 +5,6 @@ RSpec.describe Supplement, type: :model do
 
     let(:valid_attributes) { { name: 'The attachment', description: 'Not blank', url: 'http://www.archive.org/not_blank', conference_id: 1 } }
 
-    def errors_on_blank(attribute)
-      Supplement.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "has a working factory" do
       expect(create :supplement).to be_valid
     end
@@ -20,7 +16,7 @@ RSpec.describe Supplement, type: :model do
     context "validation" do
       [:description].each do |required_attribute|
         it "requires #{ required_attribute }" do
-          expect(errors_on_blank(required_attribute)).to be_present
+          expect(errors_on_blank(required_attribute, Supplement)).to be_present
         end
       end
     end
