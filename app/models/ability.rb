@@ -22,6 +22,7 @@ class Ability
         can :manage, PresentationSpeaker
         can :manage, Supplement
         can :manage, Publication
+        # can :manage, Publisher   for now, this is admin only
         can :manage, Speaker
         can [:chart], Speaker
 

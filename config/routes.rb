@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       get :latest                    # for the landing page
     end
   end
+  resources :publishers, except: [:new, :show]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]

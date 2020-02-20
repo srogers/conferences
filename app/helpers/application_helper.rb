@@ -24,7 +24,7 @@ module ApplicationHelper
     when 'presentations'
       controller_name == 'presentations'
     when 'publications'
-      controller_name == 'publications'
+      controller_name == 'publications' || controller_name == 'publishers'  # for now, Publisher is a parasite on Publication
     when 'organizers'
       controller_name == 'organizers'
     when 'users'

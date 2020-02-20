@@ -3,8 +3,9 @@ class CreatePublishers < ActiveRecord::Migration[5.2]
   # publishers, but relation is not by ID - publishers can be anything.
   def up
     create_table "publishers" do |t|
-      t.string    :name
-      t.string    :description
+      t.belongs_to  :creator
+      t.string      :name
+      t.string      :description
 
       t.timestamps
       t.index ['name'], unique: true

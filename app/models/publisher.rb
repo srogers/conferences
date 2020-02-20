@@ -1,5 +1,7 @@
 class Publisher < ApplicationRecord
 
+  belongs_to :creator, class_name: 'User'
+
   # does not have_many :publications
   # In the first iteration, publishers just stand along side publications. The names just serve to mostly standardize
   # publishers, but relation is not by ID - publishers can be anything.

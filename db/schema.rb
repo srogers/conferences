@@ -182,10 +182,12 @@ ActiveRecord::Schema.define(version: 2020_02_20_135800) do
   end
 
   create_table "publishers", force: :cascade do |t|
+    t.bigint "creator_id"
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_publishers_on_creator_id"
     t.index ["name"], name: "index_publishers_on_name", unique: true
   end
 

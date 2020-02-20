@@ -1,0 +1,32 @@
+- title 'Publishers'
+
+= render partial: 'publications/control_bar' # for now, Publishers is a parasite on Publications
+
+-# For now, don't paginate these - that may not work in the long run
+
+%h3 Official Publishers
+= render :partial => "header"
+= render :partial => "publisher", :collection => @publishers
+
+%h2 Incidental Publishers
+- if @incidentals.empty?
+  %p Every publisher named in Publications is represented as a Publisher
+-else
+  .row.mb-2
+    .col
+      %b Name
+    .col
+      -# the controls column
+  - @incidentals.each do |incidental|
+    .row.mb-2
+      .col
+        = incidental.name
+      .col
+        = incidental.usages
+      .col-md-2.text-right
+        = simple_form_for :publisher, html: { class: 'form-horizontal', style: 'display: inline;' }, wrapper: :horizontal_form do |f|
+          = f.hidden_field :name, value: incidental.name
+          =# f.submit icon('fas', 'crown', class: 'fa-fw fa-sm text-warning'), class: 'btn btn-xs btn-primary', title: 'Add as a recognized publisher'
+          = button_tag icon('fas', 'crown', class: 'fa-fw  fa-sm text-warning'), type: 'submit', class: 'btn btn-xs btn-primary', title: 'Add as a recognized publisher'
+        = link_to icon('far', 'search', class: 'fa-fw fa-sm'), publications_path(search_term: incidental.name), class: 'btn btn-xs btn-primary', title: 'Find publications with this publisher'
+

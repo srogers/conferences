@@ -4,7 +4,8 @@ class PassagesController < ApplicationController
   before_action :set_passage, only: [:show, :edit, :update, :destroy]
 
   def index
-    @passages = Passage.all.page(params[:page]).per(20)
+    # doesn't participate in sticky_navigation
+    @passages = Passage.all.page(params[:page]).per(params[:per])
   end
 
   def show
