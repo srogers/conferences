@@ -1,7 +1,9 @@
 .row.mb-2
   .col
     = link_to(truncate(publisher.name, length: 80, separator: ' '), publisher_path(publisher))
+  .col-md-2.text-right
+    = @publication_counts[publisher.name]
 
   .col-md-2.text-right
     = link_to icon('far', 'edit', class: 'fa-fw fa-sm'), edit_publisher_path(publisher), :class => "btn btn-xs btn-primary"
-    = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), publisher_path(publisher), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true
+    = link_to icon('far', 'trash-alt', class: 'fa-fw fa-sm'), publisher_path(publisher), :method => :delete, :class => "btn btn-xs btn-danger", :data => { :confirm => 'Demote to incidental?' }, :post => true

@@ -8,8 +8,9 @@ class PublishersController < ApplicationController
   def index
     # doesn't participate in sticky_navigation
     @publishers = Publisher.order(params_to_sql('>publishers.name')).page(params[:page]).per(params[:per])
+    @publication_counts = Publication.group(:publisher).count
     existing = @publishers.map{|p| p.name}
-    @incidentals = Publication.group(:publisher).count.select{|k,v| k.present? && !existing.include?(k)}.map{|k,v| OpenStruct.new(name:k, usages: v) }
+    @incidentals = Publication.group(:publisher).count.map{|k,v| k }.select{|name| name.present? && !existing.include?(name)}
   end
 
   # No UI for new or show

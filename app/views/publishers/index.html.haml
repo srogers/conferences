@@ -17,16 +17,16 @@
       %b Name
     .col
       -# the controls column
-  - @incidentals.each do |incidental|
+  - @incidentals.each do |name|
     .row.mb-2
       .col
-        = incidental.name
-      .col
-        = incidental.usages
+        = name
+      .col-md-2.text-right
+        = @publication_counts[name]
       .col-md-2.text-right
         = simple_form_for :publisher, html: { class: 'form-horizontal', style: 'display: inline;' }, wrapper: :horizontal_form do |f|
-          = f.hidden_field :name, value: incidental.name
+          = f.hidden_field :name, value: name
           =# f.submit icon('fas', 'crown', class: 'fa-fw fa-sm text-warning'), class: 'btn btn-xs btn-primary', title: 'Add as a recognized publisher'
           = button_tag icon('fas', 'crown', class: 'fa-fw  fa-sm text-warning'), type: 'submit', class: 'btn btn-xs btn-primary', title: 'Add as a recognized publisher'
-        = link_to icon('far', 'search', class: 'fa-fw fa-sm'), publications_path(search_term: incidental.name), class: 'btn btn-xs btn-primary', title: 'Find publications with this publisher'
+        = link_to icon('far', 'search', class: 'fa-fw fa-sm'), publications_path(search_term: name), class: 'btn btn-xs btn-primary', title: 'Find publications with this publisher'
 
