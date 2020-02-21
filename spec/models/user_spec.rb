@@ -15,10 +15,6 @@ RSpec.describe User, :type => :model do
       }
     }
 
-    def errors_on_blank(attribute, blankish = nil)
-      User.create(valid_attributes.merge(attribute => blankish)).errors_on(attribute)
-    end
-
     it "is valid with valid attributes" do
       expect(User.new(valid_attributes)).to be_valid
     end

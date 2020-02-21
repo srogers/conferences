@@ -65,9 +65,12 @@ class PresentationsController < ApplicationController
     when 'years' then
       @presentations = presentation_count_data.to_a  # build the data here, or pull it from an endpoint in the JS, but not both
       render 'years_chart'
-    when 'topic' then
+    when 'topics' then
       @presentations = topic_count_data.sort_by{|topic,count| count }.reverse
       render 'topics_chart'
+    when 'speakers' then
+      @speakers = speaker_count_data.sort_by{|topic,count| count }.reverse
+      render 'speakers_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to presentations_path

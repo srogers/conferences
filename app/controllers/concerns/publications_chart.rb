@@ -45,7 +45,9 @@ module PublicationsChart
     # There is no user-specific publication listing comparable to "My Events" (yet)
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
+      query = init_query(Publication)
       query = base_query(query)
+      query = publication_aggregate(query)
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
 
     else
@@ -63,7 +65,8 @@ module PublicationsChart
       # Build a query using the current search term and tag
       query = init_query(Publication) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
-      results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
+      query = publication_aggregate(query)
+      results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).sum('duration')
 
     else
       # Get everything
@@ -71,6 +74,27 @@ module PublicationsChart
     end
 
     # group_by_year groups by Jan 1 of each year - we want to see only the year - duration is in minutes - make it hours
-    return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v / 60 ) }
+    return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v / 60.0 ) }
+  end
+
+  def publication_publishers_count_data
+    # There is no user-specific "My Publishers" listing comparable to "My Events" (yet) so we don't consider user_id
+    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      # Build a query using the current search term and tag
+      query = init_query(Publication.includes(:speakers).references(:speakers))
+      query = base_query(query)
+      query = publication_aggregate(query)
+      results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count
+
+    else
+      # Get everything
+      results = Publication.group("publications.publisher").count
+    end
+
+    # Since Publisher is a free-form field, it can be null or blank - consolidate those into one key
+    results["unspecified"] = results[nil].to_i + results[""].to_i
+    results = results.reject{|k,v| k.blank?}
+
+    return results
   end
 end

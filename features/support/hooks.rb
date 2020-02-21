@@ -28,6 +28,8 @@ Before('~@not_logged_in') do |scenario|
   end
 
   @current_user = User.where(:email => email).first
+  # in the normal login case, we consider the user to be current on policies
+  @current_user.privacy_policy_current!
 
   visit login_path
   fill_in("user_session_email",    :with => email)
@@ -37,7 +39,7 @@ Before('~@not_logged_in') do |scenario|
   # Check right here whether login worked - if not, check out fixtures
   page.body.should_not =~ /Unable to log in/m
   page.body.should_not =~ /User name or password are incorrect/m
-  page.body.should     =~ /Objectivist Conferences/m     # This is in the landing page
+  page.body.should     =~ /Objectivist Media/m     # This is in the landing page
 end
 
 Before('@not_logged_in') do |scenario|

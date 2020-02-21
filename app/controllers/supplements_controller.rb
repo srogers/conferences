@@ -1,7 +1,21 @@
 class SupplementsController < ApplicationController
 
-  before_action :get_event,   except: [:download]
-  before_action :get_supplement, except: [:new, :create]
+  include Sortability
+  include StickyNavigation
+
+  before_action :get_event,      except: [:index, :download]
+  before_action :get_supplement, except: [:index, :new, :create]
+  before_action :check_nav_params, only: [:index]
+
+  before_action :require_user,     only: [:index]
+
+  # This drives the supplement dashboard, outside the context of specific events
+  def index
+    @supplements = Supplement.includes(:conference).order(params_to_sql('>conferences.start_date'))
+
+    @supplements = @supplements.page(param_context(:page)).per(param_context(:per))
+    repaginate_if_needed(@supplements)
+  end
 
   def show
   end

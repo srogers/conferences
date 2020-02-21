@@ -1,0 +1,12 @@
+= render partial: 'publications/control_bar'
+
+.row
+  .col-md-12
+    %h4 Editing publisher
+
+-# The publications form_fields partial does its own column management
+= simple_form_for @publisher, :html => {:autocomplete => "off"} do |f|
+  = render :partial => "form_fields", :locals => {:f => f}
+  .row
+    .col-md-12
+      = save_or_cancel f, publishers_path

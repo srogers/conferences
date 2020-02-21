@@ -49,15 +49,19 @@
       - else
         %i none
 
+-# Always show this, even when not-applicable so that it's more clear to the user what's going on
 .row
   .col-md-12
     %p
       %b Publisher
       %br
-      - if @publication.publisher.present?
-        = @publication.publisher
+      - if Publication::PHYSICAL.include? @publication.format
+        - if @publication.publisher.present?
+          = @publication.publisher
+        - else
+          %i unspecified
       - else
-        %i unspecified
+        %i not applicable
 
 -# We're not tracking this for things like YouTube, Campus, E-store, etc. which are probably retained at
 -# the ARI in some form, only physical media. FALSE does not mean proven to not have a copy.
@@ -66,10 +70,13 @@
     .col-md-12
       %p
         %b In ARI Inventory:
-        - if @publication.ari_inventory
-          Yes
+        - if Publication::PHYSICAL.include? @publication.format
+          - if @publication.ari_inventory
+            Yes
+          - else
+            Haven't found it yet
         - else
-          Haven't found it yet
+          %i not applicable
 
 - if can?(:edit, @publication)
   .row

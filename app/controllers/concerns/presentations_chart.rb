@@ -8,6 +8,7 @@ module PresentationsChart
     query = init_query(presentations)
     if query.tag.present?
       # currently, the caller has to manage includes() and references() and apply them before the where()
+      # But we can handle this one, because we know Presentation is the root of the collection.
       presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
     end
     query = base_query(query)
@@ -42,6 +43,40 @@ module PresentationsChart
     return data.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v) }
   end
 
+  def speaker_count_data
+    # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
+    # Everything has to be applied at once - having, where, and count can't be applied in steps.
+    if param_context(:search_term).present? || param_context(:tag).present?
+
+      # Speaker queries don't use tags but it comes into play with PresentationSpeaker
+      data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
+      query = init_query(data)
+      query = base_query(query)
+      query = speaker_query(query)
+      query = presentation_query(query)
+
+      data = data.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
+      data = data.sort_by{ |k,v| v }.reverse
+
+      # Handles the My Conferences case
+    elsif param_context(:user_id).present?
+      data = PresentationSpeaker.includes(:speaker, :presentation => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("speakers.name").order(Arel.sql("count(presentation_id) DESC")).count(:presentation_id)
+
+    else
+      # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
+      # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
+      # The floor value is a setting, because it changes fairly dynamically as more events are entered.
+      # In any case, the floor would never be removed, because the resulting chart would be huge, with mostly bars of height 1 or 2
+      data = PresentationSpeaker.includes(:speaker).group("speakers.name").count(:presentation_id)
+
+      # Postgres gets annoyed with HAVING here, and ignores order - results are relatively small, so fix it up in Ruby
+      # The floor limit is only applied in this case, where everything is selected, not in the case above with search terms
+      data = data.reject{|k,v| v.to_i < Setting.speaker_chart_floor}.sort_by{ |k,v| v }.reverse
+    end
+
+    return data
+  end
+
   # Builds a hash of presentation counts by topic that looks like: {'economics'=>1, 'epistemology'=>2}
   # which the endpoint can return as JSON or the action can use directly as an array.
   def topic_count_data
@@ -69,6 +104,7 @@ module PresentationsChart
     else
       # This works for the simple case with no search term or tags - saves memory
       data = @presentations.group('tags.name').count(:all)
+      data = data.reject{|k,v| k.blank?}   # the nil key is probably presentations with no tags - skip that - can't link to them
     end
 
     return data

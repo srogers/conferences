@@ -1,0 +1,8 @@
+.row.mb-2
+  .col= link_to(truncate(supplement.conference.name, length: 40, separator: ' '), event_path(supplement.conference))
+  .col= unbreakable pretty_date(supplement.conference.start_date, style: :pretty)
+  .col.col-sm-6= truncate(supplement.name, length: 40)
+  .col-sm-1
+    = link_to icon('far', 'eye'), event_supplement_path(supplement.conference, supplement)
+  .col-sm-1
+    = linked_icon_for_supplement(supplement)

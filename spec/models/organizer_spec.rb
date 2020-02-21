@@ -7,10 +7,6 @@ RSpec.describe Organizer, type: :model do
       { name: "Valid Organizer", series_name: "Conference Series", abbreviation: "ConSer" }
     }
 
-    def errors_on_blank(attribute)
-      Organizer.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :organizer).to be_valid
     end

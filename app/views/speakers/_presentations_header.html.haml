@@ -1,0 +1,26 @@
+-# This is almost the same as the presentations/header partial, but the sortable columns are different
+.row.mb-2
+  %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
+    = sorting_header 'Name', :speaker_path, 'presentations.sortable_name'
+  .col.d-sm-block.d-md-inline
+    -# This column is the presentation date unless we're showing Latest
+    - if params[:sort]&.include? 'presentations.created_at'
+      = sorting_header 'Added', :speaker_path, 'presentations.created_at', icon: 'sort-numeric'
+    - else
+      = sorting_header 'Presented', :speaker_path, 'presentations.date', icon: 'sort-numeric'
+
+  -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
+    .col
+      = [@conference.virtual? || @conference.multi_venue? ? 'Date' : nil, @conference.multi_venue? ? 'Location' : nil].compact.join(' / ')
+
+  - if params[:heart].present?
+    .col Needs
+
+  .col.col-sm-2.col-md-2.text-right
+    Media
+
+  - if current_user.present?
+    .col-sm-3
+      Me
+      - if can? :edit, Presentation
+        .col.d-none.d-md-block

@@ -137,7 +137,7 @@ class User < ApplicationRecord
   end
 
   # The pages controller calls this to mark the user as having seen the current Privacy Policy when it is served
-  def set_privacy_policy_current
+  def privacy_policy_current!
     version = Passage.current_privacy_policy_version
     update_column(:privacy_policy_version, version) unless privacy_policy_version == version
   end

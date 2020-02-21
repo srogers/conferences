@@ -14,10 +14,6 @@ RSpec.describe Conference, type: :model do
     }
   }
 
-  def errors_on_blank(attribute)
-    Conference.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-  end
-
   describe "when creating a conference" do
 
     it "has a working factory" do

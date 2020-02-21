@@ -1,0 +1,19 @@
+# The login system assumes these exist, so Cucumber needs to load them
+terms_of_service:
+  creator_id:       1
+  name:             "Terms of Service"
+  assign_var:       "terms_of_service"
+  view:             "pages/terms_of_service"
+  content:          "Base Terms of Service Content"
+  retain_versions:  1
+  minor_version:    0
+  major_version:    1
+privacy_policy:
+  creator_id:       1
+  name:             "Privacy Policy"
+  assign_var:       "privacy_policy"
+  view:             "pages/privacy_policy"
+  content:          "Base Privacy Policy Content"
+  retain_versions:  1
+  minor_version:    0
+  major_version:    1

@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       get :latest                    # for the landing page
     end
   end
+  resources :publishers, except: [:new, :show]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
   resources :settings, only: [:index, :show, :edit, :update]
@@ -75,6 +76,7 @@ Rails.application.routes.draw do
       get :chart                     # queries the data and pushes it to the chart in an array
     end
   end
+  resources :supplements, only: [:index]    # the supplements dashboard, outside the event context
   resources :users do
     member do
       patch :approve

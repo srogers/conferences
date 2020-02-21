@@ -11,10 +11,6 @@ RSpec.describe PresentationSpeaker, type: :model do
       }
     }
 
-    def errors_on_blank(attribute)
-      PresentationSpeaker.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :presentation_speaker).to be_valid
     end

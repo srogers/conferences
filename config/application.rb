@@ -18,7 +18,7 @@ module Conferences
     config.generators do |g|
       g.template_engine :haml
       g.test_framework :rspec, :fixture => true, :views => true, :webrat => true
-      g.fixture_replacement :factory_girl, :dir => "spec/factories"
+      g.fixture_replacement :factory_bot, :dir => "spec/factories"
       g.form_builder :simple_form
     end
 

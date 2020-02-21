@@ -7,6 +7,9 @@
   .col-md-12
     = title "#{ @speaker.name }"
     %h5= @speaker.title
+    %h5
+      Active: 
+      = @speaker.active_years
 
 .row
   .col-md-12
@@ -28,5 +31,5 @@
     - if @presentations.empty?
       %p None Yet
     - else
-      = render :partial => "presentations/header"
+      = render :partial => "presentations_header"
       = render :partial => "presentations/presentation", :collection =>  @presentations

@@ -7,10 +7,6 @@ RSpec.describe Notification, type: :model do
       { user_presentation_id: 1, presentation_publication_id: 1 }
     }
 
-    def errors_on_blank(attribute)
-      Notification.create(valid_attributes.merge(attribute => nil)).errors_on(attribute)
-    end
-
     it "should have a working factory" do
       expect(create :notification).to be_valid
     end

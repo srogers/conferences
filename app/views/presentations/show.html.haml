@@ -28,10 +28,9 @@
         %b Venue:
         = location(@presentation, country_format: :full)
 
-    - if @presentation.try(:conference).try(:multi_venue?) || @presentation.try(:conference).try(:virtual?)
-      %p
-        %b Date:
-        = pretty_date @presentation.date, style: :pretty
+    %p
+      %b Date:
+      = pretty_date @presentation.date, style: :pretty
 
     %p= safe_list_sanitizer.sanitize(@presentation.description).try(:html_safe)
 

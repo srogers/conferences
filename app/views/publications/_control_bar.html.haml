@@ -28,23 +28,29 @@
               = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
             .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
               = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(chart_type: 'format'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'by Publisher', class: 'fa-sm'), chart_publications_path(chart_type: 'publisher'), class: "dropdown-item"
               = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(chart_type: 'year'), class: "dropdown-item"
               = link_to icon('fas', 'chart-bar', 'Duration by Year', class: 'fa-sm'), chart_publications_path(chart_type: 'duration_year'), class: "dropdown-item"
               =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(chart_type: 'speaker'), class: "dropdown-item"
 
-        -# action-specific buttons or search form
-        - if action_name == 'show'
-          - if can? :destroy, @publication
-            = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
-          - if can? :edit, @publication
-            = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-sm btn-primary ml-3"
-          = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+          - if can? :create, Publisher
+            %li.nav-item{ class: active_if(controller_name == 'publishers', 'mr-1 d-inline-block d-lg-list-item') }
+              =link_to 'Publishers', publishers_path, class: 'nav-link', title: 'Manage Publishers'
 
-        - elsif action_name == 'edit' || action_name == 'update'
-          = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
-          = link_to "Cancel", publication_path(@publication), :class => "btn btn-sm btn-secondary ml-3"
-        - elsif action_name == 'new' || action_name == 'create'
-          = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_publication').submit()"
-          = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary ml-3"
-        - else
-          = index_search_form
+        -# action-specific buttons or search form
+        - if controller_name == 'publications'  # becasuse Publicsher is piggybacking in this space - don't show any of this in that case
+          - if action_name == 'show'
+            - if can? :destroy, @publication
+              = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), publication_path(@publication), :method => :delete, :class => "btn btn-sm btn-danger mr-3", :data => { :confirm => 'Are you sure?' }, :post => true
+            - if can? :edit, @publication
+              = link_to "Edit", edit_publication_path(@publication), :class => "btn btn-sm btn-primary ml-3"
+            = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
+
+          - elsif action_name == 'edit' || action_name == 'update'
+            = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_publication').submit()"
+            = link_to "Cancel", publication_path(@publication), :class => "btn btn-sm btn-secondary ml-3"
+          - elsif action_name == 'new' || action_name == 'create'
+            = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_publication').submit()"
+            = link_to "Done", publications_path, :class => "btn btn-sm btn-secondary ml-3"
+          - else
+            = index_search_form

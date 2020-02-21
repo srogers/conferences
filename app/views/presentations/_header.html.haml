@@ -4,9 +4,9 @@
   .col.d-sm-block.d-md-inline
     -# This column is the presentation date unless we're showing Latest
     - if params[:sort]&.include? 'presentations.created_at'
-      = sorting_header 'Added', :presentations_path, 'presentations.created_at', 'sort-numeric'
+      = sorting_header 'Added', :presentations_path, 'presentations.created_at', icon: 'sort-numeric'
     - else
-      = sorting_header 'Presented', :presentations_path, 'presentations.date', 'sort-numeric'
+      = sorting_header 'Presented', :presentations_path, 'presentations.date', icon: 'sort-numeric'
 
   -if @conference.present? && (@conference.multi_venue? || @conference.virtual?)
     .col

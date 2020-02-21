@@ -4,6 +4,8 @@
 
 Given /^I am logged in as (.*) with password (.*)$/ do |email, password|
   @current_user = User.where(:email => email).first
+  # in the normal login case, we consider the user to be current on policies
+  @current_user.privacy_policy_current!
 
   visit login_path
   fill_in "user_session_email", :with => email
@@ -11,5 +13,5 @@ Given /^I am logged in as (.*) with password (.*)$/ do |email, password|
   click_button "Log in"
   page.body.should_not =~ /Email is not valid/m
   page.body.should_not =~ /Password is not valid/m
-  page.body.should =~ /Objectivist Conferences/m     # This is in the landing page
+  page.body.should =~ /Objectivist Media/m     # This is in the landing page
 end
