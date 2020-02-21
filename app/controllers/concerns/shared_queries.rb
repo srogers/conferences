@@ -87,8 +87,9 @@ module SharedQueries
 
     if term.blank?
       # set the search term to the tag
-      term =  escape_wildcards(param_context(:tag))
-      set_param_context :search_term, term
+      # TODO - per #401 - try not doing this
+      # term =  escape_wildcards(param_context(:tag))
+      # set_param_context :search_term, term
     elsif tag.blank? && use_tag
       # if the search term exists as a tag and something public is tagged with it, then set it
       if Presentation.tagged_with(term).count > 0
