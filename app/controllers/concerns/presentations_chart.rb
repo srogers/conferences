@@ -8,6 +8,7 @@ module PresentationsChart
     query = init_query(presentations)
     if query.tag.present?
       # currently, the caller has to manage includes() and references() and apply them before the where()
+      # But we can handle this one, because we know Presentation is the root of the collection.
       presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
     end
     query = base_query(query)
@@ -69,6 +70,7 @@ module PresentationsChart
     else
       # This works for the simple case with no search term or tags - saves memory
       data = @presentations.group('tags.name').count(:all)
+      data = data.reject{|k,v| k.blank?}   # the nil key is probably presentations with no tags - skip that - can't link to them
     end
 
     return data
