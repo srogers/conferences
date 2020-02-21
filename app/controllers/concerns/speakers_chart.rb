@@ -25,6 +25,7 @@ module SpeakersChart
       query = init_query(data)
       query = base_query(query)
       query = speaker_query(query)
+      query = presentation_query(query)
 
       data = data.group("speakers.name").where(query.where_clause, *query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
 
