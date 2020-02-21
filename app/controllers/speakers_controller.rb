@@ -51,8 +51,8 @@ class SpeakersController < ApplicationController
     # a vertical bar chart).
     case param_context(:chart_type)
     when 'presentations' then
-      @presentations = speaker_presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
-      render 'presentations_chart'
+      @speakers = speaker_presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
+      render 'speakers_chart'
     when 'conferences' then
       @conferences = conference_count_data.to_a
       render 'conferences_chart'

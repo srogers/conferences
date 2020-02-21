@@ -1,0 +1,17 @@
+= render partial: 'control_bar'
+
+.row.chart-controls
+  .col-md-12
+    = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary float-right"
+
+    - if param_context(:search_term).present? || param_context(:tag).present?
+      = title chart_title_with_context('Speaker Presentations for')
+
+    - else
+      = title "Presentations by Speaker"
+
+    %p
+      Click a speaker for details.
+    #speakers_chart
+      = render partial: 'shared/speakers_chart'
+    .text-center Presentations

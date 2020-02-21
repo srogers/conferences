@@ -20,12 +20,13 @@ module SpeakersChart
     # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if param_context(:search_term).present? || param_context(:tag).present?
 
-      # Speaker queries don't use tags but it comes into play with PresentationSpeaker
-      data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
+      # Speaker queries don't reference presentations all - just PresentationSpeakers for counting.
+      # Conferences are referenced for the "My Conferences" case
+      data = PresentationSpeaker.includes(:speaker, :presentation => :conference)  #.includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query(data)
       query = base_query(query)
       query = speaker_query(query)
-      query = presentation_query(query)
+      # query = presentation_query(query)
 
       data = data.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
@@ -59,7 +60,8 @@ module SpeakersChart
       query = init_query(data)
       query = base_query(query)
       query = speaker_query(query)
-      query = presentation_query(query)
+      # don't match on presentations in this context - "Smith" matches things like "Adam Smith" in  titles - distracting - do that in the presentations tab
+      # query = presentation_query(query)
 
       data = data.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id')
       # do the sort in Ruby - don't filter when a search term is present
