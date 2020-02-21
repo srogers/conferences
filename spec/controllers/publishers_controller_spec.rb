@@ -102,7 +102,8 @@ RSpec.describe PublishersController, type: :controller do
 
   describe "PUT #update" do
 
-    let(:publisher) { create :publisher, name: 'First Renaissance'}
+    let(:publication) { create :publication, publisher: 'First Renaissance' }
+    let(:publisher)   { create :publisher, name: publication.publisher }
 
     context "with valid params" do
       let(:new_name)       { 'Fourth Renaissance' }
@@ -111,6 +112,12 @@ RSpec.describe PublishersController, type: :controller do
       it "updates the requested publisher" do
         put :update, params: {id: publisher.to_param, publisher: new_attributes}
         expect(assigns(:publisher).name).to eq(new_name)
+      end
+
+      # TODO - this is an interim "feature" until publishers get sussed out
+      it "updates matching publication publishers" do
+        put :update, params: {id: publisher.to_param, publisher: new_attributes}
+        expect(publication.reload.publisher).to eq(new_name)
       end
 
       it "redirects to the publisher" do

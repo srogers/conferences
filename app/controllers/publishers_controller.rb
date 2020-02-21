@@ -39,8 +39,13 @@ class PublishersController < ApplicationController
   end
 
   def update
+    original_name = @publisher.name
     respond_to do |format|
       if @publisher.update(publisher_params)
+        # Since Publisher and Publication are linked by text names, update the matching records in Publication,
+        # so both can be managed just by editing the publisher name.
+        Publication.where(publisher: original_name).update_all(publisher: @publisher.name)
+
         format.html { redirect_to publishers_path, notice: 'Publisher was successfully updated.' }
         format.json { render :show, status: :ok, location: @publisher }
       else
