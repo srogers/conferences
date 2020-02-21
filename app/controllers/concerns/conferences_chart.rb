@@ -23,6 +23,11 @@ module ConferencesChart
 
       results = Conference.group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
 
+      if results[''].present?
+        results['virtual'] = results['']
+        results = results.reject{|k,v| k.blank?}
+      end
+
     elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
       # Just have to let the results fly, and hope it's not too huge.
