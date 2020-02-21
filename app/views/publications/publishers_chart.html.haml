@@ -1,0 +1,20 @@
+= render partial: 'control_bar'
+
+.row.chart-controls
+  .col-md-12
+    = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary float-right"
+
+    - if param_context(:search_term).present?
+      = title chart_title_with_context('Publishers for')
+
+    - elsif param_context(:user_id).present?
+      = title "Your Publishers"
+      = param_context(:search_term)
+
+    - else
+      = title "Publishers"
+
+    %p Click a publisher to see their publications
+    #publishers_chart
+      = render partial: 'shared/publishers_chart'
+    .text-center Publishers

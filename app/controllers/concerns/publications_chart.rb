@@ -73,4 +73,23 @@ module PublicationsChart
     # group_by_year groups by Jan 1 of each year - we want to see only the year - duration is in minutes - make it hours
     return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v / 60 ) }
   end
+
+  def publication_publishers_count_data
+    # There is no user-specific "My Publishers" listing comparable to "My Events" (yet) so we don't consider user_id
+    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      # Build a query using the current search term and tag
+      query = base_query(query)
+      results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count
+
+    else
+      # Get everything
+      results = Publication.group("publications.publisher").count
+    end
+
+    # Since Publisher is a free-form field, it can be null or blank - consolidate those into one key
+    results["unspecified"] = results[nil] + results[""]
+    results = results.reject{|k,v| k.blank?}
+
+    return results
+  end
 end

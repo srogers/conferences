@@ -28,6 +28,7 @@
               = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
             .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
               = link_to icon('fas', 'chart-bar', 'by Format',  class: 'fa-sm'), chart_publications_path(chart_type: 'format'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'by Publisher', class: 'fa-sm'), chart_publications_path(chart_type: 'publisher'), class: "dropdown-item"
               = link_to icon('fas', 'chart-bar', 'by Year',  class: 'fa-sm'), chart_publications_path(chart_type: 'year'), class: "dropdown-item"
               = link_to icon('fas', 'chart-bar', 'Duration by Year', class: 'fa-sm'), chart_publications_path(chart_type: 'duration_year'), class: "dropdown-item"
               =# link_to icon('fas', 'chart-bar', 'Speakers', class: 'fa-sm'), chart_speakers_path(chart_type: 'speaker'), class: "dropdown-item"

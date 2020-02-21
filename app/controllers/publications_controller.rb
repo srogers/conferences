@@ -75,6 +75,9 @@ class PublicationsController < ApplicationController
     when 'duration_year' then
       @publications = publication_duration_year_count_data.to_a
       render 'duration_by_year_chart'
+    when 'publisher' then
+      @publishers = publication_publishers_count_data.to_a
+      render 'publishers_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to publications_path
