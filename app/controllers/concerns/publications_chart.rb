@@ -87,7 +87,7 @@ module PublicationsChart
     end
 
     # Since Publisher is a free-form field, it can be null or blank - consolidate those into one key
-    results["unspecified"] = results[nil] + results[""]
+    results["unspecified"] = results[nil].to_i + results[""].to_i
     results = results.reject{|k,v| k.blank?}
 
     return results
