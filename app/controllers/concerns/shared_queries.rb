@@ -78,7 +78,8 @@ module SharedQueries
     # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
-    use_tag = false unless collection.try(:klass).try(:name) == 'Presentation' # only presentations have tags
+    # if the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
+    use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # These can be overridden so aggregate queries can ignore them
     term = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact.join(' ') : nil
@@ -95,7 +96,7 @@ module SharedQueries
         set_param_context :tag, tag
       end
     end
-    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }'"
+    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}'"
     Query.new collection, term, tag
   end
 
@@ -166,6 +167,17 @@ module SharedQueries
     # Only Presentations use tags
     if query.tag.present?
       query.add param_context(:operator) == 'AND' ? :required : :optional, "tags.name = ?", query.tag
+    end
+
+    return query
+  end
+
+  # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table
+  def publication_aggregate(query)
+    if query.term.present? && !query.skip_optionals?
+      query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
+      query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
+      query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
     end
 
     return query

@@ -21,13 +21,13 @@ module SpeakersChart
     if param_context(:search_term).present?
 
       # Speaker queries don't use tags and don't use special query terms like matching state and year - it's just about speaker name
-      data = PresentationSpeaker.includes(:speaker, :presentation => :conference)
+      data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query(data)
       query = base_query(query)
       query = speaker_query(query)
       query = presentation_query(query)
 
-      data = data.group("speakers.name").where(query.where_clause, *query.bindings).order("count(presentation_id) DESC").count(:presentation_id)
+      data = data.group("speakers.name").where(query.where_clause, *query.bindings).order(Arel.sql("count(presentation_id) DESC")).count(:presentation_id)
 
     # Handles the My Conferences case
     elsif param_context(:user_id).present?
