@@ -36,7 +36,7 @@ class Publication < ApplicationRecord
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
   HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
-  PHYSICAL     = [PRINT, TAPE, CD, VHS, DISK].freeze
+  PHYSICAL     = [PRINT, TAPE, CD, VHS, DISK, LP].freeze
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
 
