@@ -45,6 +45,7 @@ module PublicationsChart
     # There is no user-specific publication listing comparable to "My Events" (yet)
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
+      query = init_query(Publication)
       query = base_query(query)
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
 
@@ -78,6 +79,7 @@ module PublicationsChart
     # There is no user-specific "My Publishers" listing comparable to "My Events" (yet) so we don't consider user_id
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
+      query = init_query(Publication)
       query = base_query(query)
       results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count
 
