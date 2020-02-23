@@ -13,7 +13,7 @@ class EventsController < ApplicationController
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   def index
-    @conferences = Conference
+    @conferences = Conference.includes(:supplements)
 
     # This structure separates out the :q from everything else. TODO maybe put autocomplete in a separate action
     if params[:q].present?
