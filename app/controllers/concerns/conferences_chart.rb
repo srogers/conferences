@@ -15,7 +15,7 @@ module ConferencesChart
   # After adjusting the total for multiple and virtual, the rest must be unspecified
   def rename_blank_to_unspecified(results)
     if results[''].present? || results[nil].present?
-      results['unspecified'] = results[''].to_i + results[nil].to_i
+      results[Conference::UNSPECIFIED] = results[''].to_i + results[nil].to_i
       results = results.reject{|k,v| k.blank?}
     end
     return results

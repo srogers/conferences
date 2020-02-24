@@ -6,6 +6,8 @@ module Locations
 
   end
 
+  UNSPECIFIED = 'unspecified' # shows up in reports, can be clicked, and fed back in as param - so ensure consistency
+
   PHYSICAL = 'Physical'.freeze
   VIRTUAL  = 'Virtual'.freeze
   MULTIPLE = 'Multiple'.freeze
