@@ -12,7 +12,8 @@ module ConferencesChart
     events.where(query.where_clause, *query.bindings)
   end
 
-  # After adjusting the total for multiple and virtual, the rest must be unspecified
+  # After adjusting the total for multiple and virtual, the rest must be unspecified. This should be unusual, but
+  # a necessary case for situations where we definitely have the event (old or new) but not a city.
   def rename_blank_to_unspecified(results)
     if results[''].present? || results[nil].present?
       results[Conference::UNSPECIFIED] = results[''].to_i + results[nil].to_i
@@ -21,12 +22,14 @@ module ConferencesChart
     return results
   end
 
+  # Folds in the presentation-level cities from multi-venue events with the event cities.
   def reconcile_multiple(combined, multiple)
     results = {}
     (combined.to_a + multiple.to_a).each do |city, value|
       results.has_key?(city) ? results[city] = results[city] + value : results[city] = value
     end
-    results = results.reject{|k,v| k == Conference::MULTIPLE}   # Replace the multiple event count with specific cities
+    # Remove the multi-venue event count, since the specific cities are folded in.
+    results = results.reject{|k,v| k == Conference::MULTIPLE}
 
     return results
   end
@@ -52,21 +55,19 @@ module ConferencesChart
       # This query will get all the event cities - the multiple, virtual, and unspecified ones will all come out on the empty string key
       combined = Conference.group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
 
-      # Now get the cities out of presentations.city for multi-venue events
-      query_m = multiples_query(query)
-      multiple = Conference.includes(:presentations).group("presentations.city").where(query_m.where_clause, *query_m.bindings).order(Arel.sql("count(city) DESC")).count(:city)
+      # TODO - #405 it's still unclear whether this is the right answer - if so, may need to apply it to all city count reports.
+      if param_context(:event_type) == Conference::SERIES
+        # Now get the cities out of presentations.city for multi-venue events, and fold that into the overall count.
+        # we can do this by just extending the query we've already built
+        query_m = multiples_query(query)
 
-      logger.debug "combined"
-      logger.debug combined.inspect
-      logger.debug "multiple"
-      logger.debug multiple.inspect
-
-      results = reconcile_multiple(combined, multiple)
-      logger.debug "results"
-      logger.debug results.inspect
-
-      # In this case, we have to subtract the multiple total from the ambiguous
+        multiple = Conference.includes(:presentations).group("presentations.city").where(query_m.where_clause, *query_m.bindings).order(Arel.sql("count(city) DESC")).count(:city)
+        results = reconcile_multiple(combined, multiple)
+      else
+        results = combined
+      end
     else
+
       # Show the top cities - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off cities with the same count as cities shown, which is misleading. There is a setting
       # for the speaker chart floor - but not for cities (yet) - 2 works well.
@@ -74,8 +75,6 @@ module ConferencesChart
     end
 
     results = rename_blank_to_unspecified(results)
-    logger.debug "results"
-    logger.debug results.inspect
 
     return results
   end
