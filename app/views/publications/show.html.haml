@@ -30,7 +30,7 @@
           - unless current_user&.hms_duration?
             mins
         -else
-          %i= Publication::UNSPECIFIED
+          %i unspecified
 
     %p
       %b Notes
@@ -59,7 +59,7 @@
         - if @publication.publisher.present?
           = @publication.publisher
         - else
-          %i= Publication::UNSPECIFIED
+          %i unspecified
       - else
         %i not applicable
 
