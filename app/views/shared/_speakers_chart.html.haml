@@ -19,7 +19,8 @@
         $('#speakers_chart .highcharts-xaxis-labels tspan').each(function() {
           console.log(this.innerHTML);
           this.addEventListener("click", function(e) {
-              var url = '/speakers/'+this.innerHTML.replace(' ', '-').toLowerCase();
+              // This could be a problem with foreign characters, etc, because the friendly ID slug generation is more complicated than this
+              var url = '/speakers/'+this.innerHTML.split('.').join('').split(' ').join('-').toLowerCase();
               // window.open(url, '_blank');
               window.location.href = url
           }, false);
