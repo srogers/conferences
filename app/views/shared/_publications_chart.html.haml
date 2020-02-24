@@ -25,7 +25,8 @@
           }
           console.log(element.innerHTML);
           element.addEventListener("click", function(e) {
-              var url = '/publications?search_term='+this.innerHTML+'&tag=blank';  //  <=  This is the only thing that is different from publications topic chart
+              var url = '/publications?search_term='+this.innerHTML;  //  <=  This is the only thing that is different from publications topic chart
+              // alert(url);
               // window.open(url, '_blank');
               window.location.href = url
           }, false);
