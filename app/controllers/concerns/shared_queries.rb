@@ -53,6 +53,8 @@ module SharedQueries
       [required_clause, optional_clause].compact.join(' AND ')
     end
 
+    # Cranks out bind variables for each of the WHERE clause elements.
+    # TODO - currently, every WHERE requires a bind variable - allow nil for those that don't require anything
     def bindings
       atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
       # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
@@ -168,7 +170,11 @@ module SharedQueries
   def events_with_presentations_query(query)
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
-    query.add :optional, "presentations.city ILIKE ?", "#{query.term}%"
+    if query.term == Conference::UNSPECIFIED
+      query.add :optional, "coalesce(conferences.city, '') = ?", '' # this seems redundant, but query.add requires a bind variable for everything
+    else
+      query.add :optional, "presentations.city ILIKE ?", "#{query.term}%"
+    end
 
     return query
   end
