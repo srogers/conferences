@@ -181,7 +181,7 @@ module SharedQueries
     if query.term == Conference::UNSPECIFIED
       query.add :optional, "coalesce(conferences.city, '') = ''" # this seems redundant, but query.add requires a bind variable for everything
     else
-      query.add :optional, "presentations.city ILIKE ?", "#{query.term}%"
+      query.add :optional, "presentations.city ILIKE ?", "#{query.term}%" unless query.skip_optionals?
     end
 
     return query
