@@ -53,7 +53,9 @@ module SharedQueries
       optional_clause = optionals.length > 0 ? optionals.join(' OR ') : nil
       optional_clause = "(#{ optional_clause })" if optionals.length > 1     # if there's more than one, paren-wrap it
 
-      [required_clause, optional_clause].compact.join(' AND ')
+      results = [required_clause, optional_clause].compact.join(' AND ')
+      Rails.logger.debug "WHERE: #{ results }"
+      return results
     end
 
     # Cranks out bind variables for each of the WHERE clause elements, using the same kind of ordering so they match up
@@ -120,6 +122,7 @@ module SharedQueries
   def base_query(query)
     # Deduce what the query is about - the basics depend on that
     publication_query = collection_has?(query, 'Publication')
+    event_query = collection_has?(query, 'Conference')
     speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
     logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
@@ -158,9 +161,9 @@ module SharedQueries
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
 
       unless query.skip_optionals?
-        if publication_query
+        if publication_query && query.term != 'unspecified' # unspecified is a special term - don't look for name in that case
           query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
-        elsif !speaker_query
+        elsif event_query
           query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
           query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
         end
@@ -181,7 +184,7 @@ module SharedQueries
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
     if query.term == Conference::UNSPECIFIED
-      query.add :optional, "coalesce(conferences.city, '') = ''" # this seems redundant, but query.add requires a bind variable for everything
+      query.add :optional, "coalesce(conferences.city, '') = ''"
     else
       query.add :optional, "presentations.city ILIKE ?", "#{query.term}%" unless query.skip_optionals?
     end
@@ -218,11 +221,18 @@ module SharedQueries
 
   def publication_query(query)
     if query.term.present? && !query.skip_optionals?
-      query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
-      query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
-      query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
-      query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+      if query.term == 'unspecified'
+        # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
+        # Get the Physical publications without a publisher
+        query.add :required, "coalesce(publications.publisher, '') = ''"
+        query.add :required, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
+      else
+        query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
+        query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
+        query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
+        query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
+        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+      end
     end
 
     return query
