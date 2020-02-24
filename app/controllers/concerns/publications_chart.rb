@@ -73,8 +73,8 @@ module PublicationsChart
       results = Publication.group_by_year("publications.published_on").sum('duration')
     end
 
-    # group_by_year groups by Jan 1 of each year - we want to see only the year - duration is in minutes - make it hours
-    return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => v / 60.0 ) }
+    # group_by_year groups by Jan 1 of each year - we want to see only the year - duration is in minutes - make it hours and round it
+    return results.inject({}) { |h, (k, v)| h.merge( (k.is_a?(Date) ? k.year : k) => (v / 60.0).round ) }
   end
 
   def publication_publishers_count_data
@@ -92,7 +92,7 @@ module PublicationsChart
     end
 
     # Since Publisher is a free-form field, it can be null or blank - consolidate those into one key
-    results["unspecified"] = results[nil].to_i + results[""].to_i
+    results['unspecified'] = results[nil].to_i + results[""].to_i
     results = results.reject{|k,v| k.blank?}
 
     return results

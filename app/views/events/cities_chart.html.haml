@@ -6,7 +6,11 @@
 
     = conference_chart_title('City')
 
-    %p Click a city to see its events
+    %p
+      - if param_context(:event_type) == Conference::SERIES
+        Includes mult-venue cities
+        %br
+      Click a city to see its events
     #cities_chart
       = render partial: 'shared/cities_chart'
     .text-center= current_event_type.pluralize

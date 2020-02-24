@@ -7,15 +7,16 @@ $ ->
   set_location_fields = (location) ->
     if location == 'Physical'
       $('.location-conditional-fields').slideDown()
-      if $('#conference_venue').val() == 'Virtual'
-        # clear the flag value so the user can enter something
-        $('#conference_venue').val('')
+      $('#conference_venue').val('')
+      $('#conference_city').val('')
     if location == 'Virtual'
       $('.location-conditional-fields').slideUp()
       $('#conference_venue').val('Virtual')
+      # the model handles setting conference city to Virtual
     if location == 'Multiple'
       $('.location-conditional-fields').slideUp()
       $('#conference_venue').val('Multiple')
+      # the model handles setting conference city to Multiple
 
   # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date,
   # But it shouldn't change the name once it's been set. A gon flag is used to wave it off.

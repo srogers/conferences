@@ -29,7 +29,7 @@ class Conference < ApplicationRecord
   validate  :us_state_existence
 
   before_validation :set_default_name, if: Proc.new {|c| c.name.blank? }  # only set the default if the user blanked it
-  before_save       :update_default_name
+  before_save       :update_default_name, :set_virtual_multiple
 
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :history]
@@ -66,6 +66,12 @@ class Conference < ApplicationRecord
       use_default = name.blank?
     end
     self.name = default_name(organizer) if use_default
+  end
+
+  # Sets the city to Virtual/Multiple according to the location type. This makes reporting much simpler.
+  def set_virtual_multiple
+    self.city = Conference::VIRTUAL if virtual?
+    self.city = Conference::MULTIPLE if multi_venue?
   end
 
   # This is referenced directly in conference/index and used in PDF generation, so it isn't private

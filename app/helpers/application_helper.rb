@@ -317,12 +317,12 @@ module ApplicationHelper
   # :wrapping       - default false, uses &nbsp; as a separator.
   #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
   def location(thing, options={})
-    return 'unspecified' unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
+    return Presentation::UNSPECIFIED unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
     return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
 
     elements = []
     if thing.venue.blank?
-      elements << ['unspecified venue']
+      elements << ["#{ Presentation::UNSPECIFIED } venue"]
     else
       if thing.venue_url.present?
         elements <<  [link_to(thing.venue, thing.venue_url, target: '_blank')]

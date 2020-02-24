@@ -24,7 +24,10 @@ module SharedQueries
     #   :required, 'table.attribute = ?', 3
     # When the query is built, the clauses and bindings will stack out in the right order. Since bindings() does a flatten()
     # on the list, it's possible to cheat and pass a string with multiple '?' targets and an array of multiple binding values.
-    def add(option, clause, value)
+    # It's also possible to add a self-contained clause that requires no bind variable - the nil acts as a placeholder.
+    # The crucial thing is that clauses and bind variables are stacked in order, then peeled off in order for the WHERE clause.
+    def add(option, clause, value=nil)
+      Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
     end
@@ -36,7 +39,7 @@ module SharedQueries
     def where_clause
       optionals = []
       requires  = []
-      atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
+      organize_for_output
 
       atoms.each do |atom|
         if atom.kind == :optional && !skip_optionals?
@@ -50,16 +53,27 @@ module SharedQueries
       optional_clause = optionals.length > 0 ? optionals.join(' OR ') : nil
       optional_clause = "(#{ optional_clause })" if optionals.length > 1     # if there's more than one, paren-wrap it
 
-      [required_clause, optional_clause].compact.join(' AND ')
+      results = [required_clause, optional_clause].compact.join(' AND ')
+      Rails.logger.debug "WHERE: #{ results }"
+      return results
     end
 
+    # Cranks out bind variables for each of the WHERE clause elements, using the same kind of ordering so they match up
     def bindings
-      atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
+      organize_for_output
       # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
-      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten
+      results = atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten.compact
+      Rails.logger.debug "Bindings: #{ results }"
+      return results
     end
 
     private
+
+    # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive-more terms
+    # can be added to the query and then used again - but sort must be applied each time before the query is used.
+    def organize_for_output
+      atoms.sort!{ |a,b| b.kind <=> a.kind }
+    end
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into
     # initialize() because it needs visibility into StickyNavigation.
@@ -97,7 +111,7 @@ module SharedQueries
         set_param_context :tag, tag
       end
     end
-    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}'"
+    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
     Query.new collection, term, tag
   end
 
@@ -106,10 +120,12 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
+    # Deduce what the query is about - the basics depend on that
     publication_query = collection_has?(query, 'Publication')
+    event_query = collection_has?(query, 'Conference')
     speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
-    logger.debug "Publication query: #{publication_query}   (#{query.collection.try(:klass).try(:name)})"
+    logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
     if param_context(:event_type).present? && !publication_query
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
@@ -145,13 +161,32 @@ module SharedQueries
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
 
       unless query.skip_optionals?
-        if publication_query
+        if publication_query && query.term != 'unspecified' # unspecified is a special term - don't look for name in that case
           query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
-        elsif !speaker_query
+        elsif event_query
           query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
           query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
         end
       end
+    end
+
+    return query
+  end
+
+  # Used to find the city names for multi-venue events, which live at the presentation level.
+  def multiples_query(query)
+    query.add :required, "conferences.venue = ?", Conference::MULTIPLE
+
+    return query
+  end
+
+  def events_with_presentations_query(query)
+    # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
+    # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
+    if query.term == Conference::UNSPECIFIED
+      query.add :optional, "coalesce(conferences.city, '') = ''"
+    else
+      query.add :optional, "presentations.city ILIKE ?", "#{query.term}%" unless query.skip_optionals?
     end
 
     return query
@@ -186,11 +221,18 @@ module SharedQueries
 
   def publication_query(query)
     if query.term.present? && !query.skip_optionals?
-      query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
-      query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
-      query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
-      query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+      if query.term == 'unspecified'
+        # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
+        # Get the Physical publications without a publisher
+        query.add :required, "coalesce(publications.publisher, '') = ''"
+        query.add :required, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
+      else
+        query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
+        query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
+        query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
+        query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
+        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+      end
     end
 
     return query
