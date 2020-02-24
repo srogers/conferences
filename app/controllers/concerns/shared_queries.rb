@@ -60,7 +60,9 @@ module SharedQueries
     def bindings
       organize_for_output
       # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
-      atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten
+      results = atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten.compact
+      Rails.logger.debug "Bindings: #{ results }"
+      return results
     end
 
     private
