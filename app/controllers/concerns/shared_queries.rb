@@ -24,7 +24,10 @@ module SharedQueries
     #   :required, 'table.attribute = ?', 3
     # When the query is built, the clauses and bindings will stack out in the right order. Since bindings() does a flatten()
     # on the list, it's possible to cheat and pass a string with multiple '?' targets and an array of multiple binding values.
-    def add(option, clause, value)
+    # It's also possible to add a self-contained clause that requires no bind variable - the nil acts as a placeholder.
+    # The crucial thing is that clauses and bind variables are stacked in order, then peeled off in order for the WHERE clause.
+    def add(option, clause, value=nil)
+      Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
     end
@@ -53,8 +56,7 @@ module SharedQueries
       [required_clause, optional_clause].compact.join(' AND ')
     end
 
-    # Cranks out bind variables for each of the WHERE clause elements.
-    # TODO - currently, every WHERE requires a bind variable - allow nil for those that don't require anything
+    # Cranks out bind variables for each of the WHERE clause elements, using the same kind of ordering so they match up
     def bindings
       organize_for_output
       # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
@@ -105,7 +107,7 @@ module SharedQueries
         set_param_context :tag, tag
       end
     end
-    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}'"
+    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
     Query.new collection, term, tag
   end
 
@@ -118,7 +120,7 @@ module SharedQueries
     publication_query = collection_has?(query, 'Publication')
     speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
-    logger.debug "Publication query: #{publication_query}   (#{query.collection.try(:klass).try(:name)})"
+    logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
     if param_context(:event_type).present? && !publication_query
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
@@ -177,7 +179,7 @@ module SharedQueries
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
     if query.term == Conference::UNSPECIFIED
-      query.add :optional, "coalesce(conferences.city, '') = ?", '' # this seems redundant, but query.add requires a bind variable for everything
+      query.add :optional, "coalesce(conferences.city, '') = ''" # this seems redundant, but query.add requires a bind variable for everything
     else
       query.add :optional, "presentations.city ILIKE ?", "#{query.term}%"
     end
