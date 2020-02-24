@@ -37,7 +37,9 @@ module ConferencesHelper
     elsif param_context(:my_events).present?
       title("Your #{ current_event_type.pluralize } by #{pivot}")
     elsif param_context(:search_term).present?
-      title("#{ current_event_type.pluralize } by #{pivot} For #{ [param_context(:search_term), param_context(:tag)].compact.join(' and ') }")
+      p = param_context(:search_term).present? ? param_context(:search_term) : nil
+      t = param_context(:tag).present? ? param_context(:tag) : nil
+      title("#{ current_event_type.pluralize } by #{pivot} For #{ [p, t].compact.join(' and ') }")
     else
       title("#{ current_event_type.pluralize} by #{pivot}")
     end

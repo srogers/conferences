@@ -106,6 +106,7 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
+    # Deduce what the query is about - the basics depend on that
     publication_query = collection_has?(query, 'Publication')
     speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
@@ -153,6 +154,21 @@ module SharedQueries
         end
       end
     end
+
+    return query
+  end
+
+  # Used to find the city names for multi-venue events, which live at the presentation level.
+  def multiples_query(query)
+    query.add :required, "conferences.venue = ?", Conference::MULTIPLE
+
+    return query
+  end
+
+  def events_with_presentations_query(query)
+    # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
+    # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
+    query.add :optional, "presentations.city ILIKE ?", "#{query.term}%"
 
     return query
   end

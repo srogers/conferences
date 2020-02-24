@@ -49,4 +49,16 @@ namespace :db do
     puts "updated #{ count } users"
     puts
   end
+
+  # Set initial values for virtual and multiple conference cities, to switch to the regime of having these managed
+  # by the model, so they show up correctly in reports. Probably just a one-shot tassk. Might keep in case it needs reversing.
+  desc 'A data maintenance task set Virtual and Multiple event cities to those values.'
+  task :set_multiple_virtual_event_cities => :environment do
+    puts "updating Multiple"
+    ActiveRecord::Base.connection.execute("UPDATE conferences SET city = 'Multiple' WHERE venue = 'Multiple'")
+    puts "updating Virtual"
+    ActiveRecord::Base.connection.execute("UPDATE conferences SET city = 'Virtual' WHERE venue = 'Virtual'")
+    puts "done"
+  end
+
 end
