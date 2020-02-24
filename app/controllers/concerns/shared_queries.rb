@@ -36,7 +36,7 @@ module SharedQueries
     def where_clause
       optionals = []
       requires  = []
-      atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
+      organize_for_output
 
       atoms.each do |atom|
         if atom.kind == :optional && !skip_optionals?
@@ -56,12 +56,18 @@ module SharedQueries
     # Cranks out bind variables for each of the WHERE clause elements.
     # TODO - currently, every WHERE requires a bind variable - allow nil for those that don't require anything
     def bindings
-      atoms.sort!{ |a,b| b.kind <=> a.kind } # Sort required first, then build clauses and bindings in order
+      organize_for_output
       # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
       atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten
     end
 
     private
+
+    # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive-more terms
+    # can be added to the query and then used again - but sort must be applied each time before the query is used.
+    def organize_for_output
+      atoms.sort!{ |a,b| b.kind <=> a.kind }
+    end
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into
     # initialize() because it needs visibility into StickyNavigation.
