@@ -77,4 +77,26 @@ RSpec.describe Speaker, type: :model do
     end
 
   end
+
+  describe "finding active years" do
+
+    let(:speaker) { create :speaker }
+
+    it "returns n/a with no presentations" do
+      expect(speaker.active_years).to eq('none')
+    end
+
+    context "with presentations" do
+
+      let(:first) { create :presentation, date: "1982-03-21".to_date }
+      let(:last)  { create :presentation, date: "1997-05-12".to_date }
+
+      let!(:dummy1) { create :presentation_speaker, speaker: speaker, presentation: first }
+      let!(:dummy2) { create :presentation_speaker, speaker: speaker, presentation: last }
+
+      it "finds the date of the first and last presentations" do
+        expect(speaker.active_years).to eq('1982-1997')
+      end
+    end
+  end
 end
