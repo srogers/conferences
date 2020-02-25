@@ -51,11 +51,11 @@ class SpeakersController < ApplicationController
     # a vertical bar chart).
     case param_context(:chart_type)
     when 'presentations' then
-      @speakers = speaker_presentation_count_data.to_a    # build the data here, or pull it from an endpoint in the JS, but not both
+      @speakers = speaker_presentation_count_data(params[:id]).to_a    # build the data here, or pull it from an endpoint in the JS, but not both
       render 'speakers_chart'
-    when 'conferences' then
-      @conferences = conference_count_data.to_a
-      render 'conferences_chart'
+    when 'events' then
+      @events = event_count_data(params[:id]).to_a
+      render 'events_chart'
     else
       flash[:error] = 'Unknown chart type'
       redirect_to speakers_path

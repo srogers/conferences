@@ -248,6 +248,13 @@ module SharedQueries
     return query
   end
 
+  def one_speaker_query(query, speaker_slug)
+    # this filters down from the friendly find view of a speaker, so it's the slug, not ActiveRecord ID
+    query.add :required, 'speakers.slug = ?', speaker_slug
+
+    return query
+  end
+
   # This defines the core restriction used to collect counts by user for conferences, cities, years, etc.
   # Since this query has an aggregate built into it, we can't use the base_query() method
   def by_user_query(query)
