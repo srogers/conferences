@@ -53,8 +53,11 @@ class Speaker < ApplicationRecord
   end
 
   def active_years
-    max = presentations.maximum(:date).year
-    min = presentations.minimum(:date).year
+    max = presentations.maximum(:date)&.year
+    min = presentations.minimum(:date)&.year
+
+    return 'none' if max.nil?
+
     if max == min
       return max
     else
