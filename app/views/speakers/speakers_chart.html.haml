@@ -2,7 +2,10 @@
 
 .row.chart-controls
   .col-md-12
-    = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary float-right"
+    - if params[:id].present?
+      = link_to "Done", speaker_path(params[:id]), :class => "btn btn-sm btn-secondary float-right"
+    - else
+      = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary float-right"
 
     - if param_context(:search_term).present?
       = title chart_title_with_context('Speaker Presentations for')
@@ -10,6 +13,9 @@
     - elsif param_context(:user_id).present?
       = title "Your Event Speakers"
       = param_context(:search_term)
+
+    - elsif params[:id].present?
+      = title "Speaker Presentations"
 
     - else
       - title "Frequent Event Speakers"

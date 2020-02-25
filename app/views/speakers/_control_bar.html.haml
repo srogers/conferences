@@ -1,4 +1,5 @@
 -# This puts the navbar outside the content div so it can span the page
+-# This puts the navbar outside the content div so it can span the page
 - content_for :body do
   %nav.navbar.navbar-expand-lg.navbar-dark
     .container
@@ -21,8 +22,8 @@
             = link_to('#', class: active_if(action_name == 'chart', "nav-link dropdown-toggle"), id: "navbarDropdownMenuLink", 'data-toggle' => "dropdown", 'aria-haspopup' => "true", 'aria-expanded' => "false") do
               = icon('fas', 'chart-bar', 'Chart It',   class: 'fa-sm')
             .dropdown-menu{'aria-labelledby' => "navbarDropdownMenuLink"}
-              = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(chart_type: 'presentations'), class: "dropdown-item"
-              = link_to icon('fas', 'chart-bar', 'Events'  , class: 'fa-sm'), chart_speakers_path(chart_type: 'conferences'), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'Presentations', class: 'fa-sm'), chart_speakers_path(chart_type: 'presentations', id: params[:id]), class: "dropdown-item"
+              = link_to icon('fas', 'chart-bar', 'Events'  , class: 'fa-sm'), chart_speakers_path(chart_type: 'events', id: params[:id]), class: "dropdown-item"
 
         -# action-specific buttons or search field
         - if action_name == 'show'
