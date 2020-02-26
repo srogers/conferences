@@ -7,8 +7,12 @@ $ ->
   set_location_fields = (location) ->
     if location == 'Physical'
       $('.location-conditional-fields').slideDown()
-      $('#conference_venue').val('')
-      $('#conference_city').val('')
+      venue = $('#conference_venue').val()
+      # When switching from Multiple or Virtual back to phsycial, these need to be blanked, so we're not counting on the
+      # user to do it -  the old location type will stick if the user neglects to change it.
+      if venue == 'Multiple' || venue == 'Virtual'
+        $('#conference_venue').val('')
+        $('#conference_city').val('')
     if location == 'Virtual'
       $('.location-conditional-fields').slideUp()
       $('#conference_venue').val('Virtual')
