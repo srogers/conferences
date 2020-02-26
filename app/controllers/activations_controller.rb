@@ -5,10 +5,16 @@ class ActivationsController < ApplicationController
 
     if current_user
       if @user != current_user
-        flash[:notice] = "This activation notice is for a different account. Your account is already active."
-        logger.warn "User #{ current_user.id }, #{ current_user.email } tried to activate as user ID #{ @user.id }"
+        if @user.blank?
+          # An already activated and logged in user clicked on their email token again
+          logger.warn "User #{ current_user.id }, #{ current_user.email } tried to activate a stale or non-existent token"
+          flash[:notice] = "Your account has already been activated"
+        else
+          # This looks like a logged-in user tried to activate with someone else's token - shenanigans
+          logger.warn "User #{ current_user.id }, #{ current_user.email } tried to activate as user ID #{ @user.id }"
+          flash[:notice] = "This activation notice is for a different account. Your account is already active."
+        end
       end
-      flash[:notice] = "Your account has already been activated"
       redirect_to root_url
 
     elsif @user
@@ -31,7 +37,7 @@ class ActivationsController < ApplicationController
       end
     else
       # TODO - maybe rate-limit or block this if it gets abused
-      logger.warn "Request IP #{ request.ip } attempted to validate with bogus token: #{ params[:id] }"
+      logger.warn "Request IP #{ request.ip } attempted to validate with bogus or expired token: #{ params[:id] }"
       flash[:error] = "We're sorry-your account could not be activated. Please contact an administrator."
       redirect_to root_path
     end
