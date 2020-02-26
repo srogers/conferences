@@ -9,7 +9,7 @@
 -# use this method to get the data from the controller action, and set the height based on the result size
 = bar_chart @years, height: bar_chart_height(@years.length), library: { yAxis: { allowDecimals: false } }
 
--# This is a somewhat hacky way of getting the Top Cities chart labels linked to a conference search
+-# This is a somewhat hacky way of getting the Top Cities chart labels linked to an event search
 -# The chart has to be rendered into a #countries_chart element so it can appear on pages with other charts without side-effects
 - content_for :footer do
   :javascript
