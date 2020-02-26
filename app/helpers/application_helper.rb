@@ -11,6 +11,7 @@ module ApplicationHelper
   end
 
   def unbreakable(text)
+    return '' if text.blank?
     text.gsub(' ','&nbsp;').html_safe
   end
 
