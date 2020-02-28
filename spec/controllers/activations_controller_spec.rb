@@ -116,7 +116,7 @@ describe ActivationsController do
         end
 
         it "tells the user their account is approved already" do
-          expect(flash[:notice]).to match(/already been activated/)
+          expect(flash[:notice]).to match(/already active/)
         end
 
         it "redirects to the main page" do
