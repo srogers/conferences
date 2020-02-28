@@ -1,6 +1,21 @@
 # Used to get certain nav-related params into session, and clear them when switch subject areas
 module StickyNavigation
 
+  # Defines the expected param keys and their default values
+  DEFAULTS = {
+    :page           => nil,
+    :per            => 10,
+    :chart_type     => nil,
+    :event_type     => nil,
+    :search_term    => nil,
+    :tag            => nil,
+    :user_id        => nil,
+    :needs_approval => nil,
+    :operator       => 'OR',    # may not be necessary
+    :my_events      => nil,
+  }
+  PERSISTENT_DEFAULTS = [:per]  # these don't get cleared
+
   def set_param_context(key, value)
     session[key] = value
   end
@@ -17,12 +32,7 @@ module StickyNavigation
     end
 
     if default=='unassigned'
-      default = case param
-      when :per         then 10
-      when :operator    then 'OR'  # this may be unnecessary
-      else
-        nil
-      end
+      default = DEFAULTS[param]  # get the default from the pre-defined value
     else
       # allow param_context() to be called directly with 'blank' to kill a current value
       if default == 'blank' && [:user_id].include?(param)
@@ -106,18 +116,10 @@ module StickyNavigation
   private
 
   def reset_and_remember
-    session.delete(:page)
-    session.delete(:chart_type)
-    session.delete(:event_type)
-    session.delete(:search_term)
-    session.delete(:tag)
-    session.delete(:user_id)
-    session.delete(:needs_approval)
-    session.delete(:operator)
-    session.delete(:my_events)
-
+    DEFAULTS.keys.each do |param|
+      session.delete(param) unless PERSISTENT_DEFAULTS.include?(param)
+    end
     session[:via] = controller_name  # remember how we got here
-
     params[:nav] = nil               # clear this out so it won't get stuck in pagination
   end
 end
