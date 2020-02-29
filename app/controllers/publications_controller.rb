@@ -11,6 +11,11 @@ class PublicationsController < ApplicationController
 
   def index
     @publications = Publication
+    # Patch a recurring error in Sentry
+    if params[:sort] == '-created_at'
+      logger.warn "patching over invalid params"
+      redirect_to publications_path(sort: '-publications.created_at') and return
+    end
 
     if params[:q].present? # then it's autocomplete
       @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))

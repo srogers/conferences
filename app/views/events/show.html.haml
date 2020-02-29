@@ -71,9 +71,18 @@
       - else
         %i none
     - if can? :edit, Conference
-      %p
-        %b Data entry completed:
-        = @conference.completed ? icon('fas', 'check', :class => 'fa-lg fa-fw text-success') : tag.i('not yet')
+      %br
+        - if @conference.completed
+          %b Data entry completed:
+          = icon('fas', 'check', :class => 'fa-lg fa-fw text-success')
+        - else
+          %b Data entry in progress:
+          %div{ style: 'display: inline-block;'}
+            = simple_form_for @conference, url: event_path(@conference), html: { class: 'form-inline' } do |f|
+              = f.input :completed, as: :hidden, input_html: { value: 'true' }
+              = f.button :submit, 'Complete', :class => 'btn btn-primary btn-xs'
+      %br
+
     %p
       %b Members Attending:
       = @conference.users.length
