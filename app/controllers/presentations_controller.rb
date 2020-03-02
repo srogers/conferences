@@ -10,6 +10,11 @@ class PresentationsController < ApplicationController
   authorize_resource            # friendly_find is incompatible with load_resource
 
   def index
+    if params[:sort] == '-created_at'
+      logger.warn "patching over invalid params"
+      redirect_to presentations_path(sort: '-presentations.created_at') and return
+    end
+
     # Construct the simplest query base for guest user (and robots) - build elaborate WHERE, but only fetch presentations.
     @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
 
