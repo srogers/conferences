@@ -42,7 +42,7 @@ module Sortability
     else
       ' DESC'
     end
-    column = expression.downcase.delete('^a-z.')        # nothing can be in column name except a-z and the dot between table and column
+    column = expression.downcase.delete('^a-z_.')        # nothing can be in column name except a-z, underscore, and the dot between table and column
     return sanitize_sql_for_order column + direction
   end
 end
