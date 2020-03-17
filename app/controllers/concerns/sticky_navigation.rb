@@ -20,6 +20,18 @@ module StickyNavigation
     session[key] = value
   end
 
+  # Before we save the param into session, ensure the contents are legit - robots tend to inject crap into sort and tag
+  def cleaned_copy(param)
+    if param == :tag
+      params[param].delete('^A-Za-z-')   # nothing but letters and included dash
+    elsif [:page, :per, :user_id].include? param
+      params[param].delete('^0-9')        # ensure these are digits
+    # elsif param == :sort  per #323 - see if it works to include sort in sticky navigation - and if so, clean it here per #428
+    else
+      params[param]                       # otherwise, nothing to clean
+    end
+  end
+
   # Gets the current value of navigation-related params or assigns a default. Stashes current value in session to make
   # it sticky everywhere - with the overall goal of getting consistent nav behavior without littering URLs with params.
   # In some cases, we want links to clear part of the current context. To do that, pass URL params ?param=blank
@@ -56,7 +68,7 @@ module StickyNavigation
         end
       else
         # Save the value from params and return it as the current value
-        session[param] = params[param]
+        session[param] = cleaned_copy(param)
       end
       # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
       params.delete(param) unless param == :page

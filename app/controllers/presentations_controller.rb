@@ -18,7 +18,7 @@ class PresentationsController < ApplicationController
     # Construct the simplest query base for guest user (and robots) - build elaborate WHERE, but only fetch presentations.
     @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
 
-    @presentations = @presentations.order(params_to_sql '<presentations.date')
+    @presentations = @presentations.order(params_to_sql Arel.sql('<presentations.date'))
     # This is necessary for getting the presentation status - TODO see if it can be fetched via association
     @user_presentations = current_user.user_presentations if current_user.present?
 
