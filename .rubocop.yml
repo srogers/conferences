@@ -9,7 +9,13 @@ AllCops:
     - 'bin/**/*'
 
 Layout/LineLength:
-  Max: 120
+  Enabled: false
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
 
 Metrics/BlockLength:
   Exclude:
