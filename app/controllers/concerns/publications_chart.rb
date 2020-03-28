@@ -28,7 +28,7 @@ module PublicationsChart
 
     # Handles the My Conferences case - TODO does this make sense for Publications?
     elsif param_context(:user_id).present?
-      data = Publication.includes(:presentations => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("format").order("count(publications.id) DESC").count('publications.id')
+      data = Publication.includes(:presentations => :conference).where("conferences.id in (SELECT conference_id FROM conference_users WHERE user_id = ?)", current_user.id).group("format").order(Arel.sql("count(publications.id) DESC")).count('publications.id')
 
     else
       # Show the top publications - otherwise it's too big - limit is not great here, because even though results are sorted

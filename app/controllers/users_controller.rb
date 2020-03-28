@@ -68,7 +68,7 @@ class UsersController < ApplicationController
     @speakers_created = Speaker.where(:creator_id => @user.id).count
 
     # Personal activity
-    @conferences_attended = @user.conferences.order('start_date DESC')
+    @conferences_attended = @user.conferences.order(Arel.sql('start_date DESC'))
     @presentations = @user.user_presentations     # presentations the user is watching
     @notifications = @user.notifications          # notifications sent
   end
@@ -97,7 +97,7 @@ class UsersController < ApplicationController
 
     @conferences = @user.conferences
     @conferences = @conferences.where("conferences.event_type ILIKE ?", param_context(:event_type)) if param_context(:event_type).present?
-    @conferences = @conferences.order('start_date DESC')
+    @conferences = @conferences.order(Arel.sql('start_date DESC'))
   end
 
   def edit

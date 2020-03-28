@@ -37,7 +37,7 @@ LIMIT 3
 
   def notifications
     @notifications = Notification.includes(:user_presentation, :presentation_publication => :presentation).includes(:presentation_publication => :publication) \
-                    .references(:user_presentation).where("user_presentations.user_id = ?", current_user&.id).order('notifications.created_at DESC').limit(3)
+                    .references(:user_presentation).where("user_presentations.user_id = ?", current_user&.id).order(Arel.sql('notifications.created_at DESC')).limit(3)
 
     render layout: false
   end

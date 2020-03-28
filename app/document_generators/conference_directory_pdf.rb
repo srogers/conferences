@@ -99,7 +99,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
       # Use plain each, because find_each doesn't allow sorting.
       table_data = [['<strong>Name</strong>', '<strong>Date</strong>', '<strong>Location</strong>']]
-      Conference.where("event_type = ?", event_type).order('start_date DESC').each do |conference|
+      Conference.where("event_type = ?", event_type).order(Arel.sql('start_date DESC')).each do |conference|
         table_data << [
           "<link href='#{ event_url(conference) }'>#{ conference.name }</link>",
           conference.date_span(compact: true),
@@ -117,7 +117,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Name</strong>', '<strong>Speakers</strong>', '<strong>Conference</strong>', '<strong>Links</strong>']]
-    Presentation.includes(:publications, :speakers, :conference).order('conferences.start_date DESC, presentations.sortable_name').each do |presentation|
+    Presentation.includes(:publications, :speakers, :conference).order(Arel.sql('conferences.start_date DESC, presentations.sortable_name')).each do |presentation|
       table_data << [
         "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>",
         linked_speaker_names(presentation),
@@ -135,7 +135,7 @@ class ConferenceDirectoryPdf < Prawn::Document
 
     # Use #all because #find_each doesn't allow sorting.  TODO - try to eager-load the tags
     table_data = [['<strong>Conference/Name/Notes</strong>', '<strong>Format/ Location</strong>', '<strong>HH:MM</strong>']]
-    Publication.includes(:presentations => :conference).order('conferences.start_date DESC, presentations.sortable_name').each do |publication|
+    Publication.includes(:presentations => :conference).order(Arel.sql('conferences.start_date DESC, presentations.sortable_name')).each do |publication|
       publication.presentations.each do |presentation|
         table_data << [
             [presentation.conference_name, "<link href='#{ presentation_url(presentation) }'>#{ presentation.name }</link>", publication.notes].join('<br/>'),

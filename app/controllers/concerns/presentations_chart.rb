@@ -24,7 +24,7 @@ module PresentationsChart
     # Handling search terms for presentations is more complex than speakers or conferences because of tags, so it's handled on the Ruby side
     if param_context(:search_term).present? || param_context(:tag).present?
 
-      @presentations = Presentation.includes(:publications, :speakers, :conference).order('conferences.start_date DESC, presentations.sortable_name')
+      @presentations = Presentation.includes(:publications, :speakers, :conference).order(Arel.sql('conferences.start_date DESC, presentations.sortable_name'))
       @presentations = filter_presentations @presentations
 
       # Build year keys and counts - use one method or the other
@@ -81,7 +81,7 @@ module PresentationsChart
   # which the endpoint can return as JSON or the action can use directly as an array.
   def topic_count_data
     # If it weren't for the need to support query terms on presentations, we could get the counts directly from the tags table
-    # data = ActsAsTaggableOn::Tag.order('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
+    # data = ActsAsTaggableOn::Tag.order(Arel.sql('taggings_count DESC').map{|t| [t.name, t.taggings_count]}
 
     # adding taggings and tags with #load seems to speed things up a little
     # 12/17/19 remove load to perhaps save memory

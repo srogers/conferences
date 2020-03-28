@@ -14,7 +14,7 @@ class OrganizersController < ApplicationController
   end
 
   def show
-    @events = @organizer.conferences.order('start_date DESC')
+    @events = @organizer.conferences.order(Arel.sql('start_date DESC'))
   end
 
   def edit

@@ -41,8 +41,8 @@ class PublicationsController < ApplicationController
     # The listing contains "duplicates" - the same publication name in various formats, so the listing makes more sense
     # if these alternate formats always appear together. To do that, we add it as a secondary sort when it isn't the primary
     sorting = params_to_sql('<publications.published_on')
-    sorting = Arel.sql([sorting, 'publications.name ASC'].compact.join(', ')) unless sorting&.include?('publications.name')
-    @publications = @publications.order(sorting)
+    sorting = [sorting, 'publications.name ASC'].compact.join(', ') unless sorting&.include?('publications.name')
+    @publications = @publications.order(Arel.sql(sorting))
 
     page = params[:q].present? ? 1 : param_context(:page)       # autocomplete should always get page 1 limit 8
     per  = params[:q].present? ? 8 : param_context(:per)
@@ -65,7 +65,7 @@ class PublicationsController < ApplicationController
   end
 
   def latest
-    @publications = Publication.includes(:presentations => :speakers).order('publications.created_at DESC').limit(3)
+    @publications = Publication.includes(:presentations => :speakers).order(Arel.sql('publications.created_at DESC')).limit(3)
     render layout: false
   end
 
