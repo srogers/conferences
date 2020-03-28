@@ -49,6 +49,8 @@ module Sortability
     # If the column sort contains a comma, then we have to seed in the sort direction twice, e.g. 'column1 ASC, column2 ASC'
     # There's no provision for two separate sorting directions. Currently only event city,state works like this.
     column_with_direction = column.split(',').map{|c| c + direction}.join(',')
+    # make a special hack for conferences by State
+    column_with_direction += ', conferences.city ASC' if column_with_direction.include?('conferences.state') && !column_with_direction.include?('conferences.city')
     return sanitize_sql_for_order column_with_direction
   end
 end
