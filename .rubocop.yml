@@ -1,3 +1,4 @@
+# All the options are defined here:  https://rubocop.readthedocs.io/en/latest/
 require:
   - rubocop-rails
   - rubocop-rspec
@@ -8,15 +9,6 @@ AllCops:
     - 'script/**/*'
     - 'bin/**/*'
 
-Layout/LineLength:
-  Enabled: false
-
-Layout/SpaceBeforeBlockBraces:
-  Enabled: false
-
-Layout/SpaceInsideBlockBraces:
-  Enabled: false
-
 Metrics/BlockLength:
   Exclude:
     - config/**/*
@@ -26,9 +18,31 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - spec/**/*
 
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines_except_namespace
+
+Layout/ExtraSpacing:
+  AllowBeforeTrailingComments: true
+
+Layout/LineLength:
+  Enabled: false
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+# These are relatively new cops that are disabled by default unless explicitly enabled
 Style/HashEachMethods:
   Enabled: true
 
