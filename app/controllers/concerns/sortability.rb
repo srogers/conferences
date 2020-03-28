@@ -21,14 +21,16 @@ module Sortability
         params[:sort] = ''
         return nil
       elsif ! '+-'.include?(params[:sort][0])
-        sqlize_sort_param(default)   # this is the "neutral" sort, where we revert to the default, but leave the sort param in play
+        sql = sqlize_sort_param(default)   # this is the "neutral" sort, where we revert to the default, but leave the sort param in play
       else
-        sqlize_sort_param(params[:sort])
+        sql = sqlize_sort_param(params[:sort])
       end
     else
       params[:sort] = default        # awkward direct tweaking of params - but needed to make this stick and flow up
-      sqlize_sort_param(default)
+      sql =sqlize_sort_param(default)
     end
+
+    return Arel.sql(sql)             # So it's not necessary to call Arel.sql() on this in the controller
   end
 
   private
@@ -42,7 +44,11 @@ module Sortability
     else
       ' DESC'
     end
-    column = expression.downcase.delete('^a-z_.')        # nothing can be in column name except a-z, underscore, and the dot between table and column
-    return sanitize_sql_for_order column + direction
+    column = expression.downcase.delete('^a-z_.,\(\)')    # nothing can be in column name except a-z, underscore, comma, and the dot between table and column - parens are to preserve lower(x) as a viable option
+    @current_sortable_column = column                     # The view needs to look at this to see what we're sorting by - params[:sort] may be it, or may have kicked back to default sort
+    # If the column sort contains a comma, then we have to seed in the sort direction twice, e.g. 'column1 ASC, column2 ASC'
+    # There's no provision for two separate sorting directions. Currently only event city,state works like this.
+    column_with_direction = column.split(',').map{|c| c + direction}.join(',')
+    return sanitize_sql_for_order column_with_direction
   end
 end

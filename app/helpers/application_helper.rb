@@ -130,13 +130,16 @@ module ApplicationHelper
   # path_helper expects a symbol. If the listing is on an index page, pass the index path helper name, on a show page
   # (e.g. presentations listing on event or speaker page) then pass the singular route, e.g.:  speaker_path
   # Options:  use icon to change the sort icon as appropriate for the column
+  # TODO - pull this into the Sortability concern and then helperize it in ApplicationController
   def sorting_header(text, path_helper, sql_column, options={})
     icon = options[:icon] || 'sort-alpha'
     new_sort = params_with_sort(sql_column)
-    if params[:sort].present? && params[:sort].from(1) == sql_column  # Then the current sort is about this column
-      # logger.debug "params[:sort] = #{ params[:sort]}"
+    # sort is about this column when the sort matches the column, and we're not returning to the "neutral" mode
+    if params[:sort].present? && @current_sortable_column == sql_column && ['+','-','<','>'].include?(params[:sort][0])
+      # logger.debug "Sort is about this column:  #{ @current_sortable_column }"
       sort_indicator = ['-', '<'].include?(params[:sort][0]) ? icon('fas', icon + '-up', :class => 'fa-fw') : icon('fas', icon + '-down', :class => 'fa-fw')
     else
+      # logger.debug "Sort is NOT about #{sql_column}:  current_sortable_column = #{ @current_sortable_column}"
       sort_indicator = ''
     end
     content_tag :span, class: 'sort-indicator-wrapper' do
