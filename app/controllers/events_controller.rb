@@ -2,7 +2,6 @@ class EventsController < ApplicationController
 
   include ConferencesChart
   include ConferencesHelper
-  include Sortability
   include SpeakersChart
   include StickyNavigation
 

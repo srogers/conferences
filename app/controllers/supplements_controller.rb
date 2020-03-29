@@ -1,6 +1,5 @@
 class SupplementsController < ApplicationController
 
-  include Sortability
   include StickyNavigation
 
   before_action :get_event,      except: [:index, :download]

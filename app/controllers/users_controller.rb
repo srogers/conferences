@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
 
-  include Sortability
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]

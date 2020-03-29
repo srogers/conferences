@@ -1,7 +1,5 @@
 class PublishersController < ApplicationController
 
-  include Sortability
-
   before_action :require_admin
   before_action :get_publisher, only: [:show, :edit, :update, :destroy]
 

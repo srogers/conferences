@@ -1,7 +1,6 @@
 class PresentationsController < ApplicationController
 
   include PresentationsChart    # defines the filter methods and gets chart data
-  include Sortability
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]
