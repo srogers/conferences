@@ -86,7 +86,11 @@ GROUP BY pr.id"
   # Brings over attributes from the conference that also live in presentation to make querying and reporting easier
   def inherit_conference_defaults
     return unless conference.present?
-    self.date    = conference.start_date if date.blank?
+    if conference&.event_type == Conference::SERIES
+      self.date    = conference.end_date if date.blank?
+    else
+      self.date    = conference.start_date if date.blank?
+    end
     self.city    = conference.city if city.blank?
     self.state   = conference.state if state.blank?
     self.country = conference.country if country.blank?
