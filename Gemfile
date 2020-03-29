@@ -68,6 +68,7 @@ group :development do
   gem 'bullet'                      # looks for N+1 queries and unnecessary eager loading
   gem 'letter_opener_web'
   gem 'listen'
+  gem "rails-erd"                   # builds database ERD, requires graphviz install via macports
 end
 
 group :test do
