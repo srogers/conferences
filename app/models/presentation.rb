@@ -20,7 +20,7 @@ class Presentation < ApplicationRecord
   validate  :unique_per_conference
   # requiring a speaker at create is handled by PresentationsController
 
-  before_save :update_sortable_name
+  before_save :update_sortable_name, :adjust_series_end
 
   acts_as_taggable
 
@@ -52,6 +52,15 @@ GROUP BY pr.id"
   # This is necessary to make Friendly_id generate a new slug when the current name is changed.
   def should_generate_new_friendly_id?
     slug.blank? || name_changed?
+  end
+
+  # If this presentation is part of a series, and falls past the current end-date for the series, push that date out.
+  def adjust_series_end
+    if conference&.event_type == Conference::SERIES
+      if conference.end_date < date
+        conference.update(end_date: date)
+      end
+    end
   end
 
   # presentations can exist with duplicate names, but presentation names must be unique within a conference
