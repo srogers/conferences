@@ -1,0 +1,7 @@
+attributes:
+  - content
+  - foreign_key
+  - inheritance
+notation: bachman
+exclude: ActiveRecord::SchemaMigration,ActiveRecord::InternalMetadata
+

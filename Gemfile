@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.5.7'
 
-gem 'rails', '5.2.4.1'
+gem 'rails', '5.2.4.2'
 gem 'pg'
 gem 'puma'
 gem 'uglifier'
@@ -53,12 +53,12 @@ gem 'redis', '~> 3.0'
 # gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
-  gem 'byebug', platform: :mri      # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platform: :mri         # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'dotenv-rails'
-  gem "factory_bot_rails"           # consider setting up factories as tests get more robust
-  gem "pry"                         # debug console support for development and cucumber
-  # gem "foreman"                     # runs the server specified by Procfile - a Heroku-compatible way of running the server
-  # gem "thin"                        # for the times when Puma is unstable
+  gem "factory_bot_rails"              # consider setting up factories as tests get more robust
+  gem "pry"                            # debug console support for development and cucumber
+  gem 'rubocop-rails', require: false  # provides some rails-specific cops
+  gem 'rubocop-rspec', require: false  # provides some spec-specific cops
 end
 
 group :development do
@@ -68,6 +68,7 @@ group :development do
   gem 'bullet'                      # looks for N+1 queries and unnecessary eager loading
   gem 'letter_opener_web'
   gem 'listen'
+  gem "rails-erd"                   # builds database ERD, requires graphviz install via macports
 end
 
 group :test do

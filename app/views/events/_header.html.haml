@@ -8,10 +8,13 @@
     = ' / '
     = sorting_header 'Date', :events_path, 'conferences.start_date', icon: 'sort-numeric'
     = ' / '
-    = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
+    = sorting_header 'Location', :events_path, 'conferences.city,conferences.state'
 
   .col-md-2.d-none.d-md-block
-    = sorting_header 'Location', :events_path, 'concat(conferences.city, conferences.state)'
+    -# Desktop gets this
+    = sorting_header 'City', :events_path, 'conferences.city'
+    = ' / '
+    = sorting_header 'State', :events_path, 'conferences.state'
 
   .col.d-none.d-md-block.text-center
     Info

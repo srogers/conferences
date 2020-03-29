@@ -90,7 +90,7 @@ module ConferencesChart
       query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
       query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
 
-      results = Conference.group(:country).where(query.where_clause, *query.bindings).order("count(country) DESC").count
+      results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
 
     elsif param_context(:search_term).present? || param_context(:event_type).present?
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
@@ -98,13 +98,13 @@ module ConferencesChart
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
 
-      results = Conference.group(:country).where(query.where_clause, *query.bindings).order("count(country) DESC").count
+      results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
 
     else
       # Show the top countries - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off countries with the same count as countries shown, which is misleading. There is a setting
       # for the speaker chart floor - but not for countries (yet) - 2 works well.
-      results = Conference.group(:country).order("count(country) DESC").count
+      results = Conference.group(:country).order(Arel.sql("count(country) DESC")).count
     end
 
     return results.transform_keys{|k| country_name(k) }

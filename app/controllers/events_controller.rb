@@ -2,7 +2,6 @@ class EventsController < ApplicationController
 
   include ConferencesChart
   include ConferencesHelper
-  include Sortability
   include SpeakersChart
   include StickyNavigation
 
@@ -55,7 +54,7 @@ class EventsController < ApplicationController
   # This is a lot like a subset of index, but the layout is quite different, so merging it into one action is tedious.
   # Gets called from jQuery in /news and rendered by jQuery append(html).
   def upcoming
-    @conferences = Conference.where("conferences.start_date > ?", Date.today).order('start_date ASC')
+    @conferences = Conference.where("conferences.start_date > ?", Date.today).order(Arel.sql('start_date ASC'))
     render layout: false
   end
 

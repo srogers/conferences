@@ -20,7 +20,7 @@ class Presentation < ApplicationRecord
   validate  :unique_per_conference
   # requiring a speaker at create is handled by PresentationsController
 
-  before_save :update_sortable_name
+  before_save :update_sortable_name, :adjust_series_end
 
   acts_as_taggable
 
@@ -54,6 +54,15 @@ GROUP BY pr.id"
     slug.blank? || name_changed?
   end
 
+  # If this presentation is part of a series, and falls past the current end-date for the series, push that date out.
+  def adjust_series_end
+    if conference&.event_type == Conference::SERIES
+      if conference.end_date < date
+        conference.update(end_date: date)
+      end
+    end
+  end
+
   # presentations can exist with duplicate names, but presentation names must be unique within a conference
   def unique_per_conference
     if conference_id.present?
@@ -77,7 +86,11 @@ GROUP BY pr.id"
   # Brings over attributes from the conference that also live in presentation to make querying and reporting easier
   def inherit_conference_defaults
     return unless conference.present?
-    self.date    = conference.start_date if date.blank?
+    if conference&.event_type == Conference::SERIES
+      self.date    = conference.end_date if date.blank?
+    else
+      self.date    = conference.start_date if date.blank?
+    end
     self.city    = conference.city if city.blank?
     self.state   = conference.state if state.blank?
     self.country = conference.country if country.blank?

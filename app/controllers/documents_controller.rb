@@ -10,7 +10,7 @@ class DocumentsController < ApplicationController
   authorize_resource
 
   def index
-    @documents = Document.order("created_at DESC")
+    @documents = Document.order(Arel.sql("created_at DESC"))
     @documents = @documents.where("status = ?", Document::COMPLETE) unless current_user.admin?
     @documents = @documents.page(param_context(:page)).per(param_context(:per))
     repaginate_if_needed(@documents)

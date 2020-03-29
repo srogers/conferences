@@ -1,6 +1,5 @@
 class OrganizersController < ApplicationController
 
-  include Sortability
   include StickyNavigation
 
   before_action :check_nav_params, only: [:index]
@@ -14,7 +13,7 @@ class OrganizersController < ApplicationController
   end
 
   def show
-    @events = @organizer.conferences.order('start_date DESC')
+    @events = @organizer.conferences.order(Arel.sql('start_date DESC'))
   end
 
   def edit

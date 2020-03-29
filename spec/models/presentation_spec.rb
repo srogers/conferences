@@ -63,7 +63,7 @@ RSpec.describe Presentation, type: :model do
     end
     # Requiring a speaker is managed by the controller
 
-    context "with an associated conference" do
+    context "with an associated event" do
 
       let(:conference) { create :conference }
 
@@ -77,6 +77,18 @@ RSpec.describe Presentation, type: :model do
 
         it "can't be associated with that conference" do
           expect { Presentation.create!(valid_attributes.merge(conference_id: conference.id)) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Conference already has a presentation with the same name.")
+        end
+      end
+
+      context "series" do
+        let!(:dummy) { conference.update(event_type: Conference::SERIES) }
+        # only series does this, because for conferences, a presentation date outside the window is probably a user error
+        it "extends the series end date if the presentation date falls outside" do
+          presentation = Presentation.new(valid_attributes.merge(conference_id: conference.id, date: conference.end_date + 1.day ))
+          expect(presentation).to be_valid
+          presentation.save
+          expect(presentation.errors).to be_empty
+          expect(conference.reload.end_date).to eq(presentation.date)
         end
       end
     end
