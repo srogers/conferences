@@ -109,10 +109,12 @@ class User < ApplicationRecord
     end
   end
 
-  def location(show_country=false)
+  # Shows the user's location without country, with a short country abbreviation, or full country name depending on options.
+  # Part of ApplicationHelper location() and location_with_non_us_country() which works symmetrically for users and conferences.
+  def location(options={})
     elements = [city.presence, state.presence]
-    elements << [country_name.presence] if show_country.to_s == 'full'
-    elements << [country.presence] if show_country.to_s == 'short'
+    elements << [country_name.presence] if options[:country_format] == :full
+    elements << [country.presence] if options[:country_format]  == :short
     elements.compact.join(', ')
   end
 
