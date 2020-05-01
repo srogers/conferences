@@ -18,6 +18,9 @@ Layout/ExtraSpacing:
 Layout/LineLength:
   Enabled: false
 
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
