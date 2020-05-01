@@ -191,9 +191,9 @@ module ApplicationHelper
       when 'notice'
         'fa fa-check-circle'
       when 'error'
-        'fa fa-times-circle'
+        'fa fa-exclamation-circle'
       when 'alert'
-        'fa fa-times-circle'
+        'fa fa-exclamation-circle'
       when 'warn'
         'fa fa-warning'
       else

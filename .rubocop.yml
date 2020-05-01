@@ -9,15 +9,6 @@ AllCops:
     - 'script/**/*'
     - 'bin/**/*'
 
-Metrics/BlockLength:
-  Exclude:
-    - config/**/*
-    - spec/**/*
-
-Lint/AmbiguousBlockAssociation:
-  Exclude:
-    - spec/**/*
-
 Layout/EmptyLinesAroundClassBody:
   EnforcedStyle: empty_lines_except_namespace
 
@@ -27,11 +18,26 @@ Layout/ExtraSpacing:
 Layout/LineLength:
   Enabled: false
 
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
 Layout/SpaceInsideBlockBraces:
   Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - spec/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - config/**/*
+    - spec/**/*
+
+Metrics/MethodLength:
+  Max: 20
 
 Style/Documentation:
   Enabled: false
