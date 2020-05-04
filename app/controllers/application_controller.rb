@@ -138,23 +138,23 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     logger.warn "ApplicationController handled failed find: #{ exception }"
-    respond_to do |format|
-      format.html do
-        flash[:notice] = "Couldn't find that information"
-        redirect_to root_url
+    begin
+      respond_to do |format|
+        format.html do
+          flash[:notice] = "Couldn't find that information"
+          redirect_to root_url
+        end
+        format.json do
+          render :json => { :error => 'not found', status: 404 }
+        end
       end
-      format.json do
-        render :json => { :error => 'not found', status: 404 }
-      end
+    # this can happen often with "robot" URLs like /events/favicon.ico - which raises ActiveRecord::RecordNotFound, then
+    # raises UnknownFormat on .ico - so we wind up here
+    rescue ActionController::UnknownFormat
+      logger.warn "ApplicationController handled unknown format "
+      flash[:notice] = "Couldn't find that information"
+      redirect_to root_url
     end
-  end
-
-  # this can happen often with "robot" URLs like /events/favicon.ico - which raises ActiveRecord::RecordNotFound, then
-  # raises UnknownFormat on .ico - so we wind up here
-  rescue_from ActionController::UnknownFormat do |exception|
-    logger.warn "ApplicationController handled unknown format: #{ exception }"
-    flash[:notice] = "Couldn't find that information"
-    redirect_to root_url
   end
 
 end
