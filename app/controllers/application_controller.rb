@@ -148,4 +148,13 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  # this can happen often with "robot" URLs like /events/favicon.ico - which raises ActiveRecord::RecordNotFound, then
+  # raises UnknownFormat on .ico - so we wind up here
+  rescue_from ActionController::UnknownFormat do |exception|
+    logger.warn "ApplicationController handled unknown format: #{ exception }"
+    flash[:notice] = "Couldn't find that information"
+    redirect_to root_url
+  end
+
 end
