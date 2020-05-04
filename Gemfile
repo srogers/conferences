@@ -38,6 +38,7 @@ gem 'rails-assets-tether'           # enables tooltips properly in the pipeline 
 gem 'rmagick'
 gem 'rubyzip'                       # Used for zipping PDF for download
 gem 'scout_apm'                     # replacement for New Relic
+gem 'scrypt'                        # In AuthLogic 6, no longer built-in
 gem 'select2-rails'                 # used for autocomplete select boxes
 gem 'sentry-raven'
 gem 'sidekiq'
