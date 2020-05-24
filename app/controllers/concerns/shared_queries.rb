@@ -213,6 +213,7 @@ module SharedQueries
     if query.term.present? && !query.skip_optionals?
       query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
       query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
+      query.add :optional, 'publications.notes ILIKE ?', "%#{query.term}%"
       query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
     end
 
@@ -229,6 +230,7 @@ module SharedQueries
       else
         query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
         query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
+        query.add :optional, 'publications.notes ILIKE ?', "%#{query.term}%"
         query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
         query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
         query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
