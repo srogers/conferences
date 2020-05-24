@@ -17,7 +17,7 @@ class PublicationsController < ApplicationController
     end
 
     if params[:q].present? # then it's autocomplete
-      @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", params[:q] + '%', '% ' + params[:q] + '%').limit(param_context(:per))
+      @publications = @publications.where("publications.name ILIKE ? OR publications.name ILIKE ?", "#{params[:q]}%", "% #{params[:q]}%").limit(param_context(:per))
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     else
