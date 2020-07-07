@@ -121,7 +121,7 @@ class PresentationsController < ApplicationController
     # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
     @related_publications = @related_publications.where("publications.id NOT IN (?)", @presentation.presentation_publications.map{|pp| pp.publication_id}) if @presentation.presentation_publications.present?
     @current_publication_ids = @presentation.publications.map{|p| p.id}.join(',')
-    @publication = Publication.new
+    @publication = Publication.new published_on: Date.today
   end
 
   # Send the handout straight to the browser - assumes PDF is required at upload

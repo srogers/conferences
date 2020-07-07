@@ -29,3 +29,19 @@ $ ->
 
   $('#publisher_name').on 'change', ->
     $('#publication_publisher').val(this.value)
+
+  $('#publication_url').on 'blur', ->
+    $format_selector = $('#publication_format')
+    url =  $('#publication_url').val().toLowerCase()
+    if url.includes("youtube.com") or url.includes("youtu.be")
+      $format_selector.val("YouTube")
+    else if url.includes("facebook.com")
+      $format_selector.val("FaceBook")
+    else if url.includes("mokuji")
+      $format_selector.val("Mokuji")
+    else if url.includes("vimeo.com")
+      $format_selector.val("Vimeo")
+    else if url.includes("campus.aynrand")
+      $format_selector.val("Campus")
+    else if url.includes("estore.aynrand")
+      $format_selector.val("e-Store")
