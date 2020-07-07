@@ -101,6 +101,7 @@ class PublicationsController < ApplicationController
   end
 
   def new
+    @publishers = Publisher.all.map{|p| [p.name]}
     @publication = Publication.new
   end
 
