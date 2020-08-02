@@ -90,6 +90,8 @@ module PublicationsHelper
       icon('fab', 'vimeo')
     when Publication::FACEBOOK then
       icon('fab', 'facebook')
+    when Publication::INSTAGRAM then
+      icon('fab', 'instagram')
     when Publication::PODCAST then
       icon('fas', 'podcast')
     when Publication::ONLINE then

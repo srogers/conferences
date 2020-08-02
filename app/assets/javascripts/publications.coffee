@@ -37,6 +37,8 @@ $ ->
       $format_selector.val("YouTube")
     else if url.includes("facebook.com")
       $format_selector.val("FaceBook")
+    else if url.includes("instagram.com")
+      $format_selector.val("Instagram")
     else if url.includes("mokuji")
       $format_selector.val("Mokuji")
     else if url.includes("vimeo.com")
