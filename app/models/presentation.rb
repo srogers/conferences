@@ -20,7 +20,7 @@ class Presentation < ApplicationRecord
   validate  :unique_per_conference
   # requiring a speaker at create is handled by PresentationsController
 
-  before_save :update_sortable_name, :adjust_series_end
+  before_save :update_sortable_name, :adjust_series_bounds
 
   acts_as_taggable
 
@@ -54,9 +54,13 @@ GROUP BY pr.id"
     slug.blank? || name_changed?
   end
 
-  # If this presentation is part of a series, and falls past the current end-date for the series, push that date out.
-  def adjust_series_end
+  # If this presentation is part of a series, and falls outside the current start/end date for the series, push that date out.
+  def adjust_series_bounds
     if conference&.event_type == Conference::SERIES
+      if conference.start_date > date
+        conference.update(start_date: date)
+      end
+
       if conference.end_date < date
         conference.update(end_date: date)
       end
