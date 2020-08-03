@@ -3,6 +3,8 @@ class Presentation < ApplicationRecord
   include SortableNames
   include Locations
 
+  LOCATION_TYPES = [PHYSICAL, VIRTUAL].freeze      # multiple doesn't apply to presentations - override the value from Locations
+
   belongs_to  :conference
   belongs_to  :creator,   class_name: "User"
 

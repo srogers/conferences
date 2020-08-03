@@ -13,7 +13,7 @@
 = f.trix_editor :description
 .small.mb-3 Historic or organizational details specific to this event (e.g., attendance)
 = f.input :registration_url, input_html: { autocomplete: "off" }, hint: "A link where attendees can sign up"
-= render partial: 'shared/location', locals:  {f: f}
+= render partial: 'shared/location', locals:  {f: f, location_types: Conference::LOCATION_TYPES}
 = f.input :completed, as: :boolean, hint: "Check this when all the event's presentations have been entered."
 - if current_user&.editor? || current_user&.admin?
   = f.label :editors_notes, "Editor's Notes"
