@@ -17,7 +17,7 @@
 = f.input :date, as: :date, start_year: Setting.base_event_year, end_year: Date.today.year + 1, order: [:month, :day, :year]
 -# Don't show Venue unless the presentation is attached to a multi-venue event
 - if @presentation.try(:conference).try(:multi_venue?)
-  = render partial: 'shared/location', locals:  {f: f, venue_type: @presentation.venue}
+  = render partial: 'shared/location', locals:  {f: f}
 - if current_user.editor? || current_user.admin?
   = f.label :editors_notes, "Editor's Notes"
   = f.trix_editor :editors_notes

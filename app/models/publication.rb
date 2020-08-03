@@ -22,12 +22,13 @@ class Publication < ApplicationRecord
   YOUTUBE = 'YouTube'.freeze      # Is it helpful to make this distinct?
   VIMEO   = 'Vimeo'.freeze        # Is it helpful to make this distinct?  for now, seems like yes
   FACEBOOK = 'FaceBook'.freeze    # Is it helpful to make this distinct?
+  INSTAGRAM = 'Instagram'.freeze  # Is it helpful to make this distinct?
   PODCAST = 'Podcast'.freeze
   ONLINE  = 'Online'.freeze       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'.freeze      # This is going away . . . (said Tal in 2018, but it's still there)
   PRINT   = 'Print'.freeze        # Books, pamphlets, Newsletter articles, etc. - physical media
   MOKUJI  = 'Mokuji'.freeze
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, VIMEO, PRINT, PODCAST, TAPE, CD, VHS, DISK, LP, ONLINE].freeze  # approximately most to least used
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, INSTAGRAM, VIMEO, PRINT, PODCAST, TAPE, CD, VHS, DISK, LP, ONLINE].freeze  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
@@ -35,7 +36,7 @@ class Publication < ApplicationRecord
 
   # Presence of duration isn't validated - but in a few cases, it's just not applicable. When it isn't, we need a way to
   # ensure those don't get flagged by the "heart" query as needing attention because duration is blank.
-  HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, PODCAST, TAPE, CD, VHS, DISK]
+  HAS_DURATION = [ESTORE, YOUTUBE, CAMPUS, MOKUJI, FACEBOOK, INSTAGRAM, PODCAST, TAPE, CD, VHS, DISK]
   PHYSICAL     = [PRINT, TAPE, CD, VHS, DISK, LP].freeze
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
