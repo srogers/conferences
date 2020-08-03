@@ -200,7 +200,7 @@ class PresentationsController < ApplicationController
 
   def presentation_params
     params.require(:presentation).permit(:conference_id, :name, :description, :parts, :tag_list, :handout, :remove_handout,
-      :editors_notes, :date, :venue, :venue_url, :city, :state, :country)
+      :editors_notes, :date, :location_type, :venue, :venue_url, :city, :state, :country)
   end
 
   def presentation_speaker_params

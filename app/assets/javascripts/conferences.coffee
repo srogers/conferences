@@ -4,22 +4,20 @@
 
 $ ->
   # This is used in Conference and Preseentation to manage the location fields
-  set_location_fields = (location) ->
-    if location == 'Physical'
+  set_location_fields = (location_type) ->
+    if location_type == 'Physical'
       $('.location-conditional-fields').slideDown()
       venue = $('#conference_venue').val()
       # When switching from Multiple or Virtual back to phsycial, these need to be blanked, so we're not counting on the
       # user to do it -  the old location type will stick if the user neglects to change it.
-      if venue == 'Multiple' || venue == 'Virtual'
+      if location_type == 'Multiple' || location_type == 'Virtual'
         $('#conference_venue').val('')
         $('#conference_city').val('')
-    if location == 'Virtual'
+    if location_type == 'Virtual'
       $('.location-conditional-fields').slideUp()
-      $('#conference_venue').val('Virtual')
       # the model handles setting conference city to Virtual
-    if location == 'Multiple'
+    if location_type == 'Multiple'
       $('.location-conditional-fields').slideUp()
-      $('#conference_venue').val('Multiple')
       # the model handles setting conference city to Multiple
 
   # This is used by on-change events to set the conference name field to reflect the chosen organizer and start date,
@@ -37,15 +35,15 @@ $ ->
   $("#conference_organizer_id").change ->
     set_conference_name()
 
-  set_location_fields($('#conference_location').val())
-  set_location_fields($('#presentation_location').val())
+  set_location_fields($('#conference_location_type').val())
+  set_location_fields($('#presentation_location_type').val())
 
   # Use the location selector to set the venue and show/hide appropriate fields
-  $('#conference_location').change ->
+  $('#conference_location_type').change ->
     set_location_fields($(this).val())
 
   # Use the location selector to set the venue and show/hide appropriate fields
-  $('#presentation_location').change ->
+  $('#presentation_location_type').change ->
     set_location_fields($(this).val())
 
   # Make Start/End date a little less tedious by setting the end dates to the start dates as selected.

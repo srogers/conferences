@@ -83,7 +83,15 @@ RSpec.describe Presentation, type: :model do
       context "series" do
         let!(:dummy) { conference.update(event_type: Conference::SERIES) }
         # only series does this, because for conferences, a presentation date outside the window is probably a user error
-        it "extends the series end date if the presentation date falls outside" do
+        it "extends the series start date if the presentation date falls before" do
+          presentation = Presentation.new(valid_attributes.merge(conference_id: conference.id, date: conference.start_date - 1.day ))
+          expect(presentation).to be_valid
+          presentation.save
+          expect(presentation.errors).to be_empty
+          expect(conference.reload.start_date).to eq(presentation.date)
+        end
+
+        it "extends the series end date if the presentation date falls after" do
           presentation = Presentation.new(valid_attributes.merge(conference_id: conference.id, date: conference.end_date + 1.day ))
           expect(presentation).to be_valid
           presentation.save

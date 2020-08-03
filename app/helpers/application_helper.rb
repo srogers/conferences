@@ -296,7 +296,7 @@ module ApplicationHelper
   #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
   def location(thing, options={})
     return Presentation::UNSPECIFIED unless thing.present? && thing.respond_to?(:venue) && (thing.venue.present? || thing.location.present?)
-    return thing.venue if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.venue
+    return thing.location_type if [Conference::VIRTUAL, Conference::MULTIPLE].include? thing.location_type
 
     elements = []
     if thing.venue.blank?

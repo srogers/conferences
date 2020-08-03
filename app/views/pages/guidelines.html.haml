@@ -116,13 +116,14 @@
         To get around that, open the schedule in a different browser and turn JavaScript off in the browser preferences.
         Then then text will behave normally. You have to re-enable Javascript to navigate between days.
 
-      %li
-        %b Venue and location
-        %br
-        Presentations inherit venue/location information from their parent event unless that event is a series.
-        A series may have multiple locations (such as the
-        = link_to "ARI Road to a Free Society", event_path('ari-road-to-a-free-society')
-        series). In this case, each presentation has a separate date and location.
+    %b Venue and location
+    %p
+    Presentations inherit venue/location information from their parent event unless that event is a physical series.
+    A series may have multiple locations (such as the
+    = link_to "ARI Road to a Free Society", event_path('ari-road-to-a-free-society')
+    series). In this case, each presentation has a separate date and location.
+
+    %p Presentations can be physical or virtual, but "multiple" only applies to events.
 
     %h5 Presentation Topics
     %p

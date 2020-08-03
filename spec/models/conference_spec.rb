@@ -153,7 +153,7 @@ RSpec.describe Conference, type: :model do
     context "when changing the location type" do
       [Conference::VIRTUAL, Conference::MULTIPLE].each do |location_type|
         context "to #{ location_type }" do
-          before { conference.update venue: location_type }
+          before { conference.update location_type: location_type }
 
           it "sets the city to #{location_type}" do
             expect(conference.city).to eq(location_type)

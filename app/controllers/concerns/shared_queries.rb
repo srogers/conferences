@@ -175,7 +175,7 @@ module SharedQueries
 
   # Used to find the city names for multi-venue events, which live at the presentation level.
   def multiples_query(query)
-    query.add :required, "conferences.venue = ?", Conference::MULTIPLE
+    query.add :required, "conferences.location_type = ?", Conference::MULTIPLE
 
     return query
   end
