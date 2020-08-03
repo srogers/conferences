@@ -99,6 +99,7 @@ GROUP BY pr.id"
     self.state   = conference.state if state.blank?
     self.country = conference.country if country.blank?
     self.venue   = conference.venue if venue.blank?
+    self.location_type   = conference.location_type if location_type.blank?
     # the caller must save
   end
 

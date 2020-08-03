@@ -13,17 +13,21 @@ module Locations
   MULTIPLE = 'Multiple'.freeze
   LOCATION_TYPES = [PHYSICAL, VIRTUAL, MULTIPLE].freeze
 
+  def physical?
+    location_type == PHYSICAL
+  end
+
   def virtual?
-    venue == VIRTUAL
+    location_type == VIRTUAL
   end
 
   def multi_venue?
-    venue == MULTIPLE
+    location_type == MULTIPLE
   end
 
   def us_state_existence
     return true unless country == 'US'                 # ignore foreign states because we can't validate them
-    return true if [VIRTUAL, MULTIPLE].include? venue  # allow blank in this case
+    return true if [VIRTUAL, MULTIPLE].include? location_type  # allow blank in this case
     state.upcase!
     return true if city.blank?                         # if city is skipped, state can be too - needed for events with sketchy info
     errors.add(:state, 'Use the standard two-letter postal abbreviation for US states.') unless States::STATES.map{|s| s[0]}.include?(state)
@@ -45,7 +49,7 @@ module Locations
   #                   Must be TRUE for PDFs, which don't support entity codes. non-breaking looks better in HTML lists
   # :include_us     - by default, country is omitted unless it is non-US
   def location(options={})
-    return venue if [VIRTUAL, MULTIPLE].include? venue
+    return location_type if [VIRTUAL, MULTIPLE].include? location_type
     include_country = options[:include_us] || country != 'US'
     elements = [city.presence, state.presence]
     elements << [country_name.presence] if options[:country_format].to_s == 'full' && include_country

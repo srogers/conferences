@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_135800) do
+ActiveRecord::Schema.define(version: 2020_08_02_025802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_135800) do
     t.string "registration_url"
     t.text "description"
     t.string "event_type"
+    t.string "location_type", default: "Physical", null: false
     t.index ["creator_id"], name: "index_conferences_on_creator_id"
     t.index ["organizer_id"], name: "index_conferences_on_organizer_id"
   end
@@ -157,6 +158,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_135800) do
     t.string "city"
     t.string "state"
     t.string "country"
+    t.string "location_type", default: "Physical", null: false
     t.index ["conference_id"], name: "index_presentations_on_conference_id"
     t.index ["creator_id"], name: "index_presentations_on_creator_id"
   end
