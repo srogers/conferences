@@ -43,7 +43,7 @@ $ ->
       $format_selector.val("Mokuji")
     else if url.includes("vimeo.com")
       $format_selector.val("Vimeo")
-    else if url.includes("campus.aynrand")
+    else if url.includes("courses.aynrand")
       $format_selector.val("Campus")
     else if url.includes("estore.aynrand")
       $format_selector.val("e-Store")
