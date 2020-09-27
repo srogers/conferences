@@ -37,6 +37,11 @@
     %p
       = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
 
+    - if @presentation.try(:conference).try(:use_episodes?)  && @presentation.episode.present?
+      %p
+        %b Episode:
+        = @presentation.episode
+
     %p
       %b Parts:
       = @presentation.parts

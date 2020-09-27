@@ -223,11 +223,18 @@ Production was bootstrapped from a copy of the staging database
 The easiest way to move data up and down from Heroku is using the
 [pg-push/pg-pull](https://devcenter.heroku.com/articles/heroku-postgresql#pg-pull) commands.
 
-    PGUSER=steve PGPASSWORD='' heroku pg:pull postgresql-rigid-18515 conferences_development --remote production
+    PGUSER=steve PGPASSWORD='' heroku pg:pull DATABASE_URL conferences_development --remote production
 
 This command creates the named database, so rename the existing database before performing the download.
 For this to work, the server and local Postgres versions must match. If they don't, you're pretty much hosed
 unless you can change your local Postgres version to match what's running on Heroku.
+
+#### Remote Database URL
+
+It's possible to connect a PostgreSQL client directly the Heroku instance. The connection information is stored in the
+database URLs which have a format like:
+
+    HEROKU_POSTGRESQL_ONYX_URL: postgres://[username]:[password]@[host]:[port]/[database name]
 
 #### Transferring Data Between Apps
 

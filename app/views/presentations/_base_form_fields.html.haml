@@ -18,6 +18,8 @@
 -# Don't show Venue unless the presentation is attached to a multi-venue event
 - if @presentation.try(:conference).try(:multi_venue?)
   = render partial: 'shared/location', locals:  {f: f, location_types: Presentation::LOCATION_TYPES}
+- if @presentation.try(:conference).try(:use_episodes?)
+  = f.input :episode, hint: "Episode number - leave blank if it doesn't apply."
 - if current_user.editor? || current_user.admin?
   = f.label :editors_notes, "Editor's Notes"
   = f.trix_editor :editors_notes
