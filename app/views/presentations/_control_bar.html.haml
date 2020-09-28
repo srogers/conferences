@@ -54,6 +54,9 @@
           = link_to "Cancel", presentation_path(@presentation), :class => "btn btn-sm btn-secondary ml-3"
         - elsif action_name == 'new' || action_name == 'create'
           = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_presentation').submit()"
-          = link_to "Cancel", presentations_path, :class => "btn btn-sm btn-secondary ml-3"
+          - if @presentation.conference_id.present?
+            = link_to "Cancel", event_path(@presentation.conference_id), :class => "btn btn-sm btn-secondary ml-3"
+          - else
+            = link_to "Cancel", presentations_path, :class => "btn btn-sm btn-secondary ml-3"
         - else
           = index_search_form
