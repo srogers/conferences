@@ -25,6 +25,35 @@ namespace :db do
     puts
   end
 
+  # This is primarily for numbering existing events after adding episode numbers - but it might stick around for cases
+  # where it turns out something needs to be numbered but wasn't initially set up that way.
+  desc "A data migration/maintenance task to number the presentations within an event. Specify an event with event_id=name-slug"
+  task :number_presentations => :environment do
+    event_id = ENV['event_id'] || ENV['EVENT_ID']
+    raise "specify the event to number with event_id=name-slug" if event_id.blank?
+    event = Conference.friendly.find event_id
+
+    puts
+    puts "handling presentations . . ."
+    count = 0
+    presentations = event.presentations.order(:created_at)
+    presentations.each do |presentation|
+      count += 1
+      presentation.episode = count
+      presentation.save
+      if presentation.errors.present?
+        puts # get on a new line
+        puts "Failed to save presentation ID #{ presentation.id} - #{ presentation.errors.full_messages }"
+      end
+      print "." # I'm not hung!
+      STDOUT.flush
+    end
+    event.use_episodes = true
+    event.save!
+    puts
+  end
+
+
   # This might be a keeper, in case the problem ever comes back due to switching settings
   desc 'A data maintenance task to catch up legacy accounts to the new standard where all are approved.'
   task :approve_all_accounts => :environment do
@@ -51,7 +80,7 @@ namespace :db do
   end
 
   # Set initial values for virtual and multiple conference cities, to switch to the regime of having these managed
-  # by the model, so they show up correctly in reports. Probably just a one-shot tassk. Might keep in case it needs reversing.
+  # by the model, so they show up correctly in reports. Probably just a one-shot task. Might keep in case it needs reversing.
   desc 'A data maintenance task set Virtual and Multiple event cities to those values.'
   task :set_multiple_virtual_event_cities => :environment do
     puts "updating Multiple"

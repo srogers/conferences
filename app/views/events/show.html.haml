@@ -29,6 +29,8 @@
       %div{style: 'font-size: 1rem'}
         by
         = @conference.organizer&.name
+      - if @conference.use_episodes?
+        Episodic
     %p
       = location(@conference, country_format: :full)
 
