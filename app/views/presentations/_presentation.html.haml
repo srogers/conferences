@@ -6,6 +6,8 @@
     -# Make the detailed view the default - see what indexing robots do with that - use compact for speakers
     -if (controller_name != 'presentations' && current_user&.compact_presentations) || controller_name == 'speakers'
       -# For compact use just the name for event presentation listing. Never include speaker in speaker presentation listing - redundant
+      - if @conference && @conference.use_episodes
+        = presentation.episode
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
     -elsif current_user&.compact_presentations
       .detail-selector
@@ -14,6 +16,8 @@
         = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
         = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
     -else
+      - if @conference && @conference.use_episodes
+        = presentation.episode
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
       %br
       by
