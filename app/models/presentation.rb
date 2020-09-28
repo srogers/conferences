@@ -105,6 +105,14 @@ GROUP BY pr.id"
     # the caller must save
   end
 
+  # Sets the next episode number based on prior episodes - caller has to save
+  def set_next_episode
+    return unless conference.present?
+    return unless conference.use_episodes
+    current = Presentation.where(conference_id: conference_id).maximum(:episode)
+    self.episode = current.to_i + 1
+  end
+
   def tag_names
     tag_list.join(', ')
   end

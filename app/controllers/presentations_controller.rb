@@ -137,9 +137,11 @@ class PresentationsController < ApplicationController
       # Set the conference ID, plus inherit any of these that may show up in the form now or later.
       @presentation = Presentation.new conference_id: @conference.id
       @presentation.inherit_conference_defaults
+      @presentation.set_next_episode
     else
       @presentation = Presentation.new
     end
+    @presentation.parts = 1         # set this as a default, because it's by far the most common value
   end
 
   def create
