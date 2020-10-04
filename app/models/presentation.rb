@@ -109,7 +109,7 @@ GROUP BY pr.id"
   def set_next_episode
     return unless conference.present?
     return unless conference.use_episodes
-    current = Presentation.where(conference_id: conference_id).maximum(:episode)
+    current = Presentation.where(conference_id: conference_id).maximum("cast(episode as integer)")
     self.episode = current.to_i + 1
   end
 
