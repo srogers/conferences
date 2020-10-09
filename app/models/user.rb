@@ -25,6 +25,7 @@ class User < ApplicationRecord
   before_save       :update_sortable_human_name   # always do this unless it's been manually changed
 
   validates :name, presence: true
+  validate  :name_not_spam
   validates :role, presence: true
 
 
@@ -49,6 +50,12 @@ class User < ApplicationRecord
 
   scope :needing_approval, -> { where('not users.approved') }
   scope :editors,          -> { includes('role').references('role').where("roles.name = ?", Role::EDITOR) }
+
+  def name_not_spam
+    spammy = (name =~ /http/) != nil
+    spammy = (name.split(" ").length > 3) unless spammy
+    errors.add(:name, "should not look like spam.") if spammy
+  end
 
   def hms_duration?
     time_format == Publication::HMS
