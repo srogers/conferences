@@ -2,7 +2,7 @@
   .float-right
     =image_tag @user.photo.url, style: 'max-height: 100px'
 -# Don't offer photo as part of account creation - just a little too needy
-- unless action_name == 'new'
+- unless action_name == 'new' || action_name == 'create'
   = f.input :photo, label: @user.photo.present? ? 'Change photo' : 'Add photo'
   - if @user.has_photo?
     = f.input :remove_photo, as: :boolean, label: 'Remove Photo (revert to default icon)'

@@ -42,7 +42,16 @@ RSpec.describe User, :type => :model do
     end
 
     it "requires matching password and confirmation" do
-      expect { User.create! valid_attributes.merge(password: 'robosity', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password confirmation doesn't match Password")    end
+      expect { User.create! valid_attributes.merge(password: 'robosity', password_confirmation: 'bogosity') }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Password confirmation doesn't match Password")
+    end
+
+    context "with spam-like account info" do
+      ["Too many words in my name","http link","Click here https://junk.com"].each do |bogus_name|
+        it "rejects an account with name #{ bogus_name }" do
+          expect { User.create! valid_attributes.merge(name: bogus_name) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Name should not look like spam.")
+        end
+      end
+    end
 
     it "sets the sortable name" do
       speaker = Speaker.new name: "Distinctively Named Speakerperson"
