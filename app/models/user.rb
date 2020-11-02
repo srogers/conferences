@@ -52,8 +52,8 @@ class User < ApplicationRecord
   scope :editors,          -> { includes('role').references('role').where("roles.name = ?", Role::EDITOR) }
 
   def name_not_spam
-    spammy = (name =~ /http/) != nil
-    spammy = (name.split(" ").length > 3) unless spammy
+    return unless name
+    spammy = (name =~ /http/) != nil || (name.split(" ").length > 3)
     errors.add(:name, "should not look like spam.") if spammy
   end
 
