@@ -58,7 +58,7 @@ GROUP BY pr.id"
 
   # If this presentation is part of a series, and falls outside the current start/end date for the series, push that date out.
   def adjust_series_bounds
-    if conference&.event_type == Conference::SERIES
+    if conference&.series?
       if conference.start_date > date
         conference.update(start_date: date)
       end
@@ -92,7 +92,7 @@ GROUP BY pr.id"
   # Brings over attributes from the conference that also live in presentation to make querying and reporting easier
   def inherit_conference_defaults
     return unless conference.present?
-    if conference&.event_type == Conference::SERIES
+    if conference&.series?
       self.date    = conference.end_date if date.blank?
     else
       self.date    = conference.start_date if date.blank?
