@@ -46,7 +46,7 @@ class Publication < ApplicationRecord
   validates :ui_duration, duration_format: true
   validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
 
-  before_validation :format_duration
+  before_validation :format_duration, :clean_url
 
   before_save :update_sortable_name
 
@@ -64,6 +64,11 @@ class Publication < ApplicationRecord
         self.duration = ui_duration.to_i                # expect raw minutes format
       end
     end
+  end
+
+  # Strip off marketing/tracking params and remove video start time params from YouTube and Vimeo
+  def clean_url
+    return  #   Not yet implemented
   end
 
   def has_duration?

@@ -66,6 +66,16 @@ RSpec.describe Publication, type: :model do
       end
     end
 
+    # 466 - clean publication params
+    # context "url" do
+    #   context "with trailing params" do
+    #     it "strips time codes and extraneous params off YouTube videos" do
+    #       publication = Publication.create(valid_attributes.merge(url: "https://www.youtube.com/watch?v=fAY1vMGYG_w?stupid-stuff=123&t=55"))
+    #       expect(publication.url).to equal("https://www.youtube.com/watch?v=fAY1vMGYG_w")
+    #     end
+    #   end
+    # end
+
     context "with duration" do
       context "blank" do
         it "is valid" do  # Have to allow this, because sometimes we just don't have it
