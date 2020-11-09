@@ -1,5 +1,6 @@
 %tr{ :class => cycle(:even, :odd) }
   %td= link_to(truncate(language.name, length: 40, separator: ' '), language_path(language))
+  %td= language.abbreviation
 
   %td{width: 130}
     - if can? :edit, language
