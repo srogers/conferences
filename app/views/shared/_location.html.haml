@@ -1,4 +1,4 @@
-= f.input :location_type, as: 'select', collection: location_types, include_blank: false
+= f.input :location_type, as: :select, collection: location_types, include_blank: false
 -# This backs up the visible venue field so that when the selector changes it to Multiple/virtual and the field is
 -# disabled, the changed value will still be submitted.
 -# The initial state is set by JS in conferences.coffee

@@ -9,7 +9,7 @@
 = f.input :name
 = f.input :email, required: true
 - if current_user&.admin?
-  = f.input :role_id, as: 'select', collection: @roles, include_blank: false
+  = f.input :role_id, as: :select, collection: @roles, include_blank: false
   = f.input :speaker_id, collection: [[@user&.speaker&.name, @user&.speaker&.id]], label: "Associated Speaker", input_html: { data: { delimiter: ',', placeholder: "enter a speaker name...", source: speakers_path(format: :json) }, class: "select2-autocomplete" }, :autofocus => true
 
 = f.input :password, required: true

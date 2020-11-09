@@ -16,6 +16,7 @@
           %li.nav-item= link_to 'Users',       users_path(nav: 'reset'),      class: 'nav-link' + current_tab?('users')
           %li.nav-item= link_to 'Settings',    settings_path,                 class: 'nav-link' + current_tab?('settings')
           %li.nav-item= link_to 'Text',        passages_path,                 class: 'nav-link' + current_tab?('text')
+          %li.nav-item= link_to 'Lang',        languages_path(nav: 'reset'),  class: 'nav-link' + current_tab?('languages')
         - elsif current_user&.editor?
           %li.nav-item= link_to 'Docs',        documents_path(nav: 'reset'), class: 'nav-link' + current_tab?('documents')
         - elsif current_user&.reader?
