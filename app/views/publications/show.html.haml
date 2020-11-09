@@ -42,6 +42,12 @@
 .row
   .col-md-12
     %p
+      %b Primary language:
+      = @publication.language_name
+
+.row
+  .col-md-12
+    %p
       %b Details
       %br
       - if @publication.details.present?

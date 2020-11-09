@@ -1,0 +1,19 @@
+- content_for :head do
+  = tag :link, rel: 'canonical', href: language_url(@language)
+- title "#{ @language.name }"
+
+= render partial: 'control_bar'
+
+.row
+  .col-md-2
+    %b
+      Name
+  .col-md-10
+    = @language.name
+
+.row
+  .col-md-2
+    %b
+      Abbreviation
+  .col-md-10
+    = @language.abbreviation

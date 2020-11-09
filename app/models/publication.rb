@@ -9,6 +9,7 @@ class Publication < ApplicationRecord
   has_many    :presentations, through: :presentation_publications
 
   belongs_to  :creator,   class_name: "User"
+  belongs_to  :language
 
   # Publication doesn't use friendly ID because only editors and admin can see these paths, so they aren't indexed by search engines
 
@@ -41,7 +42,7 @@ class Publication < ApplicationRecord
 
   attr_accessor :ui_duration      # duration in hh:mm or hh:mm:ss or raw minutes
 
-  validates :name, :speaker_names, presence: true
+  validates :name, :language_id, :speaker_names, presence: true
   validates :format, inclusion: { in: FORMATS, message: "%{value} is not a recognized format" }
   validates :ui_duration, duration_format: true
   validates_numericality_of :duration, greater_than_or_equal_to: 0, allow_blank: true
@@ -108,6 +109,14 @@ class Publication < ApplicationRecord
     else
       speaker_names
     end
+  end
+
+  def language_name
+    language&.name
+  end
+
+  def language_abbreviation
+    language&.abbreviation
   end
 
   def publication_url

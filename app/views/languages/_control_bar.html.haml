@@ -1,0 +1,23 @@
+-# This puts the navbar outside the content div so it can span the page
+- content_for :body do
+  %nav.navbar.navbar-expand-lg.navbar-dark
+    .container
+      %ul.navbar-nav.mr-auto
+        - if can? :create, Language
+          %li.nav-item{ class: action_name == 'new' ? 'active' : ''}
+            =link_to icon('fas', 'plus', 'Add', class: 'fa-sm'), new_language_path, class: 'nav-link', title: 'Add an Organization'
+
+      -# action-specific buttons
+      - if action_name == 'show'
+        - if can?(:destroy, @language) && @language.publications.empty?
+          = link_to icon('far', 'trash-alt', '', class: 'fa-fw'), language_path(@language), :method => :delete, :class => "btn btn-sm btn-danger ml-3", :data => { :confirm => 'Are you sure?' }, :post => true
+        - if can? :edit, @language
+          = link_to "Edit", edit_language_path(@language), :class => "btn btn-sm btn-primary"
+        = link_to "Done", languages_path, :class => "btn btn-sm btn-secondary ml-3"
+
+      - elsif action_name == 'edit' || action_name == 'update'
+        = link_to "Save", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.edit_language').submit()"
+        = link_to "Cancel", language_path(@language), :class => "btn btn-sm btn-secondary ml-3"
+      - elsif action_name == 'new' || action_name == 'create'
+        = link_to "Create", "#", class: 'btn btn-sm btn-primary mr-3', onclick: "$('form.new_language').submit()"
+        = link_to "Cancel",  languages_path, :class => "btn btn-sm btn-secondary ml-3"

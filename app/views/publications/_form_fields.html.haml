@@ -36,6 +36,11 @@
     = f.input :ui_duration, as: :string, label: 'Duration', input_html: { value: duration_for_display(@publication) }, hint: "duration in minutes or as hh:mm or hh:mm:ss"
   .col-md-10
     = f.input :notes, hint: 'Users see this in pubs list - label multi-part items here.'
+
+.row
+  .col-md-12
+    = f.input :language_id, as: :select, collection: @languages, include_blank: false, label: "Primary Language"
+
 - if @presentation.present?
   .row
     .col-md-12

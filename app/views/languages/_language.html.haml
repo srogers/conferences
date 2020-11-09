@@ -1,0 +1,8 @@
+%tr{ :class => cycle(:even, :odd) }
+  %td= link_to(truncate(language.name, length: 40, separator: ' '), language_path(language))
+
+  %td{width: 130}
+    - if can? :edit, language
+      = link_to icon('far', 'edit', class: 'fa-fw'), edit_language_path(language), :class => "btn btn-sm btn-primary"
+    - if can?(:destroy, language) && language.publications.empty?
+      = link_to icon('far', 'trash-alt', class: 'fa-fw'), language_path(language), :method => :delete, :class => "btn btn-sm btn-danger", :data => { :confirm => 'Are you sure?' }, :post => true

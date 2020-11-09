@@ -22,8 +22,12 @@ RSpec.describe Presentation, type: :model do
       expect(Presentation.new(valid_attributes)).to be_valid
     end
 
-    it "requires a name" do
-      expect(Presentation.create(valid_attributes.merge(name: '')).errors_on(:name)).not_to be_blank
+    context "validation" do
+      [:name].each do |required_attribute|
+        it "requires #{ required_attribute }" do
+          expect(errors_on_blank(required_attribute)).to be_present
+        end
+      end
     end
 
     context "when the name starts with an article" do

@@ -39,7 +39,7 @@
     %p= safe_list_sanitizer.sanitize(@presentation.description).try(:html_safe)
 
     %p
-      = @presentation.tag_list.empty? ? tag.i('none identified') : linked_tag_names(@presentation)
+      = @presentation.tag_list.empty? ? tag.i('no topics yet') : linked_tag_names(@presentation)
 
     %p
       %b Parts:

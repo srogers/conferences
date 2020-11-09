@@ -1,0 +1,9 @@
+- title "Edit Language"
+
+= render partial: 'control_bar'
+
+.row
+  .col-md-12
+    = simple_form_for @language do |f|
+      = render :partial => "form_fields", :locals => {:f => f}
+      = save_or_cancel f, languages_path, 'Save'

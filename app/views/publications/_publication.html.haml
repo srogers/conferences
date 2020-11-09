@@ -13,6 +13,9 @@
   .col-md-1.text-right
     = publication.duration
 
+  .col-md-1.text-right
+    = publication.language_abbreviation
+
   - if params[:heart].present?
     .col-sm-2
       = icon('far', 'clock', class: 'fa-fw') if publication.duration.blank?

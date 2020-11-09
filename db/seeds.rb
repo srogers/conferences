@@ -23,3 +23,8 @@ if Organizer.all.empty?
   Organizer.create! name: "The Hill Country Objectivist Association", series_name: "Texas Objectivist Conferences", abbreviation: "TOC"
   Organizer.create! name: "The Objective Standard", series_name: "The Objective Standard Conferences", abbreviation: "TOS-CON"
 end
+
+if Language.all.empty?
+  Language.create! name: "English"
+  Language.create! name: "Spanish"
+end

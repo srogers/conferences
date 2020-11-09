@@ -25,6 +25,30 @@ namespace :db do
     puts
   end
 
+  # Needs to run once after #474 is deployed - then can be deleted
+  desc 'A data migration task to set a language for all publications.'
+  task :set_publication_language => :environment do
+    puts
+    puts "handling publications . . ."
+    count = 0
+    language = Language.where(name: "English").first
+    raise "English language not yet defined" unless language
+    Publication.find_each do |publication|
+      publication.language = language
+      publication.save
+      if publication.errors.present?
+        puts # get on a new line
+        puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+      end
+      count += 1
+      if count % 100 == 0
+        print "." # I'm not hung!
+        STDOUT.flush
+      end
+    end
+    puts
+  end
+
   # This is primarily for numbering existing events after adding episode numbers - but it might stick around for cases
   # where it turns out something needs to be numbered but wasn't initially set up that way.
   desc "A data migration/maintenance task to number the presentations within an event. Specify an event with event_id=name-slug"
