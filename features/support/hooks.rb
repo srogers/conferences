@@ -1,7 +1,7 @@
 require "authlogic/test_case"
 
 
-Before('~@not_logged_in') do |scenario|
+Before('not @not_logged_in') do |scenario|
   # Handle login before every scenario except those with the tag above - for the few pre-login scenarios
   # Mention the role in the scenario title to be logged in as that role/user.
   email = case scenario.name
@@ -56,7 +56,7 @@ Before('@not_logged_in') do |scenario|
   end
 end
 
-#After('~@not_logged_in') do |scenario|
+#After('not @not_logged_in') do |scenario|
 # apparently this isn't necessary
 #visit logout_path
 #end

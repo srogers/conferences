@@ -48,6 +48,7 @@ Rails.application.routes.draw do
       get :download
     end
   end
+  resources :languages
   resources :passages
   resources :presentation_publications, only: [:create, :destroy]
   resources :presentation_speakers, only: [:create, :destroy]

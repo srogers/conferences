@@ -1,5 +1,6 @@
 -# Shows a publication in a single row on the presentation/show and publication/show page
 = format_and_date(publication)
+= "(#{publication.language_abbreviation})"
 - if publication.duration.present?
   = " - #{ publication.duration } mins"
 - if publication.notes.present?

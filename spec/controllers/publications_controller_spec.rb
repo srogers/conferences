@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe PublicationsController, type: :controller do
 
   let(:presentation) { create :presentation }
+  let(:language)     { create :language }
 
   let(:valid_attributes) {
-    { format: Publication::FORMATS.first, name: 'Valid Publication', speaker_names: 'Somebody' }
+    { format: Publication::FORMATS.first, name: 'Valid Publication', language_id: language.id, speaker_names: 'Somebody' }
   }
 
   let(:invalid_attributes) { { format: '', name: '', speaker_names: '' } }

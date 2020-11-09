@@ -10,6 +10,8 @@
       = sorting_header 'Pub', :publications_path, 'publications.published_on', icon: 'sort-numeric'
   .col-md-1.text-right
     = sorting_header 'Mins', :publications_path, 'publications.duration', icon: 'sort-numeric'
+  .col-md-1.text-right
+    = sorting_header 'Lang', :publications_path, 'publications.duration'
   - if params[:heart].present?
     .col-md-2 Needs
   - if can? :edit, Publication

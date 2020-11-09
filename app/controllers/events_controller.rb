@@ -89,7 +89,7 @@ class EventsController < ApplicationController
 
   def show
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
-    default_sorting = (@conference.virtual? || @conference.multi_venue?) ? ">presentations.date" : ">presentations.sortable_name"
+    default_sorting = get_default_sort()
     @presentations = @conference.presentations.order(params_to_sql default_sorting)
     @user_presentations = current_user.user_presentations if current_user.present?
   end
@@ -150,6 +150,16 @@ class EventsController < ApplicationController
   def get_organizer_selections
     # JS on the conference create page parses the organizer abbreviation out of this
     @organizer_selections = Organizer.all.order(:name).map{|o| ["#{o.name} - #{o.series_name} - #{o.abbreviation}", o.id]}
+  end
+
+  def get_default_sort
+    if @conference.series?
+      return "<presentations.date"
+    elsif @conference.virtual? || @conference.multi_venue?
+      return ">presentations.date"
+    else
+      return ">presentations.sortable_name"
+    end
   end
 
   def conference_params

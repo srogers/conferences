@@ -102,6 +102,7 @@ class PublicationsController < ApplicationController
 
   def new
     @publishers = Publisher.all.map{|p| [p.name]}
+    @languages = Language.all.map{|l| [l.name, l.id]}
     @publication = Publication.new
   end
 
@@ -122,6 +123,7 @@ class PublicationsController < ApplicationController
         redirect_to publication_path(@publication)
       end
     else
+      @languages = Language.all.map{|l| [l.name, l.id]}
       flash[:error] = "The publication could not be saved: #{ @publication.errors.full_messages.join(', ') }"
       logger.error "Publication save failed: #{ @publication.errors.full_messages }"
       render 'new'
@@ -129,6 +131,7 @@ class PublicationsController < ApplicationController
   end
 
   def edit
+    @languages = Language.all.map{|l| [l.name, l.id]}
     @publication.name ||= @presentation.name if @presentation.present?
   end
 
@@ -152,6 +155,7 @@ class PublicationsController < ApplicationController
         redirect_to publication_path(@publication)
       end
     else
+      @languages = Language.all.map{|l| [l.name, l.id]}
       flash.now[:error] = "Your publication could not be saved: #{ @publication.errors.full_messages.join(', ') }"
       logger.error "Publication update failed: #{ @publication.errors.full_messages }"
       render 'edit'
@@ -182,6 +186,9 @@ class PublicationsController < ApplicationController
   end
 
   def publication_params
-    params.require(:publication).permit(:name, :speaker_names, :published_on, :format, :url, :duration, :ui_duration, :publisher, :ari_inventory, :details, :notes, :editors_notes)
+    params.require(:publication).permit(
+      :name, :speaker_names, :published_on, :format, :url, :duration, :ui_duration, :publisher, :ari_inventory, :details,
+      :notes, :editors_notes, :language_id
+    )
   end
 end

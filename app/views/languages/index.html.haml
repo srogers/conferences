@@ -1,0 +1,15 @@
+- title 'Languages'
+
+= render partial: 'control_bar'
+
+- if @languages.blank?
+  .row
+    .col-md-12
+    %p You haven't created any languages yet.
+
+- else
+  .row
+    .col-md-12
+      %table.table
+        = render :partial => "table_head"
+        = render :partial => "language", :collection => @languages

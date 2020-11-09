@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Publication, type: :model do
   describe "create" do
-
-    let(:valid_attributes) { { :format => Publication::CD, name: 'Valid Publication', speaker_names: "Somebody" } }
+    let(:language) { create :language }
+    let(:valid_attributes) { { :format => Publication::CD, name: 'Valid Publication', language_id: language.id, speaker_names: "Somebody" } }
 
     it "has a working factory" do
       expect(create :publication).to be_valid
@@ -14,7 +14,7 @@ RSpec.describe Publication, type: :model do
     end
 
     context "validation" do
-      [:format, :name, :speaker_names].each do |required_attribute|
+      [:format, :name, :language_id, :speaker_names].each do |required_attribute|
         it "requires #{ required_attribute }" do
           expect(errors_on_blank(required_attribute)).to be_present
         end
@@ -27,7 +27,7 @@ RSpec.describe Publication, type: :model do
 
     describe "name" do
 
-      let(:attributes) { { speaker_names: 'unspecified', format: Publication::CD } }
+      let(:attributes) { { speaker_names: 'unspecified', language_id: language.id, format: Publication::CD } }
 
       context "starting with an article" do
         it "removes the article from name for sortable name" do
@@ -65,6 +65,16 @@ RSpec.describe Publication, type: :model do
         end
       end
     end
+
+    # 466 - clean publication params
+    # context "url" do
+    #   context "with trailing params" do
+    #     it "strips time codes and extraneous params off YouTube videos" do
+    #       publication = Publication.create(valid_attributes.merge(url: "https://www.youtube.com/watch?v=fAY1vMGYG_w?stupid-stuff=123&t=55"))
+    #       expect(publication.url).to equal("https://www.youtube.com/watch?v=fAY1vMGYG_w")
+    #     end
+    #   end
+    # end
 
     context "with duration" do
       context "blank" do

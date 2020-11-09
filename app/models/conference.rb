@@ -46,6 +46,30 @@ class Conference < ApplicationRecord
     slug.blank? || name_changed?
   end
 
+  def conference?
+    event_type == CONFERENCE
+  end
+
+  def debate?
+    event_type == DEBATE
+  end
+
+  def interview?
+    event_type == INTERVIEW
+  end
+
+  def series?
+    event_type == SERIES
+  end
+
+  def speech?
+    event_type == SPEECH
+  end
+
+  def tour?
+    event_type == TOUR
+  end
+
   def starts_before_ending
     errors.add(:end_date, 'End date has to be after or the same as start date') if start_date.present? && end_date.present? && start_date > end_date
   end
