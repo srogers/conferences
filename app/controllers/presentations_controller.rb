@@ -116,6 +116,7 @@ class PresentationsController < ApplicationController
   end
 
   def manage_publications
+    @languages = Language.all.map{|l| [l.name, l.id]}
     @publishers  = Publisher.all.map{|p| [p.name]}
     @related_publications = Publication.where("name @@  phraseto_tsquery(?)", @presentation.name)
     # Don't add this unless there is something to exclude, because otherwise it makes nothing show up.
