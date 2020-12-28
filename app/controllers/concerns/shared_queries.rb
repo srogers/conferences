@@ -10,7 +10,7 @@ module SharedQueries
     KINDS = [:required, :optional]
     Atom = Struct.new :kind, :clause, :value
 
-    attr_accessor :collection, :atoms, :term, :tag, :skip_optionals
+    attr_accessor :collection, :atoms, :terms, :tag, :skip_optionals
 
     def skip_optionals!
       @skip_optionals = true
@@ -69,7 +69,7 @@ module SharedQueries
 
     private
 
-    # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive-more terms
+    # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive: more terms
     # can be added to the query and then used again - but sort must be applied each time before the query is used.
     def organize_for_output
       atoms.sort!{ |a,b| b.kind <=> a.kind }
@@ -77,42 +77,43 @@ module SharedQueries
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into
     # initialize() because it needs visibility into StickyNavigation.
-    def initialize(collection, term, tag)
-      @collection = collection
-      @atoms  = []
-      @term = term
-      @tag = tag
-      @skip_optionals = false
+    def initialize(collection, terms, tag)
+      @collection = collection  # an ActiveRecord query collection with a key class at the root - i.e., the result of Presentation.where(...)
+      @atoms  = []              # individual elements in the query
+      @terms = terms            # an array of the words in the user's search text
+      @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
+      @skip_optionals = false   # Gets set when query terms are present that need to override other (such as year) for the query to make sense.
     end
   end
 
-  # Starts the query construction process by establishing the term and tag (from StickyNavigation)
+  # Callers use this, not Query.new() directly.
+  # Starts the query construction process by establishing the search terms and tag (from StickyNavigation).
+  # Collection is an ActiveRecord collection begun with one of the key classes, such as:  Presentation.where(..) or Presentation.select(...)
+  # The rest of the query is built onto this basic root.
   def init_query(collection, use_term=true, use_tag=true)
-    # Search term comes from explicit queries - tag comes from clicking a tag on a presentation.
-    # We combine these to get a broad search - the search term gets initialized with the tag to catch obvious matches lacking an explicit tag.
+    # Search terms come from explicit queries - tag comes from clicking a tag on a presentation.
+    # We combine these to get a broad search - the tag gets initialized from the search terms, if it exists.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
     # if the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
     use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
-    # These can be overridden so aggregate queries can ignore them
-    term = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact.join(' ') : nil
+    # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
+    terms = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact : []
     tag  = use_tag  ? param_context(:tag)&.strip : nil
 
-    if term.blank?
-      # set the search term to the tag
-      # TODO - per #401 - try not doing this
-      # term =  escape_wildcards(param_context(:tag))
-      # set_param_context :search_term, term
-    elsif tag.blank? && use_tag
-      # if the search term exists as a tag and something public is tagged with it, then set it
-      if Presentation.tagged_with(term).count > 0
-        tag = param_context(:search_term)
-        set_param_context :tag, tag
+    if tag.blank? && use_tag
+      # if a search term exists as a tag, and something public is tagged with it, then set it.  TODO - is this a good idea? or confusing?
+      terms.each do |term|
+        if Presentation.tagged_with(term).count > 0
+          tag = term
+          set_param_context :tag, tag
+          break  # so long as we're limited to just one tag, take the first one
+        end
       end
     end
-    logger.debug "Initializing Query with term: '#{ term }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
-    Query.new collection, term, tag
+    logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
+    Query.new collection, terms, tag
   end
 
   # This defines the query for the main case, shared by all - only name should get leading and trailing wildcard - others
@@ -120,52 +121,57 @@ module SharedQueries
   # Terms:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
-    # Deduce what the query is about - the basics depend on that
+    # Deduce what the query is about - the basics depend on that TODO - move this into initialize?
     publication_query = collection_has?(query, 'Publication')
     event_query = collection_has?(query, 'Conference')
     speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
 
-    logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
+    Rails.logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
     if param_context(:event_type).present? && !publication_query
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
 
-    if query.term.present?
+    # Build a query term around each word in the user's search query
+    query.terms.each do |term|
+      Rails.logger.debug "base query handling search term #{term}"
       # None of this stuff applies to publications or speakers
       unless publication_query || speaker_query
         # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
         # then we can't also say AND (conference.title ILIKE 'SE')
-        if country_code(query.term.upcase)
-          query.add :required, "conferences.country = ?", country_code(query.term)
+        if country_code(term.upcase)
+          query.add :required, "conferences.country = ?", country_code(term)
           query.skip_optionals!
         end
         # State-based search seems like another optional criterion, but it needs to be :required because the state
         # abbreviations are short, they match many incidental things.
         # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
-        if  query.term.length == 2 && States::STATES.map { |name| name[0] }.include?(query.term.upcase)
-          query.add :required, 'conferences.state = ?', query.term.upcase
+        if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
+          query.add :required, 'conferences.state = ?', term.upcase
           query.skip_optionals!
         end
       end
 
       # This applies to presentations and publications, but the query is different
-      if query.term.to_i.to_s == query.term && query.term.length == 4 # then this looks like a year
+      if term.to_i.to_s == term && term.length == 4 # then this looks like a year
         if publication_query
-          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", query.term
+          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", term
         else
-          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", query.term
+          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
         end
         query.skip_optionals!
       end
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
 
-      unless query.skip_optionals?
-        if publication_query && query.term != 'unspecified' # unspecified is a special term - don't look for name in that case
-          query.add :optional, "publications.name ILIKE ?", "%#{query.term}%"
+      # TODO - is this redundant with publication_query(query)  - there is no event_query() - fold them all in, or separate them all
+      if query.skip_optionals?
+        Rails.logger.debug "Skipping optional query terms..."
+      else
+        if publication_query && term != 'unspecified' # unspecified is a special term - don't look for name in that case
+          query.add :optional, "publications.name ILIKE ?", "%#{term}%"
         elsif event_query
-          query.add :optional, "conferences.name ILIKE ?", "%#{query.term}%"
-          query.add :optional, "conferences.city ILIKE ?", "#{query.term}%"
+          query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
+          query.add :optional, "conferences.city ILIKE ?", "#{term}%"
         end
       end
     end
@@ -183,10 +189,12 @@ module SharedQueries
   def events_with_presentations_query(query)
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
-    if query.term == Conference::UNSPECIFIED
-      query.add :optional, "coalesce(conferences.city, '') = ''"
-    else
-      query.add :optional, "presentations.city ILIKE ?", "#{query.term}%" unless query.skip_optionals?
+    query.terms.each do |term|
+      if term == Conference::UNSPECIFIED
+        query.add :optional, "coalesce(conferences.city, '') = ''"
+      else
+        query.add :optional, "presentations.city ILIKE ?", "#{term}%" unless query.skip_optionals?
+      end
     end
 
     return query
@@ -195,10 +203,12 @@ module SharedQueries
   # Extend the base query to do a common query on presentations. The approach depends on the SQL retaining the same
   # order of question marks and bind variables, so when we append query terms and bind variables, everything still lines up.
   def presentation_query(query)
-    if query.term.present? && !query.skip_optionals?
-      query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
-      query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+    if query.terms.present? && !query.skip_optionals?
+      query.terms.each do |term|
+        query.add :optional, 'presentations.name ILIKE ?', "%#{term}%"
+        query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
+        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
+      end
     end
     # Only Presentations use tags
     if query.tag.present?
@@ -210,30 +220,34 @@ module SharedQueries
 
   # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table
   def publication_aggregate(query)
-    if query.term.present? && !query.skip_optionals?
-      query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
-      query.add :optional, 'publications.notes ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
+    if query.terms.present? && !query.skip_optionals?
+      query.terms.each do |term|
+        query.add :optional, 'publications.name ILIKE ?', "%#{term}%"
+        query.add :optional, 'publications.format ILIKE ?', "#{term}%"
+        query.add :optional, 'publications.notes ILIKE ?', "%#{term}%"
+        query.add :optional, 'publications.publisher = ?', term             # only matches when the exact name is kicked over from Publishers
+      end
     end
 
     return query
   end
 
   def publication_query(query)
-    if query.term.present? && !query.skip_optionals?
-      if query.term == 'unspecified'
-        # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
-        # Get the Physical publications without a publisher
-        query.add :required, "coalesce(publications.publisher, '') = ''"
-        query.add :required, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
-      else
-        query.add :optional, 'publications.name ILIKE ?', "%#{query.term}%"
-        query.add :optional, 'publications.format ILIKE ?', "#{query.term}%"
-        query.add :optional, 'publications.notes ILIKE ?', "%#{query.term}%"
-        query.add :optional, 'publications.publisher = ?', query.term             # only matches when the exact name is kicked over from Publishers
-        query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
-        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+    if query.terms.present? && !query.skip_optionals?
+      query.terms.each do |term|
+        if term == 'unspecified'
+          # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
+          # Get the Physical publications without a publisher
+          query.add :required, "coalesce(publications.publisher, '') = ''"
+          query.add :required, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
+        else
+          query.add :optional, 'publications.name ILIKE ?', "%#{term}%"
+          query.add :optional, 'publications.format ILIKE ?', "#{term}%"
+          query.add :optional, 'publications.notes ILIKE ?', "%#{term}%"
+          query.add :optional, 'publications.publisher = ?', term             # only matches when the exact name is kicked over from Publishers
+          query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
+          query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
+        end
       end
     end
 
@@ -241,10 +255,12 @@ module SharedQueries
   end
 
   def speaker_query(query)
-    if query.term.present? && !query.skip_optionals?
-      #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
-      query.add :optional, 'speakers.name ILIKE ?', "#{query.term}%"
-      query.add :optional, 'speakers.sortable_name ILIKE ?', "#{query.term}%"
+    if query.terms.present? && !query.skip_optionals?
+      query.terms.each do |term|
+        #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
+        query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
+        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
+      end
     end
 
     return query
@@ -284,7 +300,7 @@ SELECT conference_id FROM conference_users, conferences
   # The chart building methods use this to determine which chart needs to be built
   def collect_user_id
     if param_context(:user_id).present? || param_context(:my_events).present?
-      # Handles the My Conferences case - doesn't work with search term
+      # Handles the My Conferences case - doesn't work with search terms
       param_context(:user_id) || current_user.id
     else
       false
