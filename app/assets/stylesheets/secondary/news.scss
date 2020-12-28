@@ -33,6 +33,11 @@ body.news {
   a:active  { color: black; }
 }
 
+#landing-page-search {
+  font-size: larger;
+  #search_term { width: 85%; }
+}
+
 .carousel img { width: 100% }
 
 .carousel-title {
