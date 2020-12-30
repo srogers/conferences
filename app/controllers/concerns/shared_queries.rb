@@ -7,10 +7,11 @@ module SharedQueries
   # Builds the query string and bind variables for an ActiveRecord call.
   # TODO - doesn't handle includes() or references() - the caller has to do that. But seems like it could handle it.
   class Query
-    KINDS = [:required, :optional]
-    Atom = Struct.new :kind, :clause, :value
+    KINDS = [:required, :optional]                                    # distinguishes things that get AND vs OR
+    TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
+    Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
-    attr_accessor :collection, :atoms, :terms, :tag, :skip_optionals
+    attr_accessor :collection, :type, :atoms, :terms, :tag, :skip_optionals
 
     def skip_optionals!
       @skip_optionals = true
@@ -67,7 +68,28 @@ module SharedQueries
       return results
     end
 
+    def event?
+      type == :event
+    end
+
+    def presentation?
+      type == :presentation
+    end
+
+    def publication?
+      type == :publication
+    end
+
+    def speaker?
+      type == :speaker
+    end
+
     private
+
+    # look for a class in the collection - this works because collection always starts with an ActiveRecord class
+    def collection_name(collection)
+      collection.try(:klass).try(:name) || collection.try(:name)
+    end
 
     # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive: more terms
     # can be added to the query and then used again - but sort must be applied each time before the query is used.
@@ -79,10 +101,26 @@ module SharedQueries
     # initialize() because it needs visibility into StickyNavigation.
     def initialize(collection, terms, tag)
       @collection = collection  # an ActiveRecord query collection with a key class at the root - i.e., the result of Presentation.where(...)
-      @atoms  = []              # individual elements in the query
+      @atoms  = []              # individual elements in the WHERE clause to be joined with AND/OR based on :required vs :optional
       @terms = terms            # an array of the words in the user's search text
       @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
       @skip_optionals = false   # Gets set when query terms are present that need to override other (such as year) for the query to make sense.
+
+      @type = case collection_name(collection)
+      when 'Conference'
+        :event
+      when 'Presentation'
+        :presentation
+      when 'Publication'
+        :publication
+      when 'Speaker'
+        :speaker
+      when 'PresentationSpeaker'
+        :speaker
+      else
+        # this is a development-level error caused by invalid query setup
+        raise "unknown query type #{collection_name(query)}"
+      end
     end
   end
 
@@ -112,22 +150,23 @@ module SharedQueries
         end
       end
     end
-    logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
+    Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
     Query.new collection, terms, tag
   end
 
-  # This defines the query for the main case, shared by all - only name should get leading and trailing wildcard - others
-  # just trailing wildcard - year, no wildcard. Year is there to catch special events that don't have the year in the title.
-  # Terms:  name, city, country, year, organizer_abbreviation
+  # The idea here is to setup the query based on what's being searched, and the search terms - but the query is left
+  # open for a finalizing step that would set the final form - a details list or an aggregate summary. This is handled
+  # by specialized "finalizing" methods, like publication_query() or publication_aggregate_query(). The whole idea is
+  # to setup the queries in a consistent way, so views, charts, and exports get the same thing, and aggregate queries
+  # are operating on the same base data set as a detailed listing. All the complexity is here, without repeated code.
+  # 
+  # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
+  # with intuitive expectations. Only name should get leading and trailing wildcard - others just trailing wildcard - year
+  # gets no wildcard. 
+  # Searchable fields:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
-    # Deduce what the query is about - the basics depend on that TODO - move this into initialize?
-    publication_query = collection_has?(query, 'Publication')
-    event_query = collection_has?(query, 'Conference')
-    speaker_query     = collection_has?(query, 'Speaker') || collection_has?(query, 'PresentationSpeaker')
-
-    Rails.logger.debug "Publication query: #{publication_query}, Speaker query: #{speaker_query}   (#{query.collection.try(:klass).try(:name)})"
-    if param_context(:event_type).present? && !publication_query
+    if param_context(:event_type).present? && !query.publication?
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
 
@@ -135,10 +174,11 @@ module SharedQueries
     query.terms.each do |term|
       Rails.logger.debug "base query handling search term #{term}"
       # None of this stuff applies to publications or speakers
-      unless publication_query || speaker_query
+      unless query.publication? || query.speaker?
         # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
         # then we can't also say AND (conference.title ILIKE 'SE')
         if country_code(term.upcase)
+          Rails.logger.debug "adding required country = #{term}"
           query.add :required, "conferences.country = ?", country_code(term)
           query.skip_optionals!
         end
@@ -146,6 +186,7 @@ module SharedQueries
         # abbreviations are short, they match many incidental things.
         # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
+          Rails.logger.debug "adding required state = #{term}"
           query.add :required, 'conferences.state = ?', term.upcase
           query.skip_optionals!
         end
@@ -153,7 +194,7 @@ module SharedQueries
 
       # This applies to presentations and publications, but the query is different
       if term.to_i.to_s == term && term.length == 4 # then this looks like a year
-        if publication_query
+        if query.publication?
           query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", term
         else
           query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
@@ -167,9 +208,9 @@ module SharedQueries
       if query.skip_optionals?
         Rails.logger.debug "Skipping optional query terms..."
       else
-        if publication_query && term != 'unspecified' # unspecified is a special term - don't look for name in that case
+        if query.publication? && term != 'unspecified' # unspecified is a special term - don't look for name in that case
           query.add :optional, "publications.name ILIKE ?", "%#{term}%"
-        elsif event_query
+        elsif query.event?
           query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
           query.add :optional, "conferences.city ILIKE ?", "#{term}%"
         end
@@ -308,11 +349,6 @@ SELECT conference_id FROM conference_users, conferences
   end
 
   private
-
-  # look for a class in the query base - this is how the query is adjusted based on what's being searched
-  def collection_has?(query, class_name)
-    query.collection.try(:klass).try(:name) == class_name || query.collection.try(:name) == class_name
-  end
 
   # When the tag is used as a wildcard search in the remark space, any wildcard characters needs to be escaped.
   # Wildcards in the search text are allowed, but cause spurious results in tags - e.g. the dot in "this vs. that"
