@@ -11,14 +11,15 @@ module SharedQueries
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
     Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
-    attr_accessor :collection, :type, :atoms, :terms, :tag, :skip_optionals
+    attr_accessor :collection, :type, :atoms, :terms, :tag
 
-    def skip_optionals!
-      @skip_optionals = true
-    end
-
-    def skip_optionals?
-      @skip_optionals
+    # Marks a term as handled once it's been added to the where clause, so it doesn't get re-added later.
+    # For now, the quick-and-dirty way is to just delete it from the terms list.
+    # TODO - if necesssary, make the elements of terms a struct, so each one can literally be marked as handled.
+    def handled(term)
+      Rails.logger.debug "Deleting #{term} from terms"
+      @terms = @terms - [term]
+      Rails.logger.debug "Terms:  #{@terms}"
     end
 
     # Add a clause and corresponding value to the list of clauses that will build the query. looks like:
@@ -43,7 +44,7 @@ module SharedQueries
       organize_for_output
 
       atoms.each do |atom|
-        if atom.kind == :optional && !skip_optionals?
+        if atom.kind == :optional
           optionals << atom.clause
         else
           requires << atom.clause
@@ -62,8 +63,7 @@ module SharedQueries
     # Cranks out bind variables for each of the WHERE clause elements, using the same kind of ordering so they match up
     def bindings
       organize_for_output
-      # Skip optional clauses when one of the special required queries triggers it - but not tags. Flatten because add() can accept array values
-      results = atoms.reject{|a| a.kind == :optional && skip_optionals? && !a.clause.include?('tags.name')}.map{|a| a.value}.flatten.compact
+      results = atoms.map{|a| a.value}.flatten.compact
       Rails.logger.debug "Bindings: #{ results }"
       return results
     end
@@ -104,8 +104,6 @@ module SharedQueries
       @atoms  = []              # individual elements in the WHERE clause to be joined with AND/OR based on :required vs :optional
       @terms = terms            # an array of the words in the user's search text
       @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
-      @skip_optionals = false   # Gets set when query terms are present that need to override other (such as year) for the query to make sense.
-
       @type = case collection_name(collection)
       when 'Conference'
         :event
@@ -159,10 +157,10 @@ module SharedQueries
   # by specialized "finalizing" methods, like publication_query() or publication_aggregate_query(). The whole idea is
   # to setup the queries in a consistent way, so views, charts, and exports get the same thing, and aggregate queries
   # are operating on the same base data set as a detailed listing. All the complexity is here, without repeated code.
-  # 
+  #
   # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
   # with intuitive expectations. Only name should get leading and trailing wildcard - others just trailing wildcard - year
-  # gets no wildcard. 
+  # gets no wildcard.
   # Searchable fields:  name, city, country, year, organizer_abbreviation
 
   def base_query(query)
@@ -170,7 +168,7 @@ module SharedQueries
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
     end
 
-    # Build a query term around each word in the user's search query
+    # Scan the query for terms that need to get speical handling
     query.terms.each do |term|
       Rails.logger.debug "base query handling search term #{term}"
       # None of this stuff applies to publications or speakers
@@ -180,7 +178,7 @@ module SharedQueries
         if country_code(term.upcase)
           Rails.logger.debug "adding required country = #{term}"
           query.add :required, "conferences.country = ?", country_code(term)
-          query.skip_optionals!
+          query.handled(term)
         end
         # State-based search seems like another optional criterion, but it needs to be :required because the state
         # abbreviations are short, they match many incidental things.
@@ -188,7 +186,7 @@ module SharedQueries
         if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
           Rails.logger.debug "adding required state = #{term}"
           query.add :required, 'conferences.state = ?', term.upcase
-          query.skip_optionals!
+          query.handled(term)
         end
       end
 
@@ -199,22 +197,11 @@ module SharedQueries
         else
           query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
         end
-        query.skip_optionals!
+        query.handled(term)
       end
+
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
-
-      # TODO - is this redundant with publication_query(query)  - there is no event_query() - fold them all in, or separate them all
-      if query.skip_optionals?
-        Rails.logger.debug "Skipping optional query terms..."
-      else
-        if query.publication? && term != 'unspecified' # unspecified is a special term - don't look for name in that case
-          query.add :optional, "publications.name ILIKE ?", "%#{term}%"
-        elsif query.event?
-          query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
-          query.add :optional, "conferences.city ILIKE ?", "#{term}%"
-        end
-      end
     end
 
     return query
@@ -227,24 +214,35 @@ module SharedQueries
     return query
   end
 
+  # Extend the base query to apply search terms on events only.
+  def event_query(query)
+    query.terms.each do |term|
+      query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
+      query.add :optional, "conferences.city ILIKE ?", "#{term}%"
+    end
+
+    return query
+  end
+
+  # Extend the base query to apply search terms to events and presentations. Assumes the collection has been set for that.
   def events_with_presentations_query(query)
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
     query.terms.each do |term|
       if term == Conference::UNSPECIFIED
-        query.add :optional, "coalesce(conferences.city, '') = ''"
+        query.add :optional, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
-        query.add :optional, "presentations.city ILIKE ?", "#{term}%" unless query.skip_optionals?
+        query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
+        query.add :optional, "presentations.city ILIKE ?", "#{term}%"
       end
     end
 
     return query
   end
 
-  # Extend the base query to do a common query on presentations. The approach depends on the SQL retaining the same
-  # order of question marks and bind variables, so when we append query terms and bind variables, everything still lines up.
+  # Extend the base query to apply search terms to presentations and speakers.  Assumes the collection has both already.
   def presentation_query(query)
-    if query.terms.present? && !query.skip_optionals?
+    if query.terms.present?
       query.terms.each do |term|
         query.add :optional, 'presentations.name ILIKE ?', "%#{term}%"
         query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
@@ -259,9 +257,10 @@ module SharedQueries
     return query
   end
 
-  # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table
+  # Extends the base query to apply search terms for an aggregate.
+  # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
   def publication_aggregate(query)
-    if query.terms.present? && !query.skip_optionals?
+    if query.terms.present?
       query.terms.each do |term|
         query.add :optional, 'publications.name ILIKE ?', "%#{term}%"
         query.add :optional, 'publications.format ILIKE ?', "#{term}%"
@@ -273,8 +272,9 @@ module SharedQueries
     return query
   end
 
+  # Extends the base query to apply search terms to publications and speakers. Assumes the collection is set up for both.
   def publication_query(query)
-    if query.terms.present? && !query.skip_optionals?
+    if query.terms.present?
       query.terms.each do |term|
         if term == 'unspecified'
           # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
@@ -295,8 +295,9 @@ module SharedQueries
     return query
   end
 
+  # Extends the base query to apply search terms to speakers only.
   def speaker_query(query)
-    if query.terms.present? && !query.skip_optionals?
+    if query.terms.present?
       query.terms.each do |term|
         #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
         query.add :optional, 'speakers.name ILIKE ?', "#{term}%"

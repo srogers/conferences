@@ -51,6 +51,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference)
       query = base_query(query)
+      query = event_query(query)
 
       # This query will get all the event cities - the multiple, virtual, and unspecified ones will all come out on the empty string key
       combined = Conference.group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
@@ -97,6 +98,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
+      query = event_query(query)
 
       results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
 
@@ -126,6 +128,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
+      query = event_query(query)
       results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 
     else
