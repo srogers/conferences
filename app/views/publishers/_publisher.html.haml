@@ -1,6 +1,6 @@
 .row.mb-2
   .col
-    = link_to(truncate(publisher.name, length: 80, separator: ' '), publisher_path(publisher))
+    = truncate(publisher.name, length: 80, separator: ' ')
   .col-md-2.text-right
     = @publication_counts[publisher.name]
 
