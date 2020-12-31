@@ -4,8 +4,24 @@ module SharedQueries
   # guaranteed to get the same results. Try to do the least amount of restricting and joining necessary to satisfy
   # the query, so performance/memory is optimized.
 
-  # Builds the query string and bind variables for an ActiveRecord call.
-  # TODO - doesn't handle includes() or references() - the caller has to do that. But seems like it could handle it.
+  # Builds the query string and bind variables for an ActiveRecord call. Callers should get a query object from
+  # init_query(), build the base_query(), apply where restrictions, then get the results:
+  #
+  #     query = init_query(ActiveRecord collection)   - builds the query object
+  #     query = base_query(query)                     - collets search term and tags, and applies "speical" search terms
+  #     query = publication_where(query)              - restricts the query
+  #     query = speaker_where(query)
+  #     results = query.collection.where(query.where_clause, *query.bindings)
+  #
+  # The initial collection can be a bare ActiveRecord class, or a class with includes(), references(), and where() pre-applied.
+  # The necessary includes() or references() must be supplied with init_query - that doesn't happen automatically.
+  # The whole idea is to build queries for views, charts, and exports in a consistent way without repeating code, so
+  # the list and the chart for a particular search are always consistent.
+  #
+  # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
+  # with intuitive expectations. 
+  #
+  # TODO - Seems like it should be possible to infer includes() and references() when a x_where() method is applied.
   class Query
     KINDS = [:required, :optional]                                    # distinguishes things that get AND vs OR
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
@@ -22,12 +38,15 @@ module SharedQueries
       Rails.logger.debug "Terms:  #{@terms}"
     end
 
-    # Add a clause and corresponding value to the list of clauses that will build the query. looks like:
-    #   :required, 'table.attribute = ?', 3
-    # When the query is built, the clauses and bindings will stack out in the right order. Since bindings() does a flatten()
-    # on the list, it's possible to cheat and pass a string with multiple '?' targets and an array of multiple binding values.
-    # It's also possible to add a self-contained clause that requires no bind variable - the nil acts as a placeholder.
-    # The crucial thing is that clauses and bind variables are stacked in order, then peeled off in order for the WHERE clause.
+    # Add a clause and corresponding value to the list of clauses that will build the query. For example:
+    #   add(:required, 'table.attribute = ?', 3)
+    # It's not necessary to call add() in any particular order. When the query is built, the clauses and bindings will 
+    # stack out in the right order. Since bindings() does a flatten() on the list, it's possible to "cheat" and pass a 
+    # string with multiple '?' targets and an array of multiple binding values. It's also possible to add a self-contained 
+    # clause that requires no bind variable:
+    #   add(:required, 'NOT x.completed')
+    # The crucial thing is that clauses and bind variables are stacked in order within each atom, then peeled off in order 
+    # for the WHERE clause and bindings. The :optional/:required qualifier determines how the atoms get stacked together.
     def add(option, clause, value=nil)
       Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
@@ -152,16 +171,10 @@ module SharedQueries
     Query.new collection, terms, tag
   end
 
-  # The idea here is to setup the query based on what's being searched, and the search terms - but the query is left
-  # open for additional refinement via WHERE clauses using any of the xx_where() methods. The whole idea is
-  # to setup the queries in a consistent way, so views, charts, and exports get the same thing, and aggregate queries
-  # are operating on the same base data set as a detailed listing. All the complexity is here, without repeated code.
+  # The idea here is to setup the query based on what's being searched, and initialize the search terms, while leaving
+  # the query open for additional refinement via WHERE clauses using any of the xx_where() methods. 
   #
-  # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
-  # with intuitive expectations. Only name should get leading and trailing wildcard - others just trailing wildcard - year
-  # gets no wildcard.
-  # Searchable fields:  name, city, country, year, organizer_abbreviation
-
+  # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
   def base_query(query)
     if param_context(:event_type).present? && !query.publication?
       query.add :required, "conferences.event_type = ?", param_context(:event_type)
@@ -239,13 +252,14 @@ module SharedQueries
     return query
   end
 
-  # Extend the base query to apply search terms to presentations and speakers.  Assumes the collection has both already.
+  # Extend the base query to apply search terms and tag to presentations.
   def presentation_where(query)
     if query.terms.present?
       query.terms.each do |term|
         query.add :optional, 'presentations.name ILIKE ?', "%#{term}%"
-        query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
-        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
+        # This could go either way. It's usually helpful, but sometimes gets surprising results, e.g. "economy" gets
+        # things about economics, but also things in writing, and epistemology (unit economy).
+        query.add :optional, 'presentations.description ILIKE ?', "%#{term}%"
       end
     end
     # Only Presentations use tags
@@ -256,7 +270,7 @@ module SharedQueries
     return query
   end
 
-  # Extends the base query to apply search terms to publications and speakers. Assumes the collection is set up for both.
+  # Extends the base query to apply search terms to publications.
   def publication_where(query)
     if query.terms.present?
       query.terms.each do |term|

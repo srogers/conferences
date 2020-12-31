@@ -70,7 +70,6 @@ module SpeakersChart
       query = base_query(query)
       query = speaker_where(query)
       # don't match on presentations in this context - "Smith" matches things like "Adam Smith" in  titles - distracting - do that in the presentations tab
-      # query = presentation_where(query)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id')
       # do the sort in Ruby - don't filter when a search term is present

@@ -13,6 +13,7 @@ module PresentationsChart
     end
     query = base_query(query)
     query = presentation_where(query)
+    query = speaker_where(query)
 
     presentations.where(query.where_clause, *query.bindings)
   end
