@@ -229,23 +229,11 @@ module SharedQueries
   # Extend the base query to apply search terms on events only.
   def event_where(query)
     query.terms.each do |term|
-      query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
-      query.add :optional, "conferences.city ILIKE ?", "#{term}%"
-    end
-
-    return query
-  end
-
-  # Extend the base query to apply search terms to events and presentations. Assumes the collection has been set for that.
-  def events_with_presentations_where(query)
-    # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
-    # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
-    query.terms.each do |term|
       if term == Conference::UNSPECIFIED
         query.add :optional, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
         query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
-        query.add :optional, "presentations.city ILIKE ?", "#{term}%"
+        query.add :optional, "conferences.city ILIKE ?", "#{term}%"
       end
     end
 
@@ -260,6 +248,7 @@ module SharedQueries
         # This could go either way. It's usually helpful, but sometimes gets surprising results, e.g. "economy" gets
         # things about economics, but also things in writing, and epistemology (unit economy).
         query.add :optional, 'presentations.description ILIKE ?', "%#{term}%"
+        query.add :optional, "presentations.city ILIKE ?", "#{term}%"
       end
     end
     # Only Presentations use tags
@@ -274,7 +263,7 @@ module SharedQueries
   def publication_where(query)
     if query.terms.present?
       query.terms.each do |term|
-        if term == 'unspecified'
+        if term == Conference::UNSPECIFIED
           # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
           # Get the Physical publications without a publisher
           query.add :required, "coalesce(publications.publisher, '') = ''"

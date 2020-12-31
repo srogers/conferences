@@ -7,7 +7,8 @@ module ConferencesChart
   def filter_events(events)
     query = init_query(events)
     query = base_query(query)
-    events_with_presentations_where(query)
+    event_where(query)
+    presentation_where(query)
 
     events.where(query.where_clause, *query.bindings)
   end

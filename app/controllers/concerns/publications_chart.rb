@@ -9,7 +9,7 @@ module PublicationsChart
     query = init_query(publications)
     query = base_query(query)
     query = publication_where(query)
-    query = speaker_where(query) unless query.terms == ["unspecified"] # this is a chart click on unspecified publishers
+    query = speaker_where(query) unless query.terms == [Conference::UNSPECIFIED] # this is a chart click on unspecified publishers
 
     publications.where(query.where_clause, *query.bindings)
   end
