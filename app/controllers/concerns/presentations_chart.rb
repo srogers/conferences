@@ -12,7 +12,7 @@ module PresentationsChart
       presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
     end
     query = base_query(query)
-    query = presentation_query(query)
+    query = presentation_where(query)
 
     presentations.where(query.where_clause, *query.bindings)
   end
@@ -52,8 +52,8 @@ module PresentationsChart
       data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query(data)
       query = base_query(query)
-      query = speaker_query(query)
-      query = presentation_query(query)
+      query = speaker_where(query)
+      query = presentation_where(query)
 
       data = data.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
@@ -92,7 +92,7 @@ module PresentationsChart
       # This is super-efficient, but it just doesn't get it the right answer
       #query = init_query(@presentations)
       #query = base_query(query)
-      #query = presentation_query(query)
+      #query = presentation_where(query)
       #logger.debug query.where_clause
       #logger.debug query.bindings.inspect
       #data = @presentations.group('tags.name').where(query.where_clause, *query.bindings).count('taggings.taggable_id')

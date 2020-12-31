@@ -8,7 +8,8 @@ module PublicationsChart
   def filter_publications(publications)
     query = init_query(publications)
     query = base_query(query)
-    query = publication_query(query)
+    query = publication_where(query)
+    query = speaker_where(query) unless query.terms == ["unspecified"] # this is a chart click on unspecified publishers
 
     publications.where(query.where_clause, *query.bindings)
   end
@@ -47,7 +48,8 @@ module PublicationsChart
       # Build a query using the current search term and tag
       query = init_query(Publication)
       query = base_query(query)
-      query = publication_aggregate(query)
+      query = publication_where(query)
+      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
 
     else
@@ -65,7 +67,8 @@ module PublicationsChart
       # Build a query using the current search term and tag
       query = init_query(Publication) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
-      query = publication_aggregate(query)
+      query = publication_where(query)
+      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).sum('duration')
 
     else
@@ -83,7 +86,8 @@ module PublicationsChart
       # Build a query using the current search term and tag
       query = init_query(Publication.includes(:speakers).references(:speakers))
       query = base_query(query)
-      query = publication_aggregate(query)
+      query = publication_where(query)
+      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count
 
     else

@@ -7,7 +7,7 @@ module ConferencesChart
   def filter_events(events)
     query = init_query(events)
     query = base_query(query)
-    events_with_presentations_query(query)
+    events_with_presentations_where(query)
 
     events.where(query.where_clause, *query.bindings)
   end
@@ -51,7 +51,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference)
       query = base_query(query)
-      query = event_query(query)
+      query = event_where(query)
 
       # This query will get all the event cities - the multiple, virtual, and unspecified ones will all come out on the empty string key
       combined = Conference.group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
@@ -60,7 +60,7 @@ module ConferencesChart
       if param_context(:event_type) == Conference::SERIES
         # Now get the cities out of presentations.city for multi-venue events, and fold that into the overall count.
         # we can do this by just extending the query we've already built
-        query_m = multiples_query(query)
+        query_m = multiples_where(query)
 
         multiple = Conference.includes(:presentations).group("presentations.city").where(query_m.where_clause, *query_m.bindings).order(Arel.sql("count(city) DESC")).count(:city)
         results = reconcile_multiple(combined, multiple)
@@ -98,7 +98,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
-      query = event_query(query)
+      query = event_where(query)
 
       results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
 
@@ -128,7 +128,7 @@ module ConferencesChart
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
       query = base_query(query)
-      query = event_query(query)
+      query = event_where(query)
       results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 
     else

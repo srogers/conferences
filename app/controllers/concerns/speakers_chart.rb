@@ -8,7 +8,7 @@ module SpeakersChart
   def filter_speakers(speakers)
     query = init_query(speakers)
     query = base_query(query)
-    query = speaker_query(query)
+    query = speaker_where(query)
 
     speakers.where(query.where_clause, *query.bindings)
   end
@@ -25,7 +25,7 @@ module SpeakersChart
       base = PresentationSpeaker.includes(:speaker, :presentation => :conference)  #.includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query base
       query = base_query(query)
-      query = speaker_query(query)
+      query = speaker_where(query)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
@@ -38,8 +38,8 @@ module SpeakersChart
       base = PresentationSpeaker.includes(:speaker, :presentation => :conference)
       query = init_query base
       query = base_query(query)
-      query = speaker_query(query)
-      query = one_speaker_query(query, speaker_slug)
+      query = speaker_where(query)
+      query = one_speaker_where(query, speaker_slug)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
 
@@ -68,9 +68,9 @@ module SpeakersChart
       base = Speaker.includes(:presentations => :conference)
       query = init_query(base)
       query = base_query(query)
-      query = speaker_query(query)
+      query = speaker_where(query)
       # don't match on presentations in this context - "Smith" matches things like "Adam Smith" in  titles - distracting - do that in the presentations tab
-      # query = presentation_query(query)
+      # query = presentation_where(query)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id')
       # do the sort in Ruby - don't filter when a search term is present
@@ -84,8 +84,8 @@ module SpeakersChart
       base = Speaker.includes(:presentations => :conference)
       query = init_query base
       query = base_query(query)
-      query = speaker_query(query)
-      query = one_speaker_query(query, speaker_slug)
+      query = speaker_where(query)
+      query = one_speaker_where(query, speaker_slug)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id')
     else

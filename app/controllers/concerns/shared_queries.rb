@@ -153,8 +153,7 @@ module SharedQueries
   end
 
   # The idea here is to setup the query based on what's being searched, and the search terms - but the query is left
-  # open for a finalizing step that would set the final form - a details list or an aggregate summary. This is handled
-  # by specialized "finalizing" methods, like publication_query() or publication_aggregate_query(). The whole idea is
+  # open for additional refinement via WHERE clauses using any of the xx_where() methods. The whole idea is
   # to setup the queries in a consistent way, so views, charts, and exports get the same thing, and aggregate queries
   # are operating on the same base data set as a detailed listing. All the complexity is here, without repeated code.
   #
@@ -208,14 +207,14 @@ module SharedQueries
   end
 
   # Used to find the city names for multi-venue events, which live at the presentation level.
-  def multiples_query(query)
+  def multiples_where(query)
     query.add :required, "conferences.location_type = ?", Conference::MULTIPLE
 
     return query
   end
 
   # Extend the base query to apply search terms on events only.
-  def event_query(query)
+  def event_where(query)
     query.terms.each do |term|
       query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
       query.add :optional, "conferences.city ILIKE ?", "#{term}%"
@@ -225,7 +224,7 @@ module SharedQueries
   end
 
   # Extend the base query to apply search terms to events and presentations. Assumes the collection has been set for that.
-  def events_with_presentations_query(query)
+  def events_with_presentations_where(query)
     # Add this to events index query so that when series cities show up in charts, clicking them will be able to find
     # the related conference. Don't add it to the base query, because it breaks some simple aggregates.
     query.terms.each do |term|
@@ -241,7 +240,7 @@ module SharedQueries
   end
 
   # Extend the base query to apply search terms to presentations and speakers.  Assumes the collection has both already.
-  def presentation_query(query)
+  def presentation_where(query)
     if query.terms.present?
       query.terms.each do |term|
         query.add :optional, 'presentations.name ILIKE ?', "%#{term}%"
@@ -257,23 +256,8 @@ module SharedQueries
     return query
   end
 
-  # Extends the base query to apply search terms for an aggregate.
-  # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
-  def publication_aggregate(query)
-    if query.terms.present?
-      query.terms.each do |term|
-        query.add :optional, 'publications.name ILIKE ?', "%#{term}%"
-        query.add :optional, 'publications.format ILIKE ?', "#{term}%"
-        query.add :optional, 'publications.notes ILIKE ?', "%#{term}%"
-        query.add :optional, 'publications.publisher = ?', term             # only matches when the exact name is kicked over from Publishers
-      end
-    end
-
-    return query
-  end
-
   # Extends the base query to apply search terms to publications and speakers. Assumes the collection is set up for both.
-  def publication_query(query)
+  def publication_where(query)
     if query.terms.present?
       query.terms.each do |term|
         if term == 'unspecified'
@@ -286,8 +270,6 @@ module SharedQueries
           query.add :optional, 'publications.format ILIKE ?', "#{term}%"
           query.add :optional, 'publications.notes ILIKE ?', "%#{term}%"
           query.add :optional, 'publications.publisher = ?', term             # only matches when the exact name is kicked over from Publishers
-          query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
-          query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
         end
       end
     end
@@ -296,7 +278,7 @@ module SharedQueries
   end
 
   # Extends the base query to apply search terms to speakers only.
-  def speaker_query(query)
+  def speaker_where(query)
     if query.terms.present?
       query.terms.each do |term|
         #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
@@ -308,7 +290,7 @@ module SharedQueries
     return query
   end
 
-  def one_speaker_query(query, speaker_slug)
+  def one_speaker_where(query, speaker_slug)
     # this filters down from the friendly find view of a speaker, so it's the slug, not ActiveRecord ID
     query.add :required, 'speakers.slug = ?', speaker_slug
 
@@ -316,6 +298,7 @@ module SharedQueries
   end
 
   # This defines the core restriction used to collect counts by user for conferences, cities, years, etc.
+  # Get into this by clicking on Events -> My Events -> then pick a chart.
   # Since this query has an aggregate built into it, we can't use the base_query() method
   def by_user_query(query)
     # Build this WHERE clause:
