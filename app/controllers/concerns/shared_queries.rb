@@ -236,7 +236,6 @@ module SharedQueries
   def speaker_where(query)
     if query.terms.present?
       query.terms.each do |term|
-        #query.add :optional, 'presentations.name ILIKE ?', "%#{query.term}%"
         query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
         query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
       end

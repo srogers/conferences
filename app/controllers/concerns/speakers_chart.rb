@@ -76,12 +76,13 @@ module SpeakersChart
       data = Conference.includes(:presentations => :speakers).where("conferences.id in (SELECT conferences.id FROM conference_users WHERE user_id = ?)", current_user.id).group("speakers.name").count('conferences.id').sort_by { |name, count| count }.reverse.to_h
 
     elsif speaker_slug.present?
+      # This happens when the user has drilled down from the speakers list to a specific speaker and presentations.
       base = Speaker.includes(:presentations => :conference)
       query = init_query base
       query = speaker_where(query)
       query = one_speaker_where(query, speaker_slug)
 
-      data = base.group("speakers.name").where(query.where_clause, *query.bindings).count('conferences.id')
+      data = base.group("conferences.name").where(query.where_clause, *query.bindings).count('presentations.id')
     else
       # Show the top speakers - otherwise it's too big - limit is not great here, because even though results are sorted
       # by count, limit might cut off speakers with the same count as speakers shown, which is misleading.
