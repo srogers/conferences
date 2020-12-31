@@ -12,7 +12,7 @@
       %i Presentations.
       Presentations happen at
       %i Events.
-      An event might be a conference, a debate, or an interview.
+      An event might be a conference, a debate, an interview, or a podcast series.
       When the presentation becomes available in a format you can watch or hear, that is a
       %i Publication.
     -#%p Maybe this is a little too verbose and distracting
@@ -24,7 +24,7 @@
       The site provides tools aimed at helping you answer certain kinds of questions:
       %ul
         %li Where can I watch, hear, or read a specific presentation?
-        %li Where did a specific presentation come from? How does it fit into timeline?
+        %li Where did a specific presentation come from? How does it fit into the timeline?
         %li What presentations have been given on a particular topic?
         %li What presentations are coming up?
         %li What events have I attended?
@@ -33,19 +33,29 @@
 
     %h4 Searching
     %p
-      Currently, search works with a single word or phrase, not a collection of keywords.
+      Search works with single or multiple keywords.
     %p
       Search recognizes certain words as "special"
       %ul
         %li A four-digit number will be treated as a year and match events and presentations from that year
-        %li A country name will find events and presentations in that country (e.g. Norway)
-        %li A two-character state abbreviation will find events and presentations in that state (e.g. GA)
+        %li
+          A country name will find events and presentations in that country (e.g.
+          = link_to('Norway', presentations_path(search_term: "Norway"))
+          )
+        %li
+          A two-character state abbreviation will find events and presentations in that state (e.g.
+          = link_to('GA', presentations_path(search_term: "GA"))
+          )
         %li A city name will find events and presentations in that city
         %li presentations can also be found by a word from the presentation name or the speaker first or last name
     %p
       Clicking on a tag or entering a search term that is a tag (e.g.
       %span.tags_display.linked.slim economics
       ) will start a tag-based search.
+    %p
+      So, by using these elements together, you can create a specific search:
+      %ul
+        %li= link_to('"Peikoff 1984"', presentations_path(search_term: "Peikoff 1984"))
 
     %h4 Event Types
     %p
