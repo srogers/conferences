@@ -5,10 +5,9 @@ module SharedQueries
   # the query, so performance/memory is optimized.
 
   # Builds the query string and bind variables for an ActiveRecord call. Callers should get a query object from
-  # init_query(), build the base_query(), apply where restrictions, then get the results:
+  # init_query(), apply where restrictions, then get the results:
   #
   #     query = init_query(ActiveRecord collection)   - builds the query object
-  #     query = base_query(query)                     - collets search term and tags, and applies "speical" search terms
   #     query = publication_where(query)              - restricts the query
   #     query = speaker_where(query)
   #     results = query.collection.where(query.where_clause, *query.bindings)
@@ -168,55 +167,8 @@ module SharedQueries
       end
     end
     Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
-    Query.new collection, terms, tag
-  end
-
-  # The idea here is to setup the query based on what's being searched, and initialize the search terms, while leaving
-  # the query open for additional refinement via WHERE clauses using any of the xx_where() methods. 
-  #
-  # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
-  def base_query(query)
-    if param_context(:event_type).present? && !query.publication?
-      query.add :required, "conferences.event_type = ?", param_context(:event_type)
-    end
-
-    # Scan the query for terms that need to get speical handling
-    query.terms.each do |term|
-      Rails.logger.debug "base query handling search term #{term}"
-      # None of this stuff applies to publications or speakers
-      unless query.publication? || query.speaker?
-        # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
-        # then we can't also say AND (conference.title ILIKE 'SE')
-        if country_code(term.upcase)
-          Rails.logger.debug "adding required country = #{term}"
-          query.add :required, "conferences.country = ?", country_code(term)
-          query.handled(term)
-        end
-        # State-based search seems like another optional criterion, but it needs to be :required because the state
-        # abbreviations are short, they match many incidental things.
-        # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
-        if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
-          Rails.logger.debug "adding required state = #{term}"
-          query.add :required, 'conferences.state = ?', term.upcase
-          query.handled(term)
-        end
-      end
-
-      # This applies to presentations and publications, but the query is different
-      if term.to_i.to_s == term && term.length == 4 # then this looks like a year
-        if query.publication?
-          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", term
-        else
-          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
-        end
-        query.handled(term)
-      end
-
-      # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
-      #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
-    end
-
-    return query
+    query = Query.new collection, terms, tag
+    query = base_query(query)
   end
 
   # Used to find the city names for multi-venue events, which live at the presentation level.
@@ -336,6 +288,54 @@ SELECT conference_id FROM conference_users, conferences
   end
 
   private
+
+  # The idea here is to setup the query based on what's being searched, and initialize the search terms, while leaving
+  # the query open for additional refinement via WHERE clauses using any of the xx_where() methods. 
+  #
+  # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
+  def base_query(query)
+    if param_context(:event_type).present? && !query.publication?
+      query.add :required, "conferences.event_type = ?", param_context(:event_type)
+    end
+
+    # Scan the query for terms that need to get speical handling
+    query.terms.each do |term|
+      Rails.logger.debug "base query handling search term #{term}"
+      # None of this stuff applies to publications or speakers
+      unless query.publication? || query.speaker?
+        # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
+        # then we can't also say AND (conference.title ILIKE 'SE')
+        if country_code(term.upcase)
+          Rails.logger.debug "adding required country = #{term}"
+          query.add :required, "conferences.country = ?", country_code(term)
+          query.handled(term)
+        end
+        # State-based search seems like another optional criterion, but it needs to be :required because the state
+        # abbreviations are short, they match many incidental things.
+        # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
+        if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
+          Rails.logger.debug "adding required state = #{term}"
+          query.add :required, 'conferences.state = ?', term.upcase
+          query.handled(term)
+        end
+      end
+
+      # This applies to presentations and publications, but the query is different
+      if term.to_i.to_s == term && term.length == 4 # then this looks like a year
+        if query.publication?
+          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", term
+        else
+          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
+        end
+        query.handled(term)
+      end
+
+      # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
+      #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
+    end
+
+    return query
+  end
 
   # When the tag is used as a wildcard search in the remark space, any wildcard characters needs to be escaped.
   # Wildcards in the search text are allowed, but cause spurious results in tags - e.g. the dot in "this vs. that"

@@ -11,7 +11,6 @@ module PresentationsChart
       # But we can handle this one, because we know Presentation is the root of the collection.
       presentations = presentations.includes(:taggings => :tag).references(:taggings => :tag)
     end
-    query = base_query(query)
     query = presentation_where(query)
     query = speaker_where(query)
 
@@ -52,7 +51,6 @@ module PresentationsChart
       # Speaker queries don't use tags but it comes into play with PresentationSpeaker
       data = PresentationSpeaker.includes(:speaker, :presentation => :conference).includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query(data)
-      query = base_query(query)
       query = speaker_where(query)
       query = presentation_where(query)
 
@@ -92,10 +90,7 @@ module PresentationsChart
     if param_context(:search_term).present? || param_context(:tag).present?
       # This is super-efficient, but it just doesn't get it the right answer
       #query = init_query(@presentations)
-      #query = base_query(query)
       #query = presentation_where(query)
-      #logger.debug query.where_clause
-      #logger.debug query.bindings.inspect
       #data = @presentations.group('tags.name').where(query.where_clause, *query.bindings).count('taggings.taggable_id')
 
       # Build counts - using the p.tags method instead of p.tag_list requires another map{} but avoids hitting the DB

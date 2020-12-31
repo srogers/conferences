@@ -6,7 +6,6 @@ module ConferencesChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_events(events)
     query = init_query(events)
-    query = base_query(query)
     event_where(query)
     presentation_where(query)
 
@@ -43,7 +42,7 @@ module ConferencesChart
     user_id = collect_user_id
     if user_id
       query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
-      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+      query = by_user_query(query)                    # this adds the user-specific constraints
 
       results = Conference.references(:presentations).group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
 
@@ -51,7 +50,6 @@ module ConferencesChart
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference)
-      query = base_query(query)
       query = event_where(query)
 
       # This query will get all the event cities - the multiple, virtual, and unspecified ones will all come out on the empty string key
@@ -90,7 +88,7 @@ module ConferencesChart
     if user_id
       # Handles the My Conferences case - doesn't play well with search terms
       query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
-      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+      query = by_user_query(query)                    # this adds the user-specific constraints
 
       results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
 
@@ -98,7 +96,6 @@ module ConferencesChart
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
-      query = base_query(query)
       query = event_where(query)
 
       results = Conference.group(:country).where(query.where_clause, *query.bindings).order(Arel.sql("count(country) DESC")).count
@@ -120,7 +117,7 @@ module ConferencesChart
     if user_id
       # Handles the My Conferences case - doesn't play well with search term
       query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
-      query = by_user_query(query)                    # this adds the user-specific constraints - doesn't work with base_query()
+      query = by_user_query(query)                    # this adds the user-specific constraints
 
       results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 
@@ -128,7 +125,6 @@ module ConferencesChart
       # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
       # Just have to let the results fly, and hope it's not too huge.
       query = init_query(Conference) # we can't pre-build the query, but starting with nothing works
-      query = base_query(query)
       query = event_where(query)
       results = Conference.group_by_year("conferences.start_date").where(query.where_clause, *query.bindings).count
 

@@ -7,7 +7,6 @@ module PublicationsChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_publications(publications)
     query = init_query(publications)
-    query = base_query(query)
     query = publication_where(query)
     query = speaker_where(query) unless query.terms == [Conference::UNSPECIFIED] # this is a chart click on unspecified publishers
 
@@ -47,7 +46,6 @@ module PublicationsChart
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
       query = init_query(Publication)
-      query = base_query(query)
       query = publication_where(query)
       # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
@@ -66,7 +64,6 @@ module PublicationsChart
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
       query = init_query(Publication) # we can't pre-build the query, but starting with nothing works
-      query = base_query(query)
       query = publication_where(query)
       # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).sum('duration')
@@ -85,7 +82,6 @@ module PublicationsChart
     if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
       # Build a query using the current search term and tag
       query = init_query(Publication.includes(:speakers).references(:speakers))
-      query = base_query(query)
       query = publication_where(query)
       # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
       results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count

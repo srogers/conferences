@@ -7,7 +7,6 @@ module SpeakersChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_speakers(speakers)
     query = init_query(speakers)
-    query = base_query(query)
     query = speaker_where(query)
 
     speakers.where(query.where_clause, *query.bindings)
@@ -24,7 +23,6 @@ module SpeakersChart
       # Conferences are referenced for the "My Conferences" case
       base = PresentationSpeaker.includes(:speaker, :presentation => :conference)  #.includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       query = init_query base
-      query = base_query(query)
       query = speaker_where(query)
 
       data = base.group("speakers.name").where(query.where_clause, *query.bindings).count(:presentation_id)
@@ -36,8 +34,7 @@ module SpeakersChart
 
     elsif speaker_slug.present?
       base = PresentationSpeaker.includes(:speaker, :presentation => :conference)
-      query = init_query base
-      query = base_query(query)
+      query = init_query(base)
       query = speaker_where(query)
       query = one_speaker_where(query, speaker_slug)
 
@@ -67,7 +64,6 @@ module SpeakersChart
       # Start with the Speaker class so SharedQueries will build a speaker-based query
       base = Speaker.includes(:presentations => :conference)
       query = init_query(base)
-      query = base_query(query)
       query = speaker_where(query)
       # don't match on presentations in this context - "Smith" matches things like "Adam Smith" in  titles - distracting - do that in the presentations tab
 
@@ -82,7 +78,6 @@ module SpeakersChart
     elsif speaker_slug.present?
       base = Speaker.includes(:presentations => :conference)
       query = init_query base
-      query = base_query(query)
       query = speaker_where(query)
       query = one_speaker_where(query, speaker_slug)
 
