@@ -25,7 +25,7 @@
           }
           console.log(element.innerHTML);
           element.addEventListener("click", function(e) {
-              var url = '/events?search_term='+this.innerHTML;  // spaces are OK here
+              var url = '/events?search_term="'+this.innerHTML+'"';  // wrap the city name in quotes - spaces are OK here
               window.location.href = url
           }, false);
           clearInterval(handle); // if we find one, we're done (probably)

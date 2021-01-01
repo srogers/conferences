@@ -18,17 +18,34 @@ shared_examples_for "shared_queries" do
     allow_any_instance_of(SharedQueries).to receive(:param_context).with(:event_type).and_return("")
   end
 
+  context "initializaton" do
+    before do
+      allow_any_instance_of(SharedQueries).to receive(:param_context).with(:search_term).and_return('string with "quoted term" and     embedded spaces')
+      @query = init_query(Conference)
+    end
+
+    it "parses embedded strings as a single term" do
+      expect(@query.terms.include?("quoted term")).to be_truthy
+    end
+
+    it "strips embedded spaces from the terms" do
+      @query.terms.each do |term|
+        expect(term.strip).to eq(term)
+      end
+    end
+  end
+
   context "for events" do
     it "sets the query type" do
       query = init_query(Conference, false, false)
       expect(query.event?).to be_truthy
-    end  
+    end
   end
 
   context "for speakers" do
     it "sets the query type" do
       query = init_query(Speaker, false, false)
       expect(query.speaker?).to be_truthy
-    end  
+    end
   end
 end

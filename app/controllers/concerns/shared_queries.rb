@@ -18,7 +18,7 @@ module SharedQueries
   # the list and the chart for a particular search are always consistent.
   #
   # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
-  # with intuitive expectations. 
+  # with intuitive expectations.
   #
   # TODO - Seems like it should be possible to infer includes() and references() when a x_where() method is applied.
   class Query
@@ -39,12 +39,12 @@ module SharedQueries
 
     # Add a clause and corresponding value to the list of clauses that will build the query. For example:
     #   add(:required, 'table.attribute = ?', 3)
-    # It's not necessary to call add() in any particular order. When the query is built, the clauses and bindings will 
-    # stack out in the right order. Since bindings() does a flatten() on the list, it's possible to "cheat" and pass a 
-    # string with multiple '?' targets and an array of multiple binding values. It's also possible to add a self-contained 
+    # It's not necessary to call add() in any particular order. When the query is built, the clauses and bindings will
+    # stack out in the right order. Since bindings() does a flatten() on the list, it's possible to "cheat" and pass a
+    # string with multiple '?' targets and an array of multiple binding values. It's also possible to add a self-contained
     # clause that requires no bind variable:
     #   add(:required, 'NOT x.completed')
-    # The crucial thing is that clauses and bind variables are stacked in order within each atom, then peeled off in order 
+    # The crucial thing is that clauses and bind variables are stacked in order within each atom, then peeled off in order
     # for the WHERE clause and bindings. The :optional/:required qualifier determines how the atoms get stacked together.
     def add(option, clause, value=nil)
       Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
@@ -153,7 +153,7 @@ module SharedQueries
     use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
-    terms = use_term && param_context(:search_term).present? ? param_context(:search_term).split(' ').map{|s| s.strip}.compact : []
+    terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ') : []
     tag  = use_tag  ? param_context(:tag)&.strip : nil
 
     if tag.blank? && use_tag
@@ -286,10 +286,23 @@ SELECT conference_id FROM conference_users, conferences
     end
   end
 
+  # Converts a two character code like "US" to full name "United States" - public because a chart uses it to transform keys into
+  # user-friendly values.  We use country_code() to transform them back again in queries.
+  def country_name(country_code)
+    country_object = ISO3166::Country[country_code]
+    country_object.translations[I18n.locale.to_s] || country_object.name
+  end
+
   private
 
+  # Get the two character code like "US" from the full name "United States"
+  def country_code(country_name)
+    country = ISO3166::Country.find_country_by_name(country_name)
+    country&.alpha2
+  end
+
   # The idea here is to setup the query based on what's being searched, and initialize the search terms, while leaving
-  # the query open for additional refinement via WHERE clauses using any of the xx_where() methods. 
+  # the query open for additional refinement via WHERE clauses using any of the xx_where() methods.
   #
   # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
   def base_query(query)
