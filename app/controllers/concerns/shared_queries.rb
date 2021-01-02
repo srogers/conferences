@@ -3,7 +3,7 @@ module SharedQueries
   # Try to define the SQL query string and bind variables once, and share it across listings and charts, so they are
   # guaranteed to get the same results. Try to do the least amount of restricting and joining necessary to satisfy
   # the query, so performance/memory is optimized.
-
+  #
   # Builds the query string and bind variables for an ActiveRecord call. Callers should get a query object from
   # init_query(), apply where restrictions, then get the results:
   #
@@ -19,8 +19,7 @@ module SharedQueries
   #
   # What the user gets is heaviliy influenced by implicit wildcards and selective use of AND/OR so the results match up
   # with intuitive expectations.
-  #
-  # TODO - Seems like it should be possible to infer includes() and references() when a x_where() method is applied.
+
   REQUIRED = :required
   OPTIONAL = :optional
   class Query
@@ -124,6 +123,7 @@ module SharedQueries
       @atoms  = []              # individual elements in the WHERE clause to be joined with AND/OR based on :required vs :optional
       @terms = terms            # an array of the words in the user's search text
       @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
+      # TODO - is it possible to set up all the includes() and references() here based on type? Or at least provide a default?
       @type = case collection_name(collection)
       when 'Conference'
         :event

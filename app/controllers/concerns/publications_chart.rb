@@ -3,27 +3,33 @@ module PublicationsChart
 
   include SharedQueries
 
-  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
-  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
-  def filter_publications(publications)
-    query = init_query(publications)
+  # Sets up the SELECT and FROM in the query - this should be the same everywhere, except possibly some edge cases with aggregates.
+  # Pass the results of this into filter_publications()
+  def publication_collection(collection=Publication)
+    collection.includes(:presentations => :conference).includes(:presentations => :speakers).references(:presentations => :speakers)
+  end
+
+  # Set up the query but leave it open so all the filter/aggregate methods can share the same query setup.
+  def publication_query(collection=Publication)
+    query = init_query(publication_collection(collection))
     query = publication_where(query, SharedQueries::OPTIONAL)
     query = speaker_where(query, SharedQueries::OPTIONAL) unless query.terms == [Conference::UNSPECIFIED] # this is a chart click on unspecified publishers
+    return query
+  end
 
-    publications.where(query.where_clause, *query.bindings)
+  # Call this with the output of publication_collection(), with any added qualifiers tacked on.
+  # The controller index action and the chart-building action share these WHERE clauses for consistency. It includes conference
+  # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
+  def filter_publications(collection=Publication)
+    query = publication_query(collection)
+    query.collection.where(query.where_clause, *query.bindings)
   end
 
   # Builds a hash of publication counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
   # which the endpoint can return as JSON or the action can use directly as an array.
   def format_count_data
-    # The search term restrictions have the same effect as events/index, but are applied differently since this is an aggregate query.
-    # Everything has to be applied at once - having, where, and count can't be applied in steps.
     if param_context(:search_term).present?
-      # We can't set a limit via having here, because the interesting results might be in the 1-2 range.
-      # Just have to let the results fly, and hope it's not too huge.
-      # This repeats the WHERE clause from the presentations controller so the the chart results will match the search results
-      data = Publication.includes(:presentations => :conference).includes(:presentations => :speakers)
-      data = filter_publications(data)
+      data = filter_publications
       data = data.group("format").order(Arel.sql("count(publications.id) DESC")).count('publications.id')
 
     # Handles the My Conferences case - TODO does this make sense for Publications?
@@ -43,15 +49,10 @@ module PublicationsChart
 
   def publication_year_count_data
     # There is no user-specific publication listing comparable to "My Events" (yet)
-    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
-      # Build a query using the current search term and tag
-      query = init_query(Publication)
-      query = publication_where(query)
-      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
-      results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).count
-
+    if param_context(:search_term).present?
+      query = publication_query
+      results = Publication.group_by_year("publications.published_on").from("publications, speakers").where(query.where_clause, *query.bindings).count
     else
-      # Get everything
       results = Publication.group_by_year("publications.published_on").count
     end
 
@@ -61,15 +62,10 @@ module PublicationsChart
 
   def publication_duration_year_count_data
     # There is no user-specific publication listing comparable to "My Events" (yet)
-    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
-      # Build a query using the current search term and tag
-      query = init_query(Publication) # we can't pre-build the query, but starting with nothing works
-      query = publication_where(query)
-      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
-      results = Publication.group_by_year("publications.published_on").where(query.where_clause, *query.bindings).sum('duration')
-
+    if param_context(:search_term).present?
+      query = publication_query
+      results = Publication.group_by_year("publications.published_on").from("publications, speakers").where(query.where_clause, *query.bindings).sum('duration')
     else
-      # Get everything
       results = Publication.group_by_year("publications.published_on").sum('duration')
     end
 
@@ -79,15 +75,10 @@ module PublicationsChart
 
   def publication_publishers_count_data
     # There is no user-specific "My Publishers" listing comparable to "My Events" (yet) so we don't consider user_id
-    if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
-      # Build a query using the current search term and tag
-      query = init_query(Publication.includes(:speakers).references(:speakers))
-      query = publication_where(query)
-      # When group is used, anything affecting SELECT (:include, :references) is ignored, so WHERE can only reference the primary table.
-      results = Publication.group("publications.publisher").where(query.where_clause, *query.bindings).count
-
+    if param_context(:search_term).present?
+      query = publication_query
+      results = Publication.group("publications.publisher").from("publications, speakers").where(query.where_clause, *query.bindings).count
     else
-      # Get everything
       results = Publication.group("publications.publisher").count
     end
 
