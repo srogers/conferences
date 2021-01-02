@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
 
-  include ConferencesChart
-  include ConferencesHelper
+  include EventsChart
+  include EventsHelper
   include SpeakersChart
   include StickyNavigation
 
@@ -12,7 +12,7 @@ class EventsController < ApplicationController
   authorize_resource :conference  # friendly_find is incompatible with load_resource
 
   def index
-    @conferences = Conference.includes(:supplements)
+    @conferences = event_collection
 
     # This structure separates out the :q from everything else. TODO maybe put autocomplete in a separate action
     if params[:q].present?
@@ -27,8 +27,8 @@ class EventsController < ApplicationController
       page = 1       # autocomplete should always get page 1 limit 8
       per  = 8
     else
-      # Set up a complex WHERE but select only conferences
-      @conferences = @conferences.select('conferences.*').includes(:presentations => :publications ).references(:presentations => :publications ).order(params_to_sql('<conferences.start_date'))
+      # Set up a complex WHERE but select only conferences - preload supplements only for index
+      @conferences = @conferences.includes(:supplements).order(params_to_sql('<conferences.start_date'))
 
       if params[:heart].present?
         @conferences = @conferences.where("NOT completed AND conferences.start_date < ?", Date.today)

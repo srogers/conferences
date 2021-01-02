@@ -1,4 +1,4 @@
-module ConferencesHelper
+module EventsHelper
   # Show a message appropriate for the user's relationship to the conference.
   # Adding presents a button with the new state "I was there"
   # Removing presents a confirmation "You were there" with the trash icon to remove.
