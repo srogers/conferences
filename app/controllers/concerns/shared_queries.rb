@@ -64,7 +64,7 @@ module SharedQueries
       organize_for_output
 
       atoms.each do |atom|
-        if atom.kind == :optional
+        if atom.kind == OPTIONAL
           optionals << atom.clause
         else
           requires << atom.clause
@@ -75,7 +75,7 @@ module SharedQueries
       optional_clause = optionals.length > 0 ? optionals.join(' OR ') : nil
       optional_clause = "(#{ optional_clause })" if optionals.length > 1     # if there's more than one, paren-wrap it
 
-      results = [required_clause, optional_clause].compact.join(' AND ')
+      results = [required_clause, optional_clause].compact.join(' OR ')
       Rails.logger.debug "WHERE: #{ results }"
       return results
     end
@@ -206,15 +206,15 @@ module SharedQueries
   ].join(' OR ').prepend("(").concat(")")
 
   # Extend the base query to apply search terms and tag to presentations.
-  def presentation_where(query)
+  def presentation_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add REQUIRED, PRESENTATION_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, PRESENTATION_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
       end
     end
     # Only Presentations use tags
     if query.tag.present?
-      query.add param_context(:operator) == 'AND' ? REQUIRED : :optional, "tags.name = ?", query.tag
+      query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, "tags.name = ?", query.tag
     end
 
     return query
