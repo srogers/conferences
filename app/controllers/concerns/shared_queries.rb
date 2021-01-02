@@ -21,8 +21,10 @@ module SharedQueries
   # with intuitive expectations.
   #
   # TODO - Seems like it should be possible to infer includes() and references() when a x_where() method is applied.
+  REQUIRED = :required
+  OPTIONAL = :optional
   class Query
-    KINDS = [:required, :optional]                                    # distinguishes things that get AND vs OR
+    KINDS = [REQUIRED, OPTIONAL]                                      # distinguishes things that get AND vs OR
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
     Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
@@ -38,12 +40,12 @@ module SharedQueries
     end
 
     # Add a clause and corresponding value to the list of clauses that will build the query. For example:
-    #   add(:required, 'table.attribute = ?', 3)
+    #   add(REQUIRED, 'table.attribute = ?', 3)
     # It's not necessary to call add() in any particular order. When the query is built, the clauses and bindings will
     # stack out in the right order. Since bindings() does a flatten() on the list, it's possible to "cheat" and pass a
     # string with multiple '?' targets and an array of multiple binding values. It's also possible to add a self-contained
     # clause that requires no bind variable:
-    #   add(:required, 'NOT x.completed')
+    #   add(REQUIRED, 'NOT x.completed')
     # The crucial thing is that clauses and bind variables are stacked in order within each atom, then peeled off in order
     # for the WHERE clause and bindings. The :optional/:required qualifier determines how the atoms get stacked together.
     def add(option, clause, value=nil)
@@ -153,7 +155,7 @@ module SharedQueries
     use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
-    terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ') : []
+    terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
     tag  = use_tag  ? param_context(:tag)&.strip : nil
 
     if tag.blank? && use_tag
@@ -173,58 +175,71 @@ module SharedQueries
 
   # Used to find the city names for multi-venue events, which live at the presentation level.
   def multiples_where(query)
-    query.add :required, "conferences.location_type = ?", Conference::MULTIPLE
+    query.add REQUIRED, "conferences.location_type = ?", Conference::MULTIPLE
 
     return query
   end
 
-  # Extend the base query to apply search terms on events only.
+  EVENT_CLAUSES = [
+    "conferences.name ILIKE ?",
+    "conferences.description ILIKE ?",
+    "conferences.city ILIKE ?"
+  ].join(' OR ').prepend("(").concat(")")
+
+  # Extend the base query to apply search terms on events.
   def event_where(query)
     query.terms.each do |term|
       if term == Conference::UNSPECIFIED
-        query.add :optional, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
+        query.add REQUIRED, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
-        query.add :optional, "conferences.name ILIKE ?", "%#{term}%"
-        query.add :optional, "conferences.city ILIKE ?", "#{term}%"
+        query.add REQUIRED, EVENT_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
       end
     end
 
     return query
   end
+
+  PRESENTATION_CLAUSES = [
+    "presentations.name ILIKE ?",
+    "presentations.description ILIKE ?",
+    "presentations.city ILIKE ?"
+  ].join(' OR ').prepend("(").concat(")")
 
   # Extend the base query to apply search terms and tag to presentations.
   def presentation_where(query)
     if query.terms.present?
       query.terms.each do |term|
-        query.add :optional, 'presentations.name ILIKE ?', "%#{term}%"
-        # This could go either way. It's usually helpful, but sometimes gets surprising results, e.g. "economy" gets
-        # things about economics, but also things in writing, and epistemology (unit economy).
-        query.add :optional, 'presentations.description ILIKE ?', "%#{term}%"
-        query.add :optional, "presentations.city ILIKE ?", "#{term}%"
+        query.add REQUIRED, PRESENTATION_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
       end
     end
     # Only Presentations use tags
     if query.tag.present?
-      query.add param_context(:operator) == 'AND' ? :required : :optional, "tags.name = ?", query.tag
+      query.add param_context(:operator) == 'AND' ? REQUIRED : :optional, "tags.name = ?", query.tag
     end
 
     return query
   end
 
-  # Extends the base query to apply search terms to publications.
-  def publication_where(query)
+  PUBLICATION_CLAUSES = [
+    "publications.name ILIKE ?",
+    "publications.format ILIKE ?",
+    "publications.notes ILIKE ?",
+    "publications.publisher = ?"
+  ].join(' OR ').prepend("(").concat(")")
+
+  # Extends the base query to apply search terms to publications. Publication search uses :optional for these
+  # and speaker clauses together, which allows publications to be found by speaker name, but it doesn't shut
+  # out things that don't have speakers.
+  def publication_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
         if term == Conference::UNSPECIFIED
-          # This is a special term that applies only when clicking out of the publishers chart, where 'unspecified' is clickable
+          # This is a special term that applies only when clicking out of the publishers chart, where "unspecified" is clickable
           # Get the Physical publications without a publisher
-          query.add :required, "coalesce(publications.publisher, '') = ''"
-          query.add :required, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
+          query.add REQUIRED, "coalesce(publications.publisher, '') = ''"
+          query.add REQUIRED, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
         else
-          query.add :optional, 'publications.name ILIKE ?', "%#{term}%"
-          query.add :optional, 'publications.format ILIKE ?', "#{term}%"
-          query.add :optional, 'publications.notes ILIKE ?', "%#{term}%"
-          query.add :optional, 'publications.publisher = ?', term             # only matches when the exact name is kicked over from Publishers
+          query.add option, PUBLICATION_CLAUSES, ["%#{term}%", "#{term}%", "%#{term}%", term]
         end
       end
     end
@@ -232,12 +247,16 @@ module SharedQueries
     return query
   end
 
+  SPEAKER_CLAUSES = [
+    "speakers.name ILIKE ?",
+    "speakers.sortable_name ILIKE ?"
+  ].join(' OR ').prepend("(").concat(")")
+
   # Extends the base query to apply search terms to speakers only.
-  def speaker_where(query)
+  def speaker_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add :optional, 'speakers.name ILIKE ?', "#{term}%"
-        query.add :optional, 'speakers.sortable_name ILIKE ?', "#{term}%"
+        query.add option, SPEAKER_CLAUSES, ["#{term}%", "#{term}%"]
       end
     end
 
@@ -246,7 +265,7 @@ module SharedQueries
 
   def one_speaker_where(query, speaker_slug)
     # this filters down from the friendly find view of a speaker, so it's the slug, not ActiveRecord ID
-    query.add :required, 'speakers.slug = ?', speaker_slug
+    query.add REQUIRED, 'speakers.slug = ?', speaker_slug
 
     return query
   end
@@ -267,10 +286,10 @@ SELECT conference_id FROM conference_users, conferences
     if param_context(:event_type).present?
       text += " AND conferences.event_type ILIKE ?)"
       # We have to "cheat" and pass the entire query with bind vars as an array, because bindings() can't build this nested structure
-      query.add :required, text, [collect_user_id, param_context(:event_type)]
+      query.add REQUIRED, text, [collect_user_id, param_context(:event_type)]
     else
       text += ")"
-      query.add :required, text, collect_user_id
+      query.add REQUIRED, text, collect_user_id
     end
 
     return query
@@ -307,7 +326,7 @@ SELECT conference_id FROM conference_users, conferences
   # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
   def base_query(query)
     if param_context(:event_type).present? && !query.publication?
-      query.add :required, "conferences.event_type = ?", param_context(:event_type)
+      query.add REQUIRED, "conferences.event_type = ?", param_context(:event_type)
     end
 
     # Scan the query for terms that need to get speical handling
@@ -319,7 +338,7 @@ SELECT conference_id FROM conference_users, conferences
         # then we can't also say AND (conference.title ILIKE 'SE')
         if country_code(term.upcase)
           Rails.logger.debug "adding required country = #{term}"
-          query.add :required, "conferences.country = ?", country_code(term)
+          query.add REQUIRED, "conferences.country = ?", country_code(term)
           query.handled(term)
         end
         # State-based search seems like another optional criterion, but it needs to be :required because the state
@@ -327,7 +346,7 @@ SELECT conference_id FROM conference_users, conferences
         # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
           Rails.logger.debug "adding required state = #{term}"
-          query.add :required, 'conferences.state = ?', term.upcase
+          query.add REQUIRED, 'conferences.state = ?', term.upcase
           query.handled(term)
         end
       end
@@ -335,9 +354,9 @@ SELECT conference_id FROM conference_users, conferences
       # This applies to presentations and publications, but the query is different
       if term.to_i.to_s == term && term.length == 4 # then this looks like a year
         if query.publication?
-          query.add :required, "cast(date_part('year',publications.published_on) as text) = ?", term
+          query.add REQUIRED, "cast(date_part('year',publications.published_on) as text) = ?", term
         else
-          query.add :required, "cast(date_part('year',conferences.start_date) as text) = ?", term
+          query.add REQUIRED, "cast(date_part('year',conferences.start_date) as text) = ?", term
         end
         query.handled(term)
       end

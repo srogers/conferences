@@ -20,7 +20,7 @@ shared_examples_for "shared_queries" do
 
   context "initializaton" do
     before do
-      allow_any_instance_of(SharedQueries).to receive(:param_context).with(:search_term).and_return('string with "quoted term" and     embedded spaces')
+      allow_any_instance_of(SharedQueries).to receive(:param_context).with(:search_term).and_return('string with "quoted term" and     spaces embedded and trailing ')
       @query = init_query(Conference)
     end
 

@@ -7,8 +7,8 @@ module PublicationsChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_publications(publications)
     query = init_query(publications)
-    query = publication_where(query)
-    query = speaker_where(query) unless query.terms == [Conference::UNSPECIFIED] # this is a chart click on unspecified publishers
+    query = publication_where(query, SharedQueries::OPTIONAL)
+    query = speaker_where(query, SharedQueries::OPTIONAL) unless query.terms == [Conference::UNSPECIFIED] # this is a chart click on unspecified publishers
 
     publications.where(query.where_clause, *query.bindings)
   end
