@@ -35,7 +35,7 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      if param_context(:search_term).present? || param_context(:tag).present?
         @presentations = filter_presentations @presentations
       end
     end
