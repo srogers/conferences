@@ -63,7 +63,7 @@ module PresentationsChart
       query = speaker_where(query)
       query = presentation_where(query, SharedQueries::OPTIONAL)
 
-      data = query.where(query.where_clause, *query.bindings).group("speakers.name").count(:presentation_id)
+      data = query.collection.where(query.where_clause, *query.bindings).group("speakers.name").count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
 
       # Handles the My Conferences case
