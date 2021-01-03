@@ -22,8 +22,10 @@ module SharedQueries
 
   REQUIRED = :required
   OPTIONAL = :optional
+  ADDATIVE = :addative
+
   class Query
-    KINDS = [REQUIRED, OPTIONAL]                                      # distinguishes things that get AND vs OR
+    KINDS = [REQUIRED, OPTIONAL, ADDATIVE]                            # distinguishes things that get AND vs AND (a OR b) vs OR A OR B
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
     Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
@@ -54,10 +56,15 @@ module SharedQueries
     end
 
     # We're going to build WHERE option with a structure like:
-    #    basic1 AND basic2 AND basic3 AND (option1 or option2 or option3)
-    # where the basics cover must-have restrictions like event_type = 'conference', and the options are usually about
-    # the presence of search text in any of several possible locations.
+    #    required1 AND required2 AND required3 AND (option1 or option2 or option3) OR addative1 OR addative2
+    # Every required item must be present. At least one of the optional items must be present. The addative items have
+    # the effect of expanding the result set.
+    # The required items cover must-have restrictions like event_type = 'conference', the options are usually about
+    # the presence of search text in any of several possible locations, and addative items are rare - things that we
+    # want if they match, but which narrow the query too much if they are required. Too many addative items just
+    # fetches everything and makes the results muddy and incomprehensible.
     def where_clause
+      addatives = []
       optionals = []
       requires  = []
       organize_for_output
@@ -65,6 +72,8 @@ module SharedQueries
       atoms.each do |atom|
         if atom.kind == OPTIONAL
           optionals << atom.clause
+        elsif atom.kind == ADDATIVE
+          addatives << atom.clause
         else
           requires << atom.clause
         end
@@ -73,8 +82,11 @@ module SharedQueries
       required_clause = requires.length > 0 ? requires.join(' AND ') : nil
       optional_clause = optionals.length > 0 ? optionals.join(' OR ') : nil
       optional_clause = "(#{ optional_clause })" if optionals.length > 1     # if there's more than one, paren-wrap it
+      addative_clause = addatives.length > 0 ? addatives.join(' OR ') : nil
 
-      results = [required_clause, optional_clause].compact.join(' OR ')
+      results = [required_clause, optional_clause].compact.join(' AND ')
+      results = "#{results} OR #{addative_clause}" if addative_clause
+
       Rails.logger.debug "WHERE: #{ results }"
       return results
     end
@@ -112,8 +124,10 @@ module SharedQueries
 
     # Building the WHERE clause and the bind variables requires the atoms to be sorted. This is non-destructive: more terms
     # can be added to the query and then used again - but sort must be applied each time before the query is used.
+    # The where clause and bindings line up because we sort the required items, then optional, then addative, and then
+    # build the where clause and bindings in that order.
     def organize_for_output
-      atoms.sort!{ |a,b| b.kind <=> a.kind }
+      atoms.sort!{ |a,b| b.kind <=> a.kind }                         # _r_equired, _o_ptional, _a_ddative
     end
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into

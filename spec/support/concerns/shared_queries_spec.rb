@@ -18,7 +18,7 @@ shared_examples_for "shared_queries" do
     allow_any_instance_of(SharedQueries).to receive(:param_context).with(:event_type).and_return("")
   end
 
-  context "initializaton" do
+  context "initialization" do
     before do
       allow_any_instance_of(SharedQueries).to receive(:param_context).with(:search_term).and_return('string with "quoted term" and     spaces embedded and trailing ')
       @query = init_query(Conference)
@@ -28,9 +28,55 @@ shared_examples_for "shared_queries" do
       expect(@query.terms.include?("quoted term")).to be_truthy
     end
 
-    it "strips embedded spaces from the terms" do
+    it "strips embedded spaces from the terms - no nil terms" do
       @query.terms.each do |term|
         expect(term.strip).to eq(term)
+      end
+    end
+  end
+
+  describe "query building" do
+    before do
+      @query = init_query(Conference)
+    end
+
+    context "with query terms defined in simple order" do
+      before do
+        @query.add SharedQueries::REQUIRED, "value is one", 1
+        @query.add SharedQueries::REQUIRED, "value is two", 2
+        @query.add SharedQueries::REQUIRED, "value is three", 3
+        @query.add SharedQueries::OPTIONAL, "value is four", 4
+        @query.add SharedQueries::OPTIONAL, "value is five", 5
+        @query.add SharedQueries::ADDATIVE, "value is six", 6
+        @query.add SharedQueries::ADDATIVE, "value is seven", 7
+      end
+
+      it "builds where clause and bindings in the right order" do
+        expect(@query.where_clause).to eq("value is one AND value is two AND value is three AND (value is four OR value is five) OR value is six OR value is seven")
+        expect(@query.bindings).to eq([1, 2, 3, 4, 5, 6, 7])
+      end
+
+      it "joins the major clauses correctly" do
+        expect(@query.where_clause.include?("AND (value")).to be_truthy
+        expect(@query.where_clause.include?(") OR value")).to be_truthy
+      end
+    end
+
+    context "with query terms defined in adverse order" do
+      before do
+        @query.add SharedQueries::ADDATIVE, "value is seven", 7
+        @query.add SharedQueries::OPTIONAL, "value is five", 5
+        @query.add SharedQueries::REQUIRED, "value is two", 2
+        @query.add SharedQueries::OPTIONAL, "value is four", 4
+        @query.add SharedQueries::ADDATIVE, "value is six", 6
+        @query.add SharedQueries::REQUIRED, "value is one", 1
+        @query.add SharedQueries::REQUIRED, "value is three", 3
+      end
+
+      it "builds where clause and bindings with variables/bindings aligned and variables in the right group" do
+        #                                 [------------------ required -------------------]     [----------- optional ---------]    [--------- addative ---------]
+        expect(@query.where_clause).to eq("value is two AND value is one AND value is three AND (value is five OR value is four) OR value is seven OR value is six")
+        expect(@query.bindings).to eq([2, 1, 3, 5, 4, 7, 6])
       end
     end
   end
