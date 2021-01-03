@@ -3,7 +3,7 @@ module PresentationsChart
   include SharedQueries         # defines uniform ways for applying search terms - the controller should not include this
 
   # Sets up the SELECT and FROM in the query - this should be the same everywhere, except possibly some edge cases with aggregates.
-  # Pass the results of this into filter_publications()
+  # Pass the results of this into filter_presentations()
   def presentation_collection(collection=Presentation)
     collection.includes(:conference, :publications, :speakers).references(:conference)
   end

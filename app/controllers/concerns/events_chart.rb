@@ -3,7 +3,7 @@ module EventsChart
   include SharedQueries
 
   # Sets up the SELECT and FROM in the query - this should be the same everywhere, except possibly some edge cases with aggregates.
-  # Pass the results of this into filter_publications()
+  # Pass the results of this into filter_events()
   def event_collection(collection=Conference)
     collection.includes(:presentations => :publications ).references(:presentations => :publications )
   end
