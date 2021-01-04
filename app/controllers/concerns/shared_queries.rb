@@ -148,7 +148,7 @@ module SharedQueries
       when 'Speaker'
         :speaker
       when 'PresentationSpeaker'
-        :speaker
+        :presentation
       else
         # this is a development-level error caused by invalid query setup
         raise "unknown query type #{collection_name(query)}"
