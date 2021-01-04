@@ -224,7 +224,7 @@ module ApplicationHelper
     index_path = send("#{controller_name}_path")
     search_form = form_for :search, html: { class: 'form-inline', :autocomplete => "off" }, url: index_path, method: :get do |f|
       content = "".html_safe
-      if param_context(:tag).present?
+      if param_context(:tag).present? && controller_name == "presentations"
         content << tagify(param_context(:tag), class: 'slim')
         if read_only
           content << content_tag(:span, param_context(:operator), style: 'color: #fff; margin-left: 10px; margin-right: 10px')
