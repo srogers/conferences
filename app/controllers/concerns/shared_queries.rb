@@ -29,7 +29,7 @@ module SharedQueries
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
     Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
-    attr_accessor :collection, :type, :atoms, :terms, :tag
+    attr_accessor :collection, :type, :atoms, :terms, :tags
 
     # Marks a term as handled once it's been added to the where clause, so it doesn't get re-added later.
     # For now, the quick-and-dirty way is to just delete it from the terms list.
@@ -132,11 +132,11 @@ module SharedQueries
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into
     # initialize() because it needs visibility into StickyNavigation.
-    def initialize(collection, terms, tag)
+    def initialize(collection, terms, tags)
       @collection = collection  # an ActiveRecord query collection with a key class at the root - i.e., the result of Presentation.where(...)
       @atoms  = []              # individual elements in the WHERE clause to be joined with AND/OR based on :required vs :optional
       @terms = terms            # an array of the words in the user's search text
-      @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
+      @tags = tags              # an array of tags accumulated in param_context(:tag) 
       # TODO - is it possible to set up all the includes() and references() here based on type? Or at least provide a default?
       @type = case collection_name(collection)
       when 'Conference'
@@ -157,35 +157,21 @@ module SharedQueries
   end
 
   # Callers use this, not Query.new() directly.
-  # Starts the query construction process by establishing the search terms and tag (from StickyNavigation).
+  # Starts the query construction process by establishing the search terms and tag (from StickyNavigation). The init structure
+  # assumes that (unlike search terms) tags come in one-at-a-time and build up in param_context. 
   # Collection is an ActiveRecord collection begun with one of the key classes, such as:  Presentation.where(..) or Presentation.select(...)
   # The rest of the query is built onto this basic root.
-  def init_query(collection, use_term=true, use_tag=true)
-    # Search terms come from explicit queries - tag comes from clicking a tag on a presentation.
-    # We combine these to get a broad search - the tag gets initialized from the search terms, if it exists.
-    # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
-
-    # If the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
+  def init_query(collection, use_terms=true, use_tags=true)
+    # Search terms come from an input field - tag comes from clicking a tag on a presentation or in the tag list.
     # We can't use query.type here, because we don't have query yet, and we need this build it.
-    use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
+    use_tags = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
-    terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
-    tag  = use_tag  ? param_context(:tag)&.strip : nil
+    terms = use_terms && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
+    tags = use_tags && param_context(:tag).present? ? param_context(:tag).split(',') : []
 
-    # if tag.blank? && use_tag
-    #   # if a search term exists as a tag, and something public is tagged with it, then set it.  TODO - is this a good idea? or confusing?
-    #   terms.each do |term|
-    #     if Presentation.tagged_with(term).count > 0
-    #       tag = term
-    #       set_param_context :tag, tag
-    #       terms = terms - [term]        # can't use query.handled(term) because we don't have query yet.
-    #       break                         # so long as we're limited to just one tag, take the first one
-    #     end
-    #   end
-    # end
-    Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
-    query = Query.new collection, terms, tag
+    Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tags: '#{ tags }' (param context tag: '#{param_context(:tag)}')"
+    query = Query.new collection, terms, tags
     query = base_query(query)
   end
 
@@ -221,7 +207,7 @@ module SharedQueries
     "presentations.city ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
-  # Extend the base query to apply search terms and tag to presentations.
+  # Extend the base query to apply search terms and tags to presentations.
   def presentation_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
@@ -229,8 +215,13 @@ module SharedQueries
       end
     end
     # Only Presentations use tags
-    if query.tag.present?
-      query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, "tags.name = ?", query.tag
+    if query.tags.present?
+      clauses = Array.new(query.tags.length, "tags.name = ?").join(' AND ').prepend("(").concat(")")
+      query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, clauses, query.tags
+
+      # query.tags.each do |tag|
+      #   query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, "tags.name = ?", tag
+      # end
     end
 
     return query
@@ -391,14 +382,6 @@ SELECT conference_id FROM conference_users, conferences
     end
 
     return query
-  end
-
-  # When the tag is used as a wildcard search in the remark space, any wildcard characters needs to be escaped.
-  # Wildcards in the search text are allowed, but cause spurious results in tags - e.g. the dot in "this vs. that"
-  # NOTE: with JS filtering on tag content, this shouldn't be an issue - but it's still in place just in case.
-  def escape_wildcards(text)
-    return nil if text.nil?
-    text.gsub('.', '\.').gsub('?', '\?').gsub('*', '\*').gsub('-', '\-')
   end
 
 end

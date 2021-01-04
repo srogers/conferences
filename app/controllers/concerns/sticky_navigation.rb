@@ -67,8 +67,17 @@ module StickyNavigation
           session[param] = default
         end
       else
-        # Save the value from params and return it as the current value
-        session[param] = cleaned_copy(param)
+        # Tag has a special context that builds until it is reset
+        if false # param == :tag # allow multiple tags
+          if session[:tag]
+            session[:tag] = session[:tag] + ",#{cleaned_copy(param)}"
+          else
+            session[:tag] = cleaned_copy(param)
+          end
+        else
+          # Save the value from params and return it as the current value
+          session[param] = cleaned_copy(param)
+        end
       end
       # as soon as these params are saved, kill them so they won't get sucked into pagination - Kaminari only needs to see page
       params.delete(param) unless param == :page

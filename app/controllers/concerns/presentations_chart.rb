@@ -11,7 +11,7 @@ module PresentationsChart
   # Set up the query but leave it open so all the filter/aggregate methods can share the same query setup.
   def presentation_query(collection=Presentation)
     query = init_query(presentation_collection(collection))
-    if query.tag.present?
+    if query.tags.present?
       # currently, the caller has to manage includes() and references() and apply them before the where()
       # But we can handle this one, because we know Presentation is the root of the collection.
       query.collection = query.collection.includes(:taggings => :tag).references(:taggings => :tag)
@@ -57,7 +57,7 @@ module PresentationsChart
       # This is the only place we do a query on PresentationSpeaker, so there isn't a customized builder just for it
       data = PresentationSpeaker.includes(:speaker, :presentation => :conference)
       query = init_query(data)
-      if query.tag.present?
+      if query.tags.present?
         query.collection = query.collection.includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       end
       query = speaker_where(query)
