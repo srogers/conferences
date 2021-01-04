@@ -376,6 +376,14 @@ SELECT conference_id FROM conference_users, conferences
         end
       end
 
+      # If the query term is a format, make that a required term
+      if query.publication?
+        if Publication::FORMATS.map{|f| f.downcase}.include?(term.downcase)
+          query.add REQUIRED, "publications.format = ?", term
+          query.handled(term)
+        end
+      end
+
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
       #  "conferences.id in (SELECT c.id FROM conferences c, organizers o WHERE c.organizer_id = o.id AND o.abbreviation ILIKE ?)"
     end
