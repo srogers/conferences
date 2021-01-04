@@ -165,23 +165,25 @@ module SharedQueries
     # We combine these to get a broad search - the tag gets initialized from the search terms, if it exists.
     # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
 
-    # if the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
+    # If the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
+    # We can't use query.type here, because we don't have query yet, and we need this build it.
     use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
     terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
     tag  = use_tag  ? param_context(:tag)&.strip : nil
 
-    if tag.blank? && use_tag
-      # if a search term exists as a tag, and something public is tagged with it, then set it.  TODO - is this a good idea? or confusing?
-      terms.each do |term|
-        if Presentation.tagged_with(term).count > 0
-          tag = term
-          set_param_context :tag, tag
-          break  # so long as we're limited to just one tag, take the first one
-        end
-      end
-    end
+    # if tag.blank? && use_tag
+    #   # if a search term exists as a tag, and something public is tagged with it, then set it.  TODO - is this a good idea? or confusing?
+    #   terms.each do |term|
+    #     if Presentation.tagged_with(term).count > 0
+    #       tag = term
+    #       set_param_context :tag, tag
+    #       terms = terms - [term]        # can't use query.handled(term) because we don't have query yet.
+    #       break                         # so long as we're limited to just one tag, take the first one
+    #     end
+    #   end
+    # end
     Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
     query = Query.new collection, terms, tag
     query = base_query(query)
