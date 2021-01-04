@@ -203,12 +203,12 @@ module SharedQueries
   ].join(' OR ').prepend("(").concat(")")
 
   # Extend the base query to apply search terms on events.
-  def event_where(query)
+  def event_where(query, option=REQUIRED)
     query.terms.each do |term|
       if term == Conference::UNSPECIFIED
         query.add REQUIRED, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
-        query.add REQUIRED, EVENT_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, EVENT_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
       end
     end
 

@@ -11,7 +11,7 @@ module EventsChart
   # Set up the query but leave it open so all the filter/aggregate methods can share the same query setup.
   def event_query(collection=Conference)
     query = init_query(event_collection(collection))
-    query = event_where(query)
+    query = event_where(query, SharedQueries::OPTIONAL)
     query = presentation_where(query, SharedQueries::OPTIONAL)
     return query
   end
