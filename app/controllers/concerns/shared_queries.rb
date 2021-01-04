@@ -369,10 +369,11 @@ SELECT conference_id FROM conference_users, conferences
       if term.to_i.to_s == term && term.length == 4 # then this looks like a year
         if query.publication?
           query.add REQUIRED, "cast(date_part('year',publications.published_on) as text) = ?", term
+          query.handled(term)
         else
           query.add REQUIRED, "cast(date_part('year',conferences.start_date) as text) = ?", term
+          query.handled(term)
         end
-        query.handled(term)
       end
 
       # eliminate the relation to organizers.abbreviation, because it's expensive, and not that helpful - it's generally in the title
