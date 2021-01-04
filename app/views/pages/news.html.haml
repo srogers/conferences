@@ -3,9 +3,20 @@
 - content_for :body_container_class do 'none' end
 
 .row
-  .col-md-12.carousel-container
-    %h1.carousel-title Objectivist Media
-    = render partial: 'carousel'
+  .col-md-12.text-center.primary-block
+    %h2 Objectivist Media
+    %h4 Conferences - Debates - Interviews
+
+.row.secondary-block
+  .col-md-12.mt-5.mb-5
+    = form_for :search, defaults: { required: false }, html: {:method => :get, autocomplete: "off", class: 'form-inline', id: 'landing-page-search' }, url: presentations_path do
+      = text_field_tag :search_term, param_context(:search_term), placeholder: "presentation name, author, or subject tag", class: 'mr-4 mb-2'
+      = button_tag icon('fas', 'search', class: 'fa-fw') + ' Search', type: 'submit', class: 'btn btn-sm btn-primary mb-2'
+
+-#.row
+-#  .col-md-12.carousel-container
+-#    %h1.carousel-title Objectivist Media
+-#    = render partial: 'carousel'
 
 -# Add a space between the carousel and the news . . . or not.
 -#.row

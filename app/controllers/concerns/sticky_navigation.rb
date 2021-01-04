@@ -23,7 +23,7 @@ module StickyNavigation
   # Before we save the param into session, ensure the contents are legit - robots tend to inject crap into sort and tag
   def cleaned_copy(param)
     if param == :tag
-      params[param].delete('^A-Za-z-')   # nothing but letters and included dash
+      params[param].delete('^A-Za-z- ')   # nothing but letters, space, and included dash (tag can have spaces)
     elsif [:page, :per, :user_id].include? param
       params[param].delete('^0-9')        # ensure these are digits
     # elsif param == :sort  per #323 - see if it works to include sort in sticky navigation - and if so, clean it here per #428

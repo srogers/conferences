@@ -21,10 +21,11 @@ class PublicationsController < ApplicationController
       @publications = @publications.where("publications.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     else
-      @publications = @publications.references(:presentation_publications => { :presentation => :conference })
-      @publications = @publications.includes(:presentation_publications => { :presentation => :conference })
+      @publications = publication_collection
 
       if params[:heart].present?
+        # Jam this clause in as a special case - it's just an admin/editor helper. has nothing to do with the data,
+        # so it shouldn't ever get into charts
         @publications = @publications.where("
           publications.published_on IS NULL OR (publications.duration IS NULL AND publications.format IN (?)) OR
           (SELECT COUNT(*) FROM presentation_publications pp WHERE pp.publication_id = publications.id) < 1
@@ -32,7 +33,6 @@ class PublicationsController < ApplicationController
       end
 
       if param_context(:search_term).present?
-        @publications = @publications.includes(:presentations => :speakers)
         @publications = filter_publications @publications
       end
     end

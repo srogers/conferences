@@ -14,6 +14,8 @@ RSpec.describe Conference, type: :model do
     }
   }
 
+  it_behaves_like 'shared_queries'    # this only needs to be run once - so it's here
+
   describe "when creating a conference" do
 
     it "has a working factory" do

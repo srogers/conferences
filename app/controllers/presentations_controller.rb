@@ -15,9 +15,8 @@ class PresentationsController < ApplicationController
     end
 
     # Construct the simplest query base for guest user (and robots) - build elaborate WHERE, but only fetch presentations.
-    @presentations = Presentation.select('presentations.*').includes(:conference, :publications, :speakers).references(:conference)
+    @presentations = Presentation.order(params_to_sql Arel.sql('<presentations.date'))
 
-    @presentations = @presentations.order(params_to_sql Arel.sql('<presentations.date'))
     # This is necessary for getting the presentation status - TODO see if it can be fetched via association
     @user_presentations = current_user.user_presentations if current_user.present?
 
@@ -27,7 +26,7 @@ class PresentationsController < ApplicationController
       @presentations = @presentations.where("presentations.id NOT IN (#{params[:exclude].gsub(/[^\d,]/, '')})") if params[:exclude].present?
 
     else
-      # "heart" adds onto the search terms, rather than replacing them, so we can search within a Conference, for example.
+      # "heart" adds onto the search terms, rather than replacing them, so we can search within an event, for example.
       if params[:heart].present?
         # TODO - should this include presentations without tags?  Seems like not - probably not a goal to tag *every* one.
         @presentations = @presentations.where("coalesce(presentations.description, '') = '' OR presentations.parts IS NULL OR presentations.conference_id is NULL ")
@@ -35,7 +34,7 @@ class PresentationsController < ApplicationController
         @presentations = @presentations.where("conferences.start_date < ?", Date.today)
       end
 
-      if param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
+      if param_context(:search_term).present? || param_context(:tag).present?
         @presentations = filter_presentations @presentations
       end
     end

@@ -20,13 +20,12 @@ class SpeakersController < ApplicationController
       page = 1       # autocomplete should always get page 1 limit 5
       per  = 5
     else
-      @speakers = @speakers.includes(:presentations).references(:presentations)
+      @speakers = @speakers.references(:presentations)
       if params[:heart].present?
         @speakers = @speakers.where("coalesce(speakers.description, '') = '' OR coalesce(speakers.photo, '') = '' ")
       end
 
       if param_context(:search_term).present?
-        @speakers = @speakers.references(:presentations => :conference).includes(:presentations => :conference)
         @speakers = filter_speakers @speakers
       end
 
