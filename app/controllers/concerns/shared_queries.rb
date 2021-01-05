@@ -53,6 +53,7 @@ module SharedQueries
       Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
+      return self   # it's not necessary to do  query = query.add - but return query so that works
     end
 
     # We're going to build WHERE option with a structure like:
@@ -217,6 +218,11 @@ module SharedQueries
     ["%#{term}%", "%#{term}%", "#{term}%"]
   end
 
+  # build and add the WHERE clause for one term
+  def add_presentation_clause(query, term)
+    query.add REQUIRED, PRESENTATION_CLAUSES, presentation_terms(term)
+  end
+
   # Extend the base query to apply search terms and tags to presentations.
   def presentation_where(query, option=REQUIRED)
     if query.terms.present?
@@ -234,6 +240,50 @@ module SharedQueries
       # end
     end
 
+    return query
+  end
+
+  # Build a presentation with required presentation WHERE clauses (using AND) with the speaker
+  # WHERE clauses also joined with AND if they return sonething, but omitted if they kill the query.
+  # This allows a query with presentation and speaker-specific terms (like "shakespeare peikoff")
+  # to return a narrow results set (because it's all AND) but terms with no speaker match at all
+  # still get results. Doing that requires a pre-query to see what the terms do against speakers.
+  def presentation_with_speaker_where(query)
+    if query.terms.length > 0
+      clauses = []
+      terms = []
+      query.terms.each do |term|
+        # test each term to see whether it has matches in presentations and only add it where it matches something
+        presentation_probe = Query.new(Presentation, [term], [])
+        presentation_probe = presentation_where(presentation_probe)
+        results = presentation_probe.collection.where(presentation_probe.where_clause, *presentation_probe.bindings).count
+        Rails.logger.debug "Presentation count for #{term}:  #{results}"
+        if results > 0
+          clauses = clauses << PRESENTATION_CLAUSES
+          terms = terms << presentation_terms(term)
+        else
+          Rails.logger.debug "skipping presentation WHERE clause with #{term}"
+        end
+        query.add REQUIRED, clauses.flatten.join(' OR ').prepend("(").concat(")"), terms.flatten unless clauses.empty?
+      end
+
+      # test each term to see whether it has matches in presentations and only add it where it matches something
+      query.terms.each do |term|
+        clauses = []
+        terms = []
+          speaker_probe = Query.new(Speaker, [term], [])
+        speaker_probe = speaker_where(speaker_probe)
+        results = speaker_probe.collection.where(speaker_probe.where_clause, *speaker_probe.bindings).count
+        Rails.logger.debug "Speaker count for #{term}:  #{results}"
+        if results > 0
+          clauses = clauses << SPEAKER_CLAUSES
+          terms = terms << speaker_terms(term)
+        else
+          Rails.logger.debug "skipping speaker WHERE clause with #{term}"
+        end
+        query.add REQUIRED, clauses.flatten.join(' OR ').prepend("(").concat(")"), terms.flatten unless clauses.empty?
+      end
+    end
     return query
   end
 
@@ -277,6 +327,11 @@ module SharedQueries
   # A set of search terms that match up with the clauses - not necessarily all the same
   def speaker_terms(term)
     ["#{term}%", "#{term}%"]
+  end
+
+  # build and add the WHERE clause for one term
+  def add_speaker_clause(query, term)
+    query.add REQUIRED, SPEAKER_CLAUSES, speaker_terms(term)
   end
 
   # Extends the base query to apply search terms to speakers only.

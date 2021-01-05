@@ -3,6 +3,7 @@ module SpeakersChart
 
   include SharedQueries
 
+  # TODO - force this setup stuff down into SharedQueries so default setup happens based on query type
   # Sets up the SELECT and FROM in the query - this should be the same everywhere, except possibly some edge cases with aggregates.
   # Pass the results of this into filter_speakerss()
   def speaker_collection(collection=Speaker)

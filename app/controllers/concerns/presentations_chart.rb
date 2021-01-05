@@ -16,6 +16,7 @@ module PresentationsChart
       # But we can handle this one, because we know Presentation is the root of the collection.
       query.collection = query.collection.includes(:taggings => :tag).references(:taggings => :tag)
     end
+    # query = presentation_with_speaker_where(query)
     query = presentation_where(query, SharedQueries::OPTIONAL)
     query = speaker_where(query, SharedQueries::OPTIONAL)
   end
