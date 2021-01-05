@@ -188,13 +188,18 @@ module SharedQueries
     "conferences.city ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not all the same
+  def event_terms(term)
+    ["%#{term}%", "%#{term}%", "#{term}%"]
+  end
+
   # Extend the base query to apply search terms on events.
   def event_where(query, option=REQUIRED)
     query.terms.each do |term|
       if term == Conference::UNSPECIFIED
         query.add REQUIRED, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
-        query.add option, EVENT_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, EVENT_CLAUSES, event_terms(term)
       end
     end
 
@@ -207,11 +212,16 @@ module SharedQueries
     "presentations.city ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not all the same
+  def presentation_terms(term)
+    ["%#{term}%", "%#{term}%", "#{term}%"]
+  end
+
   # Extend the base query to apply search terms and tags to presentations.
   def presentation_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add option, PRESENTATION_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, PRESENTATION_CLAUSES, presentation_terms(term)
       end
     end
     # Only Presentations use tags
@@ -234,6 +244,11 @@ module SharedQueries
     "publications.publisher = ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not all the same
+  def publication_terms(term)
+    ["%#{term}%", "#{term}%", "%#{term}%", term]
+  end
+
   # Extends the base query to apply search terms to publications. Publication search uses :optional for these
   # and speaker clauses together, which allows publications to be found by speaker name, but it doesn't shut
   # out things that don't have speakers.
@@ -246,7 +261,7 @@ module SharedQueries
           query.add REQUIRED, "coalesce(publications.publisher, '') = ''"
           query.add REQUIRED, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
         else
-          query.add option, PUBLICATION_CLAUSES, ["%#{term}%", "#{term}%", "%#{term}%", term]
+          query.add option, PUBLICATION_CLAUSES, publication_terms(term)
         end
       end
     end
@@ -259,11 +274,16 @@ module SharedQueries
     "speakers.sortable_name ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not necessarily all the same
+  def speaker_terms(term)
+    ["#{term}%", "#{term}%"]
+  end
+
   # Extends the base query to apply search terms to speakers only.
   def speaker_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add option, SPEAKER_CLAUSES, ["#{term}%", "#{term}%"]
+        query.add option, SPEAKER_CLAUSES, speaker_terms(term)
       end
     end
 
