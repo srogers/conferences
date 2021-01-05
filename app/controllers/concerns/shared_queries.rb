@@ -408,18 +408,19 @@ SELECT conference_id FROM conference_users, conferences
   # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
   def base_query(query)
     if param_context(:event_type).present? && !query.publication?
+      Rails.logger.debug "base_query restricting results to event type #{param_context(:event_type)}"
       query.add REQUIRED, "conferences.event_type = ?", param_context(:event_type)
     end
 
     # Scan the query for terms that need to get speical handling
     query.terms.each do |term|
-      Rails.logger.debug "base query handling search term #{term}"
+      #Rails.logger.debug "base query handling search term #{term}"
       # None of this stuff applies to publications or speakers
       unless query.publication? || query.speaker?
         # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
         # then we can't also say AND (conference.title ILIKE 'SE')
         if country_code(term.upcase)
-          Rails.logger.debug "adding required country = #{term}"
+          Rails.logger.debug "base_query adding required country = #{term}"
           query.add REQUIRED, "conferences.country = ?", country_code(term)
           query.handled(term)
         end
@@ -427,7 +428,7 @@ SELECT conference_id FROM conference_users, conferences
         # abbreviations are short, they match many incidental things.
         # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
-          Rails.logger.debug "adding required state = #{term}"
+          Rails.logger.debug "base_query adding required state = #{term}"
           query.add REQUIRED, 'conferences.state = ?', term.upcase
           query.handled(term)
         end
@@ -436,9 +437,11 @@ SELECT conference_id FROM conference_users, conferences
       # This applies to presentations and publications, but the query is different
       if term.to_i.to_s == term && term.length == 4 # then this looks like a year
         if query.publication?
+          Rails.logger.debug "base_query adding required publication year = #{term}"
           query.add REQUIRED, "cast(date_part('year',publications.published_on) as text) = ?", term
           query.handled(term)
         else
+          Rails.logger.debug "base_query adding required event start year = #{term}"
           query.add REQUIRED, "cast(date_part('year',conferences.start_date) as text) = ?", term
           query.handled(term)
         end
