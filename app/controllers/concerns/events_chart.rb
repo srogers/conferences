@@ -20,7 +20,7 @@ module EventsChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_events(collection=Conference)
     query = event_query(collection)
-    query.collection.where(query.where_clause, *query.bindings)
+    query.apply_where
   end
 
   # After adjusting the total for multiple and virtual, the rest must be unspecified. This should be unusual, but
@@ -55,10 +55,14 @@ module EventsChart
       query = init_query(Conference, false, false)    # build an empty query, ignoring tag and term
       query = by_user_query(query)                    # this adds the user-specific constraints
 
-      results = Conference.references(:presentations).group(:city).where(query.where_clause, *query.bindings).order(Arel.sql("count(city) DESC")).count(:city)
+      results = query.apply_where_to(Conference.references(:presentations).group(:city)).order(Arel.sql("count(city) DESC")).count(:city)
 
     elsif param_context(:search_term).present? || param_context(:tag).present? || param_context(:event_type).present?
-      # TODO - make this use event_query()
+      # TODO - make this use event_query() - this works, but gets everything very slowly
+      # query = event_query
+      # combined = Conference.group("conferences.city").from("conferences, presentations").where(query.where_clause, *query.bindings).order(Arel.sql("count(DISTINCT conferences.id) DESC")).count("DISTINCT conferences.id")
+
+      # This works, but doesn't get the same answer as filter_events
       query = init_query(Conference)
       query = event_where(query)
       # This query will get all the event cities - the multiple, virtual, and unspecified ones will all come out on the empty string key

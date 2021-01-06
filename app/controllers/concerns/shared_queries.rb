@@ -4,13 +4,19 @@ module SharedQueries
   # guaranteed to get the same results. Try to do the least amount of restricting and joining necessary to satisfy
   # the query, so performance/memory is optimized.
   #
-  # Builds the query string and bind variables for an ActiveRecord call. Callers should get a query object from
+  # Builds the query string and bind variables for an ActiveRecord call. Caller can get a query on a specific area
+  # in two shots - apply_where() looks at search terms and tags to get the right where clauses.
+  #
+  #     query = event_query
+  #     results = query.apply_where
+  #
+  # If it's necessary to manipulate the query in more detail, callers should get a query object from
   # init_query(), apply where restrictions, then get the results:
   #
   #     query = init_query(ActiveRecord collection)   - builds the query object
   #     query = publication_where(query)              - restricts the query
   #     query = speaker_where(query)
-  #     results = query.collection.where(query.where_clause, *query.bindings)
+  #     results = query.apply_where
   #
   # The initial collection can be a bare ActiveRecord class, or a class with includes(), references(), and where() pre-applied.
   # The necessary includes() or references() must be supplied with init_query - that doesn't happen automatically.
@@ -114,6 +120,19 @@ module SharedQueries
 
     def speaker?
       type == :speaker
+    end
+
+    # Returns an ActiveRecord relation based on the current query state. This is non-destructive, 
+    # so it's possible to build a query get the results, then add another where clause and run it again.
+    # Since it's an ActiveRecord relation, the result can be modified with methods like .order() and .count
+    def apply_where
+      collection.where(where_clause, *bindings)
+    end
+
+    # For the case where the query is based on something besides the basic collection - usually something
+    # like Model.group(:attribute)
+    def apply_where_to(alternate_collection)
+      alternate_collection.where(where_clause, *bindings)
     end
 
     private
@@ -256,7 +275,7 @@ module SharedQueries
         # test each term to see whether it has matches in presentations and only add it where it matches something
         presentation_probe = Query.new(Presentation, [term], [])
         presentation_probe = presentation_where(presentation_probe)
-        results = presentation_probe.collection.where(presentation_probe.where_clause, *presentation_probe.bindings).count
+        results = presentation_probe.apply_where.count
         Rails.logger.debug "Presentation count for #{term}:  #{results}"
         if results > 0
           clauses = clauses << PRESENTATION_CLAUSES
@@ -273,7 +292,7 @@ module SharedQueries
         terms = []
           speaker_probe = Query.new(Speaker, [term], [])
         speaker_probe = speaker_where(speaker_probe)
-        results = speaker_probe.collection.where(speaker_probe.where_clause, *speaker_probe.bindings).count
+        results = speaker_probe.apply_where.count
         Rails.logger.debug "Speaker count for #{term}:  #{results}"
         if results > 0
           clauses = clauses << SPEAKER_CLAUSES

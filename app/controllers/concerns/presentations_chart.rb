@@ -25,7 +25,7 @@ module PresentationsChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_presentations(collection=Presentation)
     query = presentation_query(collection)
-    query.collection.where(query.where_clause, *query.bindings)
+    query.apply_where
   end
 
   # Builds a hash of presentation counts by year that looks like: {Fri, 01 Jan 1982=>1, Sat, 01 Jan 1983=>2, Sun, 01 Jan 1984=>1, Tue, 01 Jan 1985=>3}
@@ -64,7 +64,7 @@ module PresentationsChart
       query = speaker_where(query)
       query = presentation_where(query, SharedQueries::OPTIONAL)
 
-      data = query.collection.where(query.where_clause, *query.bindings).group("speakers.name").count(:presentation_id)
+      data = query.apply_where.group("speakers.name").count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
 
       # Handles the My Conferences case
