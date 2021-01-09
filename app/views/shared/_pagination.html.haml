@@ -1,8 +1,11 @@
--# build a pagination row that works on desktop and mobile for all classes
+-# Build a pagination row that works on desktop and mobile for all classes.
+-# The page param can be changed in a specific instance by passing in a param name.
+- param_name = param_name || :page
 .row.mt-3
   .col-md-10.d-none.d-md-block
-    = paginate collection
+    = paginate collection, param_name: param_name
   .col-sm-10.d-md-none
-    = paginate collection, pagination_class: "pagination-sm", window: 2
+    = paginate collection, pagination_class: "pagination-sm", window: 2, param_name: param_name
+- if param_name == :page
   .col-md-2
     = per_page_selector

@@ -100,6 +100,9 @@
         .card
           .card-body
             = safe_list_sanitizer.sanitize(@conference.editors_notes).try(:html_safe)
+.row
+  .col-md-12
+    %p= fb_social_bar
 
 .row
   .col-md-12
@@ -109,6 +112,6 @@
     - else
       = render :partial => "presentations_header"
       = render :partial => "presentations/presentation", :collection =>  @presentations
-.row
-  .col-md-12
-    %p= fb_social_bar
+
+-# Uses a different page param name to keep these pages from affecting the page in param_context.
+= render :partial => 'shared/pagination', locals: { collection: @presentations, param_name: :pres_page }
