@@ -109,7 +109,7 @@ module PresentationsChart
       data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }.reject{|k,v| v == 0 }
     else
       # This works for the simple case with no search term or tags - saves memory
-      data = @presentations.group('tags.name').count(:all)
+      data = collection.group('tags.name').count(:all)
       data = data.reject{|k,v| k.blank?}   # the nil key is probably presentations with no tags - skip that - can't link to them
     end
 
