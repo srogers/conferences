@@ -62,7 +62,7 @@ GEM
       activerecord (>= 5.2, < 6.2)
       activesupport (>= 5.2, < 6.2)
       request_store (~> 1.0)
-    autoprefixer-rails (10.1.0.0)
+    autoprefixer-rails (10.2.0.0)
       execjs
     better_errors (2.9.1)
       coderay (>= 1.0.0)
@@ -207,7 +207,7 @@ GEM
     font-awesome-sass (5.15.1)
       sassc (>= 1.11)
     formatador (0.2.5)
-    friendly_id (5.4.1)
+    friendly_id (5.4.2)
       activerecord (>= 4.0.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -303,7 +303,7 @@ GEM
     mini_magick (4.11.0)
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
-    minitest (5.14.2)
+    minitest (5.14.3)
     multi_json (1.15.0)
     multi_test (0.1.2)
     multipart-post (2.1.1)
@@ -311,7 +311,7 @@ GEM
       connection_pool (~> 2.2)
     net_http_timeout_errors (0.3.5)
     nio4r (2.5.4)
-    nokogiri (1.11.0)
+    nokogiri (1.11.1)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     numerizer (0.1.1)
@@ -422,15 +422,15 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.1)
-    rubocop (1.7.0)
+    rubocop (1.8.0)
       parallel (~> 1.10)
-      parser (>= 2.7.1.5)
+      parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
       rubocop-ast (>= 1.2.0, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 2.0)
+      unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.4.0)
       parser (>= 2.7.1.5)
     rubocop-rails (2.9.1)
@@ -507,9 +507,9 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
-    unicode-display_width (1.7.0)
+    unicode-display_width (2.0.0)
     unicode_utils (1.4.0)
-    uniform_notifier (1.13.0)
+    uniform_notifier (1.13.1)
     video_info (2.7)
       iso8601 (~> 0.9.1)
       net_http_timeout_errors (~> 0.3.0)
@@ -596,7 +596,7 @@ DEPENDENCIES
   webrat
 
 RUBY VERSION
-   ruby 2.5.7p206
+   ruby 2.5.8p224
 
 BUNDLED WITH
    1.17.3
