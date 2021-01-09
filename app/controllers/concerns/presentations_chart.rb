@@ -11,11 +11,12 @@ module PresentationsChart
   # Set up the query but leave it open so all the filter/aggregate methods can share the same query setup.
   def presentation_query(collection=Presentation)
     query = init_query(presentation_collection(collection))
-    if query.tag.present?
+    if query.tags.present?
       # currently, the caller has to manage includes() and references() and apply them before the where()
       # But we can handle this one, because we know Presentation is the root of the collection.
       query.collection = query.collection.includes(:taggings => :tag).references(:taggings => :tag)
     end
+    # query = presentation_with_speaker_where(query)
     query = presentation_where(query, SharedQueries::OPTIONAL)
     query = speaker_where(query, SharedQueries::OPTIONAL)
   end
@@ -24,7 +25,7 @@ module PresentationsChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_presentations(collection=Presentation)
     query = presentation_query(collection)
-    query.collection.where(query.where_clause, *query.bindings)
+    query.apply_where
   end
 
   # Builds a hash of presentation counts by year that looks like: {Fri, 01 Jan 1982=>1, Sat, 01 Jan 1983=>2, Sun, 01 Jan 1984=>1, Tue, 01 Jan 1985=>3}
@@ -57,13 +58,13 @@ module PresentationsChart
       # This is the only place we do a query on PresentationSpeaker, so there isn't a customized builder just for it
       data = PresentationSpeaker.includes(:speaker, :presentation => :conference)
       query = init_query(data)
-      if query.tag.present?
+      if query.tags.present?
         query.collection = query.collection.includes(:presentation => { :taggings => :tag }).references(:presentation => { :taggings => :tag })
       end
       query = speaker_where(query)
       query = presentation_where(query, SharedQueries::OPTIONAL)
 
-      data = query.collection.where(query.where_clause, *query.bindings).group("speakers.name").count(:presentation_id)
+      data = query.apply_where.group("speakers.name").count(:presentation_id)
       data = data.sort_by{ |k,v| v }.reverse
 
       # Handles the My Conferences case
@@ -108,7 +109,7 @@ module PresentationsChart
       data = keys.inject({}) { |h, v| h.merge(v => @presentations.count{|p| p.tags.map{|t| t.name }.include?(v) }) }.reject{|k,v| v == 0 }
     else
       # This works for the simple case with no search term or tags - saves memory
-      data = @presentations.group('tags.name').count(:all)
+      data = collection.group('tags.name').count(:all)
       data = data.reject{|k,v| k.blank?}   # the nil key is probably presentations with no tags - skip that - can't link to them
     end
 

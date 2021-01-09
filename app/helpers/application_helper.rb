@@ -243,7 +243,7 @@ module ApplicationHelper
       # Build the "All" button which clears the search and goes to page 1
       if param_context(:search_term).present? || param_context(:tag).present? || params[:heart].present?
         # For continuity, keep existing params and just eliminate :search_term, :tag, :heart, and :page
-        index_path_with_params = send("#{controller_name}_path", search_term: '', tag: '', page: 1)
+        index_path_with_params = send("#{controller_name}_path", search_term: 'blank', tag: 'blank', page: 1)
         buttons << link_to('All', index_path_with_params, class: "btn btn-sm btn-primary ml-2")
       end
       content << buttons unless read_only

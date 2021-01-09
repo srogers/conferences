@@ -91,7 +91,8 @@ class EventsController < ApplicationController
     @conference_user = ConferenceUser.where(conference_id: @conference.id, user_id: current_user&.id).first || ConferenceUser.new
     default_sorting = get_default_sort()
     @presentations = @conference.presentations.order(params_to_sql default_sorting)
-    @user_presentations = current_user.user_presentations if current_user.present?
+    @presentations = @presentations.page(params[:pres_page]).per(10)
+    @user_presentations = current_user.user_presentations if current_user.present?  # This is a list referenced by _presentation partial to set user-specific icons
   end
 
   def edit

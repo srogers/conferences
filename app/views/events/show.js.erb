@@ -1,0 +1,7 @@
+// This drives the secondary pages that get loaded in infinite scroll in event/show
+$('#presentations').append('<%= j render(@presentations) %>');
+<% if @presentations.next_page %>
+  $('.pagination').replaceWith('<%= j paginate(@presentations, param_name: :pres_page) %>');
+<% else %>
+  $('.pagination').remove();
+<% end %>

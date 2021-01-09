@@ -4,13 +4,19 @@ module SharedQueries
   # guaranteed to get the same results. Try to do the least amount of restricting and joining necessary to satisfy
   # the query, so performance/memory is optimized.
   #
-  # Builds the query string and bind variables for an ActiveRecord call. Callers should get a query object from
+  # Builds the query string and bind variables for an ActiveRecord call. Caller can get a query on a specific area
+  # in two shots - apply_where() looks at search terms and tags to get the right where clauses.
+  #
+  #     query = event_query
+  #     results = query.apply_where
+  #
+  # If it's necessary to manipulate the query in more detail, callers should get a query object from
   # init_query(), apply where restrictions, then get the results:
   #
   #     query = init_query(ActiveRecord collection)   - builds the query object
   #     query = publication_where(query)              - restricts the query
   #     query = speaker_where(query)
-  #     results = query.collection.where(query.where_clause, *query.bindings)
+  #     results = query.apply_where
   #
   # The initial collection can be a bare ActiveRecord class, or a class with includes(), references(), and where() pre-applied.
   # The necessary includes() or references() must be supplied with init_query - that doesn't happen automatically.
@@ -29,7 +35,7 @@ module SharedQueries
     TYPES = [:event, :presentation, :publication, :speaker]           # The query target - customization happens based on this
     Atom = Struct.new :kind, :clause, :value                          # holds all the elements of a term in the WHERE clause
 
-    attr_accessor :collection, :type, :atoms, :terms, :tag
+    attr_accessor :collection, :type, :atoms, :terms, :tags
 
     # Marks a term as handled once it's been added to the where clause, so it doesn't get re-added later.
     # For now, the quick-and-dirty way is to just delete it from the terms list.
@@ -53,6 +59,7 @@ module SharedQueries
       Rails.logger.debug "Query add #{option} clause #{ clause }  value: #{ value }"
       raise "unknown option for Query atom: #{ option } (must be #{ KINDS.to_sentence(words_connector: ', ', last_word_connector: ' or ')}" unless KINDS.include?(option)
       @atoms << Atom.new(option, clause, value)
+      return self   # it's not necessary to do  query = query.add - but return query so that works
     end
 
     # We're going to build WHERE option with a structure like:
@@ -115,6 +122,19 @@ module SharedQueries
       type == :speaker
     end
 
+    # Returns an ActiveRecord relation based on the current query state. This is non-destructive, 
+    # so it's possible to build a query get the results, then add another where clause and run it again.
+    # Since it's an ActiveRecord relation, the result can be modified with methods like .order() and .count
+    def apply_where
+      collection.where(where_clause, *bindings)
+    end
+
+    # For the case where the query is based on something besides the basic collection - usually something
+    # like Model.group(:attribute)
+    def apply_where_to(alternate_collection)
+      alternate_collection.where(where_clause, *bindings)
+    end
+
     private
 
     # look for a class in the collection - this works because collection always starts with an ActiveRecord class
@@ -132,11 +152,11 @@ module SharedQueries
 
     # Caller begins with query = init_query, which automatically collects term and tag. That can't be built into
     # initialize() because it needs visibility into StickyNavigation.
-    def initialize(collection, terms, tag)
+    def initialize(collection, terms, tags)
       @collection = collection  # an ActiveRecord query collection with a key class at the root - i.e., the result of Presentation.where(...)
       @atoms  = []              # individual elements in the WHERE clause to be joined with AND/OR based on :required vs :optional
       @terms = terms            # an array of the words in the user's search text
-      @tag = tag                # currently can only be one tag - TODO support multiple tags with ether/both options
+      @tags = tags              # an array of tags accumulated in param_context(:tag) 
       # TODO - is it possible to set up all the includes() and references() here based on type? Or at least provide a default?
       @type = case collection_name(collection)
       when 'Conference'
@@ -157,35 +177,21 @@ module SharedQueries
   end
 
   # Callers use this, not Query.new() directly.
-  # Starts the query construction process by establishing the search terms and tag (from StickyNavigation).
+  # Starts the query construction process by establishing the search terms and tag (from StickyNavigation). The init structure
+  # assumes that (unlike search terms) tags come in one-at-a-time and build up in param_context. 
   # Collection is an ActiveRecord collection begun with one of the key classes, such as:  Presentation.where(..) or Presentation.select(...)
   # The rest of the query is built onto this basic root.
-  def init_query(collection, use_term=true, use_tag=true)
-    # Search terms come from explicit queries - tag comes from clicking a tag on a presentation.
-    # We combine these to get a broad search - the tag gets initialized from the search terms, if it exists.
-    # ActiveRecord .or() is weird, so we build an entire query different ways depending on whether term/tag are present.
-
-    # If the caller uses tags, it needs to set the references/includes - we can't do it here, because we don't know the structure of the collection
+  def init_query(collection, use_terms=true, use_tags=true)
+    # Search terms come from an input field - tag comes from clicking a tag on a presentation or in the tag list.
     # We can't use query.type here, because we don't have query yet, and we need this build it.
-    use_tag = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
+    use_tags = false unless ['Presentation', 'PresentationSpeaker'].include? collection.try(:klass).try(:name)  # only presentations have tags
 
     # Build a list of individual search words. These can be overridden so aggregate queries can ignore them.
-    terms = use_term && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
-    tag  = use_tag  ? param_context(:tag)&.strip : nil
+    terms = use_terms && param_context(:search_term).present? ? CSV::parse_line(param_context(:search_term), col_sep: ' ').compact : []
+    tags = use_tags && param_context(:tag).present? ? param_context(:tag).split(',') : []
 
-    # if tag.blank? && use_tag
-    #   # if a search term exists as a tag, and something public is tagged with it, then set it.  TODO - is this a good idea? or confusing?
-    #   terms.each do |term|
-    #     if Presentation.tagged_with(term).count > 0
-    #       tag = term
-    #       set_param_context :tag, tag
-    #       terms = terms - [term]        # can't use query.handled(term) because we don't have query yet.
-    #       break                         # so long as we're limited to just one tag, take the first one
-    #     end
-    #   end
-    # end
-    Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tag: '#{ tag }' (param context tag: '#{param_context(:tag)}')"
-    query = Query.new collection, terms, tag
+    Rails.logger.debug "Initializing Query with #{terms.length} terms: '#{ terms }' and tags: '#{ tags }' (param context tag: '#{param_context(:tag)}')"
+    query = Query.new collection, terms, tags
     query = base_query(query)
   end
 
@@ -202,13 +208,18 @@ module SharedQueries
     "conferences.city ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not all the same
+  def event_terms(term)
+    ["%#{term}%", "%#{term}%", "#{term}%"]
+  end
+
   # Extend the base query to apply search terms on events.
   def event_where(query, option=REQUIRED)
     query.terms.each do |term|
       if term == Conference::UNSPECIFIED
         query.add REQUIRED, "coalesce(conferences.city, '') = ''"  # this can only get in as a single term
       else
-        query.add option, EVENT_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, EVENT_CLAUSES, event_terms(term)
       end
     end
 
@@ -221,18 +232,77 @@ module SharedQueries
     "presentations.city ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
-  # Extend the base query to apply search terms and tag to presentations.
+  # A set of search terms that match up with the clauses - not all the same
+  def presentation_terms(term)
+    ["%#{term}%", "%#{term}%", "#{term}%"]
+  end
+
+  # build and add the WHERE clause for one term
+  def add_presentation_clause(query, term)
+    query.add REQUIRED, PRESENTATION_CLAUSES, presentation_terms(term)
+  end
+
+  # Extend the base query to apply search terms and tags to presentations.
   def presentation_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add option, PRESENTATION_CLAUSES, ["%#{term}%", "%#{term}%", "#{term}%"]
+        query.add option, PRESENTATION_CLAUSES, presentation_terms(term)
       end
     end
     # Only Presentations use tags
-    if query.tag.present?
-      query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, "tags.name = ?", query.tag
+    if query.tags.present?
+      clauses = Array.new(query.tags.length, "tags.name = ?").join(' AND ').prepend("(").concat(")")
+      query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, clauses, query.tags
+
+      # query.tags.each do |tag|
+      #   query.add param_context(:operator) == 'AND' ? REQUIRED : OPTIONAL, "tags.name = ?", tag
+      # end
     end
 
+    return query
+  end
+
+  # Build a presentation with required presentation WHERE clauses (using AND) with the speaker
+  # WHERE clauses also joined with AND if they return sonething, but omitted if they kill the query.
+  # This allows a query with presentation and speaker-specific terms (like "shakespeare peikoff")
+  # to return a narrow results set (because it's all AND) but terms with no speaker match at all
+  # still get results. Doing that requires a pre-query to see what the terms do against speakers.
+  def presentation_with_speaker_where(query)
+    if query.terms.length > 0
+      clauses = []
+      terms = []
+      query.terms.each do |term|
+        # test each term to see whether it has matches in presentations and only add it where it matches something
+        presentation_probe = Query.new(Presentation, [term], [])
+        presentation_probe = presentation_where(presentation_probe)
+        results = presentation_probe.apply_where.count
+        Rails.logger.debug "Presentation count for #{term}:  #{results}"
+        if results > 0
+          clauses = clauses << PRESENTATION_CLAUSES
+          terms = terms << presentation_terms(term)
+        else
+          Rails.logger.debug "skipping presentation WHERE clause with #{term}"
+        end
+        query.add REQUIRED, clauses.flatten.join(' OR ').prepend("(").concat(")"), terms.flatten unless clauses.empty?
+      end
+
+      # test each term to see whether it has matches in presentations and only add it where it matches something
+      query.terms.each do |term|
+        clauses = []
+        terms = []
+          speaker_probe = Query.new(Speaker, [term], [])
+        speaker_probe = speaker_where(speaker_probe)
+        results = speaker_probe.apply_where.count
+        Rails.logger.debug "Speaker count for #{term}:  #{results}"
+        if results > 0
+          clauses = clauses << SPEAKER_CLAUSES
+          terms = terms << speaker_terms(term)
+        else
+          Rails.logger.debug "skipping speaker WHERE clause with #{term}"
+        end
+        query.add REQUIRED, clauses.flatten.join(' OR ').prepend("(").concat(")"), terms.flatten unless clauses.empty?
+      end
+    end
     return query
   end
 
@@ -242,6 +312,11 @@ module SharedQueries
     "publications.notes ILIKE ?",
     "publications.publisher = ?"
   ].join(' OR ').prepend("(").concat(")")
+
+  # A set of search terms that match up with the clauses - not all the same
+  def publication_terms(term)
+    ["%#{term}%", "#{term}%", "%#{term}%", term]
+  end
 
   # Extends the base query to apply search terms to publications. Publication search uses :optional for these
   # and speaker clauses together, which allows publications to be found by speaker name, but it doesn't shut
@@ -255,7 +330,7 @@ module SharedQueries
           query.add REQUIRED, "coalesce(publications.publisher, '') = ''"
           query.add REQUIRED, "publications.format in (#{Publication::PHYSICAL.map{|f| "'#{f}'"}.join(', ')})"
         else
-          query.add option, PUBLICATION_CLAUSES, ["%#{term}%", "#{term}%", "%#{term}%", term]
+          query.add option, PUBLICATION_CLAUSES, publication_terms(term)
         end
       end
     end
@@ -268,11 +343,21 @@ module SharedQueries
     "speakers.sortable_name ILIKE ?"
   ].join(' OR ').prepend("(").concat(")")
 
+  # A set of search terms that match up with the clauses - not necessarily all the same
+  def speaker_terms(term)
+    ["#{term}%", "#{term}%"]
+  end
+
+  # build and add the WHERE clause for one term
+  def add_speaker_clause(query, term)
+    query.add REQUIRED, SPEAKER_CLAUSES, speaker_terms(term)
+  end
+
   # Extends the base query to apply search terms to speakers only.
   def speaker_where(query, option=REQUIRED)
     if query.terms.present?
       query.terms.each do |term|
-        query.add option, SPEAKER_CLAUSES, ["#{term}%", "#{term}%"]
+        query.add option, SPEAKER_CLAUSES, speaker_terms(term)
       end
     end
 
@@ -342,18 +427,19 @@ SELECT conference_id FROM conference_users, conferences
   # TODO - can this just be folded into init_query()?  Yes, if by_user_query() can be compatible with it, or erase prior atoms.
   def base_query(query)
     if param_context(:event_type).present? && !query.publication?
+      Rails.logger.debug "base_query restricting results to event type #{param_context(:event_type)}"
       query.add REQUIRED, "conferences.event_type = ?", param_context(:event_type)
     end
 
     # Scan the query for terms that need to get speical handling
     query.terms.each do |term|
-      Rails.logger.debug "base query handling search term #{term}"
+      #Rails.logger.debug "base query handling search term #{term}"
       # None of this stuff applies to publications or speakers
       unless query.publication? || query.speaker?
         # Certain special-case terms need to override other optional searches - e.g. if we're looking for country = 'SE,
         # then we can't also say AND (conference.title ILIKE 'SE')
         if country_code(term.upcase)
-          Rails.logger.debug "adding required country = #{term}"
+          Rails.logger.debug "base_query adding required country = #{term}"
           query.add REQUIRED, "conferences.country = ?", country_code(term)
           query.handled(term)
         end
@@ -361,7 +447,7 @@ SELECT conference_id FROM conference_users, conferences
         # abbreviations are short, they match many incidental things.
         # TODO This doesn't work for international states - might be fixed by going to country_state_select at some point.
         if term.length == 2 && States::STATES.map { |name| name[0] }.include?(term.upcase)
-          Rails.logger.debug "adding required state = #{term}"
+          Rails.logger.debug "base_query adding required state = #{term}"
           query.add REQUIRED, 'conferences.state = ?', term.upcase
           query.handled(term)
         end
@@ -370,9 +456,11 @@ SELECT conference_id FROM conference_users, conferences
       # This applies to presentations and publications, but the query is different
       if term.to_i.to_s == term && term.length == 4 # then this looks like a year
         if query.publication?
+          Rails.logger.debug "base_query adding required publication year = #{term}"
           query.add REQUIRED, "cast(date_part('year',publications.published_on) as text) = ?", term
           query.handled(term)
         else
+          Rails.logger.debug "base_query adding required event start year = #{term}"
           query.add REQUIRED, "cast(date_part('year',conferences.start_date) as text) = ?", term
           query.handled(term)
         end
@@ -391,14 +479,6 @@ SELECT conference_id FROM conference_users, conferences
     end
 
     return query
-  end
-
-  # When the tag is used as a wildcard search in the remark space, any wildcard characters needs to be escaped.
-  # Wildcards in the search text are allowed, but cause spurious results in tags - e.g. the dot in "this vs. that"
-  # NOTE: with JS filtering on tag content, this shouldn't be an issue - but it's still in place just in case.
-  def escape_wildcards(text)
-    return nil if text.nil?
-    text.gsub('.', '\.').gsub('?', '\?').gsub('*', '\*').gsub('-', '\-')
   end
 
 end

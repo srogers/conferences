@@ -1,0 +1,23 @@
+-# Moves the cursor to the search field when there is text in it.
+-# All the control_bar partials should include this.
+
+:javascript
+  // TODO - rewrite this to take a jQuery object
+  function moveCursorToEnd(id) {
+    var el = document.getElementById(id)
+    el.focus()
+    if (typeof el.selectionStart == "number") {
+        el.selectionStart = el.selectionEnd = el.value.length;
+    } else if (typeof el.createTextRange != "undefined") {
+        var range = el.createTextRange();
+        range.collapse(false);
+        range.select();
+    }
+  }
+
+  $(document).ready(function() {
+    $search_box = $('#search_term')
+    if ($search_box.length > 0 && $search_box.val().length > 0) {
+      moveCursorToEnd('search_term')
+    }
+  })

@@ -3,6 +3,7 @@ module SpeakersChart
 
   include SharedQueries
 
+  # TODO - force this setup stuff down into SharedQueries so default setup happens based on query type
   # Sets up the SELECT and FROM in the query - this should be the same everywhere, except possibly some edge cases with aggregates.
   # Pass the results of this into filter_speakerss()
   def speaker_collection(collection=Speaker)
@@ -23,7 +24,7 @@ module SpeakersChart
   # and speakers, which makes searches slightly less efficient, but much more in line with what a user would expect re matches.
   def filter_speakers(collection)
     query = speaker_query(collection)
-    query.collection.where(query.where_clause, *query.bindings)
+    query.apply_where
   end
 
   # Builds a hash of speaker counts that looks like: {"Hans Schantz"=>7, "Robert Garmong"=>6, "Ann Ciccolella"=>5, "Yaron Brook"=>5 }
