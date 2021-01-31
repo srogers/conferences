@@ -28,8 +28,33 @@
 // Everything loads everywhere, so we just suck up all the JS here
 //= require_tree .
 
+console.debug("jQuery "+ ($ ? $().jquery : "NOT") +" loaded")
+console.debug("Bootstrap version: " + $.fn.tooltip.Constructor.VERSION)
+
 // For now, activate tooltips everywhere and pass any arguments in the view.
 // Tooltip details: http://v4-alpha.getbootstrap.com/components/tooltips/
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 });
+
+// Link copy buttons can appear on conference, presentation, publication, or speaker page.
+// Grabs the current URL and stuffs it into the paste buffer
+$(function() {
+  $(".copy_link").on("click", function() {
+    temp = $("<textarea style='color: white;'>");
+    $("body").append(temp);
+    text = window.location.href;
+    temp.val(text).select();
+
+    try {
+      successful = document.execCommand('copy');
+      temp.remove();
+      msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Copying share URL was ' + msg);
+      return false
+    }
+    catch(err) {
+      console.log('Oops, unable to copy share URL', err)
+    }
+  })
+})
