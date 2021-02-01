@@ -113,6 +113,9 @@ module StickyNavigation
       elsif @publication&.presentations&.length == 1 &&  session[:via] == 'presentations'
         # it looks like we got to a publication from a presentation, so go back there if there's a distinct one.
         presentation_path(@publication.presentations.first)
+      elsif session[:via] == "pages"
+        # This is a special case for searches coming from the landing page. There is no pages_path.
+        presentations_path
       else
         send("#{session[:via]}_path")
       end
