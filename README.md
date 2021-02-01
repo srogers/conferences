@@ -1,7 +1,5 @@
 # Conferences
 
-# Development
-
 ## Initial Setup
 
 To set up the dev environment:
@@ -47,6 +45,13 @@ with `bundle exec sidekiq`.
 
 ## Special Gems and Configuration
 
+### Rails ERD
+
+This development-only gem maintains an entity-relationship DB diagram in the root directory. It gets updated automatically
+with migrations. To generate it manually, run:
+
+    bundle exec erd
+
 ### Bootstrap
 
 Bootstrap is installed via the bootstrap gem.
@@ -84,7 +89,7 @@ On the free plan, the Redis DB will be destroyed after 30 days of inactivity. To
    * Name:  doesn't matter
    * You can copy the password from the original URL, or use the default - endpoint will be different anyway
    * Use the password and endpoint to update the connection string in app settings REDISCLOUD_URL
- - Restart the server  
+ - Restart the server
 
 The Redis cloud URL is:  redis://rediscloud:[password]@[endpoint]
 
@@ -149,7 +154,7 @@ See the details [here](https://devcenter.heroku.com/articles/custom-domains). In
     `heroku domains:add www.objectivistmedia.com  --app conference-media`
 
     This will kick back something like:
-    
+
     Configure your app's DNS provider to point to the DNS Target `environmental-macaw-ilnjyapxk1fapcmtn6y7g06x.herokudns.com.`
 
 1. Configure the domain at DNS service provider using info from domain add command
@@ -163,13 +168,13 @@ Current domains on the app:
 
 The MAIL_HOST environment variable is expected to contain the canonical domain name of the site. If the user arrives from
 a different domain, the ApplicationController redirects to the MAIL_HOST domain wth a 301 to keep search robots happy. This
-means that multiple domain names can be associated with the site, and the domain name can be changed by changing MAIL_HOST. 
+means that multiple domain names can be associated with the site, and the domain name can be changed by changing MAIL_HOST.
 
 If the domain name changes, the domain for forced SSL must be updated in `config/environments/production.rb`
 
 #### DNS and Nameserver Setup on Domain.com
 
-Mapping from the Heroku instructions above to Domain.com - to setup a domain add DNS entries with the domain name, 
+Mapping from the Heroku instructions above to Domain.com - to setup a domain add DNS entries with the domain name,
 followed by `herokudns.com` - at least one for the root, and optionally for www subdomain. For example:
 
 |Type | Name | Content |
@@ -351,4 +356,3 @@ Documentation is [here](https://support.google.com/webmasters/answer/47334).
 [Google Tag Manager](https://developers.google.com/tag-manager/) is configured on the Google site, but the Javascript is
 not installed - not clear that it's worth it, because it's primarily aimed at providing marketeers a way around developers.
 The [live preview mode](https://support.google.com/tagmanager/answer/6107056) might be worth it.
-

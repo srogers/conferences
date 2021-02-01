@@ -161,7 +161,7 @@ module ApplicationHelper
     # If the social links are placed on a page without a conference or presentation (such as the landing page) then the social sharing debug
     # and copy link buttons don't really make sense.
     if @sharable_object.present?
-      copy_link_button = link_to(icon('far', 'copy', class: 'fa-md fa-fw'), '#', :class => "mr-3 btn btn-primary btn-sm copy_link_to_clipboard", title: 'Copy page URL')
+      copy_link_button = link_to(icon('far', 'copy', class: 'fa-md fa-fw'), '#', :class => "mr-3 btn btn-primary btn-sm copy_link", title: 'Copy page URL')
       admin_dashboard_button =  if current_user.try(:admin?) && Rails.env.production?
         link_to(icon('fab', 'facebook-square', "Sharing Debug"), "https://developers.facebook.com/tools/debug/sharing/?q=#{ url_by_class(@sharable_object) }", class: "btn btn-sm btn-default", target: "_blank")
       elsif current_user.try(:admin?)

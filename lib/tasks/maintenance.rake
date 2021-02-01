@@ -25,28 +25,30 @@ namespace :db do
     puts
   end
 
-  # Needs to run once after #474 is deployed - then can be deleted
-  desc 'A data migration task to set a language for all publications.'
-  task :set_publication_language => :environment do
+  # For #481 - a one-shot task that can be deleted once it's run everywhere.  Safe to re-run
+  desc 'A data migration task to change "LP Record" to "Vinyl"'
+  task :set_vinyl_name => :environment do
     puts
     puts "handling publications . . ."
     count = 0
-    language = Language.where(name: "English").first
-    raise "English language not yet defined" unless language
-    Publication.find_each do |publication|
-      publication.language = language
+    updated = 0
+    publications = Publication.where(format: "LP Record")
+    publications.each do |publication|
+      count += 1
+      publication.format = "Vinyl"
       publication.save
       if publication.errors.present?
         puts # get on a new line
         puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+      else
+        updated += 1
       end
-      count += 1
-      if count % 100 == 0
+      if count % 10 == 0
         print "." # I'm not hung!
         STDOUT.flush
       end
     end
-    puts
+    puts "found #{count}, updated #{updated} publication formats"
   end
 
   # This is primarily for numbering existing events after adding episode numbers - but it might stick around for cases
@@ -76,7 +78,6 @@ namespace :db do
     event.save!
     puts
   end
-
 
   # This might be a keeper, in case the problem ever comes back due to switching settings
   desc 'A data maintenance task to catch up legacy accounts to the new standard where all are approved.'
