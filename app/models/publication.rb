@@ -18,7 +18,7 @@ class Publication < ApplicationRecord
   CD      = 'CD'.freeze
   VHS     = 'VHS'.freeze
   DISK    = 'DVD/Blu-ray'.freeze
-  LP      = 'LP Record'.freeze
+  LP      = 'Vinyl'.freeze
   CAMPUS  = 'Campus'.freeze
   YOUTUBE = 'YouTube'.freeze      # Is it helpful to make this distinct?
   VIMEO   = 'Vimeo'.freeze        # Is it helpful to make this distinct?  for now, seems like yes
