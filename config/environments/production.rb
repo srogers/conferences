@@ -70,13 +70,13 @@ Rails.application.configure do
   Rails.application.routes.default_url_options[:host] = ENV['MAIL_HOST']
 
   ActionMailer::Base.smtp_settings = {
-      :address        => 'smtp.sendgrid.net',
-      :port           => '587',
-      :authentication => :plain,
-      :user_name      => "apikey",
-      :password       => ENV['SENDGRID_API_KEY'],
-      :domain         => 'heroku.com',
-      :enable_starttls_auto => true
+    :port           => ENV['MAILGUN_SMTP_PORT'],
+    :address        => ENV['MAILGUN_SMTP_SERVER'],
+    :user_name      => ENV['MAILGUN_SMTP_LOGIN'],
+    :password       => ENV['MAILGUN_SMTP_PASSWORD'],
+    :domain         => ENV['MAIL_HOST'],
+    :authentication => :plain,
+    :enable_starttls_auto => true    # SendGrid had this - carrying it forward
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
