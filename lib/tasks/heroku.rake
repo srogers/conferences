@@ -4,7 +4,7 @@ namespace :heroku do
     # This prevents the environment of the forked command from getting the wrong environment. Weirdly, when the
     # heroku:deploy task runs, it calls the copy of run() in the statements namespace - so both are fixed. The
     # culprit for getting the wrong Ruby into the environment seems to be the Heroku toolbelt.
-    Bundler.with_clean_env { sh *cmd }
+    Bundler.with_unbundled_env { sh *cmd }
     raise "Command #{cmd.inspect} failed!" unless $?.success?
   end
 
