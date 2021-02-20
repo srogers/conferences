@@ -45,12 +45,10 @@ Rails.application.configure do
   # config.action_cable.mount_path = nil
 
 
-  # Force SSL only on production - staging doesn't have a cert
-  if ENV['MAIL_HOST'] == 'objectivistmedia.com'
-    # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-    config.force_ssl = true
-    config.ssl_options = {  redirect: { status: 307, port: 81 } }
-  end
+  # SSL now works on Heroku for both fee and paid apps, so force SSL in both staging and production.
+  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  config.force_ssl = true
+  config.ssl_options = {  redirect: { status: 307, port: 81 } }
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
