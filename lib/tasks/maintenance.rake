@@ -25,30 +25,37 @@ namespace :db do
     puts
   end
 
-  # For #481 - a one-shot task that can be deleted once it's run everywhere.  Safe to re-run
-  desc 'A data migration task to change "LP Record" to "Vinyl"'
-  task :set_vinyl_name => :environment do
+  # For #500 This fixes e-store URLs to work on the new store.
+  # One-shot task - can be deleted when it's been run everywhere
+  desc 'A data migration task to switch e-store URLs to the new format.'
+  task :update_estore_urls => :environment do
     puts
     puts "handling publications . . ."
     count = 0
-    updated = 0
-    publications = Publication.where(format: "LP Record")
-    publications.each do |publication|
-      count += 1
-      publication.format = "Vinyl"
-      publication.save
-      if publication.errors.present?
-        puts # get on a new line
-        puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+    ignored = 0
+    modified = 0
+    Publication.find_each do |publication|
+      if publication.url.include? 'estore.aynrand.org'
+        publication.url.gsub!(/p\/\d+/, "products")
+        publication.save
+        #puts publication.url
+        if publication.errors.present?
+          puts # get on a new line
+          puts "Failed to save publication ID #{ publication.id} - #{ publication.errors.full_messages }"
+        end
+        modified += 1
       else
-        updated += 1
+        ignored += 1
       end
-      if count % 10 == 0
+      count += 1
+      if count % 100 == 0
         print "." # I'm not hung!
         STDOUT.flush
       end
     end
-    puts "found #{count}, updated #{updated} publication formats"
+    puts
+    puts "processed #{count}, ignored #{ignored}, modified #{modified}"
+    puts
   end
 
   # This is primarily for numbering existing events after adding episode numbers - but it might stick around for cases
