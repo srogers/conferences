@@ -49,7 +49,7 @@ describe SettingsController do
 
       it "ensures account approval is also required" do
         expect(Setting.first.require_account_approval).to be_falsey
-        patch 'update', params: { id: setting.id.to_param, setting: { closed_beta: 'true' } }
+        patch 'update', params: { id: setting.id.to_param, setting: { closed_beta: '1' } }
 
         expect(Setting.first.require_account_approval).to be_truthy
       end
