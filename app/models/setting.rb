@@ -5,6 +5,11 @@ class Setting < ApplicationRecord
     return @setting.require_account_approval
   end
 
+  def self.closed_beta?
+    get_settings
+    return @setting.closed_beta
+  end
+
   def self.speaker_chart_floor
     get_settings
     return @setting.speaker_chart_floor || 3
