@@ -105,12 +105,16 @@ class UsersController < ApplicationController
   end
 
   def new
-    if current_user && !current_user.admin?
+    if Setting.disable_signups?
+      flash[:success] = "New accounts are not being accepted - please check back later."
+      redirect_to root_path and return
+    elsif  current_user && !current_user.admin?
       # only admin can create new users directly
       redirect_to root_path and return
+    else
+      get_roles
+      @user = User.new
     end
-    get_roles
-    @user = User.new
   end
 
   def create

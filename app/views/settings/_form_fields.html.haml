@@ -1,4 +1,5 @@
 .form_fields
+  = f.input :disable_signups,          as: :boolean, hint: "Blocks signup entirely."
   = f.input :require_account_approval, as: :boolean, hint: 'When checked, new accounts must be approved by the administrator.'
   = f.input :closed_beta,              as: :boolean, hint: "Notify users that accounts won't be approved. Forces on Require Account Approval."
   = f.input :speaker_chart_floor,                    hint: 'Minimum number of presentations required to show up on the Top Speakers chart.'

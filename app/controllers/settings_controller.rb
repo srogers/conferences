@@ -27,6 +27,6 @@ class SettingsController < ApplicationController
   private
 
   def setting_params
-    params.require(:setting).permit(:require_account_approval, :closed_beta, :speaker_chart_floor, :api_open, :facebook_sharing, :base_event_year)
+    params.require(:setting).permit(:require_account_approval, :disable_signups, :closed_beta, :speaker_chart_floor, :api_open, :facebook_sharing, :base_event_year)
   end
 end

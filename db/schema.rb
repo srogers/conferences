@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_13_171105) do
+ActiveRecord::Schema.define(version: 2021_03_13_190428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -217,6 +217,7 @@ ActiveRecord::Schema.define(version: 2021_03_13_171105) do
     t.boolean "facebook_sharing"
     t.integer "base_event_year"
     t.boolean "closed_beta", default: false
+    t.boolean "disable_signups", default: false
   end
 
   create_table "speakers", force: :cascade do |t|

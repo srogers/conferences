@@ -9,6 +9,9 @@
   .col-md-12
     %table.table
       %tr
+        %th{width: '50%'} Disable Signups
+        %td= humanize_boolean Setting.disable_signups?
+      %tr
         %th{width: '50%'} Require Account Approval
         %td= humanize_boolean Setting.require_account_approval?
       %tr
