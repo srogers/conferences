@@ -14,6 +14,7 @@ end
 Setting.create!(
   require_account_approval: false,
   closed_beta: false,
+  disable_signups: false,
   popular_media: 3,
   popular_playlists: 3,
   popular_segments: 3
