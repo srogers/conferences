@@ -10,7 +10,14 @@ Role::ROLES.each do |role_name|
   Role.find_or_create_by(name: role_name)
 end
 
-Setting.create! unless Setting.first
+# This needs to set the same values as the settings fixture
+Setting.create!(
+  require_account_approval: false,
+  closed_beta: false,
+  popular_media: 3,
+  popular_playlists: 3,
+  popular_segments: 3
+) unless Setting.first
 
 if Organizer.all.empty?
   Organizer.create! name: "The Thomas Jefferson School", series_name: "TJS Conferences", abbreviation: "TJS"

@@ -4,6 +4,13 @@
 
 = render partial: 'control_bar'
 
+- if Setting.closed_beta? && !current_user.try(:admin?)
+  .row
+    .col-md-12
+      %h5 The Site Is Currently In Closed Beta
+      %p You can register for an account now, and it will be activated some time in the future when we are ready for new users.
+      %p Thanks for your patience.
+
 .row
   .col-md-12
     = simple_form_for @user do |f|

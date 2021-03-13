@@ -39,6 +39,8 @@ RSpec.describe EventsController, type: :controller do
   # EventsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
+  it_behaves_like "sortable"
+
   describe "when listing events" do
     it "assigns all events as @conferences" do
       get :index, params: {}

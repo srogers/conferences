@@ -12,7 +12,9 @@ If the link isn't clickable, try copying it and pasting in your browser.
 
 <%= @account_activation_url %>
 
-<% if Setting.require_account_approval? %>
+<% if Setting.closed_beta? %>
+  Since we're in closed beta, it may be some time before your account is activated. You'll receive an email when it's ready.
+<% elsif Setting.require_account_approval? %>
 While we're in beta, your account will need to be verified by an administrator. Please allow a little time for this extra step.
 <% end %>
 

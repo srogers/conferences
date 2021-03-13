@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+# Model and Controller concerns live under support because it's on the include path.
+# Note this file name doesn't end in "_spec.rb" so that Rspec won't load it by default - otherwise it loads twice
+
 include SharedQueries
 
 # This is a somewhat hacky way to get Rspec to allow param_context to be stubbed out directly on SharedQueries.

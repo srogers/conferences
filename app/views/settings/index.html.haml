@@ -9,8 +9,14 @@
   .col-md-12
     %table.table
       %tr
+        %th{width: '50%'} Disable Signups
+        %td= humanize_boolean Setting.disable_signups?
+      %tr
         %th{width: '50%'} Require Account Approval
         %td= humanize_boolean Setting.require_account_approval?
+      %tr
+        %th{width: '50%'} Closed Beta Mode
+        %td= humanize_boolean @setting.closed_beta?
       %tr
         %th{width: '50%'} Top Speakers Floor
         %td= Setting.speaker_chart_floor
