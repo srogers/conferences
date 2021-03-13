@@ -17,7 +17,7 @@ class SettingsController < ApplicationController
   #        approved status, since that attribute can't be edited when approval is not required.
   def update
     if @setting.update setting_params
-      @setting.update(require_account_approval: true) if setting_params[:closed_beta] == 'true'
+      @setting.update(require_account_approval: true) if setting_params[:closed_beta] == '1'
       redirect_to settings_path, notice: 'Settings were successfully updated.'
     else
       render "edit"
