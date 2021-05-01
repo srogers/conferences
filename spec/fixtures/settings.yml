@@ -1,3 +1,4 @@
 first:
   require_account_approval: false
   closed_beta: false
+  disable_signups: false
