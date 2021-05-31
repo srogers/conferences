@@ -12,7 +12,7 @@
 = f.input :tag_list, input_html: { value: @tags, class: 'tagsinput',  autocomplete: "off" }, label: 'Topics', hint: "economics, politics, psychology, etc."
 = f.input :date, as: :date, start_year: Setting.base_event_year, end_year: Date.today.year + 1, order: [:month, :day, :year]
 - if @presentation.try(:conference).try(:use_episodes?)
-  = f.input :episode, hint: "Episode number - leave blank if it doesn't apply."
+  = f.input :episode, input_html: { autocomplete: "off" }, hint: "Episode number - leave blank if it doesn't apply."
 = f.input :parts, input_html: { autocomplete: "off" }
 = f.input :handout, label: @presentation.handout.present? ? 'Change handout' : 'Add handout'
 - if @presentation.handout.present?
