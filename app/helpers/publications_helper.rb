@@ -94,6 +94,8 @@ module PublicationsHelper
       icon('fab', 'instagram')
     when Publication::PODCAST then
       icon('fas', 'podcast')
+    when Publication::SOUNDCLOUD then
+      icon('fab', 'soundcloud')
     when Publication::ONLINE then
       icon('fas', 'download')
     when Publication::ESTORE then
