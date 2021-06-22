@@ -24,12 +24,13 @@ class Publication < ApplicationRecord
   VIMEO   = 'Vimeo'.freeze        # Is it helpful to make this distinct?  for now, seems like yes
   FACEBOOK = 'FaceBook'.freeze    # Is it helpful to make this distinct?
   INSTAGRAM = 'Instagram'.freeze  # Is it helpful to make this distinct?
+  SOUNDCLOUD = 'Soundcloud'.freeze
   PODCAST = 'Podcast'.freeze
   ONLINE  = 'Online'.freeze       # Meant to be an "other" catch-all
   ESTORE  = 'e-Store'.freeze      # This is going away . . . (said Tal in 2018, but it's still there)
   PRINT   = 'Print'.freeze        # Books, pamphlets, Newsletter articles, etc. - physical media
   MOKUJI  = 'Mokuji'.freeze
-  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, INSTAGRAM, VIMEO, PRINT, PODCAST, TAPE, CD, VHS, DISK, LP, ONLINE].freeze  # approximately most to least used
+  FORMATS = [YOUTUBE, CAMPUS, ESTORE, MOKUJI, FACEBOOK, INSTAGRAM, SOUNDCLOUD, VIMEO, PRINT, PODCAST, TAPE, CD, VHS, DISK, LP, ONLINE].freeze  # approximately most to least used
 
   MINUTES = 'minutes'.freeze
   HMS     = 'hh:mm'.freeze
