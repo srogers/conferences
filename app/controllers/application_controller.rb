@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :set_raven_context
+  before_action :set_sentry_context
 
   before_action :redirect_to_canonical_domain
 
@@ -46,9 +46,9 @@ class ApplicationController < ActionController::Base
       "GB", # United Kingdom
   ]
 
-  def set_raven_context
-    Raven.user_context(id: current_user&.id)
-    Raven.extra_context(params: params.to_unsafe_h, url: request.url)
+  def set_sentry_context
+    Sentry.set_user(id: current_user&.id)
+    Sentry.set_extras(params: params.to_unsafe_h, url: request.url)
   end
 
   # If any request makes it to the app with some other domain, redirect to the "real" one.

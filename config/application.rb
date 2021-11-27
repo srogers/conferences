@@ -22,12 +22,7 @@ module Conferences
       g.form_builder :simple_form
     end
 
-    Raven.configure do |config|
-      config.dsn = ENV['SENTRY_DSN']
-    end
-
     # Params that will be skipped for logging and error reporting
     config.filter_parameters << :password
-
   end
 end
