@@ -52,6 +52,22 @@
       - else
         = tag.i('none')
 
+    - unless @about_this.empty?
+      %p
+        %b About This Presentation
+      - @about_this.each do |presentation|  
+        %ul
+          %li
+            = link_to presentation.name, presentation_path(presentation)
+
+    - unless @this_is_about.empty?
+      %p
+        %b This is About
+      - @this_is_about.each do |presentation|
+        %ul
+          %li
+            = link_to presentation.name, presentation_path(presentation)   
+
     %p
       %b Publications:
       %ul

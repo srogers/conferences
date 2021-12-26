@@ -98,6 +98,8 @@ class PresentationsController < ApplicationController
     if current_user
       @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
     end
+    @about_this = Relation.about_this(@presentation)
+    @this_is_about = Relation.this_is_about(@presentation)
 
     respond_to do |format|
       format.html { params[:details].present? ? render('presentations/details', layout: false) : render('show') } # details responds to an ajax action on the index page
