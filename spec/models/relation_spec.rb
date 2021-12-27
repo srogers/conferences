@@ -34,17 +34,39 @@ RSpec.describe Relation, :type => :model do
   describe "getting presentations" do
     let(:presentation) { create :presentation }
     let(:about_presentation) { create :presentation }
-    let!(:relation) { create :relation, presentation: presentation, related: about_presentation, kind: Relation::ABOUT }
+    let(:relationship_type) { Relation::ABOUT }
+    # This means presentation is about about_presentation
+    let!(:relation) { create :relation, presentation: presentation, related: about_presentation, kind: relationship_type}
 
     context "about this presentation" do
-      it "finds the related presentations" do
-        expect(Relation.about_this(about_presentation)).to eq([presentation])
+      let(:relations) { Relation.targeting(about_presentation, relationship_type) }
+
+      it "finds the relation" do
+        expect(relations).to eq([relation])
+      end
+
+      it "source is the presentation about the given presentation" do
+        expect(Relation.source(relations)).to eq([presentation])
+      end
+
+      it "target is the given presentation" do
+        expect(Relation.target(relations)).to eq([about_presentation])
       end
     end
 
     context "this presentation is about" do
+      let(:relations) { Relation.sourcing(presentation, relationship_type) }
+
       it "finds the related presentations" do
-        expect(Relation.this_is_about(presentation)).to eq([about_presentation])
+        expect(relations).to eq([relation])
+      end
+
+      it "source is the given presentation" do
+        expect(Relation.source(relations)).to eq([presentation])
+      end
+
+      it "target is the presentation the given presentation is about" do
+        expect(Relation.target(relations)).to eq([about_presentation])
       end
     end
   end
