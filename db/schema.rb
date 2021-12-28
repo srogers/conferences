@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_13_190428) do
+ActiveRecord::Schema.define(version: 2021_12_25_153946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,17 @@ ActiveRecord::Schema.define(version: 2021_03_13_190428) do
     t.index ["name"], name: "index_publishers_on_name", unique: true
   end
 
+  create_table "relations", force: :cascade do |t|
+    t.bigint "presentation_id"
+    t.bigint "related_id"
+    t.string "kind"
+    t.string "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["presentation_id"], name: "index_relations_on_presentation_id"
+    t.index ["related_id"], name: "index_relations_on_related_id"
+  end
+
   create_table "roles", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -325,4 +336,5 @@ ActiveRecord::Schema.define(version: 2021_03_13_190428) do
 
   add_foreign_key "passages", "users", column: "creator_id"
   add_foreign_key "publications", "languages"
+  add_foreign_key "relations", "presentations", column: "related_id"
 end

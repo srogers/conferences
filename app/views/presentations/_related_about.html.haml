@@ -1,0 +1,8 @@
+%ul
+  %li
+    = link_to presentation.name, presentation_path(presentation)
+    - if presentation.conference.present?
+      at
+      = link_to presentation.conference_name, event_path(presentation.conference)
+    - if defined?(relation) # && can?(:edit, presentation) 
+      = link_to icon('far', 'trash-alt', :class => 'fa-fw'), relation_path(relation), :method => :delete, class: "danger", :data => { :confirm => 'Are you sure?' }
