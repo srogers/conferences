@@ -29,6 +29,12 @@ RSpec.describe Relation, :type => :model do
         end
       end
     end
+
+    context "validation" do
+      it "requires a legitimate value for kind" do
+        expect(Relation.new(valid_attributes.merge(kind: 'Bogus'))).not_to be_valid
+      end
+    end
   end
 
   describe "getting presentations" do

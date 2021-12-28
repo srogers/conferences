@@ -2,18 +2,15 @@ class Relation < ApplicationRecord
 
   belongs_to  :presentation
   belongs_to  :related,   class_name: "Presentation"
+  
+  ABOUT = 'about'                     # Primary is about related
+  RECOMMENDED = 'recommended'         # If you like primary, then you might like related (not yet implemented)
+
+  RELATIONSHIP_TYPES = [ABOUT, RECOMMENDED]
 
   validates :presentation_id, presence: true
   validates :related_id, presence: true
-  validates :kind, presence: true
-
-  ABOUT = 'about'
-  RECOMMENDED = 'recommended'
-
-  RELATIONSHIP_TYPES = {
-    ABOUT       => :about,            # Primary is about related
-    RECOMMENDED => :recommended       # If you like primary, then you might like related
-  }
+  validates :kind, presence: true, inclusion: RELATIONSHIP_TYPES
 
   # Converts a list of relations to a list of presentations from the relation.presentation.
   # Controller gets this_is_about()
