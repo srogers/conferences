@@ -47,9 +47,10 @@
               = link_to "Add Another", new_presentation_path(conference_id: @presentation.conference_id), :class => "btn btn-sm btn-primary ml-3"
             = link_to "Speakers", manage_speakers_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
             = link_to "Publications", manage_publications_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
+            = link_to "Related", manage_related_presentation_path(@presentation), :class => "btn btn-sm btn-primary ml-3"
           = link_to "Done", deduce_done_path, :class => "btn btn-sm btn-secondary ml-3"
 
-        - elsif ['manage_publications', 'manage_speakers'].include?(action_name)
+        - elsif ['manage_publications', 'manage_speakers', 'manage_related'].include?(action_name)
           = link_to "Done", presentation_path(@presentation), class: 'btn btn-sm btn-secondary btn-sm'
 
         - elsif action_name == 'edit' || action_name == 'update'

@@ -54,7 +54,7 @@ Rails.application.routes.draw do
   resources :presentation_speakers, only: [:create, :destroy]
   resources :presentations do
     member do
-      get :manage_speakers, :manage_publications, :download_handout
+      get :manage_speakers, :manage_publications, :manage_related, :download_handout
     end
     collection do
       get :chart                     # queries the data and pushes it to the chart in an array
@@ -70,6 +70,7 @@ Rails.application.routes.draw do
   resources :publishers, except: [:new, :show]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :organizers
+  resources :relations, only: [:new, :create, :destroy]
   resources :settings, only: [:index, :show, :edit, :update]
   resources :speakers do
     collection do
