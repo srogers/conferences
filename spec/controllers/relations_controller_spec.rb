@@ -1,20 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe RelationsController, type: :controller do
-  fixtures :roles
-  fixtures :settings
 
-  # This should return the minimal set of attributes required to create a valid
-  # Relation. As you add validations to Relation, be sure to adjust the attributes here as well.
+  let(:source) { create :presentation }
+  let(:target) { create :presentation }
+  let(:kind)   { Relation::ABOUT }
+
   let(:valid_attributes) {
-    { name: "Valid Relation"}
+    { presentation_id: source.id, related_id: target.id, kind: kind }
   }
 
   let(:invalid_attributes) {
-    { name: "" }
+    { presentation_id: source.id, related_id: target.id, kind: "bogus" }
   }
-
-  let(:relation) { Relation.create! valid_attributes }
 
   setup :activate_authlogic
 
@@ -42,30 +40,29 @@ RSpec.describe RelationsController, type: :controller do
         expect(assigns(:relation)).to be_persisted
       end
 
-      it "redirects to the created relation" do
+      it "redirects to the manage relations page for the target presentation" do
         post :create, params: {relation: valid_attributes}
-        expect(response).to redirect_to(Relation.last)
+        expect(response).to  redirect_to manage_related_presentation_path(source)
       end
     end
 
     context "with invalid params" do
-      it "assigns a newly created but unsaved relation as @relation" do
+      it "redirects to the manage relations page for the target presentation" do
         post :create, params: {relation: invalid_attributes}
-        expect(assigns(:relation)).to be_a_new(Relation)
+        expect(response).to  redirect_to manage_related_presentation_path(source.id) 
       end
 
-      it "re-renders the 'new' template" do
+      it "sets a flash message" do
         post :create, params: {relation: invalid_attributes}
-        expect(response).to render_template("new")
-      end
+        expect(flash[:error]).to match(/could not be saved/)
+      end      
     end
   end
 
 
   describe "DELETE #destroy" do
-    before do
-      expect(relation).to be_present # in these cases, touch it in advance to create it
-    end
+    
+    let!(:relation) { create :relation }            # has to be pre-created for .to change to work
 
     it "destroys the requested relation" do
       expect {
@@ -73,21 +70,9 @@ RSpec.describe RelationsController, type: :controller do
       }.to change(Relation, :count).by(-1)
     end
 
-    context "with a publication using relation" do
-
-      let!(:publication) { create :publication, relation_id: relation.id }
-
-      it "does not destroy the requested relation" do
-        expect {
-          delete :destroy, params: {id: relation.to_param}
-        }.not_to change(Relation, :count)
-
-      end
-    end
-
-    it "redirects to the relations list" do
+    it "redirects to the manage relations list for the target presentation" do
       delete :destroy, params: {id: relation.to_param}
-      expect(response).to redirect_to(relations_url)
+      expect(response).to redirect_to manage_related_presentation_path(relation.presentation)
     end
   end
 end

@@ -33,5 +33,6 @@
     = simple_form_for :relation, url: relations_path do |f|
       = f.input :presentation_id, as: :hidden, input_html: { value: @presentation.id }
       = f.input :related_id, collection: [['',0]], label: false, input_html: { data: { delimiter: ',', placeholder: "enter a presentation name...", source: presentations_path(format: :json), exclude: @current_related_ids }, class: "select2-autocomplete", id: "presentation_picker" }
+      = f.hidden_field :kind, value: Relation::ABOUT
       .text-right
         = f.submit 'Add', class: 'btn btn-sm btn-primary'
