@@ -50,7 +50,7 @@ class PresentationsController < ApplicationController
         if params[:q].present?
           # generate a specific format for select2
           # TODO set up page-specific options for select2,so it can use the generic JSON
-          render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: "#{s.name} (#{ s.date.year })" } } }
+          render json: { total: @presentations.length, users: @presentations.map{|s| {id: s.id, text: "#{s.name} (#{ s.date&.year })" } } }
         else
           # generate a generic API-like JSON response
           render json: PresentationSerializer.new(@presentations).serialized_json
@@ -98,6 +98,8 @@ class PresentationsController < ApplicationController
     if current_user
       @user_presentation = current_user.user_presentations.where(presentation_id: @presentation.id).first || UserPresentation.new
     end
+    @relation_about_this = Relation.targeting(@presentation, Relation::ABOUT)
+    @relation_this_is_about = Relation.sourcing(@presentation, Relation::ABOUT)
 
     respond_to do |format|
       format.html { params[:details].present? ? render('presentations/details', layout: false) : render('show') } # details responds to an ajax action on the index page
@@ -122,6 +124,12 @@ class PresentationsController < ApplicationController
     @related_publications = @related_publications.where("publications.id NOT IN (?)", @presentation.presentation_publications.map{|pp| pp.publication_id}) if @presentation.presentation_publications.present?
     @current_publication_ids = @presentation.publications.map{|p| p.id}.join(',')
     @publication = Publication.new published_on: Date.today, details: @presentation.description
+  end
+
+  def manage_related
+    @relation_about_this = Relation.targeting(@presentation, Relation::ABOUT)
+    @relation_this_is_about = Relation.sourcing(@presentation, Relation::ABOUT)
+    @current_related_ids = @relation_this_is_about.map{|r| r.related.id}.join(',')
   end
 
   # Send the handout straight to the browser - assumes PDF is required at upload

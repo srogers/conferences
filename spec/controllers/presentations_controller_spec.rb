@@ -113,10 +113,16 @@ RSpec.describe PresentationsController, type: :controller do
 
   describe "GET #show" do
 
+    it "with param as an ID redirects to the slug-based route" do
+      get :show, params: {id: presentation.id}
+      expect(assigns(:presentation)).to eq(presentation)
+      expect(response).to redirect_to presentation_path(presentation)
+    end
 
     it "assigns the requested presentation as @presentation" do
-      get :show, params: {id: presentation.to_param}
+      get :show, params: {id: presentation.to_param}      # this uses slug automatically
       expect(assigns(:presentation)).to eq(presentation)
+      expect(response).not_to be_redirect
     end
 
     context "when the presentation isn't in the current user's wishlist" do
@@ -153,6 +159,24 @@ RSpec.describe PresentationsController, type: :controller do
         get :show, params: {id: 'new-presentation-name'}
         expect(assigns(:presentation)).to eq(presentation)
       end
+    end
+  end
+
+  describe "GET manage_related" do
+    it "with param as an ID redirects to the slug-based route" do
+      get :manage_related, params: {id: presentation.id}
+
+      expect(assigns(:presentation)).to eq(presentation)
+      expect(response).to redirect_to presentation_path(presentation)
+    end
+
+    it "assigns the related presentations" do
+      get :manage_related, params: {id: presentation.to_param}      # this uses slug automatically
+
+      expect(assigns(:relation_about_this)).not_to be_nil
+      expect(assigns(:relation_this_is_about)).not_to be_nil
+      expect(assigns(:current_related_ids)).not_to be_nil
+      expect(response).not_to be_redirect
     end
   end
 

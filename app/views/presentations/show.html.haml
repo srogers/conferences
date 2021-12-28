@@ -52,6 +52,18 @@
       - else
         = tag.i('none')
 
+    - unless @relation_about_this.empty?
+      %p
+        %b About This Presentation
+      - @relation_about_this.each do |relation|
+        = render :partial => 'related_about', locals: { presentation: relation.presentation }
+
+    - unless @relation_this_is_about.empty?
+      %p
+        %b This is About
+      - @relation_this_is_about.each do |relation|
+        = render :partial => 'related_about', locals: { presentation: relation.related }
+
     %p
       %b Publications:
       %ul
