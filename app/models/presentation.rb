@@ -19,7 +19,6 @@ class Presentation < ApplicationRecord
   has_many    :users, through: :user_presentations  # answers: who's watching this presentation
 
   validates :name, presence: true
-  validate  :unique_per_conference
   # requiring a speaker at create is handled by PresentationsController
 
   before_save :update_sortable_name, :adjust_series_bounds
@@ -66,18 +65,6 @@ GROUP BY pr.id"
       if conference.end_date < date
         conference.update(end_date: date)
       end
-    end
-  end
-
-  # presentations can exist with duplicate names, but presentation names must be unique within a conference
-  def unique_per_conference
-    if conference_id.present?
-      if id.present?
-        duplicate_count = Presentation.where("name = ? AND id != ? AND conference_id = ?", name, id, conference_id).length
-      else
-        duplicate_count = Presentation.where("name = ? AND conference_id = ?", name, conference_id).length
-      end
-      errors.add(:conference, "already has a presentation with the same name.") if duplicate_count > 0
     end
   end
 
