@@ -79,14 +79,19 @@ RSpec.describe Presentation, type: :model do
 
         let!(:duplicate_presentation) { create :presentation, name: valid_attributes[:name], conference_id: conference.id }
 
-        it "can't be associated with that conference" do
-          expect { Presentation.create!(valid_attributes.merge(conference_id: conference.id)) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Conference already has a presentation with the same name.")
+      # This reverses an earlier validation that prevented duplicate names. That seemed like a sensible
+      # restriction, but it turns out the be just a pain, because series and tour events sometimes legitimately
+      # have presentations with the same name.
+      it "can be associated with that conference" do
+          presentation = Presentation.create!(valid_attributes.merge(conference_id: conference.id))
+          expect(presentation).to be_valid
         end
       end
 
       context "series" do
         let!(:dummy) { conference.update(event_type: Conference::SERIES) }
-        # only series does this, because for conferences, a presentation date outside the window is probably a user error
+        # Only series does this, because for conferences, a presentation date outside the window is probably a user error.
+        # A series is always getting new presentations, so it's convenient for the date to just extend automatically.
         it "extends the series start date if the presentation date falls before" do
           presentation = Presentation.new(valid_attributes.merge(conference_id: conference.id, date: conference.start_date - 1.day ))
           expect(presentation).to be_valid
@@ -125,8 +130,10 @@ RSpec.describe Presentation, type: :model do
 
         let!(:duplicate_presentation) { create :presentation, name: presentation.name, conference_id: conference.id }
 
-        it "can't be associated with that conference" do
-          expect { presentation.update_attributes!(conference_id: conference.id) }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Conference already has a presentation with the same name.")
+        # This reverses an earlier validation preventing duplicate names, because that restriction is really just unhelpful
+        it "can be associated with that conference" do
+          presentation.update_attributes!(conference_id: conference.id)
+          expect(presentation).to be_valid
         end
       end
     end

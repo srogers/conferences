@@ -4,30 +4,19 @@
 .row.mb-2{ id: "presentation_#{presentation.id}" }
   %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     -# Make the detailed view the default - see what indexing robots do with that - use compact for speakers
-    -if (controller_name != 'presentations' && current_user&.compact_presentations) || controller_name == 'speakers'
-      -# For compact use just the name for event presentation listing. Never include speaker in speaker presentation listing - redundant
-      - if @conference && @conference.use_episodes
-        = presentation.episode
-      = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
-    -elsif current_user&.compact_presentations
-      .detail-selector
-        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
-        = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
-        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
-        = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
-    -else
+    -if @conference.present?   # then it's the event listing, so show speakers but not tags
       - if @conference && @conference.use_episodes
         = presentation.episode
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
       %br
       by
       = clickable_speaker_list(presentation)
-      - unless controller_name == 'events' && params[:id].present? # in that case, we're looking at the event page - reiterating event is redundant
-        - if presentation.conference.present? && params[:skip_event] != 'true'
-          at
-          = link_to truncate(presentation.conference_name, length: 45, separator: ' '), event_path(presentation.conference)
-        %br
-        = linked_tag_names(presentation, class: 'slim')
+    -else 
+      .detail-selector
+        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), "#", class: 'detail-show', style: 'display: none;', title: ht_details
+        = link_to icon('far', 'caret-square-down',  class: 'fa-fw'), "#", class: 'detail-hide', style: 'display: none;', title: ht_hide_details
+        = link_to icon('far', 'caret-square-right', class: 'fa-fw'), presentation_path(presentation), class: 'detail-initiator', rel: 'nofollow', data: { method: :get, remote: true, params: { details: true, skip_event: (controller_name == 'events' && action_name == 'show') }.to_param }, title: ht_details
+        = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
 
   -if @conference.present?   # then it's the event listing
     .col.col-sm-8.col-md-2
@@ -59,7 +48,7 @@
       = icon('fas', 'puzzle-piece', class: 'fa-fw', title: 'Needs number of parts') if presentation.parts.blank?
       = icon('fas', 'chalkboard-teacher', class: 'fa-fw', title: 'Not yet associated with an event') if presentation.conference.blank?
 
-  .col.col-sm-2.col-md-2.text-right= linked_format_icons(presentation)
+  .col.col-sm-2.col-md-2.text-center= linked_format_icons(presentation)
 
   -# Jam the heart and edit buttons into one column - the heart takes up too much space in a column by itself
   - if current_user.present?

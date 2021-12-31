@@ -25,7 +25,8 @@
 
           = link_to icon('far', 'edit', :class => 'fa-fw'), edit_publication_path(publication, presentation_id: @presentation.id)
           = link_to icon('fas', 'unlink', :class => 'fa-fw'), presentation_publication_path(presentation_publication), :method => :delete, :post => true, class: 'text-danger'
-          = link_to icon('far', 'trash-alt', :class => 'fa-fw'), publication_path(publication, presentation_id: presentation_publication.presentation_id), :method => :delete, :data => { :confirm => 'remove this publication permanently?' }, :post => true, class: 'text-danger'
+          -# Don't allow delete here - too easy to slip up - follow the "eye" link to show, and delete there
+          =# link_to icon('far', 'trash-alt', :class => 'fa-fw'), publication_path(publication, presentation_id: presentation_publication.presentation_id), :method => :delete, :data => { :confirm => 'remove this publication permanently?' }, :post => true, class: 'text-danger'
 
 .row
   .col-md-12

@@ -9,5 +9,5 @@
       = [ sorting_header('Date', :event_path, 'presentations.date', icon: 'sort-numeric'), @conference.multi_venue? ? 'Location' : nil].compact.join(' / ').html_safe
   - if params[:heart].present?
     .col Needs
-  .col.col-md-1.text-right Media
+  .col.col-md-1.text-center Media
   .col.d-none.d-md-block

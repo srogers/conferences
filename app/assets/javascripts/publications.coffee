@@ -47,3 +47,5 @@ $ ->
       $format_selector.val("Campus")
     else if url.includes("estore.aynrand")
       $format_selector.val("e-Store")
+    else if url.includes("podcast")
+      $format_selector.val("Podcast")
