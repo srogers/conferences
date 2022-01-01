@@ -4,7 +4,7 @@
 .row.mb-2{ id: "presentation_#{presentation.id}" }
   %div{ class: current_user.present? ? 'col-md-5' : 'col-md-8'}
     -# Make the detailed view the default - see what indexing robots do with that - use compact for speakers
-    -if @conference.present?   # then it's the event listing, so show speakers but not tags
+    -if @conference.present? && @conference.event_type == Conference::CONFERENCE  # then it's the event listing for a conference - hide speakers for everything else esp. series
       - if @conference && @conference.use_episodes
         = presentation.episode
       = link_to(truncate(presentation.name, length: 80, separator: ' '), presentation_path(presentation))
