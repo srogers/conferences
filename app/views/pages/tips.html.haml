@@ -114,7 +114,7 @@
     %p
       Presentations have
       %i publications
-      –– some form of media that is a record of a specific presentaiton. Publications can be recorded on a variety of media types.
+      –– some form of media that is a record of a specific presentation. Publications can be recorded on a variety of media types.
       These are represented by icons:
     %ul
       - publication = Publication.new
@@ -126,6 +126,11 @@
     %p
       Sometimes a talk will have multiple copies of the same icon. This usually happens when the talk is split into
       multiple parts. Hovering on the icon will reval the specific part.
+    %p
+      Publications with the crown
+      = icon('fas', 'crown', :class => 'fa-fw text-warning')
+      indicate a publication that is the actual recording of that specific presentation. Publications without the crown are
+      presentations of the same talk, but not necessarily exactly the same as the offical recorded version.
     %p
       Publication searches recognize years, speaker names, and media formats as search terms.
       %ul
